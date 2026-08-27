@@ -1374,13 +1374,9 @@
         wrap: wrap$2
     });
 
-    /** @import { AnimationOptions } from './animation/animation.js'; */
     /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
+    /** @import { AnimationOptions } from './animation/animation.js'; */
 
-    /**
-     * @typedef {AjaxOptions} AjaxOptions
-     * @typedef {AnimationOptions} AnimationOptions
-     */
 
     const ajaxDefaults = {
         afterSend: null,
@@ -1900,13 +1896,9 @@
 
     Object.setPrototypeOf(AjaxRequest.prototype, Promise.prototype);
 
-    /** @import { AjaxOptions } from './ajax-request.js'; */
     /** @import { AjaxData } from './ajax-request.js'; */
+    /** @import { AjaxOptions } from './ajax-request.js'; */
 
-    /**
-     * @typedef {AjaxData} AjaxData
-     * @typedef {AjaxOptions} AjaxOptions
-     */
 
     /**
      * Performs an XHR DELETE request.
@@ -2142,13 +2134,23 @@
         return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, 'i');
     }
     /**
+     * Normalizes a CSS property name.
+     * @param {string} style The CSS property name.
+     * @returns {string} The normalized CSS property name.
+     */
+    function normalizeCssProperty(style) {
+        return style.startsWith('--') ?
+            `--${kebabCase(style.slice(2))}` :
+            kebabCase(style);
+    }
+    /**
      * Normalizes a CSS property value.
      * @param {string} style The CSS property name.
      * @param {string|number} value The CSS property value.
      * @returns {string|number} The normalized CSS property value.
      */
     function normalizeCssValue(style, value) {
-        if (!value || !isNumeric(value)) {
+        if (style.startsWith('--') || !value || !isNumeric(value)) {
             return value;
         }
 
@@ -2329,7 +2331,6 @@
 
     /** @import QuerySet from '../query/query-set.js'; */
 
-    /** @typedef {QuerySet} QuerySet */
 
     /**
      * @typedef {Element|Document|DocumentFragment|ShadowRoot} QueryContext
@@ -2643,17 +2644,11 @@
         return null;
     }
 
+    /** @import { NodeFilterCallback } from './helpers.js'; */
+    /** @import { NodeInput } from './helpers.js'; */
     /** @import { QueryContextInput } from './traversal/find.js'; */
     /** @import { QueryInput } from './helpers.js'; */
-    /** @import { NodeInput } from './helpers.js'; */
-    /** @import { NodeFilterCallback } from './helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterCallback} NodeFilterCallback
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QueryInput} QueryInput
-     * @typedef {QueryContextInput} QueryContextInput
-     */
 
     /**
      * @typedef {NodeInput|NodeFilterCallback} NodeFilterInput
@@ -2895,12 +2890,8 @@
 
     const styles = new WeakMap();
 
-    /** @import { StopAnimationOptions } from './animation.js'; */
     /** @import Animation from './animation.js'; */
-    /**
-     * @typedef {Animation} Animation
-     * @typedef {StopAnimationOptions} StopAnimationOptions
-     */
+    /** @import { StopAnimationOptions } from './animation.js'; */
 
     /**
      * Represents a Promise-compatible collection of animations.
@@ -3239,17 +3230,11 @@
 
     Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 
-    /** @import { StopAnimationOptions } from './animation.js'; */
-    /** @import { AnimationOptions } from './animation.js'; */
     /** @import { AnimationCallback } from './animation.js'; */
+    /** @import { AnimationOptions } from './animation.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
+    /** @import { StopAnimationOptions } from './animation.js'; */
 
-    /**
-     * @typedef {ElementInput} ElementInput
-     * @typedef {AnimationCallback} AnimationCallback
-     * @typedef {AnimationOptions} AnimationOptions
-     * @typedef {StopAnimationOptions} StopAnimationOptions
-     */
 
     /**
      * Adds an animation to each node.
@@ -3291,10 +3276,8 @@
     /** @import AnimationSet from './animation-set.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
 
+
     /**
-     * @typedef {ElementInput} ElementInput
-     * @typedef {AnimationSet} AnimationSet
-     * @typedef {AnimationOptions} AnimationOptions
      * @typedef {Record<string, {priority: string, value: string}>} InlineStyles
      */
 
@@ -3671,7 +3654,6 @@
 
     /** @import { ElementInput } from '../helpers.js'; */
 
-    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {object} CreateOptions
@@ -3727,7 +3709,7 @@
 
         if ('style' in options) {
             for (let [style, value] of Object.entries(options.style)) {
-                style = kebabCase(style);
+                style = normalizeCssProperty(style);
                 value = normalizeCssValue(style, value);
 
                 node.style.setProperty(style, value);
@@ -3792,17 +3774,11 @@
         return getContext().createTextNode(text);
     }
 
-    /** @import { QueryInput } from '../helpers.js'; */
-    /** @import { NodeInput } from '../helpers.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
     /** @import { NodeFilterInput } from '../filters.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { QueryInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {ElementInput} ElementInput
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QueryInput} QueryInput
-     */
 
     /**
      * Executes a command in the document context.
@@ -4034,13 +4010,9 @@
         return node.tagName.toLowerCase();
     }
 
-    /** @import { NodeInput } from '../helpers.js'; */
     /** @import { NodeFilterInput } from '../filters.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {NodeInput} NodeInput
-     */
 
     /**
      * Returns the first child of each node (optionally matching a filter).
@@ -4471,7 +4443,6 @@
 
     /** @import { EventCallback } from './event-handlers.js'; */
 
-    /** @typedef {EventCallback} EventCallback */
 
     /**
      * @callback DelegateCallback
@@ -4625,7 +4596,6 @@
 
     /** @import QuerySet from '../query/query-set.js'; */
 
-    /** @typedef {QuerySet} QuerySet */
 
     /**
      * @typedef {Element|Document|ShadowRoot|Window} EventTargetNode
@@ -4966,9 +4936,6 @@
 
     /** @import { NodeInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeInput} NodeInput
-     */
 
     /**
      * @typedef {object} CloneOptions
@@ -5254,7 +5221,6 @@
 
     /** @import { ElementInput } from '../helpers.js'; */
 
-    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {Record<string, *>} AttributeValues
@@ -5506,7 +5472,6 @@
 
     /** @import { QueryInput } from '../helpers.js'; */
 
-    /** @typedef {QueryInput} QueryInput */
 
     /**
      * Clones custom data from each node to each other node.
@@ -5619,7 +5584,6 @@
 
     /** @import { ElementInput } from '../helpers.js'; */
 
-    /** @typedef {ElementInput} ElementInput */
 
     /** @typedef {Record<string, string|number>} StyleValues */
 
@@ -5673,7 +5637,7 @@
             return result;
         }
 
-        style = kebabCase(style);
+        style = normalizeCssProperty(style);
 
         return nodeStyles.getPropertyValue(style);
     }
@@ -5691,15 +5655,15 @@
         }
 
         if (style) {
-            style = kebabCase(style);
+            style = normalizeCssProperty(style);
 
-            return node.style[style];
+            return node.style.getPropertyValue(style);
         }
 
         const styles = {};
 
         for (const style of node.style) {
-            styles[style] = node.style[style];
+            styles[style] = node.style.getPropertyValue(style);
         }
 
         return styles;
@@ -5741,7 +5705,7 @@
     function removeStyle$1(selector, style) {
         const nodes = parseNodes(selector);
 
-        style = kebabCase(style);
+        style = normalizeCssProperty(style);
 
         for (const node of nodes) {
             node.style.removeProperty(style);
@@ -5760,7 +5724,7 @@
         const styles = parseData(style, value);
 
         for (let [style, value] of Object.entries(styles)) {
-            style = kebabCase(style);
+            style = normalizeCssProperty(style);
             value = normalizeCssValue(style, value);
 
             for (const node of nodes) {
@@ -5824,7 +5788,6 @@
 
     /** @import { ElementInput } from '../helpers.js'; */
 
-    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {object} Coordinates
@@ -6107,7 +6070,6 @@
 
     /** @import { QueryInput } from '../helpers.js'; */
 
-    /** @typedef {QueryInput} QueryInput */
 
     /**
      * Gets the scroll X position of the first node.
@@ -6228,7 +6190,6 @@
 
     /** @import { QueryInput } from '../helpers.js'; */
 
-    /** @typedef {QueryInput} QueryInput */
 
     /**
      * @typedef {object} SizeOptions
@@ -6415,7 +6376,6 @@
 
     /** @import { EventCallback } from './event-handlers.js'; */
 
-    /** @typedef {EventCallback} EventCallback */
 
     /**
      * Returns a wrapped mouse drag event (optionally debounced).
@@ -6498,13 +6458,9 @@
         };
     }
 
-    /** @import { EventCallback } from './event-handlers.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
+    /** @import { EventCallback } from './event-handlers.js'; */
 
-    /**
-     * @typedef {ElementInput} ElementInput
-     * @typedef {EventCallback} EventCallback
-     */
 
     /**
      * Triggers a blur event on the first node.
@@ -6591,7 +6547,6 @@
 
     /** @import { NodeInput } from '../helpers.js'; */
 
-    /** @typedef {NodeInput} NodeInput */
 
     /**
      * Inserts each other node after each node.
@@ -6782,13 +6737,9 @@
         prepend$1(otherSelector, selector);
     }
 
-    /** @import { NodeInput } from '../helpers.js'; */
     /** @import { NodeFilterInput } from '../filters.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {NodeInput} NodeInput
-     */
 
     /**
      * Unwraps each node.
@@ -6977,17 +6928,11 @@
         }
     }
 
-    /** @import QuerySet from '../query-set.js'; */
-    /** @import { StopAnimationOptions } from '../../animation/animation.js'; */
-    /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
     /** @import { AnimationCallback } from '../../animation/animation.js'; */
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
+    /** @import { StopAnimationOptions } from '../../animation/animation.js'; */
 
-    /**
-     * @typedef {AnimationCallback} AnimationCallback
-     * @typedef {QueuedAnimationOptions} QueuedAnimationOptions
-     * @typedef {StopAnimationOptions} StopAnimationOptions
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Adds an animation to the queue for each node.
@@ -7016,10 +6961,6 @@
     /** @import QuerySet from '../query-set.js'; */
     /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
 
-    /**
-     * @typedef {QueuedAnimationOptions} QueuedAnimationOptions
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Adds a drop in animation to the queue for each node.
@@ -7132,13 +7073,9 @@
         );
     }
 
-    /** @import QuerySet from '../query-set.js'; */
     /** @import { AttributeValues } from '../../attributes/attributes.js'; */
+    /** @import QuerySet from '../query-set.js'; */
 
-    /**
-     * @typedef {AttributeValues} AttributeValues
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Gets attribute value(s) for the first node.
@@ -7279,13 +7216,9 @@
         return this;
     }
 
-    /** @import QuerySet from '../query-set.js'; */
     /** @import { QueryInput } from '../../helpers.js'; */
+    /** @import QuerySet from '../query-set.js'; */
 
-    /**
-     * @typedef {QueryInput} QueryInput
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Clones custom data from each node to each other node.
@@ -7327,17 +7260,11 @@
         return this;
     }
 
-    /** @import { ElementInput } from '../../helpers.js'; */
-    /** @import { PercentOptions } from '../../attributes/position.js'; */
-    /** @import { OffsetOptions } from '../../attributes/position.js'; */
     /** @import { Coordinates } from '../../attributes/position.js'; */
+    /** @import { ElementInput } from '../../helpers.js'; */
+    /** @import { OffsetOptions } from '../../attributes/position.js'; */
+    /** @import { PercentOptions } from '../../attributes/position.js'; */
 
-    /**
-     * @typedef {Coordinates} Coordinates
-     * @typedef {OffsetOptions} OffsetOptions
-     * @typedef {PercentOptions} PercentOptions
-     * @typedef {ElementInput} ElementInput
-     */
 
     /**
      * Gets the X,Y co-ordinates for the center of the first node.
@@ -7434,7 +7361,6 @@
 
     /** @import QuerySet from '../query-set.js'; */
 
-    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Gets the scroll X position of the first node.
@@ -7482,7 +7408,8 @@
         return this;
     }
 
-    /** @typedef {SizeOptions} SizeOptions */
+    /** @import { SizeOptions } from '../../attributes/size.js'; */
+
 
     /**
      * Gets the computed height of the first node.
@@ -7504,10 +7431,6 @@
     /** @import QuerySet from '../query-set.js'; */
     /** @import { StyleValues } from '../../attributes/styles.js'; */
 
-    /**
-     * @typedef {StyleValues} StyleValues
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Adds classes to each node.
@@ -7605,21 +7528,13 @@
         return this;
     }
 
-    /** @import QuerySet from '../query-set.js'; */
-    /** @import { TriggerEventOptions } from '../../events/event-handlers.js'; */
-    /** @import { RemoveEventOptions } from '../../events/event-handlers.js'; */
-    /** @import { EventTargetInput } from '../../events/event-handlers.js'; */
-    /** @import { EventOptions } from '../../events/event-handlers.js'; */
     /** @import { EventCallback } from '../../events/event-handlers.js'; */
+    /** @import { EventOptions } from '../../events/event-handlers.js'; */
+    /** @import { EventTargetInput } from '../../events/event-handlers.js'; */
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { RemoveEventOptions } from '../../events/event-handlers.js'; */
+    /** @import { TriggerEventOptions } from '../../events/event-handlers.js'; */
 
-    /**
-     * @typedef {EventCallback} EventCallback
-     * @typedef {EventOptions} EventOptions
-     * @typedef {EventTargetInput} EventTargetInput
-     * @typedef {RemoveEventOptions} RemoveEventOptions
-     * @typedef {TriggerEventOptions} TriggerEventOptions
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Adds an event to each node.
@@ -7729,7 +7644,6 @@
 
     /** @import QuerySet from '../query-set.js'; */
 
-    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Triggers a blur event on the first node.
@@ -7773,10 +7687,6 @@
     /** @import { CloneOptions } from '../../manipulation/manipulation.js'; */
     /** @import { NodeInput } from '../../helpers.js'; */
 
-    /**
-     * @typedef {NodeInput} NodeInput
-     * @typedef {CloneOptions} CloneOptions
-     */
 
     /**
      * Clones each node.
@@ -7836,13 +7746,9 @@
         return this;
     }
 
-    /** @import QuerySet from '../query-set.js'; */
     /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import QuerySet from '../query-set.js'; */
 
-    /**
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Inserts each other node after the first node.
@@ -7925,15 +7831,10 @@
         return this;
     }
 
-    /** @import QuerySet from '../query-set.js'; */
-    /** @import { NodeInput } from '../../helpers.js'; */
     /** @import { NodeFilterInput } from '../../filters.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import QuerySet from '../query-set.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Unwraps each node.
@@ -7978,7 +7879,6 @@
 
     /** @import { ElementInput } from '../helpers.js'; */
 
-    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @callback QueueCallback
@@ -8095,14 +7995,9 @@
     }
 
     /** @import QuerySet from '../query-set.js'; */
-    /** @import { QueueOptions } from '../../queue/queue.js'; */
     /** @import { QueueCallback } from '../../queue/queue.js'; */
+    /** @import { QueueOptions } from '../../queue/queue.js'; */
 
-    /**
-     * @typedef {QueueCallback} QueueCallback
-     * @typedef {QueueOptions} QueueOptions
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Clears the queue of each node.
@@ -8142,17 +8037,11 @@
         return this;
     }
 
-    /** @import { QueryInput } from '../helpers.js'; */
-    /** @import { NodeInput } from '../helpers.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
     /** @import { NodeFilterInput } from '../filters.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { QueryInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {ElementInput} ElementInput
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QueryInput} QueryInput
-     */
 
     /**
      * Returns all nodes connected to the DOM.
@@ -8462,13 +8351,9 @@
             );
     }
 
-    /** @import { NodeInput } from '../../helpers.js'; */
     /** @import { NodeFilterInput } from '../../filters.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {NodeInput} NodeInput
-     */
 
     /**
      * Returns all nodes connected to the DOM.
@@ -8694,7 +8579,6 @@
 
     /** @import { NodeFilterInput } from '../../filters.js'; */
 
-    /** @typedef {NodeFilterInput} NodeFilterInput */
 
     /**
      * Returns the first child of each node (optionally matching a filter).
@@ -8828,7 +8712,6 @@
 
     /** @import { NodeInput } from '../helpers.js'; */
 
-    /** @typedef {NodeInput} NodeInput */
 
     /**
      * Inserts each node after the selection.
@@ -9054,7 +8937,6 @@
 
     /** @import QuerySet from '../query-set.js'; */
 
-    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Inserts each node after the selection.
@@ -9102,17 +8984,11 @@
         return this;
     }
 
-    /** @import { QueryInput } from '../helpers.js'; */
-    /** @import { NodeInput } from '../helpers.js'; */
     /** @import { ElementInput } from '../helpers.js'; */
     /** @import { NodeFilterInput } from '../filters.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { QueryInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {ElementInput} ElementInput
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QueryInput} QueryInput
-     */
 
     /**
      * Checks whether any of the nodes has an animation.
@@ -9400,15 +9276,10 @@
         });
     }
 
-    /** @import QuerySet from '../query-set.js'; */
-    /** @import { NodeInput } from '../../helpers.js'; */
     /** @import { NodeFilterInput } from '../../filters.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import QuerySet from '../query-set.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {NodeInput} NodeInput
-     * @typedef {QuerySet} QuerySet
-     */
 
     /**
      * Checks whether any of the nodes has an animation.
@@ -9554,15 +9425,10 @@
         return isVisible$1(this);
     }
 
+    /** @import { NodeFilterInput } from '../../filters.js'; */
     /** @import { QueryContextInput } from '../../traversal/find.js'; */
     /** @import { QueryInput } from '../../helpers.js'; */
-    /** @import { NodeFilterInput } from '../../filters.js'; */
 
-    /**
-     * @typedef {NodeFilterInput} NodeFilterInput
-     * @typedef {QueryInput} QueryInput
-     * @typedef {QueryContextInput} QueryContextInput
-     */
 
     /**
      * Merges with new nodes and sorts the results.
@@ -9845,10 +9711,6 @@
     /** @import { QueryContextInput } from '../traversal/find.js'; */
     /** @import { QueryInput } from '../helpers.js'; */
 
-    /**
-     * @typedef {QueryInput} QueryInput
-     * @typedef {QueryContextInput} QueryContextInput
-     */
 
     /**
      * Adds a function to the ready queue or returns a QuerySet.

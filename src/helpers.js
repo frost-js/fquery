@@ -1,4 +1,4 @@
-import { escapeRegExp, isArray, isNumeric, isObject, isString, isUndefined, merge } from '@fr0st/core';
+import { escapeRegExp, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
 import { getWindow } from './config.js';
 import QuerySet from './query/query-set-core.js';
 
@@ -77,13 +77,24 @@ export function eventNamespacedRegExp(event) {
 };
 
 /**
+ * Normalizes a CSS property name.
+ * @param {string} style The CSS property name.
+ * @returns {string} The normalized CSS property name.
+ */
+export function normalizeCssProperty(style) {
+    return style.startsWith('--') ?
+        `--${kebabCase(style.slice(2))}` :
+        kebabCase(style);
+};
+
+/**
  * Normalizes a CSS property value.
  * @param {string} style The CSS property name.
  * @param {string|number} value The CSS property value.
  * @returns {string|number} The normalized CSS property value.
  */
 export function normalizeCssValue(style, value) {
-    if (!value || !isNumeric(value)) {
+    if (style.startsWith('--') || !value || !isNumeric(value)) {
         return value;
     }
 

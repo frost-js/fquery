@@ -60,6 +60,20 @@ test.describe('#create', () => {
         await expect(page.locator('body > div')).toHaveCSS('width', '50px');
     });
 
+    test('creates a new node with custom properties', async ({ page }) => {
+        await page.evaluate(() => {
+            document.body.appendChild($.create('div', {
+                style: {
+                    '--spacing-size': 100,
+                    '--theme-color': 'red',
+                },
+            }));
+        });
+
+        await expect(page.locator('body > div')).toHaveCSS('--spacing-size', '100');
+        await expect(page.locator('body > div')).toHaveCSS('--theme-color', 'red');
+    });
+
     test('creates a new node with value', async ({ page }) => {
         const value = await page.evaluate(() =>
             $.create('input', {

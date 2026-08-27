@@ -23,6 +23,19 @@ test.describe('QuerySet #removeStyle', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'background-color: blue;');
     });
 
+    test('removes a custom property', async ({ page }) => {
+        await page.evaluate((_) => {
+            for (const node of document.querySelectorAll('div')) {
+                node.style.setProperty('--theme-color', 'red');
+            }
+
+            $('div').removeStyle('--theme-color');
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'background-color: blue; color: white;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'background-color: blue; color: white;');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('div');

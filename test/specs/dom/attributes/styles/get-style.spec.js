@@ -29,6 +29,15 @@ test.describe('#getStyle', () => {
             page.evaluate((_) => $.getStyle('div', 'display'))).toBe('block');
     });
 
+    test('returns a custom property', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('--theme-color', 'red');
+        });
+
+        await expect.poll(async () =>
+            page.evaluate((_) => $.getStyle('#test1', '--theme-color'))).toBe('red');
+    });
+
     test('returns an empty string for an undefined style', async ({ page }) => {
         await expect.poll(async () =>
             page.evaluate((_) => $.getStyle('div', 'visibility'))).toBe('');

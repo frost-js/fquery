@@ -23,6 +23,19 @@ test.describe('#removeStyle', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'background-color: blue;');
     });
 
+    test('removes a custom property', async ({ page }) => {
+        await page.evaluate((_) => {
+            for (const node of document.querySelectorAll('div')) {
+                node.style.setProperty('--theme-color', 'red');
+            }
+
+            $.removeStyle('div', '--theme-color');
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'background-color: blue; color: white;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'background-color: blue; color: white;');
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         await page.evaluate((_) => {
             $.removeStyle(document.getElementById('test1'), 'color');

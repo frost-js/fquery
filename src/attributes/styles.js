@@ -1,9 +1,8 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { kebabCase } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
-import { normalizeCssValue, parseClasses, parseData } from './../helpers.js';
+import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
 import { styles } from './../vars.js';
 
 /** @typedef {Record<string, string|number>} StyleValues */
@@ -59,7 +58,7 @@ export function css(selector, style) {
         return result;
     }
 
-    style = kebabCase(style);
+    style = normalizeCssProperty(style);
 
     return nodeStyles.getPropertyValue(style);
 };
@@ -78,15 +77,15 @@ export function getStyle(selector, style) {
     }
 
     if (style) {
-        style = kebabCase(style);
+        style = normalizeCssProperty(style);
 
-        return node.style[style];
+        return node.style.getPropertyValue(style);
     }
 
     const styles = {};
 
     for (const style of node.style) {
-        styles[style] = node.style[style];
+        styles[style] = node.style.getPropertyValue(style);
     }
 
     return styles;
@@ -131,7 +130,7 @@ export function removeClass(selector, ...classes) {
 export function removeStyle(selector, style) {
     const nodes = parseNodes(selector);
 
-    style = kebabCase(style);
+    style = normalizeCssProperty(style);
 
     for (const node of nodes) {
         node.style.removeProperty(style);
@@ -151,7 +150,7 @@ export function setStyle(selector, style, value, { important = false } = {}) {
     const styles = parseData(style, value);
 
     for (let [style, value] of Object.entries(styles)) {
-        style = kebabCase(style);
+        style = normalizeCssProperty(style);
         value = normalizeCssValue(style, value);
 
         for (const node of nodes) {

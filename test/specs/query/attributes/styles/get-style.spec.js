@@ -28,6 +28,15 @@ test.describe('QuerySet #getStyle', () => {
             $('div').getStyle('display'))).toBe('block');
     });
 
+    test('returns a custom property', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('--theme-color', 'red');
+        });
+
+        await expect.poll(async () => page.evaluate((_) =>
+            $('#test1').getStyle('--theme-color'))).toBe('red');
+    });
+
     test('returns an empty string for an undefined style', async ({ page }) => {
         await expect.poll(async () => page.evaluate((_) =>
             $('div').getStyle('visibility'))).toBe('');

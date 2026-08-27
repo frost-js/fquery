@@ -34,6 +34,12 @@ test.describe('#css', () => {
         await expect.poll(async () => page.evaluate((_) => $.css('.test', 'width'))).toBe('400px');
     });
 
+    test('returns a computed custom property', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { --theme-color: red; }' });
+
+        await expect.poll(async () => page.evaluate((_) => $.css('.test', '--theme-color'))).toBe('red');
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         expect(await page.evaluate((_) => $.css('#invalid', 'width'))).toBe(undefined);
     });

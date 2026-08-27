@@ -1,9 +1,9 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { camelCase, kebabCase, wrap } from '@fr0st/core';
+import { camelCase, wrap } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { parseNode } from './../filters.js';
-import { normalizeCssValue, parseClasses, parseData } from './../helpers.js';
+import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
 
 /**
  * @typedef {object} CreateOptions
@@ -60,7 +60,7 @@ export function create(tagName = 'div', options = {}) {
 
     if ('style' in options) {
         for (let [style, value] of Object.entries(options.style)) {
-            style = kebabCase(style);
+            style = normalizeCssProperty(style);
             value = normalizeCssValue(style, value);
 
             node.style.setProperty(style, value);

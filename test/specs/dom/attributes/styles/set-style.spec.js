@@ -37,6 +37,16 @@ test.describe('#setStyle', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: block;');
     });
 
+    test('sets custom properties', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.setStyle('div', '--theme-color', 'red');
+            $.setStyle('div', { '--spacing-size': 100 });
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '--theme-color: red; --spacing-size: 100;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', '--theme-color: red; --spacing-size: 100;');
+    });
+
     test('converts number values to pixels', async ({ page }) => {
         await page.evaluate((_) => {
             $.setStyle('div', 'width', '100');
