@@ -1,16 +1,14 @@
+/** @import { ElementInput } from '../helpers.js'; */
+/** @import { NodeFilterInput } from '../filters.js'; */
+/** @import { NodeInput } from '../helpers.js'; */
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { isDocument, isElement, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
 import { parseClasses } from './../helpers.js';
 import { closest } from './../traversal/traversal.js';
 import { animations, data } from './../vars.js';
-
-/**
- * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../helpers.js').ElementInput} ElementInput
- * @typedef {import('../helpers.js').NodeInput} NodeInput
- * @typedef {import('../helpers.js').QueryInput} QueryInput
- */
 
 /**
  * Returns all nodes connected to the DOM.

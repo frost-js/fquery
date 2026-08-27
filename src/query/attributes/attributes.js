@@ -1,9 +1,7 @@
-import { getAttribute as _getAttribute, getDataset as _getDataset, getHTML as _getHTML, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHTML as _setHTML, setProperty as _setProperty, setText as _setText, setValue as _setValue } from './../../attributes/attributes.js';
+/** @import { AttributeValues } from '../../attributes/attributes.js'; */
+/** @import QuerySet from '../query-set.js'; */
 
-/**
- * @typedef {import('../../attributes/attributes.js').AttributeValues} AttributeValues
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { getAttribute as _getAttribute, getDataset as _getDataset, getHTML as _getHTML, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHTML as _setHTML, setProperty as _setProperty, setText as _setText, setValue as _setValue } from './../../attributes/attributes.js';
 
 /**
  * Gets attribute value(s) for the first node.

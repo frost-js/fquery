@@ -1,9 +1,9 @@
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { isDocument, isWindow } from '@fr0st/core';
 import { parseNode } from './../filters.js';
 import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from './../vars.js';
 import { css } from './styles.js';
-
-/** @typedef {import('../helpers.js').QueryInput} QueryInput */
 
 /**
  * @typedef {object} SizeOptions

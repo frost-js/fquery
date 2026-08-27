@@ -1,10 +1,8 @@
-import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCSSAnimation as _hasCSSAnimation, hasCSSTransition as _hasCSSTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from './../../utility/tests.js';
+/** @import { NodeFilterInput } from '../../filters.js'; */
+/** @import { NodeInput } from '../../helpers.js'; */
+/** @import QuerySet from '../query-set.js'; */
 
-/**
- * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../../helpers.js').NodeInput} NodeInput
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCSSAnimation as _hasCSSAnimation, hasCSSTransition as _hasCSSTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from './../../utility/tests.js';
 
 /**
  * Checks whether any of the nodes has an animation.

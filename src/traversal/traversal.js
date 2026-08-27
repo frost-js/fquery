@@ -1,12 +1,10 @@
+/** @import { NodeFilterInput } from '../filters.js'; */
+/** @import { NodeInput } from '../helpers.js'; */
+
 import { isDocument, isElement, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './../utility/utility.js';
-
-/**
- * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../helpers.js').NodeInput} NodeInput
- */
 
 /**
  * Returns the first child of each node (optionally matching a filter).

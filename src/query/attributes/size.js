@@ -1,8 +1,7 @@
+/** @import { SizeOptions } from '../../attributes/size.js'; */
 
 import { height as _height, width as _width } from './../../attributes/size.js';
 import { PADDING_BOX } from './../../vars.js';
-
-/** @typedef {import('../../attributes/size.js').SizeOptions} SizeOptions */
 
 /**
  * Gets the computed height of the first node.

@@ -1,8 +1,8 @@
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { parseNode, parseNodes } from './../filters.js';
 import { parseData } from './../helpers.js';
 import { data } from './../vars.js';
-
-/** @typedef {import('../helpers.js').QueryInput} QueryInput */
 
 /**
  * Clones custom data from each node to each other node.

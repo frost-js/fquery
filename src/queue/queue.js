@@ -1,8 +1,8 @@
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { getWindow } from './../config.js';
 import { parseNodes } from './../filters.js';
 import { queues } from './../vars.js';
-
-/** @typedef {import('../helpers.js').ElementInput} ElementInput */
 
 /**
  * @callback QueueCallback

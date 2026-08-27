@@ -1,9 +1,9 @@
+/** @import { EventCallback } from './event-handlers.js'; */
+
 import { getWindow } from './../config.js';
 import { debounce as _debounce } from './../helpers.js';
 import { eventLookup } from './../vars.js';
 import { addEvent, removeEvent } from './event-handlers.js';
-
-/** @typedef {import('./event-handlers.js').EventCallback} EventCallback */
 
 /**
  * Returns a wrapped mouse drag event (optionally debounced).

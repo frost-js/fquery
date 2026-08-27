@@ -1,10 +1,10 @@
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { kebabCase } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { normalizeCssValue, parseClasses, parseData } from './../helpers.js';
 import { styles } from './../vars.js';
-
-/** @typedef {import('../helpers.js').ElementInput} ElementInput */
 
 /** @typedef {Record<string, string|number>} StyleValues */
 

@@ -1,6 +1,6 @@
-import { afterSelection as _afterSelection, beforeSelection as _beforeSelection, select as _select, selectAll as _selectAll, wrapSelection as _wrapSelection } from './../../utility/selection.js';
+/** @import QuerySet from '../query-set.js'; */
 
-/** @typedef {import('../query-set.js').default} QuerySet */
+import { afterSelection as _afterSelection, beforeSelection as _beforeSelection, select as _select, selectAll as _selectAll, wrapSelection as _wrapSelection } from './../../utility/selection.js';
 
 /**
  * Inserts each node after the selection.

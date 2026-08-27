@@ -1,9 +1,9 @@
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { clampPercent, dist } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { css } from './styles.js';
-
-/** @typedef {import('../helpers.js').ElementInput} ElementInput */
 
 /**
  * @typedef {object} Coordinates

@@ -1,13 +1,11 @@
+/** @import { QueryContextInput } from '../traversal/find.js'; */
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { isFunction } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { ready } from './../events/events.js';
 import { parseNode, parseNodes } from './../filters.js';
 import QuerySet from './query-set.js';
-
-/**
- * @typedef {import('../helpers.js').QueryInput} QueryInput
- * @typedef {import('../traversal/find.js').QueryContextInput} QueryContextInput
- */
 
 /**
  * Adds a function to the ready queue or returns a QuerySet.

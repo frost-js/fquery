@@ -1,7 +1,7 @@
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { isDocument, isWindow } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
-
-/** @typedef {import('../helpers.js').QueryInput} QueryInput */
 
 /**
  * Gets the scroll X position of the first node.

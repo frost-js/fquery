@@ -1,6 +1,6 @@
-import { getScrollX as _getScrollX, getScrollY as _getScrollY, setScroll as _setScroll, setScrollX as _setScrollX, setScrollY as _setScrollY } from './../../attributes/scroll.js';
+/** @import QuerySet from '../query-set.js'; */
 
-/** @typedef {import('../query-set.js').default} QuerySet */
+import { getScrollX as _getScrollX, getScrollY as _getScrollY, setScroll as _setScroll, setScrollX as _setScrollX, setScrollY as _setScrollY } from './../../attributes/scroll.js';
 
 /**
  * Gets the scroll X position of the first node.

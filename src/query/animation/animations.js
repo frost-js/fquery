@@ -1,9 +1,7 @@
-import { dropIn as _dropIn, dropOut as _dropOut, fadeIn as _fadeIn, fadeOut as _fadeOut, rotateIn as _rotateIn, rotateOut as _rotateOut, slideIn as _slideIn, slideOut as _slideOut, squeezeIn as _squeezeIn, squeezeOut as _squeezeOut } from './../../animation/animations.js';
+/** @import QuerySet from '../query-set.js'; */
+/** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
 
-/**
- * @typedef {import('../../animation/animation.js').QueuedAnimationOptions} QueuedAnimationOptions
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { dropIn as _dropIn, dropOut as _dropOut, fadeIn as _fadeIn, fadeOut as _fadeOut, rotateIn as _rotateIn, rotateOut as _rotateOut, slideIn as _slideIn, slideOut as _slideOut, squeezeIn as _squeezeIn, squeezeOut as _squeezeOut } from './../../animation/animations.js';
 
 /**
  * Adds a drop in animation to the queue for each node.

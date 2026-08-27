@@ -1,9 +1,7 @@
-import { after as _after, append as _append, appendTo as _appendTo, before as _before, insertAfter as _insertAfter, insertBefore as _insertBefore, prepend as _prepend, prependTo as _prependTo } from './../../manipulation/move.js';
+/** @import { NodeInput } from '../../helpers.js'; */
+/** @import QuerySet from '../query-set.js'; */
 
-/**
- * @typedef {import('../../helpers.js').NodeInput} NodeInput
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { after as _after, append as _append, appendTo as _appendTo, before as _before, insertAfter as _insertAfter, insertBefore as _insertBefore, prepend as _prepend, prependTo as _prependTo } from './../../manipulation/move.js';
 
 /**
  * Inserts each other node after the first node.

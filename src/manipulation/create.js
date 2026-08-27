@@ -1,9 +1,9 @@
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { camelCase, kebabCase, wrap } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { parseNode } from './../filters.js';
 import { normalizeCssValue, parseClasses, parseData } from './../helpers.js';
-
-/** @typedef {import('../helpers.js').ElementInput} ElementInput */
 
 /**
  * @typedef {object} CreateOptions

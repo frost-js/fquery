@@ -1,11 +1,9 @@
+/** @import QuerySet from '../query-set.js'; */
+/** @import { QueueCallback } from '../../queue/queue.js'; */
+/** @import { QueueOptions } from '../../queue/queue.js'; */
+
 import { getWindow } from './../../config.js';
 import { clearQueue as _clearQueue, queue as _queue } from './../../queue/queue.js';
-
-/**
- * @typedef {import('../../queue/queue.js').QueueCallback} QueueCallback
- * @typedef {import('../../queue/queue.js').QueueOptions} QueueOptions
- * @typedef {import('../query-set.js').default} QuerySet
- */
 
 /**
  * Clears the queue of each node.

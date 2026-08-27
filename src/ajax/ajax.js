@@ -1,9 +1,7 @@
-import AjaxRequest from './ajax-request.js';
+/** @import { AjaxData } from './ajax-request.js'; */
+/** @import { AjaxOptions } from './ajax-request.js'; */
 
-/**
- * @typedef {import('./ajax-request.js').AjaxData} AjaxData
- * @typedef {import('./ajax-request.js').AjaxOptions} AjaxOptions
- */
+import AjaxRequest from './ajax-request.js';
 
 /**
  * Performs an XHR DELETE request.

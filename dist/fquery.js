@@ -530,7 +530,7 @@
      * @returns {number} The request ID.
      */
     const _requestAnimationFrame = isBrowser ?
-        (...args) => window.requestAnimationFrame(...args) :
+        (callback) => window.requestAnimationFrame(callback) :
         (callback) => setTimeout(callback, 1000 / 60);
 
     /**
@@ -1374,9 +1374,12 @@
         wrap: wrap$2
     });
 
+    /** @import { AnimationOptions } from './animation/animation.js'; */
+    /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
+
     /**
-     * @typedef {import('./ajax/ajax-request.js').AjaxOptions} AjaxOptions
-     * @typedef {import('./animation/animation.js').AnimationOptions} AnimationOptions
+     * @typedef {AjaxOptions} AjaxOptions
+     * @typedef {AnimationOptions} AnimationOptions
      */
 
     const ajaxDefaults = {
@@ -1897,9 +1900,12 @@
 
     Object.setPrototypeOf(AjaxRequest.prototype, Promise.prototype);
 
+    /** @import { AjaxOptions } from './ajax-request.js'; */
+    /** @import { AjaxData } from './ajax-request.js'; */
+
     /**
-     * @typedef {import('./ajax-request.js').AjaxData} AjaxData
-     * @typedef {import('./ajax-request.js').AjaxOptions} AjaxOptions
+     * @typedef {AjaxData} AjaxData
+     * @typedef {AjaxOptions} AjaxOptions
      */
 
     /**
@@ -2321,7 +2327,9 @@
         return merge([], childNodes);
     }
 
-    /** @typedef {import('../query/query-set.js').default} QuerySet */
+    /** @import QuerySet from '../query/query-set.js'; */
+
+    /** @typedef {QuerySet} QuerySet */
 
     /**
      * @typedef {Element|Document|DocumentFragment|ShadowRoot} QueryContext
@@ -2635,11 +2643,16 @@
         return null;
     }
 
+    /** @import { QueryContextInput } from './traversal/find.js'; */
+    /** @import { QueryInput } from './helpers.js'; */
+    /** @import { NodeInput } from './helpers.js'; */
+    /** @import { NodeFilterCallback } from './helpers.js'; */
+
     /**
-     * @typedef {import('./helpers.js').NodeFilterCallback} NodeFilterCallback
-     * @typedef {import('./helpers.js').NodeInput} NodeInput
-     * @typedef {import('./helpers.js').QueryInput} QueryInput
-     * @typedef {import('./traversal/find.js').QueryContextInput} QueryContextInput
+     * @typedef {NodeFilterCallback} NodeFilterCallback
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QueryInput} QueryInput
+     * @typedef {QueryContextInput} QueryContextInput
      */
 
     /**
@@ -2882,9 +2895,11 @@
 
     const styles = new WeakMap();
 
+    /** @import { StopAnimationOptions } from './animation.js'; */
+    /** @import Animation from './animation.js'; */
     /**
-     * @typedef {import('./animation.js').default} Animation
-     * @typedef {import('./animation.js').StopAnimationOptions} StopAnimationOptions
+     * @typedef {Animation} Animation
+     * @typedef {StopAnimationOptions} StopAnimationOptions
      */
 
     /**
@@ -3224,11 +3239,16 @@
 
     Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 
+    /** @import { StopAnimationOptions } from './animation.js'; */
+    /** @import { AnimationOptions } from './animation.js'; */
+    /** @import { AnimationCallback } from './animation.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+
     /**
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('./animation.js').AnimationCallback} AnimationCallback
-     * @typedef {import('./animation.js').AnimationOptions} AnimationOptions
-     * @typedef {import('./animation.js').StopAnimationOptions} StopAnimationOptions
+     * @typedef {ElementInput} ElementInput
+     * @typedef {AnimationCallback} AnimationCallback
+     * @typedef {AnimationOptions} AnimationOptions
+     * @typedef {StopAnimationOptions} StopAnimationOptions
      */
 
     /**
@@ -3267,10 +3287,14 @@
         }
     }
 
+    /** @import { AnimationOptions } from './animation.js'; */
+    /** @import AnimationSet from './animation-set.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+
     /**
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('./animation-set.js').default} AnimationSet
-     * @typedef {import('./animation.js').AnimationOptions} AnimationOptions
+     * @typedef {ElementInput} ElementInput
+     * @typedef {AnimationSet} AnimationSet
+     * @typedef {AnimationOptions} AnimationOptions
      * @typedef {Record<string, {priority: string, value: string}>} InlineStyles
      */
 
@@ -3645,7 +3669,9 @@
         }, options);
     }
 
-    /** @typedef {import('../helpers.js').ElementInput} ElementInput */
+    /** @import { ElementInput } from '../helpers.js'; */
+
+    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {object} CreateOptions
@@ -3766,11 +3792,16 @@
         return getContext().createTextNode(text);
     }
 
+    /** @import { QueryInput } from '../helpers.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+    /** @import { NodeFilterInput } from '../filters.js'; */
+
     /**
-     * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../helpers.js').QueryInput} QueryInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {ElementInput} ElementInput
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QueryInput} QueryInput
      */
 
     /**
@@ -4003,9 +4034,12 @@
         return node.tagName.toLowerCase();
     }
 
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { NodeFilterInput } from '../filters.js'; */
+
     /**
-     * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {NodeInput} NodeInput
      */
 
     /**
@@ -4435,7 +4469,9 @@
             results;
     }
 
-    /** @typedef {import('./event-handlers.js').EventCallback} EventCallback */
+    /** @import { EventCallback } from './event-handlers.js'; */
+
+    /** @typedef {EventCallback} EventCallback */
 
     /**
      * @callback DelegateCallback
@@ -4587,7 +4623,9 @@
         };
     }
 
-    /** @typedef {import('../query/query-set.js').default} QuerySet */
+    /** @import QuerySet from '../query/query-set.js'; */
+
+    /** @typedef {QuerySet} QuerySet */
 
     /**
      * @typedef {Element|Document|ShadowRoot|Window} EventTargetNode
@@ -4926,8 +4964,10 @@
         return node.dispatchEvent(eventData);
     }
 
+    /** @import { NodeInput } from '../helpers.js'; */
+
     /**
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
+     * @typedef {NodeInput} NodeInput
      */
 
     /**
@@ -5212,7 +5252,9 @@
         remove$1(nodes);
     }
 
-    /** @typedef {import('../helpers.js').ElementInput} ElementInput */
+    /** @import { ElementInput } from '../helpers.js'; */
+
+    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {Record<string, *>} AttributeValues
@@ -5462,7 +5504,9 @@
         }
     }
 
-    /** @typedef {import('../helpers.js').QueryInput} QueryInput */
+    /** @import { QueryInput } from '../helpers.js'; */
+
+    /** @typedef {QueryInput} QueryInput */
 
     /**
      * Clones custom data from each node to each other node.
@@ -5573,7 +5617,9 @@
         }
     }
 
-    /** @typedef {import('../helpers.js').ElementInput} ElementInput */
+    /** @import { ElementInput } from '../helpers.js'; */
+
+    /** @typedef {ElementInput} ElementInput */
 
     /** @typedef {Record<string, string|number>} StyleValues */
 
@@ -5776,7 +5822,9 @@
         }
     }
 
-    /** @typedef {import('../helpers.js').ElementInput} ElementInput */
+    /** @import { ElementInput } from '../helpers.js'; */
+
+    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @typedef {object} Coordinates
@@ -6057,7 +6105,9 @@
         return result;
     }
 
-    /** @typedef {import('../helpers.js').QueryInput} QueryInput */
+    /** @import { QueryInput } from '../helpers.js'; */
+
+    /** @typedef {QueryInput} QueryInput */
 
     /**
      * Gets the scroll X position of the first node.
@@ -6176,7 +6226,9 @@
         }
     }
 
-    /** @typedef {import('../helpers.js').QueryInput} QueryInput */
+    /** @import { QueryInput } from '../helpers.js'; */
+
+    /** @typedef {QueryInput} QueryInput */
 
     /**
      * @typedef {object} SizeOptions
@@ -6361,7 +6413,9 @@
         getContext().cookie = cookie;
     }
 
-    /** @typedef {import('./event-handlers.js').EventCallback} EventCallback */
+    /** @import { EventCallback } from './event-handlers.js'; */
+
+    /** @typedef {EventCallback} EventCallback */
 
     /**
      * Returns a wrapped mouse drag event (optionally debounced).
@@ -6444,9 +6498,12 @@
         };
     }
 
+    /** @import { EventCallback } from './event-handlers.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+
     /**
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('./event-handlers.js').EventCallback} EventCallback
+     * @typedef {ElementInput} ElementInput
+     * @typedef {EventCallback} EventCallback
      */
 
     /**
@@ -6532,7 +6589,9 @@
         return fQuery;
     }
 
-    /** @typedef {import('../helpers.js').NodeInput} NodeInput */
+    /** @import { NodeInput } from '../helpers.js'; */
+
+    /** @typedef {NodeInput} NodeInput */
 
     /**
      * Inserts each other node after each node.
@@ -6723,9 +6782,12 @@
         prepend$1(otherSelector, selector);
     }
 
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { NodeFilterInput } from '../filters.js'; */
+
     /**
-     * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {NodeInput} NodeInput
      */
 
     /**
@@ -6915,11 +6977,16 @@
         }
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { StopAnimationOptions } from '../../animation/animation.js'; */
+    /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
+    /** @import { AnimationCallback } from '../../animation/animation.js'; */
+
     /**
-     * @typedef {import('../../animation/animation.js').AnimationCallback} AnimationCallback
-     * @typedef {import('../../animation/animation.js').QueuedAnimationOptions} QueuedAnimationOptions
-     * @typedef {import('../../animation/animation.js').StopAnimationOptions} StopAnimationOptions
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {AnimationCallback} AnimationCallback
+     * @typedef {QueuedAnimationOptions} QueuedAnimationOptions
+     * @typedef {StopAnimationOptions} StopAnimationOptions
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -6946,9 +7013,12 @@
         return this;
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
+
     /**
-     * @typedef {import('../../animation/animation.js').QueuedAnimationOptions} QueuedAnimationOptions
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {QueuedAnimationOptions} QueuedAnimationOptions
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7062,9 +7132,12 @@
         );
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { AttributeValues } from '../../attributes/attributes.js'; */
+
     /**
-     * @typedef {import('../../attributes/attributes.js').AttributeValues} AttributeValues
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {AttributeValues} AttributeValues
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7206,9 +7279,12 @@
         return this;
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { QueryInput } from '../../helpers.js'; */
+
     /**
-     * @typedef {import('../../helpers.js').QueryInput} QueryInput
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {QueryInput} QueryInput
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7251,11 +7327,16 @@
         return this;
     }
 
+    /** @import { ElementInput } from '../../helpers.js'; */
+    /** @import { PercentOptions } from '../../attributes/position.js'; */
+    /** @import { OffsetOptions } from '../../attributes/position.js'; */
+    /** @import { Coordinates } from '../../attributes/position.js'; */
+
     /**
-     * @typedef {import('../../attributes/position.js').Coordinates} Coordinates
-     * @typedef {import('../../attributes/position.js').OffsetOptions} OffsetOptions
-     * @typedef {import('../../attributes/position.js').PercentOptions} PercentOptions
-     * @typedef {import('../../helpers.js').ElementInput} ElementInput
+     * @typedef {Coordinates} Coordinates
+     * @typedef {OffsetOptions} OffsetOptions
+     * @typedef {PercentOptions} PercentOptions
+     * @typedef {ElementInput} ElementInput
      */
 
     /**
@@ -7351,7 +7432,9 @@
         return rect$1(this, { offset });
     }
 
-    /** @typedef {import('../query-set.js').default} QuerySet */
+    /** @import QuerySet from '../query-set.js'; */
+
+    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Gets the scroll X position of the first node.
@@ -7399,7 +7482,7 @@
         return this;
     }
 
-    /** @typedef {import('../../attributes/size.js').SizeOptions} SizeOptions */
+    /** @typedef {SizeOptions} SizeOptions */
 
     /**
      * Gets the computed height of the first node.
@@ -7418,9 +7501,12 @@
         return width$1(this, { boxSize, outer });
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { StyleValues } from '../../attributes/styles.js'; */
+
     /**
-     * @typedef {import('../../attributes/styles.js').StyleValues} StyleValues
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {StyleValues} StyleValues
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7519,13 +7605,20 @@
         return this;
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { TriggerEventOptions } from '../../events/event-handlers.js'; */
+    /** @import { RemoveEventOptions } from '../../events/event-handlers.js'; */
+    /** @import { EventTargetInput } from '../../events/event-handlers.js'; */
+    /** @import { EventOptions } from '../../events/event-handlers.js'; */
+    /** @import { EventCallback } from '../../events/event-handlers.js'; */
+
     /**
-     * @typedef {import('../../events/event-handlers.js').EventCallback} EventCallback
-     * @typedef {import('../../events/event-handlers.js').EventOptions} EventOptions
-     * @typedef {import('../../events/event-handlers.js').EventTargetInput} EventTargetInput
-     * @typedef {import('../../events/event-handlers.js').RemoveEventOptions} RemoveEventOptions
-     * @typedef {import('../../events/event-handlers.js').TriggerEventOptions} TriggerEventOptions
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {EventCallback} EventCallback
+     * @typedef {EventOptions} EventOptions
+     * @typedef {EventTargetInput} EventTargetInput
+     * @typedef {RemoveEventOptions} RemoveEventOptions
+     * @typedef {TriggerEventOptions} TriggerEventOptions
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7634,7 +7727,9 @@
         return triggerOne$1(this, event, { data, detail, bubbles, cancelable });
     }
 
-    /** @typedef {import('../query-set.js').default} QuerySet */
+    /** @import QuerySet from '../query-set.js'; */
+
+    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Triggers a blur event on the first node.
@@ -7675,9 +7770,12 @@
         return new QuerySet(shadow ? [shadow] : []);
     }
 
+    /** @import { CloneOptions } from '../../manipulation/manipulation.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+
     /**
-     * @typedef {import('../../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../../manipulation/manipulation.js').CloneOptions} CloneOptions
+     * @typedef {NodeInput} NodeInput
+     * @typedef {CloneOptions} CloneOptions
      */
 
     /**
@@ -7738,9 +7836,12 @@
         return this;
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+
     /**
-     * @typedef {import('../../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7824,10 +7925,14 @@
         return this;
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import { NodeFilterInput } from '../../filters.js'; */
+
     /**
-     * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -7871,7 +7976,9 @@
         return this;
     }
 
-    /** @typedef {import('../helpers.js').ElementInput} ElementInput */
+    /** @import { ElementInput } from '../helpers.js'; */
+
+    /** @typedef {ElementInput} ElementInput */
 
     /**
      * @callback QueueCallback
@@ -7987,10 +8094,14 @@
         }
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { QueueOptions } from '../../queue/queue.js'; */
+    /** @import { QueueCallback } from '../../queue/queue.js'; */
+
     /**
-     * @typedef {import('../../queue/queue.js').QueueCallback} QueueCallback
-     * @typedef {import('../../queue/queue.js').QueueOptions} QueueOptions
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {QueueCallback} QueueCallback
+     * @typedef {QueueOptions} QueueOptions
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -8031,11 +8142,16 @@
         return this;
     }
 
+    /** @import { QueryInput } from '../helpers.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+    /** @import { NodeFilterInput } from '../filters.js'; */
+
     /**
-     * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../helpers.js').QueryInput} QueryInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {ElementInput} ElementInput
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QueryInput} QueryInput
      */
 
     /**
@@ -8346,9 +8462,12 @@
             );
     }
 
+    /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import { NodeFilterInput } from '../../filters.js'; */
+
     /**
-     * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../../helpers.js').NodeInput} NodeInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {NodeInput} NodeInput
      */
 
     /**
@@ -8434,7 +8553,7 @@
     /**
      * Returns all nodes with an animation.
      * @returns {QuerySet} The QuerySet object.
-    */
+     */
     function withAnimation() {
         return new QuerySet(withAnimation$1(this));
     }
@@ -8464,7 +8583,7 @@
     /**
      * Returns all nodes with a CSS animation.
      * @returns {QuerySet} The QuerySet object.
-    */
+     */
     function withCSSAnimation() {
         return new QuerySet(withCSSAnimation$1(this));
     }
@@ -8573,7 +8692,9 @@
         return new QuerySet(node ? [node] : []);
     }
 
-    /** @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput */
+    /** @import { NodeFilterInput } from '../../filters.js'; */
+
+    /** @typedef {NodeFilterInput} NodeFilterInput */
 
     /**
      * Returns the first child of each node (optionally matching a filter).
@@ -8586,6 +8707,7 @@
     /**
      * Returns all children of each node (optionally matching a filter).
      * @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+     * @param {{elementsOnly?: boolean}} [options] The filtering options.
      * @returns {QuerySet} The QuerySet object.
      */
     function children(nodeFilter, { elementsOnly = true } = {}) {
@@ -8704,7 +8826,9 @@
         return new QuerySet(siblings$1(this, nodeFilter, { elementsOnly }));
     }
 
-    /** @typedef {import('../helpers.js').NodeInput} NodeInput */
+    /** @import { NodeInput } from '../helpers.js'; */
+
+    /** @typedef {NodeInput} NodeInput */
 
     /**
      * Inserts each node after the selection.
@@ -8928,7 +9052,9 @@
         }
     }
 
-    /** @typedef {import('../query-set.js').default} QuerySet */
+    /** @import QuerySet from '../query-set.js'; */
+
+    /** @typedef {QuerySet} QuerySet */
 
     /**
      * Inserts each node after the selection.
@@ -8976,11 +9102,16 @@
         return this;
     }
 
+    /** @import { QueryInput } from '../helpers.js'; */
+    /** @import { NodeInput } from '../helpers.js'; */
+    /** @import { ElementInput } from '../helpers.js'; */
+    /** @import { NodeFilterInput } from '../filters.js'; */
+
     /**
-     * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../helpers.js').ElementInput} ElementInput
-     * @typedef {import('../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../helpers.js').QueryInput} QueryInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {ElementInput} ElementInput
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QueryInput} QueryInput
      */
 
     /**
@@ -9269,10 +9400,14 @@
         });
     }
 
+    /** @import QuerySet from '../query-set.js'; */
+    /** @import { NodeInput } from '../../helpers.js'; */
+    /** @import { NodeFilterInput } from '../../filters.js'; */
+
     /**
-     * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../../helpers.js').NodeInput} NodeInput
-     * @typedef {import('../query-set.js').default} QuerySet
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {NodeInput} NodeInput
+     * @typedef {QuerySet} QuerySet
      */
 
     /**
@@ -9419,10 +9554,14 @@
         return isVisible$1(this);
     }
 
+    /** @import { QueryContextInput } from '../../traversal/find.js'; */
+    /** @import { QueryInput } from '../../helpers.js'; */
+    /** @import { NodeFilterInput } from '../../filters.js'; */
+
     /**
-     * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
-     * @typedef {import('../../helpers.js').QueryInput} QueryInput
-     * @typedef {import('../../traversal/find.js').QueryContextInput} QueryContextInput
+     * @typedef {NodeFilterInput} NodeFilterInput
+     * @typedef {QueryInput} QueryInput
+     * @typedef {QueryContextInput} QueryContextInput
      */
 
     /**
@@ -9703,9 +9842,12 @@
         });
     }
 
+    /** @import { QueryContextInput } from '../traversal/find.js'; */
+    /** @import { QueryInput } from '../helpers.js'; */
+
     /**
-     * @typedef {import('../helpers.js').QueryInput} QueryInput
-     * @typedef {import('../traversal/find.js').QueryContextInput} QueryContextInput
+     * @typedef {QueryInput} QueryInput
+     * @typedef {QueryContextInput} QueryContextInput
      */
 
     /**

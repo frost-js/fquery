@@ -1,14 +1,12 @@
+/** @import { ElementInput } from '../helpers.js'; */
+/** @import { NodeFilterInput } from '../filters.js'; */
+/** @import { NodeInput } from '../helpers.js'; */
+/** @import { QueryInput } from '../helpers.js'; */
+
 import { isDocument, isElement, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
 import { parseParams } from './../ajax/helpers.js';
 import { getContext, getWindow } from './../config.js';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
-
-/**
- * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../helpers.js').ElementInput} ElementInput
- * @typedef {import('../helpers.js').NodeInput} NodeInput
- * @typedef {import('../helpers.js').QueryInput} QueryInput
- */
 
 /**
  * Executes a command in the document context.

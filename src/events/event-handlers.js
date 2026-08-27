@@ -1,9 +1,9 @@
+/** @import QuerySet from '../query/query-set.js'; */
+
 import { parseNode, parseNodes } from './../filters.js';
 import { createEvent, eventNamespacedRegExp, parseEvent, parseEvents } from './../helpers.js';
 import { events } from './../vars.js';
 import { delegateFactory, delegateFactoryClean, namespaceFactory, preventFactory, selfDestructCallbackFactory } from './event-wrappers.js';
-
-/** @typedef {import('../query/query-set.js').default} QuerySet */
 
 /**
  * @typedef {Element|Document|ShadowRoot|Window} EventTargetNode

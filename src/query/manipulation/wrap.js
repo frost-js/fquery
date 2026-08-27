@@ -1,10 +1,8 @@
-import { unwrap as _unwrap, wrap as _wrap, wrapAll as _wrapAll, wrapInner as _wrapInner } from './../../manipulation/wrap.js';
+/** @import { NodeFilterInput } from '../../filters.js'; */
+/** @import { NodeInput } from '../../helpers.js'; */
+/** @import QuerySet from '../query-set.js'; */
 
-/**
- * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../../helpers.js').NodeInput} NodeInput
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { unwrap as _unwrap, wrap as _wrap, wrapAll as _wrapAll, wrapInner as _wrapInner } from './../../manipulation/wrap.js';
 
 /**
  * Unwraps each node.

@@ -1,7 +1,7 @@
+/** @import { EventCallback } from './event-handlers.js'; */
+
 import { merge } from '@fr0st/core';
 import { closest } from './../traversal/traversal.js';
-
-/** @typedef {import('./event-handlers.js').EventCallback} EventCallback */
 
 /**
  * @callback DelegateCallback

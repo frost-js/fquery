@@ -43,10 +43,10 @@
         "src"
     ],
     "scripts": {
-        "build": "npm run js-compile && npm run js-minify",
-        "js-compile": "rollup --config",
-        "js-lint": "eslint",
-        "js-minify": "terser --compress passes=2 --mangle --source-map \"content=dist/fquery.js.map,url=fquery.min.js.map\" --output dist/fquery.min.js dist/fquery.js",
+        "build": "npm run bundle && npm run minify",
+        "bundle": "rollup --config",
+        "lint": "eslint",
+        "minify": "terser --compress passes=2 --mangle --source-map \"content=dist/fquery.js.map,url=fquery.min.js.map\" --output dist/fquery.min.js dist/fquery.js",
         "test": "npm run build && npm run test:browser",
         "test:browser": "playwright test --forbid-only",
         "test:headed": "playwright test --forbid-only --headed",
@@ -56,7 +56,7 @@
         "@fr0st/core": "^3.0.4"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^4.0.0",
+        "@fr0st/eslint-config": "^5.0.0",
         "@playwright/test": "^1.62.1",
         "@rollup/plugin-node-resolve": "^16.0.3",
         "eslint": "^10.8.1",

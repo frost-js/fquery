@@ -46,7 +46,7 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Lint
-        run: npm run js-lint
+        run: npm run lint
 
       - name: Build
         run: npm run build

@@ -1,11 +1,9 @@
+/** @import { NodeFilterInput } from '../filters.js'; */
+/** @import { NodeInput } from '../helpers.js'; */
+
 import { isFragment, merge } from '@fr0st/core';
 import { parseFilter, parseNodes } from './../filters.js';
 import { clone, remove } from './manipulation.js';
-
-/**
- * @typedef {import('../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../helpers.js').NodeInput} NodeInput
- */
 
 /**
  * Unwraps each node.

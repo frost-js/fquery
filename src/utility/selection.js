@@ -1,10 +1,10 @@
+/** @import { NodeInput } from '../helpers.js'; */
+
 import { isElement, merge, unique } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './utility.js';
-
-/** @typedef {import('../helpers.js').NodeInput} NodeInput */
 
 /**
  * Inserts each node after the selection.

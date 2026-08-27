@@ -1,14 +1,12 @@
+/** @import { NodeFilterInput } from '../../filters.js'; */
+/** @import { QueryContextInput } from '../../traversal/find.js'; */
+/** @import { QueryInput } from '../../helpers.js'; */
+
 import { merge, unique } from '@fr0st/core';
 import { getContext } from './../../config.js';
 import { parseNodes } from './../../filters.js';
 import { index as _index, indexOf as _indexOf, normalize as _normalize, serialize as _serialize, serializeArray as _serializeArray, sort as _sort, tagName as _tagName } from './../../utility/utility.js';
 import QuerySet from './../query-set-core.js';
-
-/**
- * @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput
- * @typedef {import('../../helpers.js').QueryInput} QueryInput
- * @typedef {import('../../traversal/find.js').QueryContextInput} QueryContextInput
- */
 
 /**
  * Merges with new nodes and sorts the results.

@@ -1,7 +1,5 @@
-/**
- * @typedef {import('./animation.js').default} Animation
- * @typedef {import('./animation.js').StopAnimationOptions} StopAnimationOptions
- */
+/** @import Animation from './animation.js'; */
+/** @import { StopAnimationOptions } from './animation.js'; */
 
 /**
  * Represents a Promise-compatible collection of animations.

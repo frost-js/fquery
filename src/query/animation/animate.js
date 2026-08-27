@@ -1,11 +1,9 @@
-import { animate as _animate, stop as _stop } from './../../animation/animate.js';
+/** @import { AnimationCallback } from '../../animation/animation.js'; */
+/** @import QuerySet from '../query-set.js'; */
+/** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
+/** @import { StopAnimationOptions } from '../../animation/animation.js'; */
 
-/**
- * @typedef {import('../../animation/animation.js').AnimationCallback} AnimationCallback
- * @typedef {import('../../animation/animation.js').QueuedAnimationOptions} QueuedAnimationOptions
- * @typedef {import('../../animation/animation.js').StopAnimationOptions} StopAnimationOptions
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { animate as _animate, stop as _stop } from './../../animation/animate.js';
 
 /**
  * Adds an animation to the queue for each node.

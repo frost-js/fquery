@@ -1,15 +1,13 @@
+/** @import { AnimationCallback } from './animation.js'; */
+/** @import { AnimationOptions } from './animation.js'; */
+/** @import { ElementInput } from '../helpers.js'; */
+/** @import { StopAnimationOptions } from './animation.js'; */
+
 import { parseNodes } from './../filters.js';
 import { animations } from './../vars.js';
 import AnimationSet from './animation-set.js';
 import Animation from './animation.js';
 import { start } from './helpers.js';
-
-/**
- * @typedef {import('../helpers.js').ElementInput} ElementInput
- * @typedef {import('./animation.js').AnimationCallback} AnimationCallback
- * @typedef {import('./animation.js').AnimationOptions} AnimationOptions
- * @typedef {import('./animation.js').StopAnimationOptions} StopAnimationOptions
- */
 
 /**
  * Adds an animation to each node.

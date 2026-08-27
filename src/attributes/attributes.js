@@ -1,9 +1,9 @@
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { camelCase, merge } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
 import { parseData, parseDataset } from './../helpers.js';
 import { removeNode } from './../manipulation/manipulation.js';
-
-/** @typedef {import('../helpers.js').ElementInput} ElementInput */
 
 /**
  * @typedef {Record<string, *>} AttributeValues

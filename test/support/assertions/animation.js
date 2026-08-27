@@ -1,3 +1,5 @@
+/** @import { Page } from '@playwright/test'; */
+
 import { expect } from '@playwright/test';
 
 /**
@@ -9,7 +11,7 @@ import { expect } from '@playwright/test';
 
 /**
  * Expects animation state on the matched nodes.
- * @param {import('@playwright/test').Page} page The Playwright page.
+ * @param {Page} page The Playwright page.
  * @param {AnimationStateExpectation[]} expectations The expected animation states.
  * @returns {Promise<void>} The promise.
  */

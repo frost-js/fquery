@@ -1,9 +1,7 @@
-import { cloneData as _cloneData, getData as _getData, removeData as _removeData, setData as _setData } from './../../attributes/data.js';
+/** @import { QueryInput } from '../../helpers.js'; */
+/** @import QuerySet from '../query-set.js'; */
 
-/**
- * @typedef {import('../../helpers.js').QueryInput} QueryInput
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { cloneData as _cloneData, getData as _getData, removeData as _removeData, setData as _setData } from './../../attributes/data.js';
 
 /**
  * Clones custom data from each node to each other node.

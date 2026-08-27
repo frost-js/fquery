@@ -1,6 +1,6 @@
-import { blur as _blur, click as _click, focus as _focus } from './../../events/events.js';
+/** @import QuerySet from '../query-set.js'; */
 
-/** @typedef {import('../query-set.js').default} QuerySet */
+import { blur as _blur, click as _click, focus as _focus } from './../../events/events.js';
 
 /**
  * Triggers a blur event on the first node.

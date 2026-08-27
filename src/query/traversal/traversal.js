@@ -1,7 +1,7 @@
+/** @import { NodeFilterInput } from '../../filters.js'; */
+
 import { child as _child, children as _children, closest as _closest, commonAncestor as _commonAncestor, contents as _contents, fragment as _fragment, next as _next, nextAll as _nextAll, offsetParent as _offsetParent, parent as _parent, parents as _parents, prev as _prev, prevAll as _prevAll, shadow as _shadow, siblings as _siblings } from './../../traversal/traversal.js';
 import QuerySet from './../query-set-core.js';
-
-/** @typedef {import('../../filters.js').NodeFilterInput} NodeFilterInput */
 
 /**
  * Returns the first child of each node (optionally matching a filter).
@@ -15,6 +15,7 @@ export function child(nodeFilter) {
 /**
  * Returns all children of each node (optionally matching a filter).
  * @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+ * @param {{elementsOnly?: boolean}} [options] The filtering options.
  * @returns {QuerySet} The QuerySet object.
  */
 export function children(nodeFilter, { elementsOnly = true } = {}) {

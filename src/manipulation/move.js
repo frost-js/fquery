@@ -1,7 +1,7 @@
+/** @import { NodeInput } from '../helpers.js'; */
+
 import { parseNodes } from './../filters.js';
 import { clone } from './manipulation.js';
-
-/** @typedef {import('../helpers.js').NodeInput} NodeInput */
 
 /**
  * Inserts each other node after each node.

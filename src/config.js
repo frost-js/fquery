@@ -1,9 +1,7 @@
-import { extend, isDocument, isWindow } from '@fr0st/core';
+/** @import { AjaxOptions } from './ajax/ajax-request.js'; */
+/** @import { AnimationOptions } from './animation/animation.js'; */
 
-/**
- * @typedef {import('./ajax/ajax-request.js').AjaxOptions} AjaxOptions
- * @typedef {import('./animation/animation.js').AnimationOptions} AnimationOptions
- */
+import { extend, isDocument, isWindow } from '@fr0st/core';
 
 const ajaxDefaults = {
     afterSend: null,

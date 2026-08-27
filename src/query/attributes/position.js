@@ -1,12 +1,10 @@
+/** @import { Coordinates } from '../../attributes/position.js'; */
+/** @import { ElementInput } from '../../helpers.js'; */
+/** @import { OffsetOptions } from '../../attributes/position.js'; */
+/** @import { PercentOptions } from '../../attributes/position.js'; */
+
 import { center as _center, constrain as _constrain, distTo as _distTo, distToNode as _distToNode, nearestTo as _nearestTo, nearestToNode as _nearestToNode, percentX as _percentX, percentY as _percentY, position as _position, rect as _rect } from './../../attributes/position.js';
 import QuerySet from './../query-set-core.js';
-
-/**
- * @typedef {import('../../attributes/position.js').Coordinates} Coordinates
- * @typedef {import('../../attributes/position.js').OffsetOptions} OffsetOptions
- * @typedef {import('../../attributes/position.js').PercentOptions} PercentOptions
- * @typedef {import('../../helpers.js').ElementInput} ElementInput
- */
 
 /**
  * Gets the X,Y co-ordinates for the center of the first node.

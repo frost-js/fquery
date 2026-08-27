@@ -1,15 +1,13 @@
+/** @import { NodeFilterCallback } from './helpers.js'; */
+/** @import { NodeInput } from './helpers.js'; */
+/** @import { QueryContextInput } from './traversal/find.js'; */
+/** @import { QueryInput } from './helpers.js'; */
+
 import { isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
 import { resolveNode, resolveNodes } from './helpers.js';
 import { parseHTML } from './parser/parser.js';
 import { find, findOne } from './traversal/find.js';
-
-/**
- * @typedef {import('./helpers.js').NodeFilterCallback} NodeFilterCallback
- * @typedef {import('./helpers.js').NodeInput} NodeInput
- * @typedef {import('./helpers.js').QueryInput} QueryInput
- * @typedef {import('./traversal/find.js').QueryContextInput} QueryContextInput
- */
 
 /**
  * @typedef {NodeInput|NodeFilterCallback} NodeFilterInput

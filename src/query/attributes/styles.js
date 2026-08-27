@@ -1,9 +1,7 @@
-import { addClass as _addClass, css as _css, getStyle as _getStyle, hide as _hide, removeClass as _removeClass, removeStyle as _removeStyle, setStyle as _setStyle, show as _show, toggle as _toggle, toggleClass as _toggleClass } from './../../attributes/styles.js';
+/** @import QuerySet from '../query-set.js'; */
+/** @import { StyleValues } from '../../attributes/styles.js'; */
 
-/**
- * @typedef {import('../../attributes/styles.js').StyleValues} StyleValues
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { addClass as _addClass, css as _css, getStyle as _getStyle, hide as _hide, removeClass as _removeClass, removeStyle as _removeStyle, setStyle as _setStyle, show as _show, toggle as _toggle, toggleClass as _toggleClass } from './../../attributes/styles.js';
 
 /**
  * Adds classes to each node.

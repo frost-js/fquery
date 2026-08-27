@@ -1,10 +1,11 @@
+/** @import { AnimationOptions } from './animation.js'; */
+/** @import AnimationSet from './animation-set.js'; */
+/** @import { ElementInput } from '../helpers.js'; */
+
 import { evaluate } from '@fr0st/core';
 import { animate } from './animate.js';
 
 /**
- * @typedef {import('../helpers.js').ElementInput} ElementInput
- * @typedef {import('./animation-set.js').default} AnimationSet
- * @typedef {import('./animation.js').AnimationOptions} AnimationOptions
  * @typedef {Record<string, {priority: string, value: string}>} InlineStyles
  */
 

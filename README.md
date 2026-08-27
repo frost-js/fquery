@@ -466,7 +466,7 @@ fQuery supports Node.js `^20.19.0`, `^22.13.0`, or `>=24`.
 ```bash
 npm ci
 npm test
-npm run js-lint
+npm run lint
 npm run build
 npm pack --dry-run
 ```

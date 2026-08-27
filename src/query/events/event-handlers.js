@@ -1,13 +1,11 @@
-import { addEvent as _addEvent, addEventDelegate as _addEventDelegate, addEventDelegateOnce as _addEventDelegateOnce, addEventOnce as _addEventOnce, cloneEvents as _cloneEvents, removeEvent as _removeEvent, removeEventDelegate as _removeEventDelegate, triggerEvent as _triggerEvent, triggerOne as _triggerOne } from './../../events/event-handlers.js';
+/** @import { EventCallback } from '../../events/event-handlers.js'; */
+/** @import { EventOptions } from '../../events/event-handlers.js'; */
+/** @import { EventTargetInput } from '../../events/event-handlers.js'; */
+/** @import QuerySet from '../query-set.js'; */
+/** @import { RemoveEventOptions } from '../../events/event-handlers.js'; */
+/** @import { TriggerEventOptions } from '../../events/event-handlers.js'; */
 
-/**
- * @typedef {import('../../events/event-handlers.js').EventCallback} EventCallback
- * @typedef {import('../../events/event-handlers.js').EventOptions} EventOptions
- * @typedef {import('../../events/event-handlers.js').EventTargetInput} EventTargetInput
- * @typedef {import('../../events/event-handlers.js').RemoveEventOptions} RemoveEventOptions
- * @typedef {import('../../events/event-handlers.js').TriggerEventOptions} TriggerEventOptions
- * @typedef {import('../query-set.js').default} QuerySet
- */
+import { addEvent as _addEvent, addEventDelegate as _addEventDelegate, addEventDelegateOnce as _addEventDelegateOnce, addEventOnce as _addEventOnce, cloneEvents as _cloneEvents, removeEvent as _removeEvent, removeEventDelegate as _removeEventDelegate, triggerEvent as _triggerEvent, triggerOne as _triggerOne } from './../../events/event-handlers.js';
 
 /**
  * Adds an event to each node.

@@ -1,10 +1,8 @@
+/** @import { ElementInput } from '../helpers.js'; */
+/** @import { EventCallback } from './event-handlers.js'; */
+
 import { getContext, getWindow } from './../config.js';
 import { parseNode } from './../filters.js';
-
-/**
- * @typedef {import('../helpers.js').ElementInput} ElementInput
- * @typedef {import('./event-handlers.js').EventCallback} EventCallback
- */
 
 /**
  * Triggers a blur event on the first node.

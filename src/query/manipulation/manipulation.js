@@ -1,10 +1,8 @@
+/** @import { CloneOptions } from '../../manipulation/manipulation.js'; */
+/** @import { NodeInput } from '../../helpers.js'; */
+
 import { clone as _clone, detach as _detach, empty as _empty, remove as _remove, replaceAll as _replaceAll, replaceWith as _replaceWith } from './../../manipulation/manipulation.js';
 import QuerySet from './../query-set-core.js';
-
-/**
- * @typedef {import('../../helpers.js').NodeInput} NodeInput
- * @typedef {import('../../manipulation/manipulation.js').CloneOptions} CloneOptions
- */
 
 /**
  * Clones each node.

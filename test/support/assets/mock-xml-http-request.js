@@ -29,7 +29,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
      * Initialize a request.
      * @param {string} method The request method.
      * @param {string} url The URL to send the request to.
-     * @param {Boolean} [async=true] Whether to perform the request asynchronously.
+     * @param {boolean} [async=true] Whether to perform the request asynchronously.
      * @param {string} [username] The username to authenticate with.
      * @param {string} [password] The password to authenticate with.
      */
