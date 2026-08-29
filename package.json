@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/query",
-    "version": "4.0.2",
+    "version": "4.1.0",
     "private": false,
     "description": "Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.",
     "keywords": [
@@ -25,17 +25,20 @@
         "url": "git+https://github.com/elusivecodes/fQuery.git"
     },
     "license": "MIT",
-    "author": "Elusive",
+    "author": "Elusive <elusivecodes@gmail.com>",
     "type": "module",
     "exports": {
-        ".": "./src/index.js",
+        ".": {
+            "import": "./dist/fquery.esm.js",
+            "default": "./dist/fquery.esm.js"
+        },
         "./dist/*": "./dist/*",
-        "./src/*": "./src/*",
-        "./package.json": "./package.json"
+        "./src/*": "./src/*"
     },
-    "main": "src/index.js",
-    "jsdelivr": "dist/fquery.min.js",
-    "unpkg": "dist/fquery.min.js",
+    "main": "./dist/fquery.esm.js",
+    "jsdelivr": "./dist/fquery.min.js",
+    "unpkg": "./dist/fquery.min.js",
+    "module": "./dist/fquery.esm.js",
     "files": [
         "dist",
         "LICENSE",
@@ -43,25 +46,23 @@
         "src"
     ],
     "scripts": {
-        "build": "npm run bundle && npm run minify",
-        "bundle": "rollup --config",
+        "build": "vite build && vite build --mode umd",
         "lint": "eslint",
-        "minify": "terser --compress passes=2 --mangle --source-map \"content=dist/fquery.js.map,url=fquery.min.js.map\" --output dist/fquery.min.js dist/fquery.js",
         "test": "npm run build && npm run test:browser",
         "test:browser": "playwright test --forbid-only",
+        "test:coverage": "playwright test --config=playwright.coverage.config.js --forbid-only",
         "test:headed": "playwright test --forbid-only --headed",
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@fr0st/core": "^3.0.4"
+        "@fr0st/core": "^3.1.1"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.0",
+        "@fr0st/eslint-config": "^5.0.2",
         "@playwright/test": "^1.62.1",
-        "@rollup/plugin-node-resolve": "^16.0.3",
-        "eslint": "^10.8.1",
-        "rollup": "^4.62.4",
-        "terser": "^5.50.0"
+        "eslint": "^10.9.1",
+        "monocart-reporter": "^2.12.6",
+        "vite": "^8.2.2"
     },
     "engines": {
         "node": "^20.19.0 || ^22.13.0 || >=24"

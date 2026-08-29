@@ -1,16 +1,17 @@
 # fQuery
 
 [![CI](https://github.com/elusivecodes/fQuery/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/elusivecodes/fQuery/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/elusivecodes/fQuery/branch/main/graph/badge.svg)](https://codecov.io/gh/elusivecodes/fQuery)
 [![npm version](https://img.shields.io/npm/v/%40fr0st%2Fquery?style=flat-square)](https://www.npmjs.com/package/@fr0st/query)
 [![npm downloads](https://img.shields.io/npm/dm/%40fr0st%2Fquery?style=flat-square)](https://www.npmjs.com/package/@fr0st/query)
-[![minzipped size](https://img.shields.io/bundlejs/size/%40fr0st%2Fquery?format=minzip&style=flat-square)](https://bundlejs.com/?q=@fr0st/query)
+[![JS gzip size](https://img.badgesize.io/elusivecodes/fQuery/main/dist/fquery.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/elusivecodes/fQuery/blob/main/dist/fquery.min.js)
 [![license](https://img.shields.io/github/license/elusivecodes/fQuery?style=flat-square)](./LICENSE)
 
 Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.
 
 ## Highlights
 
-- Default ESM export for browser projects, bundlers, and DOM-enabled Node environments
+- Prebuilt ESM and UMD bundles in `dist/`
 - Browser UMD bundle in `dist/` exposed as `globalThis.fQuery` and `globalThis.$`
 - Familiar, chainable `QuerySet` API alongside equivalent static functions
 - Querying across elements, documents, fragments, shadow roots, collections, and multiple contexts
@@ -22,18 +23,37 @@ Lightweight JavaScript library for DOM querying, traversal, manipulation, events
 
 ## Installation
 
-### Browser projects and bundlers
+### Browser projects / bundlers
 
 ```bash
 npm i @fr0st/query
 ```
 
-fQuery is an ES module. In a browser environment, importing it initializes the current `window` and `document`, assigns `window.$`, and returns the query function.
+fQuery's package entry point is ESM-only. In a browser environment, importing the default query function initializes the current `window` and `document` and assigns `window.$`.
 
 ```js
 import $ from '@fr0st/query';
 
 $('.card').addClass('is-ready');
+```
+
+### Browser (ESM)
+
+The ESM bundle imports `@fr0st/core`. Map that dependency when loading the bundle directly in a browser:
+
+```html
+<script type="importmap">
+{
+    "imports": {
+        "@fr0st/core": "https://cdn.jsdelivr.net/npm/@fr0st/core@latest/dist/frost-core.esm.min.js"
+    }
+}
+</script>
+<script type="module">
+    import $ from 'https://cdn.jsdelivr.net/npm/@fr0st/query@latest/dist/fquery.esm.min.js';
+
+    $('.card').addClass('is-ready');
+</script>
 ```
 
 ### Browser (UMD)
@@ -55,6 +75,8 @@ The UMD bundle exposes the same object as both `globalThis.fQuery` and `globalTh
 fQuery.noConflict();
 fQuery('.card').addClass('is-ready');
 ```
+
+The package root resolves to the prebuilt ESM bundle. Published files under `dist/` and `src/` are also available through matching package subpaths.
 
 ### Node and DOM implementations
 
@@ -461,17 +483,13 @@ These prefixed helpers follow the installed FrostCore version. Consult FrostCore
 
 ## Development
 
-fQuery supports Node.js `^20.19.0`, `^22.13.0`, or `>=24`.
-
 ```bash
-npm ci
 npm test
 npm run lint
 npm run build
-npm pack --dry-run
 ```
 
-CI runs the Playwright suite in Chromium, Firefox, and WebKit, tests supported Node.js release lines, rebuilds the UMD bundles, verifies that `dist/` is current, and validates the package contents.
+`npm test` runs the Playwright suite in Chromium, Firefox, and WebKit.
 
 ## License
 

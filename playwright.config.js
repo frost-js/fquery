@@ -15,8 +15,8 @@ export default defineConfig({
             use: { browserName: 'webkit' },
         },
     ],
-    testDir: './test/specs',
-    testMatch: '**/*.spec.js',
+    testDir: './test/browser',
+    testMatch: '**/*.test.js',
     timeout: 30000,
     use: {
         baseURL: 'http://localhost:3001',
