@@ -1,11 +1,11 @@
 # fQuery
 
-[![CI](https://github.com/elusivecodes/fQuery/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/elusivecodes/fQuery/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/elusivecodes/fQuery/branch/main/graph/badge.svg)](https://codecov.io/gh/elusivecodes/fQuery)
+[![CI](https://github.com/frost-js/fquery/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/frost-js/fquery/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/frost-js/fquery/branch/main/graph/badge.svg)](https://codecov.io/gh/frost-js/fquery)
 [![npm version](https://img.shields.io/npm/v/%40fr0st%2Fquery?style=flat-square)](https://www.npmjs.com/package/@fr0st/query)
 [![npm downloads](https://img.shields.io/npm/dm/%40fr0st%2Fquery?style=flat-square)](https://www.npmjs.com/package/@fr0st/query)
-[![JS gzip size](https://img.badgesize.io/elusivecodes/fQuery/main/dist/fquery.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/elusivecodes/fQuery/blob/main/dist/fquery.min.js)
-[![license](https://img.shields.io/github/license/elusivecodes/fQuery?style=flat-square)](./LICENSE)
+[![JS gzip size](https://img.badgesize.io/frost-js/fquery/main/dist/fquery.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/frost-js/fquery/blob/main/dist/fquery.min.js)
+[![license](https://img.shields.io/github/license/frost-js/fquery?style=flat-square)](./LICENSE)
 
 Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.
 

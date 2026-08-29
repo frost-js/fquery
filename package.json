@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/query",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "private": false,
     "description": "Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.",
     "keywords": [
@@ -15,14 +15,14 @@
         "traversal",
         "utilities"
     ],
-    "homepage": "https://github.com/elusivecodes/fQuery",
+    "homepage": "https://github.com/frost-js/fquery",
     "bugs": {
-        "url": "https://github.com/elusivecodes/fQuery/issues",
+        "url": "https://github.com/frost-js/fquery/issues",
         "email": "elusivecodes@gmail.com"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/elusivecodes/fQuery.git"
+        "url": "git+https://github.com/frost-js/fquery.git"
     },
     "license": "MIT",
     "author": "Elusive <elusivecodes@gmail.com>",
@@ -55,10 +55,10 @@
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@fr0st/core": "^3.1.1"
+        "@fr0st/core": "^3.1.2"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.2",
+        "@fr0st/eslint-config": "^5.0.3",
         "@playwright/test": "^1.62.1",
         "eslint": "^10.9.1",
         "monocart-reporter": "^2.12.6",
