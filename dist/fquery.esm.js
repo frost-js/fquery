@@ -605,7 +605,7 @@ function eventNamespacedRegExp(event) {
 * @returns {string} The normalized CSS property name.
 */
 function normalizeCssProperty(style) {
-	return style.startsWith("--") ? `--${kebabCase(style.slice(2))}` : kebabCase(style);
+	return style.startsWith("--") ? style : kebabCase(style);
 }
 /**
 * Normalizes a CSS property value.

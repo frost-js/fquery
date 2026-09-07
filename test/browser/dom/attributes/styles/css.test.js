@@ -35,9 +35,9 @@ test.describe('#css', () => {
     });
 
     test('returns a computed custom property', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { --theme-color: red; }' });
+        await page.addStyleTag({ content: '.test { --brandColor: red; }' });
 
-        await expect.poll(async () => page.evaluate((_) => $.css('.test', '--theme-color'))).toBe('red');
+        await expect.poll(async () => page.evaluate((_) => $.css('.test', '--brandColor'))).toBe('red');
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {

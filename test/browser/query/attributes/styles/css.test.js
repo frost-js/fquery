@@ -35,10 +35,10 @@ test.describe('QuerySet #css', () => {
     });
 
     test('returns a computed custom property', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { --theme-color: red; }' });
+        await page.addStyleTag({ content: '.test { --brandColor: red; }' });
 
         await expect.poll(async () => page.evaluate((_) =>
-            $('.test').css('--theme-color'))).toBe('red');
+            $('.test').css('--brandColor'))).toBe('red');
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {

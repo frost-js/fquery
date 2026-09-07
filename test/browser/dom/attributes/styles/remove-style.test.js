@@ -26,10 +26,10 @@ test.describe('#removeStyle', () => {
     test('removes a custom property', async ({ page }) => {
         await page.evaluate((_) => {
             for (const node of document.querySelectorAll('div')) {
-                node.style.setProperty('--theme-color', 'red');
+                node.style.setProperty('--brandColor', 'red');
             }
 
-            $.removeStyle('div', '--theme-color');
+            $.removeStyle('div', '--brandColor');
         });
 
         await expect(page.locator('#test1')).toHaveAttribute('style', 'background-color: blue; color: white;');

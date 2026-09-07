@@ -30,11 +30,11 @@ test.describe('QuerySet #getStyle', () => {
 
     test('returns a custom property', async ({ page }) => {
         await page.evaluate((_) => {
-            document.getElementById('test1').style.setProperty('--theme-color', 'red');
+            document.getElementById('test1').style.setProperty('--brandColor', 'red');
         });
 
         await expect.poll(async () => page.evaluate((_) =>
-            $('#test1').getStyle('--theme-color'))).toBe('red');
+            $('#test1').getStyle('--brandColor'))).toBe('red');
     });
 
     test('returns an empty string for an undefined style', async ({ page }) => {

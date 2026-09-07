@@ -31,11 +31,11 @@ test.describe('#getStyle', () => {
 
     test('returns a custom property', async ({ page }) => {
         await page.evaluate((_) => {
-            document.getElementById('test1').style.setProperty('--theme-color', 'red');
+            document.getElementById('test1').style.setProperty('--brandColor', 'red');
         });
 
         await expect.poll(async () =>
-            page.evaluate((_) => $.getStyle('#test1', '--theme-color'))).toBe('red');
+            page.evaluate((_) => $.getStyle('#test1', '--brandColor'))).toBe('red');
     });
 
     test('returns an empty string for an undefined style', async ({ page }) => {

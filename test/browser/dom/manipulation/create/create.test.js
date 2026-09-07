@@ -65,13 +65,13 @@ test.describe('#create', () => {
             document.body.appendChild($.create('div', {
                 style: {
                     '--spacing-size': 100,
-                    '--theme-color': 'red',
+                    '--brandColor': 'red',
                 },
             }));
         });
 
         await expect(page.locator('body > div')).toHaveCSS('--spacing-size', '100');
-        await expect(page.locator('body > div')).toHaveCSS('--theme-color', 'red');
+        await expect(page.locator('body > div')).toHaveCSS('--brandColor', 'red');
     });
 
     test('creates a new node with value', async ({ page }) => {

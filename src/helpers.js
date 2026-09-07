@@ -83,7 +83,7 @@ export function eventNamespacedRegExp(event) {
  */
 export function normalizeCssProperty(style) {
     return style.startsWith('--') ?
-        `--${kebabCase(style.slice(2))}` :
+        style :
         kebabCase(style);
 };
 
