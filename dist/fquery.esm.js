@@ -5756,8 +5756,8 @@ function isEqual$1(selector, otherSelector, { shallow = false } = {}) {
 		shadow: true
 	});
 	if (shallow) {
-		nodes = $.clone(nodes, { deep: false });
-		others = $.clone(others, { deep: false });
+		nodes = clone$1(nodes, { deep: false });
+		others = clone$1(others, { deep: false });
 	}
 	return nodes.some((node) => others.some((other) => node.isEqualNode(other)));
 }

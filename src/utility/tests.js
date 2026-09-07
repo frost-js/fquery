@@ -7,6 +7,7 @@ import { camelCase, isDocument, isElement, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
 import { parseClasses } from './../helpers.js';
+import { clone } from './../manipulation/manipulation.js';
 import { closest } from './../traversal/traversal.js';
 import { animations, data } from './../vars.js';
 
@@ -220,8 +221,8 @@ export function isEqual(selector, otherSelector, { shallow = false } = {}) {
     });
 
     if (shallow) {
-        nodes = $.clone(nodes, { deep: false });
-        others = $.clone(others, { deep: false });
+        nodes = clone(nodes, { deep: false });
+        others = clone(others, { deep: false });
     }
 
     return nodes.some((node) =>
