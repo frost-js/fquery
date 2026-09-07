@@ -3529,11 +3529,12 @@
 			fragment: true,
 			html: true
 		});
-		if (!nodes.some((node) => node.parentNode && !others.includes(node) && !nodes.some((other) => !other.isSameNode(node) && other.contains(node)))) return;
+		const isReplacementTarget = (node) => node.parentNode && !others.includes(node) && !nodes.some((other) => !other.isSameNode(node) && other.contains(node));
+		if (!nodes.some(isReplacementTarget)) return;
 		const fragment = createFragment();
 		for (const other of others) fragment.insertBefore(other, null);
 		others = merge([], fragment.childNodes);
-		nodes = nodes.filter((node) => !others.includes(node) && !nodes.some((other) => !other.isSameNode(node) && other.contains(node)));
+		nodes = nodes.filter(isReplacementTarget);
 		for (const [i, node] of nodes.entries()) {
 			const parent = node.parentNode;
 			if (!parent) continue;

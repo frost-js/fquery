@@ -247,15 +247,16 @@ export function replaceWith(selector, otherSelector) {
         html: true,
     });
 
-    // Avoid detaching replacements when there is no target to replace.
-    if (!nodes.some((node) =>
+    const isReplacementTarget = (node) =>
         node.parentNode &&
         !others.includes(node) &&
         !nodes.some((other) =>
             !other.isSameNode(node) &&
             other.contains(node),
-        ),
-    )) {
+        );
+
+    // Avoid detaching replacements when there is no target to replace.
+    if (!nodes.some(isReplacementTarget)) {
         return;
     }
 
@@ -268,13 +269,8 @@ export function replaceWith(selector, otherSelector) {
 
     others = merge([], fragment.childNodes);
 
-    nodes = nodes.filter((node) =>
-        !others.includes(node) &&
-        !nodes.some((other) =>
-            !other.isSameNode(node) &&
-            other.contains(node),
-        ),
-    );
+    // Moving replacements can change the target relationships.
+    nodes = nodes.filter(isReplacementTarget);
 
     for (const [i, node] of nodes.entries()) {
         const parent = node.parentNode;

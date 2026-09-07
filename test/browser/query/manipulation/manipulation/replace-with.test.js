@@ -36,6 +36,21 @@ test.describe('QuerySet #replaceWith', () => {
         await expect(page.locator('body > div')).toHaveCount(0);
     });
 
+    test('inserts the original replacement when the final target is detached', async ({ page }) => {
+        const isOriginal = await page.evaluate(() => {
+            const node = document.querySelector('.outer1');
+            const detached = document.createElement('div');
+            const replacement = document.querySelector('.inner2 a');
+
+            $([node, detached]).replaceWith(replacement);
+
+            return document.body.firstElementChild === replacement;
+        });
+
+        expect(isOriginal).toBe(true);
+        await expect(page.locator('.outer1')).toHaveCount(0);
+    });
+
     test('does not move replacement nodes when the target set is empty', async ({ page }) => {
         const isSamePosition = await page.evaluate(() => {
             const node = document.querySelector('.inner1 a');
