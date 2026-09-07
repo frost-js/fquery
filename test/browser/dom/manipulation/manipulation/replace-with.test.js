@@ -36,6 +36,36 @@ test.describe('#replaceWith', () => {
         await expect(page.locator('body > div')).toHaveCount(0);
     });
 
+    test('does not move replacement nodes when the target set is empty', async ({ page }) => {
+        const isSamePosition = await page.evaluate(() => {
+            const node = document.querySelector('.inner1 a');
+            const { parentNode, previousSibling, nextSibling } = node;
+
+            $.replaceWith([], node);
+
+            return node.parentNode === parentNode &&
+                node.previousSibling === previousSibling &&
+                node.nextSibling === nextSibling;
+        });
+
+        expect(isSamePosition).toBe(true);
+    });
+
+    test('does not move a node when replacing it with itself', async ({ page }) => {
+        const isSamePosition = await page.evaluate(() => {
+            const node = document.querySelector('.inner1 a');
+            const { parentNode, previousSibling, nextSibling } = node;
+
+            $.replaceWith(node, node);
+
+            return node.parentNode === parentNode &&
+                node.previousSibling === previousSibling &&
+                node.nextSibling === nextSibling;
+        });
+
+        expect(isSamePosition).toBe(true);
+    });
+
     test('removes events from nodes', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;

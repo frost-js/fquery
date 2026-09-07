@@ -253,6 +253,11 @@ export function replaceWith(selector, otherSelector) {
         html: true,
     });
 
+    // Avoid detaching replacements when there is no target to replace.
+    if (!nodes.some((node) => node.parentNode && !others.includes(node))) {
+        return;
+    }
+
     // Move nodes to a fragment so they don't get removed
     const fragment = createFragment();
 

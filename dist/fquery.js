@@ -3530,6 +3530,7 @@
 			fragment: true,
 			html: true
 		});
+		if (!nodes.some((node) => node.parentNode && !others.includes(node))) return;
 		const fragment = createFragment();
 		for (const other of others) fragment.insertBefore(other, null);
 		others = merge([], fragment.childNodes);
