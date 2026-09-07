@@ -91,9 +91,16 @@ export function serializeArray(selector) {
     }).reduce(
         (values, node) => {
             if (isElement(node) && node.matches('form')) {
+                // Named controls can shadow the form's elements property.
+                const elements = Reflect.get(
+                    getWindow().HTMLFormElement.prototype,
+                    'elements',
+                    node,
+                );
+
                 return values.concat(
                     serializeArray(
-                        merge([], node.elements)
+                        merge([], elements)
                             .filter((node) => node.matches('input, select, textarea')),
                     ),
                 );

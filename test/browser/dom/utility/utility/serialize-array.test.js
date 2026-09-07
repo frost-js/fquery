@@ -168,6 +168,56 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
+    test('serializes forms with a control named elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="elements" type="text" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>' +
+                '<input name="test3" type="text" value="Test 3" form="form">';
+            return $.serializeArray('#form');
+        })).toEqual([
+            {
+                name: 'elements',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+            {
+                name: 'test3',
+                value: 'Test 3',
+            },
+        ]);
+    });
+
+    test('serializes forms with a control whose id is elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="test1" type="text" id="elements" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>' +
+                '<input name="test3" type="text" value="Test 3" form="form">';
+            return $.serializeArray('#form');
+        })).toEqual([
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+            {
+                name: 'test3',
+                value: 'Test 3',
+            },
+        ]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.serializeArray(

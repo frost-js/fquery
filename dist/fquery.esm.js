@@ -1801,7 +1801,10 @@ function serializeArray$1(selector) {
 		fragment: true,
 		shadow: true
 	}).reduce((values, node) => {
-		if (isElement(node) && node.matches("form")) return values.concat(serializeArray$1(merge([], node.elements).filter((node) => node.matches("input, select, textarea"))));
+		if (isElement(node) && node.matches("form")) {
+			const elements = Reflect.get(getWindow().HTMLFormElement.prototype, "elements", node);
+			return values.concat(serializeArray$1(merge([], elements).filter((node) => node.matches("input, select, textarea"))));
+		}
 		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(node.querySelectorAll("input, select, textarea")));
 		if (isElement(node) && node.matches(":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
 		const name = node.getAttribute("name");
