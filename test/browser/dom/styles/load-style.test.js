@@ -50,7 +50,7 @@ test.describe('#loadStyle', () => {
         const href = await link.getAttribute('href');
 
         await expect(link).toHaveCount(1);
-        expect(href).toMatch(/^assets\/test\.css\?_=\d+$/);
+        expect(href).toMatch(/^http:\/\/localhost:3001\/assets\/test\.css\?_=\d+$/);
     });
 
     test('loads a stylesheet without cache (query string)', async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe('#loadStyle', () => {
         const href = await link.getAttribute('href');
 
         await expect(link).toHaveCount(1);
-        expect(href).toMatch(/^assets\/test\.css\?test=1&_=\d+$/);
+        expect(href).toMatch(/^http:\/\/localhost:3001\/assets\/test\.css\?test=1&_=\d+$/);
     });
 
     test('resolves when the stylesheet is loaded', async ({ page }) => {

@@ -1086,9 +1086,7 @@
 	function setSearchParams(url, searchParams) {
 		const urlData = createUrl(url);
 		urlData.search = searchParams.toString();
-		const newUrl = urlData.toString();
-		const pos = newUrl.indexOf(url);
-		return newUrl.substring(pos);
+		return urlData.toString();
 	}
 
 //#endregion

@@ -73,8 +73,8 @@ test.describe('#loadStyles', () => {
         const secondHref = await links.nth(1).getAttribute('href');
 
         await expect(links).toHaveCount(2);
-        expect(firstHref).toMatch(/^assets\/test\.css\?_=\d+$/);
-        expect(secondHref).toMatch(/^assets\/test2\.css\?_=\d+$/);
+        expect(firstHref).toMatch(/^http:\/\/localhost:3001\/assets\/test\.css\?_=\d+$/);
+        expect(secondHref).toMatch(/^http:\/\/localhost:3001\/assets\/test2\.css\?_=\d+$/);
     });
 
     test('loads a stylesheet without cache (query string)', async ({ page }) => {
@@ -90,8 +90,8 @@ test.describe('#loadStyles', () => {
         const secondHref = await links.nth(1).getAttribute('href');
 
         await expect(links).toHaveCount(2);
-        expect(firstHref).toMatch(/^assets\/test\.css\?test=1&_=\d+$/);
-        expect(secondHref).toMatch(/^assets\/test2\.css\?test=2&_=\d+$/);
+        expect(firstHref).toMatch(/^http:\/\/localhost:3001\/assets\/test\.css\?test=1&_=\d+$/);
+        expect(secondHref).toMatch(/^http:\/\/localhost:3001\/assets\/test2\.css\?test=2&_=\d+$/);
     });
 
     test('resolves when stylesheets are loaded', async ({ page }) => {

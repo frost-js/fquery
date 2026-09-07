@@ -45,7 +45,7 @@ test.describe('#loadScript', () => {
         const src = await script.getAttribute('src');
 
         await expect(script).toHaveCount(1);
-        expect(src).toMatch(/^assets\/test\.js\?_=\d+$/);
+        expect(src).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?_=\d+$/);
     });
 
     test('loads a script without cache (query string)', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('#loadScript', () => {
         const src = await script.getAttribute('src');
 
         await expect(script).toHaveCount(1);
-        expect(src).toMatch(/^assets\/test\.js\?test=1&_=\d+$/);
+        expect(src).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?test=1&_=\d+$/);
     });
 
     test('resolves when the script is loaded', async ({ page }) => {

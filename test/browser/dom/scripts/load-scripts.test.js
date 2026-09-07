@@ -69,8 +69,8 @@ test.describe('#loadScripts', () => {
         const secondSrc = await scripts.nth(1).getAttribute('src');
 
         await expect(scripts).toHaveCount(2);
-        expect(firstSrc).toMatch(/^assets\/test\.js\?_=\d+$/);
-        expect(secondSrc).toMatch(/^assets\/test2\.js\?_=\d+$/);
+        expect(firstSrc).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?_=\d+$/);
+        expect(secondSrc).toMatch(/^http:\/\/localhost:3001\/assets\/test2\.js\?_=\d+$/);
     });
 
     test('loads scripts without cache (query string)', async ({ page }) => {
@@ -86,8 +86,8 @@ test.describe('#loadScripts', () => {
         const secondSrc = await scripts.nth(1).getAttribute('src');
 
         await expect(scripts).toHaveCount(2);
-        expect(firstSrc).toMatch(/^assets\/test\.js\?test=1&_=\d+$/);
-        expect(secondSrc).toMatch(/^assets\/test2\.js\?test=2&_=\d+$/);
+        expect(firstSrc).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?test=1&_=\d+$/);
+        expect(secondSrc).toMatch(/^http:\/\/localhost:3001\/assets\/test2\.js\?test=2&_=\d+$/);
     });
 
     test('resolves when the scripts are loaded', async ({ page }) => {
