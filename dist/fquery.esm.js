@@ -2576,7 +2576,6 @@ function empty$1(selector) {
 			if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
 			child.remove();
 		}
-		if (isFragment(node.content)) removeNode(node.content);
 	}
 }
 /**
@@ -2821,7 +2820,6 @@ function setText$1(selector, text) {
 	for (const node of nodes) {
 		const childNodes = merge([], node.children);
 		for (const child of childNodes) removeNode(child);
-		if (isFragment(node.content)) removeNode(node.content);
 		node.textContent = text;
 	}
 }

@@ -235,11 +235,6 @@ export function setText(selector, text) {
             removeNode(child);
         }
 
-        // Remove DocumentFragment
-        if (isFragment(node.content)) {
-            removeNode(node.content);
-        }
-
         node.textContent = text;
     }
 };

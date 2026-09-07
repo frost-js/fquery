@@ -131,11 +131,6 @@ export function empty(selector) {
 
             child.remove();
         }
-
-        // Remove DocumentFragment
-        if (isFragment(node.content)) {
-            removeNode(node.content);
-        }
     }
 };
 

@@ -3459,7 +3459,6 @@
 				if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
 				child.remove();
 			}
-			if (isFragment(node.content)) removeNode(node.content);
 		}
 	}
 	/**
@@ -3704,7 +3703,6 @@
 		for (const node of nodes) {
 			const childNodes = merge([], node.children);
 			for (const child of childNodes) removeNode(child);
-			if (isFragment(node.content)) removeNode(node.content);
 			node.textContent = text;
 		}
 	}

@@ -91,6 +91,31 @@ test.describe('QuerySet #empty', () => {
         await expect(page.locator('#inner1')).toHaveCount(0);
     });
 
+    test('preserves events inside template contents', async ({ page }) => {
+        const clickCount = await page.evaluate(() => {
+            let count = 0;
+            const node = document.getElementById('test1');
+            const template = document.createElement('template');
+            template.content.appendChild(node);
+            template.appendChild(document.getElementById('outer1'));
+            document.body.appendChild(template);
+
+            $.addEvent(node, 'click', () => {
+                count++;
+            });
+
+            $(template).empty();
+            document.body.appendChild(template.content);
+            $.triggerEvent(node, 'click');
+
+            return count;
+        });
+
+        expect(clickCount).toBe(1);
+        await expect(page.locator('#test1')).toHaveText('Test');
+        await expect(page.locator('template > *')).toHaveCount(0);
+    });
+
     test('removes data recursively', async ({ page }) => {
         const values = await page.evaluate(() => {
             const nodes = [...document.querySelectorAll('a')];
@@ -124,6 +149,26 @@ test.describe('QuerySet #empty', () => {
         expect(values).toEqual(['Test', 'Test']);
         await expect(page.locator('#test1')).toHaveText('Test');
         await expect(page.locator('#inner1')).toHaveCount(0);
+    });
+
+    test('preserves data inside template contents', async ({ page }) => {
+        const values = await page.evaluate(() => {
+            const node = document.getElementById('test1');
+            const template = document.createElement('template');
+            template.content.appendChild(node);
+            template.appendChild(document.getElementById('outer1'));
+            document.body.appendChild(template);
+
+            $.setData([template.content, node], 'test', 'Test');
+            $(template).empty();
+            document.body.appendChild(template.content);
+
+            return [template.content, node].map((node) => $.getData(node, 'test'));
+        });
+
+        expect(values).toEqual(['Test', 'Test']);
+        await expect(page.locator('#test1')).toHaveText('Test');
+        await expect(page.locator('template > *')).toHaveCount(0);
     });
 
     test('removes animations recursively', async ({ page }) => {
