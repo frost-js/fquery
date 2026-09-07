@@ -193,11 +193,6 @@ export function setHTML(selector, html) {
             removeNode(child);
         }
 
-        // Remove ShadowRoot
-        if (node.shadowRoot) {
-            removeNode(node.shadowRoot);
-        }
-
         // Remove DocumentFragment
         if (node.content) {
             removeNode(node.content);
@@ -238,11 +233,6 @@ export function setText(selector, text) {
 
         for (const child of childNodes) {
             removeNode(child);
-        }
-
-        // Remove ShadowRoot
-        if (node.shadowRoot) {
-            removeNode(node.shadowRoot);
         }
 
         // Remove DocumentFragment

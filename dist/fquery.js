@@ -3685,7 +3685,6 @@
 		for (const node of nodes) {
 			const childNodes = merge([], node.children);
 			for (const child of childNodes) removeNode(child);
-			if (node.shadowRoot) removeNode(node.shadowRoot);
 			if (node.content) removeNode(node.content);
 			node.innerHTML = html;
 		}
@@ -3711,7 +3710,6 @@
 		for (const node of nodes) {
 			const childNodes = merge([], node.children);
 			for (const child of childNodes) removeNode(child);
-			if (node.shadowRoot) removeNode(node.shadowRoot);
 			if (node.content) removeNode(node.content);
 			node.textContent = text;
 		}
