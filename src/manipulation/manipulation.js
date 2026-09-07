@@ -132,11 +132,6 @@ export function empty(selector) {
             child.remove();
         }
 
-        // Remove ShadowRoot
-        if (node.shadowRoot) {
-            removeNode(node.shadowRoot);
-        }
-
         // Remove DocumentFragment
         if (isFragment(node.content)) {
             removeNode(node.content);

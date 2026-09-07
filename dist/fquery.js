@@ -3459,7 +3459,6 @@
 				if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
 				child.remove();
 			}
-			if (node.shadowRoot) removeNode(node.shadowRoot);
 			if (isFragment(node.content)) removeNode(node.content);
 		}
 	}

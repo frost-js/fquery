@@ -69,6 +69,28 @@ test.describe('QuerySet #empty', () => {
         expect(clickCount).toBe(0);
     });
 
+    test('preserves events in the host shadow root', async ({ page }) => {
+        const clickCount = await page.evaluate(() => {
+            let count = 0;
+            const node = document.getElementById('test1');
+            const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
+            shadow.appendChild(node);
+
+            $.addEvent([shadow, node], 'click', () => {
+                count++;
+            });
+
+            $('#outer1').empty();
+            $.triggerEvent(node, 'click');
+
+            return count;
+        });
+
+        expect(clickCount).toBe(2);
+        await expect(page.locator('#test1')).toHaveText('Test');
+        await expect(page.locator('#inner1')).toHaveCount(0);
+    });
+
     test('removes data recursively', async ({ page }) => {
         const values = await page.evaluate(() => {
             const nodes = [...document.querySelectorAll('a')];
@@ -85,6 +107,23 @@ test.describe('QuerySet #empty', () => {
             undefined,
             undefined,
         ]);
+    });
+
+    test('preserves data in the host shadow root', async ({ page }) => {
+        const values = await page.evaluate(() => {
+            const node = document.getElementById('test1');
+            const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
+            shadow.appendChild(node);
+
+            $.setData([shadow, node], 'test', 'Test');
+            $('#outer1').empty();
+
+            return [shadow, node].map((node) => $.getData(node, 'test'));
+        });
+
+        expect(values).toEqual(['Test', 'Test']);
+        await expect(page.locator('#test1')).toHaveText('Test');
+        await expect(page.locator('#inner1')).toHaveCount(0);
     });
 
     test('removes animations recursively', async ({ page }) => {
