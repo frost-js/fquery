@@ -56,6 +56,28 @@ test.describe('QuerySet #setHTML', () => {
         expect(clickCount).toBe(0);
     });
 
+    test('removes events recursively inside template contents', async ({ page }) => {
+        const clickCount = await page.evaluate((html) => {
+            let count = 0;
+            const node = document.getElementById('inner');
+            const template = document.createElement('template');
+            template.content.appendChild(document.getElementById('test1'));
+            document.body.appendChild(template);
+
+            $.addEvent(node, 'click', () => {
+                count++;
+            });
+
+            $(template).setHTML(html);
+            document.body.appendChild(node);
+            $.triggerEvent(node, 'click');
+
+            return count;
+        }, replacementHtml);
+
+        expect(clickCount).toBe(0);
+    });
+
     test('preserves events in the host shadow root', async ({ page }) => {
         const clickCount = await page.evaluate((html) => {
             let count = 0;
@@ -91,6 +113,23 @@ test.describe('QuerySet #setHTML', () => {
         expect(storedValue).toBeUndefined();
     });
 
+    test('removes data recursively inside template contents', async ({ page }) => {
+        const storedValue = await page.evaluate((html) => {
+            const node = document.getElementById('inner');
+            const template = document.createElement('template');
+            template.content.appendChild(document.getElementById('test1'));
+            document.body.appendChild(template);
+
+            $.setData(node, 'test', 'Test');
+            $(template).setHTML(html);
+            document.body.appendChild(node);
+
+            return $.getData(node, 'test');
+        }, replacementHtml);
+
+        expect(storedValue).toBeUndefined();
+    });
+
     test('preserves data in the host shadow root', async ({ page }) => {
         const storedValue = await page.evaluate((html) => {
             const node = document.getElementById('inner');
@@ -105,6 +144,24 @@ test.describe('QuerySet #setHTML', () => {
 
         expect(storedValue).toBe('Test');
         await expect(page.locator('#inner')).toHaveText('Test 1');
+    });
+
+    test('preserves data on the template content fragment', async ({ page }) => {
+        const storedValue = await page.evaluate((html) => {
+            const template = document.createElement('template');
+            template.content.appendChild(document.getElementById('test1'));
+            document.body.appendChild(template);
+
+            $.setData(template.content, 'test', 'Test');
+            $(template).setHTML(html);
+            document.getElementById('test2').appendChild(template.content);
+
+            return $.getData(template.content, 'test');
+        }, replacementHtml);
+
+        expect(storedValue).toBe('Test');
+        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+        await expect(page.locator('#inner')).toHaveCount(0);
     });
 
     test('removes animations recursively', async ({ page }) => {

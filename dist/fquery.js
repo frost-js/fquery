@@ -3681,9 +3681,9 @@
 	function setHTML$1(selector, html) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
-			const childNodes = merge([], node.children);
+			const target = isFragment(node.content) ? node.content : node;
+			const childNodes = merge([], target.children);
 			for (const child of childNodes) removeNode(child);
-			if (isFragment(node.content)) removeNode(node.content);
 			node.innerHTML = html;
 		}
 	}
