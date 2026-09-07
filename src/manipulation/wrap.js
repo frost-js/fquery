@@ -23,7 +23,7 @@ export function unwrap(selector, nodeFilter) {
     for (const node of nodes) {
         const parent = node.parentNode;
 
-        if (!parent) {
+        if (!parent || !parent.parentNode) {
             continue;
         }
 

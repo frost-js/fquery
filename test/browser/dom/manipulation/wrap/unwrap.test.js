@@ -72,6 +72,47 @@ test.describe('#unwrap', () => {
         expect(count).toBe(0);
     });
 
+    test('preserves events when the parent is a shadow root', async ({ page }) => {
+        const count = await page.evaluate(() => {
+            let result = 0;
+            const node = document.getElementById('test1');
+            const shadow = document.getElementById('parent1').attachShadow({ mode: 'open' });
+            shadow.appendChild(node);
+
+            $.addEvent([shadow, node], 'click', () => {
+                result++;
+            });
+            $.unwrap(node);
+            $.triggerEvent(node, 'click');
+
+            return result;
+        });
+
+        expect(count).toBe(2);
+        await expect(page.locator('#test1')).toHaveText('Test');
+    });
+
+    test('preserves events when the parent is detached', async ({ page }) => {
+        const count = await page.evaluate(() => {
+            let result = 0;
+            const parent = document.getElementById('parent1');
+            const node = document.getElementById('test1');
+            parent.remove();
+
+            $.addEvent([parent, node], 'click', () => {
+                result++;
+            });
+            $.unwrap(node);
+            $.triggerEvent(node, 'click');
+            document.body.appendChild(parent);
+
+            return result;
+        });
+
+        expect(count).toBe(2);
+        await expect(page.locator('#parent1 > #test1')).toHaveText('Test');
+    });
+
     test('removes data', async ({ page }) => {
         const values = await page.evaluate(() => {
             const parents = [...document.querySelectorAll('div')];
@@ -90,6 +131,45 @@ test.describe('#unwrap', () => {
             undefined,
             undefined,
         ]);
+    });
+
+    test('preserves data when the parent is a shadow root', async ({ page }) => {
+        const values = await page.evaluate(() => {
+            const node = document.getElementById('test1');
+            const shadow = document.getElementById('parent1').attachShadow({ mode: 'open' });
+            shadow.appendChild(node);
+
+            $.setData([shadow, node], 'test', 'Test');
+            $.unwrap(node);
+
+            return [shadow, node].map((node) => $.getData(node, 'test'));
+        });
+
+        expect(values).toEqual([
+            'Test',
+            'Test',
+        ]);
+        await expect(page.locator('#test1')).toHaveText('Test');
+    });
+
+    test('preserves data when the parent is detached', async ({ page }) => {
+        const values = await page.evaluate(() => {
+            const parent = document.getElementById('parent1');
+            const node = document.getElementById('test1');
+            parent.remove();
+
+            $.setData([parent, node], 'test', 'Test');
+            $.unwrap(node);
+            document.body.appendChild(parent);
+
+            return [parent, node].map((node) => $.getData(node, 'test'));
+        });
+
+        expect(values).toEqual([
+            'Test',
+            'Test',
+        ]);
+        await expect(page.locator('#parent1 > #test1')).toHaveText('Test');
     });
 
     test('removes animations', async ({ page }) => {

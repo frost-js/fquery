@@ -3705,7 +3705,7 @@ function unwrap$1(selector, nodeFilter) {
 	const parents = [];
 	for (const node of nodes) {
 		const parent = node.parentNode;
-		if (!parent) continue;
+		if (!parent || !parent.parentNode) continue;
 		if (parents.includes(parent)) continue;
 		if (!nodeFilter(parent)) continue;
 		parents.push(parent);
