@@ -2534,12 +2534,20 @@ function deepClone(node, clone, { deep = true, events: events$1 = false, data: d
 		const nodeAnimations = animations.get(node);
 		for (const animation of nodeAnimations) animation.clone(clone);
 	}
-	if (deep) for (const [i, child] of node.childNodes.entries()) deepClone(child, clone.childNodes.item(i), {
-		deep,
-		events: events$1,
-		data: data$1,
-		animations: animations$1
-	});
+	if (deep) {
+		for (const [i, child] of node.childNodes.entries()) deepClone(child, clone.childNodes.item(i), {
+			deep,
+			events: events$1,
+			data: data$1,
+			animations: animations$1
+		});
+		if (isFragment(node.content)) deepClone(node.content, clone.content, {
+			deep,
+			events: events$1,
+			data: data$1,
+			animations: animations$1
+		});
+	}
 }
 /**
 * Detaches each node from the DOM.

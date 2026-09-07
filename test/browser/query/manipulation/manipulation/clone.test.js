@@ -52,6 +52,21 @@ test.describe('QuerySet #clone', () => {
         await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
     });
 
+    test('does not clone template content data with shallow option', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            const template = document.createElement('template');
+            template.innerHTML = '<a>Test</a>';
+
+            $.setData(template.content, 'test', 'Test');
+
+            const [clone] = $(template).clone({ deep: false, data: true }).get();
+
+            return $.getData(clone.content, 'test');
+        });
+
+        expect(value).toBeUndefined();
+    });
+
     test('clones all nodes with events', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;
@@ -74,6 +89,32 @@ test.describe('QuerySet #clone', () => {
         expect(clickCount).toBe(8);
     });
 
+    test('clones events inside template contents', async ({ page }) => {
+        const clickCount = await page.evaluate(() => {
+            let count = 0;
+            const template = document.createElement('template');
+            template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
+            const nested = template.content.querySelector('template');
+
+            $.addEvent([
+                template.content.querySelector('a'),
+                nested.content.querySelector('a'),
+            ], 'click', () => {
+                count++;
+            });
+
+            const [clone] = $(template).clone({ events: true }).get();
+            const nestedClone = clone.content.querySelector('template');
+
+            $.triggerEvent(clone.content.querySelector('a'), 'click');
+            $.triggerEvent(nestedClone.content.querySelector('a'), 'click');
+
+            return count;
+        });
+
+        expect(clickCount).toBe(2);
+    });
+
     test('clones all nodes with data', async ({ page }) => {
         const values = await page.evaluate(() => {
             $.setData('a', 'test', 'Test');
@@ -92,6 +133,38 @@ test.describe('QuerySet #clone', () => {
             'Test',
             'Test',
             'Test',
+            'Test',
+            'Test',
+            'Test',
+            'Test',
+        ]);
+    });
+
+    test('clones data inside template contents', async ({ page }) => {
+        const values = await page.evaluate(() => {
+            const template = document.createElement('template');
+            template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
+            const nested = template.content.querySelector('template');
+
+            $.setData([
+                template.content,
+                template.content.querySelector('a'),
+                nested.content,
+                nested.content.querySelector('a'),
+            ], 'test', 'Test');
+
+            const [clone] = $(template).clone({ data: true }).get();
+            const nestedClone = clone.content.querySelector('template');
+
+            return [
+                clone.content,
+                clone.content.querySelector('a'),
+                nestedClone.content,
+                nestedClone.content.querySelector('a'),
+            ].map((node) => $.getData(node, 'test'));
+        });
+
+        expect(values).toEqual([
             'Test',
             'Test',
             'Test',

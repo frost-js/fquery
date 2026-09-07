@@ -84,6 +84,10 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
             const childClone = clone.childNodes.item(i);
             deepClone(child, childClone, { deep, events, data, animations });
         }
+
+        if (isFragment(node.content)) {
+            deepClone(node.content, clone.content, { deep, events, data, animations });
+        }
     }
 };
 
