@@ -134,6 +134,72 @@ test.describe('QuerySet #serializeArray', () => {
         ]);
     });
 
+    test('excludes disabled selected options', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1">' +
+                '<option value="Test 1" selected disabled>Test 1</option>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test2[]" multiple>' +
+                '<option value="Test 2a" selected>Test 2a</option>' +
+                '<option value="Test 2b" selected disabled>Test 2b</option>' +
+                '<option value="Test 2c" selected>Test 2c</option>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test3"><option value="" selected>Test 3</option></select>' +
+                '</form>';
+            return $('#form').serializeArray();
+        })).toEqual([
+            {
+                name: 'test2[]',
+                value: 'Test 2a',
+            },
+            {
+                name: 'test2[]',
+                value: 'Test 2c',
+            },
+            {
+                name: 'test3',
+                value: '',
+            },
+        ]);
+    });
+
+    test('excludes selected options in disabled optgroups', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1">' +
+                '<optgroup label="Disabled" disabled>' +
+                '<option value="Test 1" selected>Test 1</option>' +
+                '</optgroup>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test2[]" multiple>' +
+                '<option value="Test 2a" selected>Test 2a</option>' +
+                '<optgroup label="Disabled" disabled>' +
+                '<option value="Test 2b" selected>Test 2b</option>' +
+                '</optgroup>' +
+                '<optgroup label="Enabled">' +
+                '<option value="Test 2c" selected>Test 2c</option>' +
+                '</optgroup>' +
+                '</select>' +
+                '</form>';
+            return $('#form').serializeArray();
+        })).toEqual([
+            {
+                name: 'test2[]',
+                value: 'Test 2a',
+            },
+            {
+                name: 'test2[]',
+                value: 'Test 2c',
+            },
+        ]);
+    });
+
     test('serializes associated controls in document order', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =

@@ -1808,10 +1808,13 @@ function serializeArray$1(selector) {
 		if (isElement(node) && node.matches(":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
 		const name = node.getAttribute("name");
 		if (!name) return values;
-		if (isElement(node) && node.matches("select[multiple]")) for (const option of node.selectedOptions) values.push({
-			name,
-			value: option.value || ""
-		});
+		if (isElement(node) && node.matches("select")) for (const option of node.selectedOptions) {
+			if (option.matches(":disabled")) continue;
+			values.push({
+				name,
+				value: option.value || ""
+			});
+		}
 		else values.push({
 			name,
 			value: node.value || ""

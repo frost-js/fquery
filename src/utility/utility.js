@@ -135,9 +135,13 @@ export function serializeArray(selector) {
 
             if (
                 isElement(node) &&
-                node.matches('select[multiple]')
+                node.matches('select')
             ) {
                 for (const option of node.selectedOptions) {
+                    if (option.matches(':disabled')) {
+                        continue;
+                    }
+
                     values.push(
                         {
                             name,

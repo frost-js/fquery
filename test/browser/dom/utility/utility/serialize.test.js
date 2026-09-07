@@ -80,6 +80,50 @@ test.describe('#serialize', () => {
         })).toBe('test1=Test%201');
     });
 
+    test('excludes disabled selected options', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1">' +
+                '<option value="Test 1" selected disabled>Test 1</option>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test2[]" multiple>' +
+                '<option value="Test 2a" selected>Test 2a</option>' +
+                '<option value="Test 2b" selected disabled>Test 2b</option>' +
+                '<option value="Test 2c" selected>Test 2c</option>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test3"><option value="" selected>Test 3</option></select>' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2%5B%5D=Test%202a&test2%5B%5D=Test%202c&test3=');
+    });
+
+    test('excludes selected options in disabled optgroups', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1">' +
+                '<optgroup label="Disabled" disabled>' +
+                '<option value="Test 1" selected>Test 1</option>' +
+                '</optgroup>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '<select name="test2[]" multiple>' +
+                '<option value="Test 2a" selected>Test 2a</option>' +
+                '<optgroup label="Disabled" disabled>' +
+                '<option value="Test 2b" selected>Test 2b</option>' +
+                '</optgroup>' +
+                '<optgroup label="Enabled">' +
+                '<option value="Test 2c" selected>Test 2c</option>' +
+                '</optgroup>' +
+                '</select>' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2%5B%5D=Test%202a&test2%5B%5D=Test%202c');
+    });
+
     test('serializes associated controls in document order', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
