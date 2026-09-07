@@ -154,28 +154,22 @@ export function cloneEvents(selector, otherSelector) {
         window: true,
     });
 
-    for (const node of nodes) {
-        if (!events.has(node)) {
-            continue;
-        }
+    const sourceEvents = nodes.flatMap((node) =>
+        Object.values(events.get(node) || {}).flat(),
+    );
 
-        const nodeEvents = events.get(node);
-
-        for (const realEvents of Object.values(nodeEvents)) {
-            for (const eventData of realEvents) {
-                addEvent(
-                    otherSelector,
-                    eventData.eventName,
-                    eventData.callback,
-                    {
-                        capture: eventData.capture,
-                        delegate: eventData.delegate,
-                        passive: eventData.passive,
-                        selfDestruct: eventData.selfDestruct,
-                    },
-                );
-            }
-        }
+    for (const eventData of sourceEvents) {
+        addEvent(
+            otherSelector,
+            eventData.eventName,
+            eventData.callback,
+            {
+                capture: eventData.capture,
+                delegate: eventData.delegate,
+                passive: eventData.passive,
+                selfDestruct: eventData.selfDestruct,
+            },
+        );
     }
 };
 

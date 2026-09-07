@@ -45,6 +45,37 @@ test.describe('#cloneEvents', () => {
             '</div>');
     });
 
+    test('clones events to the source node once', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element = document.getElementById('test1');
+            $.removeEvent(element);
+            $.addEvent(element, 'click', (_) => {
+                result++;
+            });
+            $.cloneEvents(element, element);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('clones only original events when source and destination nodes overlap', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            $.removeEvent('#test1, #test2');
+            $.addEvent('#test1, #test2', 'click', (_) => {
+                result++;
+            });
+            $.cloneEvents('#test1, #test2', '#test2, #test3');
+            document.getElementById('test1').dispatchEvent(event);
+            document.getElementById('test2').dispatchEvent(event);
+            document.getElementById('test3').dispatchEvent(event);
+            return result;
+        })).toBe(6);
+    });
+
     test('does nothing when a node has no registered events', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.cloneEvents('#test3', '#test4');

@@ -3236,21 +3236,17 @@
 	* @param {EventTargetInput} otherSelector The other node(s), or a query selector string.
 	*/
 	function cloneEvents$1(selector, otherSelector) {
-		const nodes = parseNodes(selector, {
+		const sourceEvents = parseNodes(selector, {
 			shadow: true,
 			document: true,
 			window: true
+		}).flatMap((node) => Object.values(events.get(node) || {}).flat());
+		for (const eventData of sourceEvents) addEvent$1(otherSelector, eventData.eventName, eventData.callback, {
+			capture: eventData.capture,
+			delegate: eventData.delegate,
+			passive: eventData.passive,
+			selfDestruct: eventData.selfDestruct
 		});
-		for (const node of nodes) {
-			if (!events.has(node)) continue;
-			const nodeEvents = events.get(node);
-			for (const realEvents of Object.values(nodeEvents)) for (const eventData of realEvents) addEvent$1(otherSelector, eventData.eventName, eventData.callback, {
-				capture: eventData.capture,
-				delegate: eventData.delegate,
-				passive: eventData.passive,
-				selfDestruct: eventData.selfDestruct
-			});
-		}
 	}
 	/**
 	* Removes events from each node.

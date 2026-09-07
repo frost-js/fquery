@@ -46,6 +46,37 @@ test.describe('QuerySet #cloneEvents', () => {
             '</div>');
     });
 
+    test('clones events to the source node once', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element = document.getElementById('test1');
+            $.removeEvent(element);
+            $.addEvent(element, 'click', (_) => {
+                result++;
+            });
+            $(element).cloneEvents(element);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('clones only original events when source and destination nodes overlap', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            $.removeEvent('#test1, #test2');
+            $.addEvent('#test1, #test2', 'click', (_) => {
+                result++;
+            });
+            $('#test1, #test2').cloneEvents('#test2, #test3');
+            document.getElementById('test1').dispatchEvent(event);
+            document.getElementById('test2').dispatchEvent(event);
+            document.getElementById('test3').dispatchEvent(event);
+            return result;
+        })).toBe(6);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('[data-toggle="event"]');
