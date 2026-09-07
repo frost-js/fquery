@@ -40,9 +40,8 @@ export function createSearchParams(data) {
  */
 export function createUrl(url) {
     const { location, URL } = getWindow();
-    const baseHref = (location.origin + location.pathname).replace(/\/$/, '');
 
-    return new URL(url, baseHref);
+    return new URL(url, location.href);
 };
 
 /**

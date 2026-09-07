@@ -138,7 +138,7 @@ function createSearchParams(data) {
 */
 function createUrl(url) {
 	const { location, URL } = getWindow();
-	return new URL(url, (location.origin + location.pathname).replace(/\/$/, ""));
+	return new URL(url, location.href);
 }
 /**
 * Gets the URLSearchParams from a URL string.
