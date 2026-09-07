@@ -115,12 +115,13 @@ function useTimeout(enable = true) {
 * @param {string} url The input URL.
 * @param {string} key The query string key.
 * @param {string|number} value The query string value.
+* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
 * @returns {string} The new URL.
 */
-function appendQueryString(url, key, value) {
-	const searchParams = getSearchParams(url);
+function appendQueryString(url, key, value, baseURI) {
+	const searchParams = getSearchParams(url, baseURI);
 	searchParams.append(key, value);
-	return setSearchParams(url, searchParams);
+	return setSearchParams(url, searchParams, baseURI);
 }
 /**
 * Creates URLSearchParams from input data.
@@ -134,19 +135,21 @@ function createSearchParams(data) {
 /**
 * Creates a URL from a URL string.
 * @param {string} url The URL.
+* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
 * @returns {URL} The URL.
 */
-function createUrl(url) {
-	const { location, URL } = getWindow();
-	return new URL(url, location.href);
+function createUrl(url, baseURI = getWindow().document.baseURI) {
+	const { URL } = getWindow();
+	return new URL(url, baseURI);
 }
 /**
 * Gets the URLSearchParams from a URL string.
 * @param {string} url The URL.
+* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
 * @returns {URLSearchParams} The URLSearchParams.
 */
-function getSearchParams(url) {
-	return createUrl(url).searchParams;
+function getSearchParams(url, baseURI) {
+	return createUrl(url, baseURI).searchParams;
 }
 /**
 * Returns a FormData object from form entries or a data object.
@@ -198,10 +201,11 @@ function parseValues(data) {
 * Sets the URLSearchParams for a URL string.
 * @param {string} url The URL.
 * @param {URLSearchParams} searchParams The URLSearchParams.
+* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
 * @returns {string} The new URL string.
 */
-function setSearchParams(url, searchParams) {
-	const urlData = createUrl(url);
+function setSearchParams(url, searchParams, baseURI) {
+	const urlData = createUrl(url, baseURI);
 	urlData.search = searchParams.toString();
 	return urlData.toString();
 }
@@ -6319,7 +6323,7 @@ function loadScript(url, attributes, { cache = true, context = getContext() } = 
 		type: "text/javascript",
 		...attributes
 	};
-	if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now());
+	if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now(), context.baseURI);
 	const script = context.createElement("script");
 	script.async = "async" in attributes ? isEnabled(attributes.async) : false;
 	for (const [key, value] of Object.entries(attributes)) setScriptAttribute(script, key, value);
@@ -6367,7 +6371,7 @@ function loadStyle(url, attributes, { cache = true, context = getContext() } = {
 		rel: "stylesheet",
 		...attributes
 	};
-	if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now());
+	if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now(), context.baseURI);
 	const link = context.createElement("link");
 	for (const [key, value] of Object.entries(attributes)) link.setAttribute(key, value);
 	context.head.appendChild(link);

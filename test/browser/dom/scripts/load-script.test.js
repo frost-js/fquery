@@ -60,6 +60,35 @@ test.describe('#loadScript', () => {
         expect(src).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?test=1&_=\d+$/);
     });
 
+    test('loads a script without cache using the document base URL', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.head.innerHTML = '<base href="/assets/">';
+            $.loadScript('test.js?test=1', null, { cache: false });
+        });
+
+        const script = page.locator('head script');
+        const src = await script.getAttribute('src');
+
+        await expect(script).toHaveCount(1);
+        expect(src).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?test=1&_=\d+$/);
+    });
+
+    test('loads a script without cache in a context with a different base URL', async ({ page }) => {
+        await page.evaluate((_) => {
+            const iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            const context = iframe.contentDocument;
+            context.head.innerHTML = '<base href="http://localhost:3001/assets/">';
+            $.loadScript('test.js?test=1', null, { cache: false, context });
+        });
+
+        const script = page.frameLocator('iframe').locator('head script');
+        const src = await script.getAttribute('src');
+
+        await expect(script).toHaveCount(1);
+        expect(src).toMatch(/^http:\/\/localhost:3001\/assets\/test\.js\?test=1&_=\d+$/);
+    });
+
     test('resolves when the script is loaded', async ({ page }) => {
         const data = await page.evaluate(async (_) => {
             await $.loadScript('assets/test.js');

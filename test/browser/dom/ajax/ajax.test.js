@@ -120,6 +120,38 @@ test.describe('#ajax', () => {
         });
     });
 
+    test('performs an AJAX request with a relative URL and data using the document base URL', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            document.head.innerHTML = '<base href="/app/">';
+
+            const response = await $.ajax({
+                url: './api',
+                data: {
+                    test1: 'Test 1',
+                    test2: 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/app/api?test1=Test+1&test2=Test+2',
+            },
+        });
+    });
+
     test('performs an AJAX request with method', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.ajax({
@@ -745,6 +777,23 @@ test.describe('#ajax', () => {
         });
 
         const match = response.xhr.url.match(/^http:\/\/localhost:3001\/app\/localhost\?_=(\d+)$/);
+
+        expect(match).toBeTruthy();
+    });
+
+    test('performs an AJAX request without cache using the document base URL', async ({ page }) => {
+        const response = await page.evaluate(async (_) => {
+            document.head.innerHTML = '<base href="/app/">';
+
+            const response = await $.ajax({
+                url: './api?test=1',
+                cache: false,
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        });
+
+        const match = response.xhr.url.match(/^http:\/\/localhost:3001\/app\/api\?test=1&_=(\d+)$/);
 
         expect(match).toBeTruthy();
     });

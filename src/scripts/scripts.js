@@ -50,7 +50,7 @@ export function loadScript(url, attributes, { cache = true, context = getContext
     };
 
     if (!cache) {
-        attributes.src = appendQueryString(attributes.src, '_', Date.now());
+        attributes.src = appendQueryString(attributes.src, '_', Date.now(), context.baseURI);
     }
 
     const script = context.createElement('script');

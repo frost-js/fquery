@@ -27,7 +27,7 @@ export function loadStyle(url, attributes, { cache = true, context = getContext(
     };
 
     if (!cache) {
-        attributes.href = appendQueryString(attributes.href, '_', Date.now());
+        attributes.href = appendQueryString(attributes.href, '_', Date.now(), context.baseURI);
     }
 
     const link = context.createElement('link');
