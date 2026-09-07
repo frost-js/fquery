@@ -46,6 +46,17 @@ test.describe('QuerySet #selectAll', () => {
         })).toBe('Test 2Test 3Test 4');
     });
 
+    test('selects text and element siblings for getSelection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('select');
+            node.innerHTML = 'Test 1<span>Test 2</span>Test 3';
+
+            $([node.firstChild, node.lastChild]).selectAll();
+            const selected = $.getSelection();
+            return selected.map((node) => node.textContent).join('');
+        })).toBe('Test 1Test 2Test 3');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('.select');

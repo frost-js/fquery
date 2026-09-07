@@ -59,6 +59,26 @@ test.describe('#getSelection', () => {
         })).toBe('');
     });
 
+    test('returns selected text and element siblings in order', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('select');
+            node.innerHTML = 'Test 1<span>Test 2</span>Test 3';
+            const range = document.createRange();
+            range.selectNodeContents(node);
+
+            const selection = document.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const selected = $.getSelection();
+            document.body.innerHTML = '';
+            for (const node of selected) {
+                document.body.appendChild(node);
+            }
+            return document.body.innerHTML;
+        })).toBe('Test 1<span>Test 2</span>Test 3');
+    });
+
     test('returns a selection contained in a text node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const node = document.getElementById('span1').firstChild;

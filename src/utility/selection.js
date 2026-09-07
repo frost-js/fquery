@@ -99,7 +99,7 @@ export function getSelection() {
         return [commonAncestor];
     }
 
-    const nodes = merge([], commonAncestor.querySelectorAll('*'));
+    const nodes = merge([], commonAncestor.childNodes);
 
     if (!nodes.length) {
         return [commonAncestor];
