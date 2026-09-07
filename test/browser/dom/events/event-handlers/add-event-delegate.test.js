@@ -85,6 +85,63 @@ test.describe('#addEventDelegate', () => {
         })).toBe(16);
     });
 
+    test('restores event targets for later native listeners', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = false;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const parent = document.getElementById('parent1');
+            const element = document.getElementById('test1');
+            $.addEventDelegate(parent, 'click', 'a', (_) => null);
+            parent.addEventListener('click', (e) => {
+                result = e.currentTarget === parent && e.delegateTarget === undefined;
+            });
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(true);
+    });
+
+    test('restores currentTarget as the event bubbles', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = false;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const parent = document.getElementById('parent1');
+            const element = document.getElementById('test1');
+            $.addEventDelegate(parent, 'click', 'a', (_) => null);
+            $.addEvent(parent, 'click', (_) => null);
+            document.body.addEventListener('click', (e) => {
+                result = e.currentTarget === document.body;
+            });
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(true);
+    });
+
+    test('restores event targets when a delegated callback throws', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = false;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const parent = document.getElementById('parent1');
+            const element = document.getElementById('test1');
+            window.addEventListener('error', (e) => {
+                e.preventDefault();
+            }, { once: true });
+            $.addEventDelegate(parent, 'click', 'a', (_) => {
+                throw new Error('Test error');
+            });
+            parent.addEventListener('click', (e) => {
+                result = e.currentTarget === parent && e.delegateTarget === undefined;
+            });
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(true);
+    });
+
     test('adds a namespaced delegated event to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

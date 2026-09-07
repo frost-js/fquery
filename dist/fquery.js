@@ -3057,26 +3057,12 @@
 				enumerable: true,
 				value: node
 			});
-			return callback(event);
-		};
-	}
-	/**
-	* Returns a wrapped event callback that cleans up delegate events.
-	* @param {Element|ShadowRoot|Document} node The input node.
-	* @param {EventCallback} callback The event callback.
-	* @returns {EventCallback} The cleaned event callback.
-	*/
-	function delegateFactoryClean(node, callback) {
-		return (event) => {
-			if (!event.delegateTarget) return callback(event);
-			Object.defineProperty(event, "currentTarget", {
-				configurable: true,
-				enumerable: true,
-				value: node
-			});
-			Object.defineProperty(event, "delegateTarget", { writable: true });
-			delete event.delegateTarget;
-			return callback(event);
+			try {
+				return callback(event);
+			} finally {
+				delete event.currentTarget;
+				delete event.delegateTarget;
+			}
 		};
 	}
 	/**
@@ -3180,7 +3166,6 @@
 				}));
 				realCallback = preventFactory(realCallback);
 				if (delegate) realCallback = delegateFactory(node, delegate, realCallback);
-				else realCallback = delegateFactoryClean(node, realCallback);
 				realCallback = namespaceFactory(eventName, realCallback);
 				eventData.realCallback = realCallback;
 				eventData.eventName = eventName;

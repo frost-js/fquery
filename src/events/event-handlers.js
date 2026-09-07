@@ -3,7 +3,7 @@
 import { parseNode, parseNodes } from './../filters.js';
 import { createEvent, eventNamespacedRegExp, parseEvent, parseEvents } from './../helpers.js';
 import { events } from './../vars.js';
-import { delegateFactory, delegateFactoryClean, namespaceFactory, preventFactory, selfDestructCallbackFactory } from './event-wrappers.js';
+import { delegateFactory, namespaceFactory, preventFactory, selfDestructCallbackFactory } from './event-wrappers.js';
 
 /**
  * @typedef {Element|Document|ShadowRoot|Window} EventTargetNode
@@ -88,8 +88,6 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
 
             if (delegate) {
                 realCallback = delegateFactory(node, delegate, realCallback);
-            } else {
-                realCallback = delegateFactoryClean(node, realCallback);
             }
 
             realCallback = namespaceFactory(eventName, realCallback);
