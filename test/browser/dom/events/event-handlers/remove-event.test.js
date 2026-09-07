@@ -97,6 +97,27 @@ test.describe('#removeEvent', () => {
         })).toBe(2);
     });
 
+    test('does not restore removed handlers when cloning nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let removedCount = 0;
+            let remainingCount = 0;
+            const callback = (_) => {
+                removedCount++;
+            };
+
+            $.addEvent('a', 'click', callback);
+            $.addEvent('a', 'click', (_) => {
+                remainingCount++;
+            });
+            $.removeEvent('a', 'click', callback);
+
+            const clones = $.clone('a', { events: true });
+            $.triggerEvent(clones, 'click');
+
+            return removedCount === 0 && remainingCount === 2;
+        })).toBe(true);
+    });
+
     test('removes a namespaced event from each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

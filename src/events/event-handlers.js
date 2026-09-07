@@ -256,6 +256,8 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
 
             if (!otherEvents.length) {
                 delete nodeEvents[realEventName];
+            } else {
+                nodeEvents[realEventName] = otherEvents;
             }
         }
 

@@ -2406,7 +2406,7 @@ function removeEvent$1(selector, eventNames, callback, { capture = null, delegat
 		const nodeEvents = events.get(node);
 		for (const [realEventName, realEvents] of Object.entries(nodeEvents)) {
 			if (eventLookup && !(realEventName in eventLookup)) continue;
-			if (!realEvents.filter((eventData) => {
+			const otherEvents = realEvents.filter((eventData) => {
 				if (eventLookup && !eventLookup[realEventName].some((eventName) => {
 					if (eventName === realEventName) return true;
 					const regExp = eventNamespacedRegExp(eventName);
@@ -2417,7 +2417,9 @@ function removeEvent$1(selector, eventNames, callback, { capture = null, delegat
 				if (capture !== null && capture !== eventData.capture) return true;
 				node.removeEventListener(realEventName, eventData.realCallback, eventData.capture);
 				return false;
-			}).length) delete nodeEvents[realEventName];
+			});
+			if (!otherEvents.length) delete nodeEvents[realEventName];
+			else nodeEvents[realEventName] = otherEvents;
 		}
 		if (!Object.keys(nodeEvents).length) events.delete(node);
 	}
