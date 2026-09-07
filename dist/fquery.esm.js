@@ -1795,12 +1795,13 @@ function serialize$1(selector) {
 * @returns {Array<{name: string, value: string}>} The serialized entries.
 */
 function serializeArray$1(selector) {
+	const window = getWindow();
 	return parseNodes(selector, {
 		fragment: true,
 		shadow: true
 	}).reduce((values, node) => {
-		if (isElement(node) && node.matches("form")) {
-			const elements = Reflect.get(getWindow().HTMLFormElement.prototype, "elements", node);
+		if (isElement(node) && window.Element.prototype.matches.call(node, "form")) {
+			const elements = Reflect.get(window.HTMLFormElement.prototype, "elements", node);
 			return values.concat(serializeArray$1(merge([], elements).filter((node) => node.matches("input, select, textarea"))));
 		}
 		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(node.querySelectorAll("input, select, textarea")));

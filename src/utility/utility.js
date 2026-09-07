@@ -85,15 +85,17 @@ export function serialize(selector) {
  * @returns {Array<{name: string, value: string}>} The serialized entries.
  */
 export function serializeArray(selector) {
+    const window = getWindow();
+
     return parseNodes(selector, {
         fragment: true,
         shadow: true,
     }).reduce(
         (values, node) => {
-            if (isElement(node) && node.matches('form')) {
+            if (isElement(node) && window.Element.prototype.matches.call(node, 'form')) {
                 // Named controls can shadow the form's elements property.
                 const elements = Reflect.get(
-                    getWindow().HTMLFormElement.prototype,
+                    window.HTMLFormElement.prototype,
                     'elements',
                     node,
                 );

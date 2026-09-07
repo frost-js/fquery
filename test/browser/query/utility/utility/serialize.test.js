@@ -128,6 +128,30 @@ test.describe('QuerySet #serialize', () => {
         })).toBe('test1=Test%201&test2=Test%202&test3=Test%203');
     });
 
+    test('serializes forms with a control named matches', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="matches" type="text" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>' +
+                '<input name="test3" type="text" value="Test 3" form="form">';
+            return $('#form').serialize();
+        })).toBe('matches=Test%201&test2=Test%202&test3=Test%203');
+    });
+
+    test('serializes forms with a control whose id is matches', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="test1" type="text" id="matches" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>' +
+                '<input name="test3" type="text" value="Test 3" form="form">';
+            return $('#form').serialize();
+        })).toBe('test1=Test%201&test2=Test%202&test3=Test%203');
+    });
+
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const range = document.createRange();
