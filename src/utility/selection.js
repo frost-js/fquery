@@ -93,6 +93,11 @@ export function getSelection() {
     }
 
     const range = selection.getRangeAt(0);
+
+    if (range.collapsed) {
+        return [];
+    }
+
     const commonAncestor = range.commonAncestorContainer;
 
     if (typeof commonAncestor.querySelectorAll !== 'function') {

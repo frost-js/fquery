@@ -59,6 +59,46 @@ test.describe('#getSelection', () => {
         })).toBe('');
     });
 
+    test('returns no nodes for a collapsed range inside text', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const range = document.createRange();
+            range.setStart(document.getElementById('span2').firstChild, 3);
+            range.collapse(true);
+
+            const selection = document.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const selected = $.getSelection();
+            document.body.innerHTML = '';
+            for (const node of selected) {
+                document.body.appendChild(node);
+            }
+            return document.body.innerHTML;
+        })).toBe('');
+    });
+
+    test('returns no nodes for a collapsed range inside an empty element', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('span2');
+            node.textContent = '';
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            range.collapse(true);
+
+            const selection = document.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const selected = $.getSelection();
+            document.body.innerHTML = '';
+            for (const node of selected) {
+                document.body.appendChild(node);
+            }
+            return document.body.innerHTML;
+        })).toBe('');
+    });
+
     test('returns selected text and element siblings in order', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const node = document.getElementById('select');

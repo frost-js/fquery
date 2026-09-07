@@ -6343,6 +6343,7 @@
 		const selection = getWindow().getSelection();
 		if (!selection.rangeCount) return [];
 		const range = selection.getRangeAt(0);
+		if (range.collapsed) return [];
 		const commonAncestor = range.commonAncestorContainer;
 		if (typeof commonAncestor.querySelectorAll !== "function") return [commonAncestor];
 		const nodes = merge([], commonAncestor.childNodes);
