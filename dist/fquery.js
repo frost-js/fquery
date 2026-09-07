@@ -46,12 +46,12 @@
 		isArray: () => isArray,
 		isArrayLike: () => isArrayLike,
 		isBoolean: () => isBoolean,
-		isDocument: () => isDocument,
-		isElement: () => isElement,
+		isDocument: () => isDocument$1,
+		isElement: () => isElement$1,
 		isFragment: () => isFragment,
 		isFunction: () => isFunction,
 		isNaN: () => isNaN,
-		isNode: () => isNode,
+		isNode: () => isNode$1,
 		isNull: () => isNull,
 		isNumeric: () => isNumeric,
 		isObject: () => isObject,
@@ -104,7 +104,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is array-like.
 	*/
-	var isArrayLike = (value) => isArray(value) || isObject(value) && !isFunction(value) && !isWindow(value) && !isElement(value) && (Symbol.iterator in value && isFunction(value[Symbol.iterator]) || "length" in value && isNumeric(value.length) && (!value.length || value.length - 1 in value));
+	var isArrayLike = (value) => isArray(value) || isObject(value) && !isFunction(value) && !isWindow(value) && !isElement$1(value) && (Symbol.iterator in value && isFunction(value[Symbol.iterator]) || "length" in value && isNumeric(value.length) && (!value.length || value.length - 1 in value));
 	/**
 	* Checks whether a value is a boolean.
 	* @param {*} value The value to test.
@@ -116,13 +116,13 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a Document.
 	*/
-	var isDocument = (value) => !!value && value.nodeType === DOCUMENT_NODE;
+	var isDocument$1 = (value) => !!value && value.nodeType === DOCUMENT_NODE;
 	/**
 	* Checks whether a value is an Element.
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is an Element.
 	*/
-	var isElement = (value) => !!value && value.nodeType === ELEMENT_NODE;
+	var isElement$1 = (value) => !!value && value.nodeType === ELEMENT_NODE;
 	/**
 	* Checks whether a value is a DocumentFragment (and not a ShadowRoot).
 	* @param {*} value The value to test.
@@ -146,7 +146,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is an Element, Text node, or Comment node.
 	*/
-	var isNode = (value) => !!value && (value.nodeType === ELEMENT_NODE || value.nodeType === TEXT_NODE || value.nodeType === COMMENT_NODE);
+	var isNode$1 = (value) => !!value && (value.nodeType === ELEMENT_NODE || value.nodeType === TEXT_NODE || value.nodeType === COMMENT_NODE);
 	/**
 	* Checks whether a value is null.
 	* @param {*} value The value to test.
@@ -884,6 +884,282 @@
 	var unescape = (string) => string.replace(/&(amp|lt|gt|quot|apos);/g, (_, code) => unescapeChars[code]);
 
 //#endregion
+//#region src/query/query-set-core.js
+/**
+	* Represents an ordered, chainable collection of DOM nodes.
+	*/
+	var QuerySet = class QuerySet {
+		#nodes;
+		/**
+		* Creates a QuerySet.
+		* @param {Array<Node|Window>} [nodes=[]] The input nodes.
+		*/
+		constructor(nodes = []) {
+			this.#nodes = nodes;
+		}
+		/**
+		* Gets the number of nodes.
+		* @returns {number} The number of nodes.
+		*/
+		get length() {
+			return this.#nodes.length;
+		}
+		/**
+		* Executes a function for each node in the set.
+		* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
+		* @returns {this} The current QuerySet.
+		*/
+		each(callback) {
+			this.#nodes.forEach((v, i) => callback(v, i));
+			return this;
+		}
+		/**
+		* Retrieves the DOM node(s) contained in the QuerySet.
+		* @param {number} [index=null] The index of the node.
+		* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
+		*/
+		get(index = null) {
+			if (index === null) return this.#nodes;
+			return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
+		}
+		/**
+		* Executes a function for each node in the set.
+		* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
+		* @returns {QuerySet} A new QuerySet object.
+		*/
+		map(callback) {
+			const nodes = this.#nodes.map(callback);
+			return new QuerySet(nodes);
+		}
+		/**
+		* Reduces the set of matched nodes to a subset specified by a range of indices.
+		* @param {number} [begin] The index to slice from.
+		* @param {number} [end]  The index to slice to.
+		* @returns {QuerySet} A new QuerySet object.
+		*/
+		slice(begin, end) {
+			const nodes = this.#nodes.slice(begin, end);
+			return new QuerySet(nodes);
+		}
+		/**
+		* Returns an iterable from the nodes.
+		* @returns {IterableIterator<Node|Window>} The node iterator.
+		*/
+		[Symbol.iterator]() {
+			return this.#nodes.values();
+		}
+	};
+
+//#endregion
+//#region src/helpers.js
+/**
+	* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
+	*/
+	/**
+	* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
+	*/
+	/**
+	* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
+	*/
+	/**
+	* @callback NodeFilterCallback
+	* @param {Node|Window} node The node to test.
+	* @returns {boolean} Whether the node matches.
+	*/
+	/**
+	* Creates a custom event.
+	* @param {string} type The event type.
+	* @param {CustomEventInit} [options] The event options.
+	* @returns {CustomEvent} The custom event.
+	*/
+	function createEvent(type, options) {
+		const { CustomEvent } = getWindow();
+		return new CustomEvent(type, options);
+	}
+	/**
+	* Creates a wrapped version of a function that executes once per tick.
+	* @template {(...args: any[]) => any} T
+	* @param {T} callback The callback to debounce.
+	* @returns {(...args: Parameters<T>) => void} The wrapped function.
+	*/
+	function debounce(callback) {
+		let running;
+		return (...args) => {
+			if (running) return;
+			running = true;
+			Promise.resolve().then((_) => {
+				try {
+					callback(...args);
+				} finally {
+					running = false;
+				}
+			});
+		};
+	}
+	/**
+	* Escapes a string for use as a CSS identifier.
+	* @param {string} value The value to escape.
+	* @returns {string} The escaped value.
+	*/
+	function escapeCSS(value) {
+		return getWindow().CSS.escape(value);
+	}
+	/**
+	* Returns a RegExp for testing a namespaced event.
+	* @param {string} event The namespaced event.
+	* @returns {RegExp} The namespaced event RegExp.
+	*/
+	function eventNamespacedRegExp(event) {
+		return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
+	}
+	/**
+	* Returns a DOM property from the prototype chain, bypassing own properties.
+	* @param {Node} node The node to read from.
+	* @param {string} property The property name.
+	* @returns {*} The property value.
+	*/
+	function getDOMProperty(node, property) {
+		return Reflect.get(Object.getPrototypeOf(node), property, node);
+	}
+	/**
+	* Returns a node type, using the prototype property when available.
+	* @param {*} value The value to read from.
+	* @returns {*} The node type.
+	*/
+	function getNodeType(value) {
+		return value && Object.getPrototypeOf(value) ? getDOMProperty(value, "nodeType") ?? value.nodeType : value?.nodeType;
+	}
+	/**
+	* Checks whether a value is a Document, ignoring named properties.
+	* @param {*} value The value to test.
+	* @returns {boolean} Whether the value is a Document.
+	*/
+	function isDocument(value) {
+		return isDocument$1({ nodeType: getNodeType(value) });
+	}
+	/**
+	* Checks whether a value is an Element, ignoring named properties.
+	* @param {*} value The value to test.
+	* @returns {boolean} Whether the value is an Element.
+	*/
+	function isElement(value) {
+		return isElement$1({ nodeType: getNodeType(value) });
+	}
+	/**
+	* Checks whether a value is an Element, Text node, or Comment node, ignoring named properties.
+	* @param {*} value The value to test.
+	* @returns {boolean} Whether the value is an Element, Text node, or Comment node.
+	*/
+	function isNode(value) {
+		return isNode$1({ nodeType: getNodeType(value) });
+	}
+	/**
+	* Normalizes a CSS property name.
+	* @param {string} style The CSS property name.
+	* @returns {string} The normalized CSS property name.
+	*/
+	function normalizeCssProperty(style) {
+		return style.startsWith("--") ? style : kebabCase(style);
+	}
+	/**
+	* Normalizes a CSS property value.
+	* @param {string} style The CSS property name.
+	* @param {string|number} value The CSS property value.
+	* @returns {string|number} The normalized CSS property value.
+	*/
+	function normalizeCssValue(style, value) {
+		if (style.startsWith("--") || !value || !isNumeric(value)) return value;
+		const { CSS } = getWindow();
+		return !CSS.supports(style, value) ? `${value}px` : value;
+	}
+	/**
+	* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
+	* @param {Array<string|string[]>} classList The classes to parse.
+	* @returns {string[]} The parsed classes.
+	*/
+	function parseClasses(classList) {
+		return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
+	}
+	/**
+	* Normalizes a key and value, or an existing data object, into a data object.
+	* @param {string|Record<string, *>} key The data key, or an object containing data.
+	* @param {*} [value] The data value.
+	* @param {{json?: boolean}} [options] The options for parsing data.
+	* @returns {Record<string, *>} The data object.
+	*/
+	function parseData(key, value, { json = false } = {}) {
+		const result = isString(key) ? { [key]: value } : key;
+		if (!json) return result;
+		return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
+	}
+	/**
+	* Parses a dataset string into a JavaScript value.
+	* @param {string} value The input value.
+	* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
+	*/
+	function parseDataset(value) {
+		if (isUndefined(value)) return value;
+		const lower = value.toLowerCase().trim();
+		if (["true", "on"].includes(lower)) return true;
+		if (["false", "off"].includes(lower)) return false;
+		if (lower === "null") return null;
+		if (isNumeric(lower)) return parseFloat(lower);
+		if (["{", "["].includes(lower.charAt(0))) try {
+			return JSON.parse(value);
+		} catch {}
+		return value;
+	}
+	/**
+	* Returns the base event name from a namespaced event.
+	* @param {string} event The namespaced event.
+	* @returns {string} The real event.
+	*/
+	function parseEvent(event) {
+		return event.split(".").shift();
+	}
+	/**
+	* Returns an array of events from a space-separated string.
+	* @param {string} events The events.
+	* @returns {string[]} The parsed events.
+	*/
+	function parseEvents(events) {
+		return events.split(" ");
+	}
+	/**
+	* Resolves a single node.
+	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+	* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
+	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+	* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
+	*/
+	function resolveNode(nodes, stringCallback, nodeFilter) {
+		if (isString(nodes)) return stringCallback(nodes);
+		if (nodeFilter(nodes)) return nodes;
+		if (nodes instanceof QuerySet) {
+			const node = nodes.get(0);
+			return nodeFilter(node) ? node : void 0;
+		}
+		if (nodes && typeof nodes.item === "function") {
+			const node = nodes.item(0);
+			return nodeFilter(node) ? node : void 0;
+		}
+	}
+	/**
+	* Resolves multiple nodes.
+	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+	* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
+	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+	* @returns {Array<Node|Window>} The resolved nodes.
+	*/
+	function resolveNodes(nodes, stringCallback, nodeFilter) {
+		if (isString(nodes)) return stringCallback(nodes);
+		if (nodeFilter(nodes)) return [nodes];
+		if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
+		if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
+		return [];
+	}
+
+//#endregion
 //#region src/config.js
 /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
 	/** @import { AnimationOptions } from './animation/animation.js'; */
@@ -1353,241 +1629,6 @@
 			method: "PUT",
 			...options
 		});
-	}
-
-//#endregion
-//#region src/query/query-set-core.js
-/**
-	* Represents an ordered, chainable collection of DOM nodes.
-	*/
-	var QuerySet = class QuerySet {
-		#nodes;
-		/**
-		* Creates a QuerySet.
-		* @param {Array<Node|Window>} [nodes=[]] The input nodes.
-		*/
-		constructor(nodes = []) {
-			this.#nodes = nodes;
-		}
-		/**
-		* Gets the number of nodes.
-		* @returns {number} The number of nodes.
-		*/
-		get length() {
-			return this.#nodes.length;
-		}
-		/**
-		* Executes a function for each node in the set.
-		* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
-		* @returns {this} The current QuerySet.
-		*/
-		each(callback) {
-			this.#nodes.forEach((v, i) => callback(v, i));
-			return this;
-		}
-		/**
-		* Retrieves the DOM node(s) contained in the QuerySet.
-		* @param {number} [index=null] The index of the node.
-		* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
-		*/
-		get(index = null) {
-			if (index === null) return this.#nodes;
-			return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
-		}
-		/**
-		* Executes a function for each node in the set.
-		* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
-		* @returns {QuerySet} A new QuerySet object.
-		*/
-		map(callback) {
-			const nodes = this.#nodes.map(callback);
-			return new QuerySet(nodes);
-		}
-		/**
-		* Reduces the set of matched nodes to a subset specified by a range of indices.
-		* @param {number} [begin] The index to slice from.
-		* @param {number} [end]  The index to slice to.
-		* @returns {QuerySet} A new QuerySet object.
-		*/
-		slice(begin, end) {
-			const nodes = this.#nodes.slice(begin, end);
-			return new QuerySet(nodes);
-		}
-		/**
-		* Returns an iterable from the nodes.
-		* @returns {IterableIterator<Node|Window>} The node iterator.
-		*/
-		[Symbol.iterator]() {
-			return this.#nodes.values();
-		}
-	};
-
-//#endregion
-//#region src/helpers.js
-/**
-	* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
-	*/
-	/**
-	* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
-	*/
-	/**
-	* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
-	*/
-	/**
-	* @callback NodeFilterCallback
-	* @param {Node|Window} node The node to test.
-	* @returns {boolean} Whether the node matches.
-	*/
-	/**
-	* Creates a custom event.
-	* @param {string} type The event type.
-	* @param {CustomEventInit} [options] The event options.
-	* @returns {CustomEvent} The custom event.
-	*/
-	function createEvent(type, options) {
-		const { CustomEvent } = getWindow();
-		return new CustomEvent(type, options);
-	}
-	/**
-	* Creates a wrapped version of a function that executes once per tick.
-	* @template {(...args: any[]) => any} T
-	* @param {T} callback The callback to debounce.
-	* @returns {(...args: Parameters<T>) => void} The wrapped function.
-	*/
-	function debounce(callback) {
-		let running;
-		return (...args) => {
-			if (running) return;
-			running = true;
-			Promise.resolve().then((_) => {
-				try {
-					callback(...args);
-				} finally {
-					running = false;
-				}
-			});
-		};
-	}
-	/**
-	* Escapes a string for use as a CSS identifier.
-	* @param {string} value The value to escape.
-	* @returns {string} The escaped value.
-	*/
-	function escapeCSS(value) {
-		return getWindow().CSS.escape(value);
-	}
-	/**
-	* Returns a RegExp for testing a namespaced event.
-	* @param {string} event The namespaced event.
-	* @returns {RegExp} The namespaced event RegExp.
-	*/
-	function eventNamespacedRegExp(event) {
-		return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
-	}
-	/**
-	* Normalizes a CSS property name.
-	* @param {string} style The CSS property name.
-	* @returns {string} The normalized CSS property name.
-	*/
-	function normalizeCssProperty(style) {
-		return style.startsWith("--") ? style : kebabCase(style);
-	}
-	/**
-	* Normalizes a CSS property value.
-	* @param {string} style The CSS property name.
-	* @param {string|number} value The CSS property value.
-	* @returns {string|number} The normalized CSS property value.
-	*/
-	function normalizeCssValue(style, value) {
-		if (style.startsWith("--") || !value || !isNumeric(value)) return value;
-		const { CSS } = getWindow();
-		return !CSS.supports(style, value) ? `${value}px` : value;
-	}
-	/**
-	* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
-	* @param {Array<string|string[]>} classList The classes to parse.
-	* @returns {string[]} The parsed classes.
-	*/
-	function parseClasses(classList) {
-		return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
-	}
-	/**
-	* Normalizes a key and value, or an existing data object, into a data object.
-	* @param {string|Record<string, *>} key The data key, or an object containing data.
-	* @param {*} [value] The data value.
-	* @param {{json?: boolean}} [options] The options for parsing data.
-	* @returns {Record<string, *>} The data object.
-	*/
-	function parseData(key, value, { json = false } = {}) {
-		const result = isString(key) ? { [key]: value } : key;
-		if (!json) return result;
-		return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
-	}
-	/**
-	* Parses a dataset string into a JavaScript value.
-	* @param {string} value The input value.
-	* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
-	*/
-	function parseDataset(value) {
-		if (isUndefined(value)) return value;
-		const lower = value.toLowerCase().trim();
-		if (["true", "on"].includes(lower)) return true;
-		if (["false", "off"].includes(lower)) return false;
-		if (lower === "null") return null;
-		if (isNumeric(lower)) return parseFloat(lower);
-		if (["{", "["].includes(lower.charAt(0))) try {
-			return JSON.parse(value);
-		} catch {}
-		return value;
-	}
-	/**
-	* Returns the base event name from a namespaced event.
-	* @param {string} event The namespaced event.
-	* @returns {string} The real event.
-	*/
-	function parseEvent(event) {
-		return event.split(".").shift();
-	}
-	/**
-	* Returns an array of events from a space-separated string.
-	* @param {string} events The events.
-	* @returns {string[]} The parsed events.
-	*/
-	function parseEvents(events) {
-		return events.split(" ");
-	}
-	/**
-	* Resolves a single node.
-	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-	* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
-	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-	* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
-	*/
-	function resolveNode(nodes, stringCallback, nodeFilter) {
-		if (isString(nodes)) return stringCallback(nodes);
-		if (nodeFilter(nodes)) return nodes;
-		if (nodes instanceof QuerySet) {
-			const node = nodes.get(0);
-			return nodeFilter(node) ? node : void 0;
-		}
-		if (nodes && typeof nodes.item === "function") {
-			const node = nodes.item(0);
-			return nodeFilter(node) ? node : void 0;
-		}
-	}
-	/**
-	* Resolves multiple nodes.
-	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-	* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
-	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-	* @returns {Array<Node|Window>} The resolved nodes.
-	*/
-	function resolveNodes(nodes, stringCallback, nodeFilter) {
-		if (isString(nodes)) return stringCallback(nodes);
-		if (nodeFilter(nodes)) return [nodes];
-		if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
-		if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
-		return [];
 	}
 
 //#endregion
@@ -7551,7 +7592,12 @@
 		wrapInner: wrapInner$1,
 		wrapSelection: wrapSelection$1
 	});
-	for (const [key, value] of Object.entries(frost_core_esm_exports)) query[`_${key}`] = value;
+	for (const [key, value] of Object.entries({
+		...frost_core_esm_exports,
+		isDocument,
+		isElement,
+		isNode
+	})) query[`_${key}`] = value;
 	var fquery_default = query;
 
 //#endregion

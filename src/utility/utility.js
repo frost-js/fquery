@@ -3,10 +3,11 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { isDocument, isElement, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
+import { isFragment, isShadow, isWindow, merge } from '@fr0st/core';
 import { parseParams } from './../ajax/helpers.js';
 import { getContext, getWindow } from './../config.js';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
+import { isDocument, isElement } from './../helpers.js';
 
 /**
  * Executes a command in the document context.

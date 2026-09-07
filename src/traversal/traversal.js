@@ -1,8 +1,9 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { isDocument, isElement, merge, unique } from '@fr0st/core';
+import { merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
+import { isDocument, isElement } from './../helpers.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './../utility/utility.js';
 

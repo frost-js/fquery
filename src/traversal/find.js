@@ -1,8 +1,8 @@
 /** @import QuerySet from '../query/query-set.js'; */
 
-import { isArray, isDocument, isElement, isFragment, isShadow, merge, unique } from '@fr0st/core';
+import { isArray, isFragment, isShadow, merge, unique } from '@fr0st/core';
 import { getContext } from './../config.js';
-import { escapeCSS, resolveNodes } from './../helpers.js';
+import { escapeCSS, isDocument, isElement, resolveNodes } from './../helpers.js';
 
 /**
  * @typedef {Element|Document|DocumentFragment|ShadowRoot} QueryContext

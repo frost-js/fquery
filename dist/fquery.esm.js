@@ -1,6 +1,282 @@
 import * as _ from "@fr0st/core";
 import { camelCase, clamp, clampPercent, dist, escapeRegExp, evaluate, extend, isArray, isDocument, isElement, isFragment, isFunction, isNode, isNumeric, isObject, isShadow, isString, isUndefined, isWindow, kebabCase, merge, unique, wrap } from "@fr0st/core";
 
+//#region src/query/query-set-core.js
+/**
+* Represents an ordered, chainable collection of DOM nodes.
+*/
+var QuerySet = class QuerySet {
+	#nodes;
+	/**
+	* Creates a QuerySet.
+	* @param {Array<Node|Window>} [nodes=[]] The input nodes.
+	*/
+	constructor(nodes = []) {
+		this.#nodes = nodes;
+	}
+	/**
+	* Gets the number of nodes.
+	* @returns {number} The number of nodes.
+	*/
+	get length() {
+		return this.#nodes.length;
+	}
+	/**
+	* Executes a function for each node in the set.
+	* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
+	* @returns {this} The current QuerySet.
+	*/
+	each(callback) {
+		this.#nodes.forEach((v, i) => callback(v, i));
+		return this;
+	}
+	/**
+	* Retrieves the DOM node(s) contained in the QuerySet.
+	* @param {number} [index=null] The index of the node.
+	* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
+	*/
+	get(index = null) {
+		if (index === null) return this.#nodes;
+		return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
+	}
+	/**
+	* Executes a function for each node in the set.
+	* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
+	* @returns {QuerySet} A new QuerySet object.
+	*/
+	map(callback) {
+		const nodes = this.#nodes.map(callback);
+		return new QuerySet(nodes);
+	}
+	/**
+	* Reduces the set of matched nodes to a subset specified by a range of indices.
+	* @param {number} [begin] The index to slice from.
+	* @param {number} [end]  The index to slice to.
+	* @returns {QuerySet} A new QuerySet object.
+	*/
+	slice(begin, end) {
+		const nodes = this.#nodes.slice(begin, end);
+		return new QuerySet(nodes);
+	}
+	/**
+	* Returns an iterable from the nodes.
+	* @returns {IterableIterator<Node|Window>} The node iterator.
+	*/
+	[Symbol.iterator]() {
+		return this.#nodes.values();
+	}
+};
+
+//#endregion
+//#region src/helpers.js
+/**
+* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
+*/
+/**
+* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
+*/
+/**
+* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
+*/
+/**
+* @callback NodeFilterCallback
+* @param {Node|Window} node The node to test.
+* @returns {boolean} Whether the node matches.
+*/
+/**
+* Creates a custom event.
+* @param {string} type The event type.
+* @param {CustomEventInit} [options] The event options.
+* @returns {CustomEvent} The custom event.
+*/
+function createEvent(type, options) {
+	const { CustomEvent } = getWindow();
+	return new CustomEvent(type, options);
+}
+/**
+* Creates a wrapped version of a function that executes once per tick.
+* @template {(...args: any[]) => any} T
+* @param {T} callback The callback to debounce.
+* @returns {(...args: Parameters<T>) => void} The wrapped function.
+*/
+function debounce(callback) {
+	let running;
+	return (...args) => {
+		if (running) return;
+		running = true;
+		Promise.resolve().then((_) => {
+			try {
+				callback(...args);
+			} finally {
+				running = false;
+			}
+		});
+	};
+}
+/**
+* Escapes a string for use as a CSS identifier.
+* @param {string} value The value to escape.
+* @returns {string} The escaped value.
+*/
+function escapeCSS(value) {
+	return getWindow().CSS.escape(value);
+}
+/**
+* Returns a RegExp for testing a namespaced event.
+* @param {string} event The namespaced event.
+* @returns {RegExp} The namespaced event RegExp.
+*/
+function eventNamespacedRegExp(event) {
+	return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
+}
+/**
+* Returns a DOM property from the prototype chain, bypassing own properties.
+* @param {Node} node The node to read from.
+* @param {string} property The property name.
+* @returns {*} The property value.
+*/
+function getDOMProperty(node, property) {
+	return Reflect.get(Object.getPrototypeOf(node), property, node);
+}
+/**
+* Returns a node type, using the prototype property when available.
+* @param {*} value The value to read from.
+* @returns {*} The node type.
+*/
+function getNodeType(value) {
+	return value && Object.getPrototypeOf(value) ? getDOMProperty(value, "nodeType") ?? value.nodeType : value?.nodeType;
+}
+/**
+* Checks whether a value is a Document, ignoring named properties.
+* @param {*} value The value to test.
+* @returns {boolean} Whether the value is a Document.
+*/
+function isDocument$1(value) {
+	return isDocument({ nodeType: getNodeType(value) });
+}
+/**
+* Checks whether a value is an Element, ignoring named properties.
+* @param {*} value The value to test.
+* @returns {boolean} Whether the value is an Element.
+*/
+function isElement$1(value) {
+	return isElement({ nodeType: getNodeType(value) });
+}
+/**
+* Checks whether a value is an Element, Text node, or Comment node, ignoring named properties.
+* @param {*} value The value to test.
+* @returns {boolean} Whether the value is an Element, Text node, or Comment node.
+*/
+function isNode$1(value) {
+	return isNode({ nodeType: getNodeType(value) });
+}
+/**
+* Normalizes a CSS property name.
+* @param {string} style The CSS property name.
+* @returns {string} The normalized CSS property name.
+*/
+function normalizeCssProperty(style) {
+	return style.startsWith("--") ? style : kebabCase(style);
+}
+/**
+* Normalizes a CSS property value.
+* @param {string} style The CSS property name.
+* @param {string|number} value The CSS property value.
+* @returns {string|number} The normalized CSS property value.
+*/
+function normalizeCssValue(style, value) {
+	if (style.startsWith("--") || !value || !isNumeric(value)) return value;
+	const { CSS } = getWindow();
+	return !CSS.supports(style, value) ? `${value}px` : value;
+}
+/**
+* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
+* @param {Array<string|string[]>} classList The classes to parse.
+* @returns {string[]} The parsed classes.
+*/
+function parseClasses(classList) {
+	return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
+}
+/**
+* Normalizes a key and value, or an existing data object, into a data object.
+* @param {string|Record<string, *>} key The data key, or an object containing data.
+* @param {*} [value] The data value.
+* @param {{json?: boolean}} [options] The options for parsing data.
+* @returns {Record<string, *>} The data object.
+*/
+function parseData(key, value, { json = false } = {}) {
+	const result = isString(key) ? { [key]: value } : key;
+	if (!json) return result;
+	return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
+}
+/**
+* Parses a dataset string into a JavaScript value.
+* @param {string} value The input value.
+* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
+*/
+function parseDataset(value) {
+	if (isUndefined(value)) return value;
+	const lower = value.toLowerCase().trim();
+	if (["true", "on"].includes(lower)) return true;
+	if (["false", "off"].includes(lower)) return false;
+	if (lower === "null") return null;
+	if (isNumeric(lower)) return parseFloat(lower);
+	if (["{", "["].includes(lower.charAt(0))) try {
+		return JSON.parse(value);
+	} catch {}
+	return value;
+}
+/**
+* Returns the base event name from a namespaced event.
+* @param {string} event The namespaced event.
+* @returns {string} The real event.
+*/
+function parseEvent(event) {
+	return event.split(".").shift();
+}
+/**
+* Returns an array of events from a space-separated string.
+* @param {string} events The events.
+* @returns {string[]} The parsed events.
+*/
+function parseEvents(events) {
+	return events.split(" ");
+}
+/**
+* Resolves a single node.
+* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
+* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
+*/
+function resolveNode(nodes, stringCallback, nodeFilter) {
+	if (isString(nodes)) return stringCallback(nodes);
+	if (nodeFilter(nodes)) return nodes;
+	if (nodes instanceof QuerySet) {
+		const node = nodes.get(0);
+		return nodeFilter(node) ? node : void 0;
+	}
+	if (nodes && typeof nodes.item === "function") {
+		const node = nodes.item(0);
+		return nodeFilter(node) ? node : void 0;
+	}
+}
+/**
+* Resolves multiple nodes.
+* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
+* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+* @returns {Array<Node|Window>} The resolved nodes.
+*/
+function resolveNodes(nodes, stringCallback, nodeFilter) {
+	if (isString(nodes)) return stringCallback(nodes);
+	if (nodeFilter(nodes)) return [nodes];
+	if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
+	if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
+	return [];
+}
+
+//#endregion
 //#region src/config.js
 /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
 /** @import { AnimationOptions } from './animation/animation.js'; */
@@ -85,7 +361,7 @@ function setAnimationDefaults(options) {
 * @throws {Error} When context is not a Document.
 */
 function setContext(context) {
-	if (!isDocument(context)) throw new Error("fQuery requires a valid Document.");
+	if (!isDocument$1(context)) throw new Error("fQuery requires a valid Document.");
 	config.context = context;
 }
 /**
@@ -473,241 +749,6 @@ function put(url, data, options) {
 }
 
 //#endregion
-//#region src/query/query-set-core.js
-/**
-* Represents an ordered, chainable collection of DOM nodes.
-*/
-var QuerySet = class QuerySet {
-	#nodes;
-	/**
-	* Creates a QuerySet.
-	* @param {Array<Node|Window>} [nodes=[]] The input nodes.
-	*/
-	constructor(nodes = []) {
-		this.#nodes = nodes;
-	}
-	/**
-	* Gets the number of nodes.
-	* @returns {number} The number of nodes.
-	*/
-	get length() {
-		return this.#nodes.length;
-	}
-	/**
-	* Executes a function for each node in the set.
-	* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
-	* @returns {this} The current QuerySet.
-	*/
-	each(callback) {
-		this.#nodes.forEach((v, i) => callback(v, i));
-		return this;
-	}
-	/**
-	* Retrieves the DOM node(s) contained in the QuerySet.
-	* @param {number} [index=null] The index of the node.
-	* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
-	*/
-	get(index = null) {
-		if (index === null) return this.#nodes;
-		return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
-	}
-	/**
-	* Executes a function for each node in the set.
-	* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
-	* @returns {QuerySet} A new QuerySet object.
-	*/
-	map(callback) {
-		const nodes = this.#nodes.map(callback);
-		return new QuerySet(nodes);
-	}
-	/**
-	* Reduces the set of matched nodes to a subset specified by a range of indices.
-	* @param {number} [begin] The index to slice from.
-	* @param {number} [end]  The index to slice to.
-	* @returns {QuerySet} A new QuerySet object.
-	*/
-	slice(begin, end) {
-		const nodes = this.#nodes.slice(begin, end);
-		return new QuerySet(nodes);
-	}
-	/**
-	* Returns an iterable from the nodes.
-	* @returns {IterableIterator<Node|Window>} The node iterator.
-	*/
-	[Symbol.iterator]() {
-		return this.#nodes.values();
-	}
-};
-
-//#endregion
-//#region src/helpers.js
-/**
-* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
-*/
-/**
-* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
-*/
-/**
-* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
-*/
-/**
-* @callback NodeFilterCallback
-* @param {Node|Window} node The node to test.
-* @returns {boolean} Whether the node matches.
-*/
-/**
-* Creates a custom event.
-* @param {string} type The event type.
-* @param {CustomEventInit} [options] The event options.
-* @returns {CustomEvent} The custom event.
-*/
-function createEvent(type, options) {
-	const { CustomEvent } = getWindow();
-	return new CustomEvent(type, options);
-}
-/**
-* Creates a wrapped version of a function that executes once per tick.
-* @template {(...args: any[]) => any} T
-* @param {T} callback The callback to debounce.
-* @returns {(...args: Parameters<T>) => void} The wrapped function.
-*/
-function debounce(callback) {
-	let running;
-	return (...args) => {
-		if (running) return;
-		running = true;
-		Promise.resolve().then((_) => {
-			try {
-				callback(...args);
-			} finally {
-				running = false;
-			}
-		});
-	};
-}
-/**
-* Escapes a string for use as a CSS identifier.
-* @param {string} value The value to escape.
-* @returns {string} The escaped value.
-*/
-function escapeCSS(value) {
-	return getWindow().CSS.escape(value);
-}
-/**
-* Returns a RegExp for testing a namespaced event.
-* @param {string} event The namespaced event.
-* @returns {RegExp} The namespaced event RegExp.
-*/
-function eventNamespacedRegExp(event) {
-	return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
-}
-/**
-* Normalizes a CSS property name.
-* @param {string} style The CSS property name.
-* @returns {string} The normalized CSS property name.
-*/
-function normalizeCssProperty(style) {
-	return style.startsWith("--") ? style : kebabCase(style);
-}
-/**
-* Normalizes a CSS property value.
-* @param {string} style The CSS property name.
-* @param {string|number} value The CSS property value.
-* @returns {string|number} The normalized CSS property value.
-*/
-function normalizeCssValue(style, value) {
-	if (style.startsWith("--") || !value || !isNumeric(value)) return value;
-	const { CSS } = getWindow();
-	return !CSS.supports(style, value) ? `${value}px` : value;
-}
-/**
-* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
-* @param {Array<string|string[]>} classList The classes to parse.
-* @returns {string[]} The parsed classes.
-*/
-function parseClasses(classList) {
-	return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
-}
-/**
-* Normalizes a key and value, or an existing data object, into a data object.
-* @param {string|Record<string, *>} key The data key, or an object containing data.
-* @param {*} [value] The data value.
-* @param {{json?: boolean}} [options] The options for parsing data.
-* @returns {Record<string, *>} The data object.
-*/
-function parseData(key, value, { json = false } = {}) {
-	const result = isString(key) ? { [key]: value } : key;
-	if (!json) return result;
-	return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
-}
-/**
-* Parses a dataset string into a JavaScript value.
-* @param {string} value The input value.
-* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
-*/
-function parseDataset(value) {
-	if (isUndefined(value)) return value;
-	const lower = value.toLowerCase().trim();
-	if (["true", "on"].includes(lower)) return true;
-	if (["false", "off"].includes(lower)) return false;
-	if (lower === "null") return null;
-	if (isNumeric(lower)) return parseFloat(lower);
-	if (["{", "["].includes(lower.charAt(0))) try {
-		return JSON.parse(value);
-	} catch {}
-	return value;
-}
-/**
-* Returns the base event name from a namespaced event.
-* @param {string} event The namespaced event.
-* @returns {string} The real event.
-*/
-function parseEvent(event) {
-	return event.split(".").shift();
-}
-/**
-* Returns an array of events from a space-separated string.
-* @param {string} events The events.
-* @returns {string[]} The parsed events.
-*/
-function parseEvents(events) {
-	return events.split(" ");
-}
-/**
-* Resolves a single node.
-* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
-* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
-*/
-function resolveNode(nodes, stringCallback, nodeFilter) {
-	if (isString(nodes)) return stringCallback(nodes);
-	if (nodeFilter(nodes)) return nodes;
-	if (nodes instanceof QuerySet) {
-		const node = nodes.get(0);
-		return nodeFilter(node) ? node : void 0;
-	}
-	if (nodes && typeof nodes.item === "function") {
-		const node = nodes.item(0);
-		return nodeFilter(node) ? node : void 0;
-	}
-}
-/**
-* Resolves multiple nodes.
-* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
-* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-* @returns {Array<Node|Window>} The resolved nodes.
-*/
-function resolveNodes(nodes, stringCallback, nodeFilter) {
-	if (isString(nodes)) return stringCallback(nodes);
-	if (nodeFilter(nodes)) return [nodes];
-	if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
-	if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
-	return [];
-}
-
-//#endregion
 //#region src/parser/parser.js
 /**
 * Creates a Document object from a string.
@@ -745,7 +786,7 @@ function parseHTML(html) {
 * @returns {QueryContext[]} The resolved contexts.
 */
 function resolveContexts(context) {
-	const nodeFilter = (node) => isDocument(node) || isElement(node) || isFragment(node) || isShadow(node);
+	const nodeFilter = (node) => isDocument$1(node) || isElement$1(node) || isFragment(node) || isShadow(node);
 	if (!isArray(context)) return resolveNodes(context, find$1, nodeFilter);
 	const results = context.flatMap((node) => resolveNodes(node, find$1, nodeFilter));
 	return context.length > 1 && results.length > 1 ? unique(results) : results;
@@ -764,7 +805,7 @@ function find$1(selector, context = getContext()) {
 		if (match[1] === ".") return findByClass$1(match[2], context);
 		return findByTag$1(match[2], context);
 	}
-	if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
+	if (isDocument$1(context) || isElement$1(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
 	const nodes = resolveContexts(context);
 	const results = [];
 	for (const node of nodes) {
@@ -780,7 +821,7 @@ function find$1(selector, context = getContext()) {
 * @returns {Element[]} The matching nodes.
 */
 function findByClass$1(className, context = getContext()) {
-	if (isDocument(context) || isElement(context)) return merge([], context.getElementsByClassName(className));
+	if (isDocument$1(context) || isElement$1(context)) return merge([], context.getElementsByClassName(className));
 	const selector = `.${escapeCSS(className)}`;
 	if (isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
 	const nodes = resolveContexts(context);
@@ -799,7 +840,7 @@ function findByClass$1(className, context = getContext()) {
 */
 function findById$1(id, context = getContext()) {
 	const selector = `#${escapeCSS(id)}`;
-	if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
+	if (isDocument$1(context) || isElement$1(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
 	const nodes = resolveContexts(context);
 	const results = [];
 	for (const node of nodes) {
@@ -815,7 +856,7 @@ function findById$1(id, context = getContext()) {
 * @returns {Element[]} The matching nodes.
 */
 function findByTag$1(tagName, context = getContext()) {
-	if (isDocument(context) || isElement(context)) return merge([], context.getElementsByTagName(tagName));
+	if (isDocument$1(context) || isElement$1(context)) return merge([], context.getElementsByTagName(tagName));
 	if (isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(tagName));
 	const nodes = resolveContexts(context);
 	const results = [];
@@ -839,7 +880,7 @@ function findOne$1(selector, context = getContext()) {
 		if (match[1] === ".") return findOneByClass$1(match[2], context);
 		return findOneByTag$1(match[2], context);
 	}
-	if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
+	if (isDocument$1(context) || isElement$1(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
 	const nodes = resolveContexts(context);
 	if (!nodes.length) return;
 	for (const node of nodes) {
@@ -855,7 +896,7 @@ function findOne$1(selector, context = getContext()) {
 * @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 */
 function findOneByClass$1(className, context = getContext()) {
-	if (isDocument(context) || isElement(context)) return context.getElementsByClassName(className).item(0);
+	if (isDocument$1(context) || isElement$1(context)) return context.getElementsByClassName(className).item(0);
 	const selector = `.${escapeCSS(className)}`;
 	if (isFragment(context) || isShadow(context)) return context.querySelector(selector);
 	const nodes = resolveContexts(context);
@@ -873,13 +914,13 @@ function findOneByClass$1(className, context = getContext()) {
 * @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 */
 function findOneById$1(id, context = getContext()) {
-	if (isDocument(context)) return context.getElementById(id);
+	if (isDocument$1(context)) return context.getElementById(id);
 	const selector = `#${escapeCSS(id)}`;
-	if (isElement(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
+	if (isElement$1(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
 	const nodes = resolveContexts(context);
 	if (!nodes.length) return;
 	for (const node of nodes) {
-		const result = isDocument(node) ? node.getElementById(id) : node.querySelector(selector);
+		const result = isDocument$1(node) ? node.getElementById(id) : node.querySelector(selector);
 		if (result) return result;
 	}
 	return null;
@@ -891,7 +932,7 @@ function findOneById$1(id, context = getContext()) {
 * @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 */
 function findOneByTag$1(tagName, context = getContext()) {
-	if (isDocument(context) || isElement(context)) return context.getElementsByTagName(tagName).item(0);
+	if (isDocument$1(context) || isElement$1(context)) return context.getElementsByTagName(tagName).item(0);
 	if (isFragment(context) || isShadow(context)) return context.querySelector(tagName);
 	const nodes = resolveContexts(context);
 	if (!nodes.length) return;
@@ -930,8 +971,8 @@ function findOneByTag$1(tagName, context = getContext()) {
 function parseFilter(filter, defaultValue = true) {
 	if (!filter) return (_) => defaultValue;
 	if (isFunction(filter)) return filter;
-	if (isString(filter)) return (node) => isElement(node) && node.matches(filter);
-	if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.isSameNode(filter);
+	if (isString(filter)) return (node) => isElement$1(node) && node.matches(filter);
+	if (isNode$1(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.isSameNode(filter);
 	filter = parseNodes(filter, {
 		node: true,
 		fragment: true,
@@ -950,7 +991,7 @@ function parseFilterContains(filter, defaultValue = true) {
 	if (!filter) return (_) => defaultValue;
 	if (isFunction(filter)) return (node) => merge([], node.querySelectorAll("*")).some(filter);
 	if (isString(filter)) return (node) => !!findOne$1(filter, node);
-	if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.contains(filter);
+	if (isNode$1(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.contains(filter);
 	filter = parseNodes(filter, {
 		node: true,
 		fragment: true,
@@ -995,11 +1036,11 @@ function parseNodes(nodes, options = {}) {
 * @returns {NodeFilterCallback} The node filter function.
 */
 function parseNodesFilter(options) {
-	if (!options) return isElement;
+	if (!options) return isElement$1;
 	const callbacks = [];
-	if (options.node) callbacks.push(isNode);
-	else callbacks.push(isElement);
-	if (options.document) callbacks.push(isDocument);
+	if (options.node) callbacks.push(isNode$1);
+	else callbacks.push(isElement$1);
+	if (options.document) callbacks.push(isDocument$1);
 	if (options.window) callbacks.push(isWindow);
 	if (options.fragment) callbacks.push(isFragment);
 	if (options.shadow) callbacks.push(isShadow);
@@ -1804,15 +1845,15 @@ function serializeArray$1(selector) {
 		fragment: true,
 		shadow: true
 	}).reduce((values, node) => {
-		if (isElement(node) && window.Element.prototype.matches.call(node, "form")) {
+		if (isElement$1(node) && window.Element.prototype.matches.call(node, "form")) {
 			const elements = Reflect.get(window.HTMLFormElement.prototype, "elements", node);
 			return values.concat(serializeArray$1(merge([], elements).filter((node) => node.matches("input, select, textarea"))));
 		}
 		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(node.querySelectorAll("input, select, textarea")));
-		if (isElement(node) && node.matches(":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
+		if (isElement$1(node) && node.matches(":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
 		const name = node.getAttribute("name");
 		if (!name) return values;
-		if (isElement(node) && node.matches("select")) for (const option of node.selectedOptions) {
+		if (isElement$1(node) && node.matches("select")) for (const option of node.selectedOptions) {
 			if (option.matches(":disabled")) continue;
 			values.push({
 				name,
@@ -1842,8 +1883,8 @@ function sort$1(selector) {
 	}).sort((node, other) => {
 		if (isWindow(node)) return 1;
 		if (isWindow(other)) return -1;
-		if (isDocument(node)) return 1;
-		if (isDocument(other)) return -1;
+		if (isDocument$1(node)) return 1;
+		if (isDocument$1(other)) return -1;
 		if (isFragment(other)) return 1;
 		if (isFragment(node)) return -1;
 		const isNodeShadow = isShadow(node);
@@ -1970,7 +2011,7 @@ function next$1(selector, nodeFilter) {
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
 	for (let node of nodes) while (node = node.nextSibling) {
-		if (!isElement(node)) continue;
+		if (!isElement$1(node)) continue;
 		if (nodeFilter(node)) results.push(node);
 		break;
 	}
@@ -1990,7 +2031,7 @@ function nextAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
 	for (let node of nodes) while (node = node.nextSibling) {
-		if (!isElement(node)) continue;
+		if (!isElement$1(node)) continue;
 		if (limitFilter(node)) break;
 		if (!nodeFilter(node)) continue;
 		results.push(node);
@@ -2042,7 +2083,7 @@ function parents$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
 	for (let node of nodes) {
 		const parents = [];
 		while (node = node.parentNode) {
-			if (isDocument(node)) break;
+			if (isDocument$1(node)) break;
 			if (limitFilter(node)) break;
 			if (!nodeFilter(node)) continue;
 			parents.unshift(node);
@@ -2063,7 +2104,7 @@ function prev$1(selector, nodeFilter) {
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
 	for (let node of nodes) while (node = node.previousSibling) {
-		if (!isElement(node)) continue;
+		if (!isElement$1(node)) continue;
 		if (nodeFilter(node)) results.push(node);
 		break;
 	}
@@ -2085,7 +2126,7 @@ function prevAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
 	for (let node of nodes) {
 		const siblings = [];
 		while (node = node.previousSibling) {
-			if (!isElement(node)) continue;
+			if (!isElement$1(node)) continue;
 			if (limitFilter(node)) break;
 			if (!nodeFilter(node)) continue;
 			siblings.unshift(node);
@@ -2577,7 +2618,7 @@ function empty$1(selector) {
 	for (const node of nodes) {
 		const childNodes = merge([], node.childNodes);
 		for (const child of childNodes) {
-			if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
+			if (isElement$1(child) || isFragment(child) || isShadow(child)) removeNode(child);
 			child.remove();
 		}
 	}
@@ -2593,8 +2634,8 @@ function remove$1(selector) {
 		shadow: true
 	});
 	for (const node of nodes) {
-		if (isElement(node) || isFragment(node) || isShadow(node)) removeNode(node);
-		if (isNode(node)) node.remove();
+		if (isElement$1(node) || isFragment(node) || isShadow(node)) removeNode(node);
+		if (isNode$1(node)) node.remove();
 	}
 }
 /**
@@ -3260,7 +3301,7 @@ function getScrollX$1(selector) {
 	});
 	if (!node) return;
 	if (isWindow(node)) return node.scrollX;
-	if (isDocument(node)) return node.scrollingElement.scrollLeft;
+	if (isDocument$1(node)) return node.scrollingElement.scrollLeft;
 	return node.scrollLeft;
 }
 /**
@@ -3275,7 +3316,7 @@ function getScrollY$1(selector) {
 	});
 	if (!node) return;
 	if (isWindow(node)) return node.scrollY;
-	if (isDocument(node)) return node.scrollingElement.scrollTop;
+	if (isDocument$1(node)) return node.scrollingElement.scrollTop;
 	return node.scrollTop;
 }
 /**
@@ -3290,7 +3331,7 @@ function setScroll$1(selector, x, y) {
 		window: true
 	});
 	for (const node of nodes) if (isWindow(node)) node.scroll(x, y);
-	else if (isDocument(node)) {
+	else if (isDocument$1(node)) {
 		node.scrollingElement.scrollLeft = x;
 		node.scrollingElement.scrollTop = y;
 	} else {
@@ -3309,7 +3350,7 @@ function setScrollX$1(selector, x) {
 		window: true
 	});
 	for (const node of nodes) if (isWindow(node)) node.scroll(x, node.scrollY);
-	else if (isDocument(node)) node.scrollingElement.scrollLeft = x;
+	else if (isDocument$1(node)) node.scrollingElement.scrollLeft = x;
 	else node.scrollLeft = x;
 }
 /**
@@ -3323,7 +3364,7 @@ function setScrollY$1(selector, y) {
 		window: true
 	});
 	for (const node of nodes) if (isWindow(node)) node.scroll(node.scrollX, y);
-	else if (isDocument(node)) node.scrollingElement.scrollTop = y;
+	else if (isDocument$1(node)) node.scrollingElement.scrollTop = y;
 	else node.scrollTop = y;
 }
 
@@ -3348,7 +3389,7 @@ function height$1(selector, { boxSize = 1, outer = false } = {}) {
 	});
 	if (!node) return;
 	if (isWindow(node)) return outer ? node.outerHeight : node.innerHeight;
-	if (isDocument(node)) node = node.documentElement;
+	if (isDocument$1(node)) node = node.documentElement;
 	if (boxSize >= 4) return node.scrollHeight;
 	let result = node.clientHeight;
 	if (boxSize <= 0) {
@@ -3378,7 +3419,7 @@ function width$1(selector, { boxSize = 1, outer = false } = {}) {
 	});
 	if (!node) return;
 	if (isWindow(node)) return outer ? node.outerWidth : node.innerWidth;
-	if (isDocument(node)) node = node.documentElement;
+	if (isDocument$1(node)) node = node.documentElement;
 	if (boxSize >= 4) return node.scrollWidth;
 	let result = node.clientWidth;
 	if (boxSize <= 0) {
@@ -4875,7 +4916,7 @@ function filterOne$1(selector, nodeFilter) {
 * @returns {Node[]} The filtered nodes.
 */
 function fixed$1(selector) {
-	return parseNodes(selector, { node: true }).filter((node) => isElement(node) && css$1(node, "position") === "fixed" || closest$1(node, (parent) => isElement(parent) && css$1(parent, "position") === "fixed").length);
+	return parseNodes(selector, { node: true }).filter((node) => isElement$1(node) && css$1(node, "position") === "fixed" || closest$1(node, (parent) => isElement$1(parent) && css$1(parent, "position") === "fixed").length);
 }
 /**
 * Returns all hidden nodes.
@@ -4889,8 +4930,8 @@ function hidden$1(selector) {
 		window: true
 	}).filter((node) => {
 		if (isWindow(node)) return node.document.visibilityState !== "visible";
-		if (isDocument(node)) return node.visibilityState !== "visible";
-		return !isElement(node) || node.getClientRects().length === 0;
+		if (isDocument$1(node)) return node.visibilityState !== "visible";
+		return !isElement$1(node) || node.getClientRects().length === 0;
 	});
 }
 /**
@@ -4951,8 +4992,8 @@ function visible$1(selector) {
 		window: true
 	}).filter((node) => {
 		if (isWindow(node)) return node.document.visibilityState === "visible";
-		if (isDocument(node)) return node.visibilityState === "visible";
-		return isElement(node) && node.getClientRects().length > 0;
+		if (isDocument$1(node)) return node.visibilityState === "visible";
+		return isElement$1(node) && node.getClientRects().length > 0;
 	});
 }
 /**
@@ -5760,7 +5801,7 @@ function isEqual$1(selector, otherSelector, { shallow = false } = {}) {
 * @returns {boolean} Whether any of the nodes is "fixed".
 */
 function isFixed$1(selector) {
-	return parseNodes(selector, { node: true }).some((node) => isElement(node) && css$1(node, "position") === "fixed" || closest$1(node, (parent) => isElement(parent) && css$1(parent, "position") === "fixed").length);
+	return parseNodes(selector, { node: true }).some((node) => isElement$1(node) && css$1(node, "position") === "fixed" || closest$1(node, (parent) => isElement$1(parent) && css$1(parent, "position") === "fixed").length);
 }
 /**
 * Checks whether any of the nodes is hidden.
@@ -5774,8 +5815,8 @@ function isHidden$1(selector) {
 		window: true
 	}).some((node) => {
 		if (isWindow(node)) return node.document.visibilityState !== "visible";
-		if (isDocument(node)) return node.visibilityState !== "visible";
-		return !isElement(node) || node.getClientRects().length === 0;
+		if (isDocument$1(node)) return node.visibilityState !== "visible";
+		return !isElement$1(node) || node.getClientRects().length === 0;
 	});
 }
 /**
@@ -5808,8 +5849,8 @@ function isVisible$1(selector) {
 		window: true
 	}).some((node) => {
 		if (isWindow(node)) return node.document.visibilityState === "visible";
-		if (isDocument(node)) return node.visibilityState === "visible";
-		return isElement(node) && node.getClientRects().length > 0;
+		if (isDocument$1(node)) return node.visibilityState === "visible";
+		return isElement$1(node) && node.getClientRects().length > 0;
 	});
 }
 
@@ -6668,7 +6709,12 @@ Object.assign(query, {
 	wrapInner: wrapInner$1,
 	wrapSelection: wrapSelection$1
 });
-for (const [key, value] of Object.entries(_)) query[`_${key}`] = value;
+for (const [key, value] of Object.entries({
+	..._,
+	isDocument: isDocument$1,
+	isElement: isElement$1,
+	isNode: isNode$1
+})) query[`_${key}`] = value;
 var fquery_default = query;
 
 //#endregion

@@ -3,10 +3,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { camelCase, isDocument, isElement, isWindow } from '@fr0st/core';
+import { camelCase, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
-import { parseClasses } from './../helpers.js';
+import { isDocument, isElement, parseClasses } from './../helpers.js';
 import { clone } from './../manipulation/manipulation.js';
 import { closest } from './../traversal/traversal.js';
 import { animations, data } from './../vars.js';

@@ -1,7 +1,8 @@
 /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
 /** @import { AnimationOptions } from './animation/animation.js'; */
 
-import { extend, isDocument, isWindow } from '@fr0st/core';
+import { extend, isWindow } from '@fr0st/core';
+import { isDocument } from './helpers.js';
 
 const ajaxDefaults = {
     afterSend: null,

@@ -236,6 +236,14 @@ test.describe('#query', () => {
         ]);
     });
 
+    test('works with Document nodes containing a form named nodeType', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form name="nodeType"></form>';
+            $.setContext(document);
+            return $(document).get(0) === document;
+        })).toBe(true);
+    });
+
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $(window)

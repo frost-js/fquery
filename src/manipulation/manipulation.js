@@ -1,9 +1,9 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { isElement, isFragment, isNode, isShadow, merge } from '@fr0st/core';
+import { isFragment, isShadow, merge } from '@fr0st/core';
 import { addEvent } from './../events/event-handlers.js';
 import { parseNodes } from './../filters.js';
-import { createEvent } from './../helpers.js';
+import { createEvent, isElement, isNode } from './../helpers.js';
 import { animations as _animations, data as _data, events as _events, queues, styles } from './../vars.js';
 import { createFragment } from './create.js';
 

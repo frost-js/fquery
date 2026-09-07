@@ -3,9 +3,9 @@
 /** @import { QueryContextInput } from './traversal/find.js'; */
 /** @import { QueryInput } from './helpers.js'; */
 
-import { isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
+import { isArray, isFragment, isFunction, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
-import { resolveNode, resolveNodes } from './helpers.js';
+import { isDocument, isElement, isNode, resolveNode, resolveNodes } from './helpers.js';
 import { parseHTML } from './parser/parser.js';
 import { find, findOne } from './traversal/find.js';
 
