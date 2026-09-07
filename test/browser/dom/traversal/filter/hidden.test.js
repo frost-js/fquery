@@ -35,6 +35,30 @@ test.describe('#hidden', () => {
         ]);
     });
 
+    test('returns hidden fixed nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.hidden('div').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div2',
+            'div4',
+        ]);
+    });
+
+    test('returns fixed descendents of hidden nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.hidden('span').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'span2',
+            'span4',
+        ]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $.hidden(document.getElementById('div2')).map((node) => node.id));

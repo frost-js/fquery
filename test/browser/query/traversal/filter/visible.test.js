@@ -35,6 +35,30 @@ test.describe('QuerySet #visible', () => {
         ]);
     });
 
+    test('returns visible fixed nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $('div').visible().get().map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+            'div3',
+        ]);
+    });
+
+    test('returns fixed descendents of visible nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $('span').visible().get().map((node) => node.id));
+
+        expect(ids).toEqual([
+            'span1',
+            'span3',
+        ]);
+    });
+
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
             const query1 = $('div');

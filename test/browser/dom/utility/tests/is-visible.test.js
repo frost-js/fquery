@@ -40,6 +40,27 @@ test.describe('#isVisible', () => {
             $.isVisible('span'))).toBe(true);
     });
 
+    test('returns true for visible fixed nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $.isVisible('div:not(.test)'))).toBe(true);
+    });
+
+    test('returns false for fixed nodes with display none', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $.isVisible('.test'))).toBe(false);
+    });
+
+    test('returns false for fixed descendents of hidden nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $.isVisible('.test span'))).toBe(false);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.isVisible(

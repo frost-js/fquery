@@ -4879,7 +4879,7 @@ function hidden$1(selector) {
 	}).filter((node) => {
 		if (isWindow(node)) return node.document.visibilityState !== "visible";
 		if (isDocument(node)) return node.visibilityState !== "visible";
-		return !node.offsetParent;
+		return !isElement(node) || node.getClientRects().length === 0;
 	});
 }
 /**
@@ -4941,7 +4941,7 @@ function visible$1(selector) {
 	}).filter((node) => {
 		if (isWindow(node)) return node.document.visibilityState === "visible";
 		if (isDocument(node)) return node.visibilityState === "visible";
-		return node.offsetParent;
+		return isElement(node) && node.getClientRects().length > 0;
 	});
 }
 /**
@@ -5768,7 +5768,7 @@ function isHidden$1(selector) {
 	}).some((node) => {
 		if (isWindow(node)) return node.document.visibilityState !== "visible";
 		if (isDocument(node)) return node.visibilityState !== "visible";
-		return !node.offsetParent;
+		return !isElement(node) || node.getClientRects().length === 0;
 	});
 }
 /**
@@ -5802,7 +5802,7 @@ function isVisible$1(selector) {
 	}).some((node) => {
 		if (isWindow(node)) return node.document.visibilityState === "visible";
 		if (isDocument(node)) return node.visibilityState === "visible";
-		return node.offsetParent;
+		return isElement(node) && node.getClientRects().length > 0;
 	});
 }
 

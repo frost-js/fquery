@@ -115,7 +115,7 @@ export function hidden(selector) {
             return node.visibilityState !== 'visible';
         }
 
-        return !node.offsetParent;
+        return !isElement(node) || node.getClientRects().length === 0;
     });
 };
 
@@ -194,7 +194,7 @@ export function visible(selector) {
             return node.visibilityState === 'visible';
         }
 
-        return node.offsetParent;
+        return isElement(node) && node.getClientRects().length > 0;
     });
 };
 

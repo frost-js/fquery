@@ -35,6 +35,30 @@ test.describe('#visible', () => {
         ]);
     });
 
+    test('returns visible fixed nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.visible('div').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+            'div3',
+        ]);
+    });
+
+    test('returns fixed descendents of visible nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.visible('span').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'span1',
+            'span3',
+        ]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $.visible(document.getElementById('div1')).map((node) => node.id));

@@ -43,6 +43,30 @@ test.describe('QuerySet #isHidden', () => {
                     .isHidden())).toBe(true);
     });
 
+    test('returns false for visible fixed nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $('div:not(.test)')
+                    .isHidden())).toBe(false);
+    });
+
+    test('returns true for fixed nodes with display none', async ({ page }) => {
+        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $('.test')
+                    .isHidden())).toBe(true);
+    });
+
+    test('returns true for fixed descendents of hidden nodes', async ({ page }) => {
+        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
+
+        expect(await page.evaluate((_) =>
+            $('.test span')
+                    .isHidden())).toBe(true);
+    });
+
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const myDoc = new Document();
