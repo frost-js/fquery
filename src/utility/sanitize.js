@@ -1,4 +1,4 @@
-import { merge } from '@fr0st/core';
+import { isFragment, merge } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 import { allowedTags as _allowedTags, uriAttributes } from './../vars.js';
 
@@ -81,7 +81,12 @@ function sanitizeNode(node, allowedTags = _allowedTags) {
     }
 
     // check children
-    const childNodes = merge([], node.children);
+    const childNodes = merge(
+        [],
+        isFragment(node.content) ?
+            node.content.children :
+            node.children,
+    );
     for (const child of childNodes) {
         sanitizeNode(child, allowedTags);
     }

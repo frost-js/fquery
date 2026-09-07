@@ -104,6 +104,27 @@ test.describe('#sanitize', () => {
             '</div>');
     });
 
+    test('sanitizes contents of allowed templates recursively', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template">' +
+                    '<script>window.alert(123);</script>' +
+                    '<a href="#" onclick="window.alert(123)">Test 1</a>' +
+                    '<template onclick="window.alert(123)">' +
+                    '<script>window.alert(123);</script>' +
+                    '<a href="javascript:alert(1)" onclick="window.alert(123)">Test 2</a>' +
+                    '</template>' +
+                    '</template>',
+                {
+                    a: ['href'],
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template">' +
+            '<a href="#">Test 1</a>' +
+            '<template><a>Test 2</a></template>' +
+            '</template>');
+    });
+
     test('matches string attribute rules exactly', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.sanitize(

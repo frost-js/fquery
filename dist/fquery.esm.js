@@ -6446,7 +6446,7 @@ function sanitizeNode(node, allowedTags$2 = allowedTags) {
 	allowedAttributes.push(...allowedTags$2[name]);
 	const attributes = merge([], node.attributes);
 	for (const attribute of attributes) if (!isAllowedAttribute(attribute, allowedAttributes)) node.removeAttribute(attribute.nodeName);
-	const childNodes = merge([], node.children);
+	const childNodes = merge([], isFragment(node.content) ? node.content.children : node.children);
 	for (const child of childNodes) sanitizeNode(child, allowedTags$2);
 }
 
