@@ -90,6 +90,88 @@ test.describe('QuerySet #serializeArray', () => {
         ]);
     });
 
+    test('excludes controls in disabled fieldsets', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '<select name="test2"><option value="Test 2" selected>Test 2</option></select>' +
+                '<textarea name="test3">Test 3</textarea>' +
+                '</fieldset>' +
+                '<input name="test4" type="text" value="Test 4">' +
+                '</form>';
+            return $('#form')
+                    .serializeArray();
+        })).toEqual([
+            {
+                name: 'test4',
+                value: 'Test 4',
+            },
+        ]);
+    });
+
+    test('includes enabled controls in the first legend of a disabled fieldset', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<legend>' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2" disabled>' +
+                '</legend>' +
+                '<legend><input name="test3" type="text" value="Test 3"></legend>' +
+                '<input name="test4" type="text" value="Test 4">' +
+                '</fieldset>' +
+                '</form>';
+            return $('#form')
+                    .serializeArray();
+        })).toEqual([
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+        ]);
+    });
+
+    test('serializes associated controls in document order', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<input name="test1" type="text" value="Test 1" form="form">' +
+                '<form id="form">' +
+                '<fieldset name="fieldset">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</fieldset>' +
+                '<input name="other" type="text" value="Other" form="other">' +
+                '<button name="button" value="Button">Button</button>' +
+                '<output name="output">Output</output>' +
+                '</form>' +
+                '<select name="test3" form="form"><option value="Test 3" selected>Test 3</option></select>' +
+                '<textarea name="test4" form="form">Test 4</textarea>' +
+                '<input name="unrelated" type="text" value="Unrelated">' +
+                '<form id="other"></form>';
+            return $('#form')
+                    .serializeArray();
+        })).toEqual([
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+            {
+                name: 'test3',
+                value: 'Test 3',
+            },
+            {
+                name: 'test4',
+                value: 'Test 4',
+            },
+        ]);
+    });
+
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const range = document.createRange();

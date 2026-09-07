@@ -90,8 +90,16 @@ export function serializeArray(selector) {
         shadow: true,
     }).reduce(
         (values, node) => {
+            if (isElement(node) && node.matches('form')) {
+                return values.concat(
+                    serializeArray(
+                        merge([], node.elements)
+                            .filter((node) => node.matches('input, select, textarea')),
+                    ),
+                );
+            }
+
             if (
-                (isElement(node) && node.matches('form')) ||
                 isFragment(node) ||
                 isShadow(node)
             ) {
@@ -106,7 +114,7 @@ export function serializeArray(selector) {
 
             if (
                 isElement(node) &&
-                node.matches('[disabled], input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
+                node.matches(':disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
             ) {
                 return values;
             }
