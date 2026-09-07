@@ -6345,12 +6345,7 @@
 		if (typeof commonAncestor.querySelectorAll !== "function") return [commonAncestor];
 		const nodes = merge([], commonAncestor.querySelectorAll("*"));
 		if (!nodes.length) return [commonAncestor];
-		if (nodes.length === 1) return nodes;
-		const startContainer = range.startContainer;
-		const endContainer = range.endContainer;
-		const start = isElement(startContainer) ? startContainer : startContainer.parentNode;
-		const end = isElement(endContainer) ? endContainer : endContainer.parentNode;
-		const selectedNodes = nodes.slice(nodes.indexOf(start), nodes.indexOf(end) + 1);
+		const selectedNodes = nodes.filter((node) => range.intersectsNode(node));
 		const results = [];
 		let lastNode;
 		for (const node of selectedNodes) {

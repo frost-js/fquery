@@ -31,11 +31,18 @@ test.describe('QuerySet #selectAll', () => {
 
     test('creates a selection on all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('.select')
-                    .selectAll();
+            $('.select').selectAll();
             const selection = document.getSelection();
             const range = selection.getRangeAt(0);
             return range.toString();
+        })).toBe('Test 2Test 3Test 4');
+    });
+
+    test('selects a range of siblings for getSelection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $('.select').selectAll();
+            const selected = $.getSelection();
+            return selected.map((node) => node.textContent).join('');
         })).toBe('Test 2Test 3Test 4');
     });
 

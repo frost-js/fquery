@@ -31,6 +31,19 @@ test.describe('#select', () => {
         })).toBe('Test 1');
     });
 
+    test('selects a middle sibling for getSelection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('select').innerHTML =
+                '<span id="span1">Test 1</span>' +
+                '<span id="span2">Test 2</span>' +
+                '<span id="span3">Test 3</span>';
+
+            $.select('#span2');
+            const selected = $.getSelection();
+            return selected.map((node) => node.textContent).join('');
+        })).toBe('Test 2');
+    });
+
     test('creates a selection on an input node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.select('#input');

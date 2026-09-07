@@ -24,18 +24,29 @@ test.describe('QuerySet #select', () => {
 
     test('creates a selection on the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('.select')
-                    .select();
+            $('.select').select();
             const selection = document.getSelection();
             const range = selection.getRangeAt(0);
             return range.toString();
         })).toBe('Test 1');
     });
 
+    test('selects a middle sibling for getSelection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('select').innerHTML =
+                '<span id="span1">Test 1</span>' +
+                '<span id="span2">Test 2</span>' +
+                '<span id="span3">Test 3</span>';
+
+            $('#span2').select();
+            const selected = $.getSelection();
+            return selected.map((node) => node.textContent).join('');
+        })).toBe('Test 2');
+    });
+
     test('creates a selection on an input node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('#input')
-                    .select();
+            $('#input').select();
             document.execCommand('cut');
             return document.getElementById('input').value;
         })).toBe('');
@@ -43,8 +54,7 @@ test.describe('QuerySet #select', () => {
 
     test('creates a selection on a textarea node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('#textarea')
-                    .select();
+            $('#textarea').select();
             document.execCommand('cut');
             return document.getElementById('textarea').value;
         })).toBe('');

@@ -40,6 +40,25 @@ test.describe('#getSelection', () => {
         })).toBe('<span id="span2">Test 2</span>');
     });
 
+    test('returns no nodes for a collapsed range before a lone descendant', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const range = document.createRange();
+            range.setStartBefore(document.getElementById('span2'));
+            range.collapse(true);
+
+            const selection = document.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const selected = $.getSelection();
+            document.body.innerHTML = '';
+            for (const node of selected) {
+                document.body.appendChild(node);
+            }
+            return document.body.innerHTML;
+        })).toBe('');
+    });
+
     test('returns a selection contained in a text node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const node = document.getElementById('span1').firstChild;

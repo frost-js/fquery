@@ -38,6 +38,14 @@ test.describe('#selectAll', () => {
         })).toBe('Test 2Test 3Test 4');
     });
 
+    test('selects a range of siblings for getSelection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.selectAll('.select');
+            const selected = $.getSelection();
+            return selected.map((node) => node.textContent).join('');
+        })).toBe('Test 2Test 3Test 4');
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.selectAll(
