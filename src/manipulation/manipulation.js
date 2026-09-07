@@ -258,7 +258,14 @@ export function replaceWith(selector, otherSelector) {
     });
 
     // Avoid detaching replacements when there is no target to replace.
-    if (!nodes.some((node) => node.parentNode && !others.includes(node))) {
+    if (!nodes.some((node) =>
+        node.parentNode &&
+        !others.includes(node) &&
+        !nodes.some((other) =>
+            !other.isSameNode(node) &&
+            other.contains(node),
+        ),
+    )) {
         return;
     }
 

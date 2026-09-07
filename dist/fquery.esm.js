@@ -2646,7 +2646,7 @@ function replaceWith$1(selector, otherSelector) {
 		fragment: true,
 		html: true
 	});
-	if (!nodes.some((node) => node.parentNode && !others.includes(node))) return;
+	if (!nodes.some((node) => node.parentNode && !others.includes(node) && !nodes.some((other) => !other.isSameNode(node) && other.contains(node)))) return;
 	const fragment = createFragment();
 	for (const other of others) fragment.insertBefore(other, null);
 	others = merge([], fragment.childNodes);

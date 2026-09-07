@@ -66,6 +66,23 @@ test.describe('QuerySet #replaceWith', () => {
         expect(isSamePosition).toBe(true);
     });
 
+    test('does not move a node when targets include itself and its descendant', async ({ page }) => {
+        const isSamePosition = await page.evaluate(() => {
+            const node = document.querySelector('.outer1');
+            const child = node.querySelector('.inner1');
+            const { parentNode, previousSibling, nextSibling } = node;
+
+            $([node, child]).replaceWith(node);
+
+            return node.parentNode === parentNode &&
+                node.previousSibling === previousSibling &&
+                node.nextSibling === nextSibling &&
+                child.parentNode === node;
+        });
+
+        expect(isSamePosition).toBe(true);
+    });
+
     test('removes events from nodes', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;
