@@ -25,6 +25,17 @@ test.describe('QuerySet #setText', () => {
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
+    test('sets text contents for nodes with a string content property', async ({ page }) => {
+        await page.evaluate((text) => {
+            document.getElementById('test1').content = 'Test 1';
+
+            $('#test1').setText(text);
+        }, replacementText);
+
+        await expect(page.locator('#test1')).toHaveText(replacementText);
+        await expect(page.locator('#test1 > *')).toHaveCount(0);
+    });
+
     test('escapes HTML strings', async ({ page }) => {
         await page.evaluate(() => {
             $('#test1').setText('<span>Test 2</span>');

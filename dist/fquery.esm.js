@@ -2577,7 +2577,7 @@ function empty$1(selector) {
 			child.remove();
 		}
 		if (node.shadowRoot) removeNode(node.shadowRoot);
-		if (node.content) removeNode(node.content);
+		if (isFragment(node.content)) removeNode(node.content);
 	}
 }
 /**
@@ -2622,7 +2622,7 @@ function removeNode(node) {
 	const childNodes = merge([], node.children);
 	for (const child of childNodes) removeNode(child);
 	if (node.shadowRoot) removeNode(node.shadowRoot);
-	if (node.content) removeNode(node.content);
+	if (isFragment(node.content)) removeNode(node.content);
 }
 /**
 * Replaces each other node with nodes.
@@ -2797,7 +2797,7 @@ function setHTML$1(selector, html) {
 	for (const node of nodes) {
 		const childNodes = merge([], node.children);
 		for (const child of childNodes) removeNode(child);
-		if (node.content) removeNode(node.content);
+		if (isFragment(node.content)) removeNode(node.content);
 		node.innerHTML = html;
 	}
 }
@@ -2822,7 +2822,7 @@ function setText$1(selector, text) {
 	for (const node of nodes) {
 		const childNodes = merge([], node.children);
 		for (const child of childNodes) removeNode(child);
-		if (node.content) removeNode(node.content);
+		if (isFragment(node.content)) removeNode(node.content);
 		node.textContent = text;
 	}
 }

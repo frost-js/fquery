@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { camelCase, merge } from '@fr0st/core';
+import { camelCase, isFragment, merge } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
 import { parseData, parseDataset } from './../helpers.js';
 import { removeNode } from './../manipulation/manipulation.js';
@@ -194,7 +194,7 @@ export function setHTML(selector, html) {
         }
 
         // Remove DocumentFragment
-        if (node.content) {
+        if (isFragment(node.content)) {
             removeNode(node.content);
         }
 
@@ -236,7 +236,7 @@ export function setText(selector, text) {
         }
 
         // Remove DocumentFragment
-        if (node.content) {
+        if (isFragment(node.content)) {
             removeNode(node.content);
         }
 

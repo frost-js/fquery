@@ -38,6 +38,16 @@ test.describe('#remove', () => {
         await expect(page.locator('#inner2').locator(':scope > *')).toHaveCount(0);
     });
 
+    test('removes meta nodes with a content attribute', async ({ page }) => {
+        await page.evaluate(() => {
+            document.head.innerHTML = '<meta name="description" content="Test 1">';
+
+            $.remove('meta');
+        });
+
+        await expect(page.locator('head > meta')).toHaveCount(0);
+    });
+
     test('removes events', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;

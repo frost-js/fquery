@@ -26,6 +26,17 @@ test.describe('QuerySet #setHTML', () => {
         await expect(page.locator('#test2 > *')).toHaveCount(1);
     });
 
+    test('sets HTML contents for nodes with a string content property', async ({ page }) => {
+        await page.evaluate((html) => {
+            document.getElementById('test1').content = 'Test 1';
+
+            $('#test1').setHTML(html);
+        }, replacementHtml);
+
+        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+        await expect(page.locator('#test1 > *')).toHaveCount(1);
+    });
+
     test('removes events recursively', async ({ page }) => {
         const clickCount = await page.evaluate((html) => {
             let count = 0;

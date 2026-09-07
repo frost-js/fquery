@@ -138,7 +138,7 @@ export function empty(selector) {
         }
 
         // Remove DocumentFragment
-        if (node.content) {
+        if (isFragment(node.content)) {
             removeNode(node.content);
         }
     }
@@ -225,7 +225,7 @@ export function removeNode(node) {
     }
 
     // Remove DocumentFragment
-    if (node.content) {
+    if (isFragment(node.content)) {
         removeNode(node.content);
     }
 };

@@ -37,6 +37,17 @@ test.describe('QuerySet #empty', () => {
         await expect(page.locator('a')).toHaveCount(0);
     });
 
+    test('empties nodes with a string content property', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('outer1').content = 'Test 1';
+
+            $('#outer1').empty();
+        });
+
+        await expect(page.locator('#outer1')).toHaveCount(1);
+        await expect(page.locator('#outer1 > *')).toHaveCount(0);
+    });
+
     test('removes events recursively', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;
