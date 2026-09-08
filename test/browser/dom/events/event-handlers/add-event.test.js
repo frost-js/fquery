@@ -31,6 +31,19 @@ test.describe('#addEvent', () => {
         })).toBe(4);
     });
 
+    test('adds listeners on forms with a control named addEventListener', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="addEventListener"></form>';
+            let result = 0;
+            const callback = (_) => {
+                result++;
+            };
+            $.addEvent('form', 'click', callback);
+            document.querySelector('form').dispatchEvent(new Event('click'));
+            return result;
+        })).toBe(1);
+    });
+
     test('adds events to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
@@ -53,25 +66,49 @@ test.describe('#addEvent', () => {
         })).toBe(8);
     });
 
-    test('adds events with names inherited from Object.prototype', async ({ page }) => {
+    test('adds events named constructor', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
-            const event1 = new Event('constructor');
-            const event2 = new Event('toString');
-            const event3 = new Event('__proto__');
+            const event = new Event('constructor');
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
-            $.addEvent('a', 'constructor toString __proto__', (_) => {
+            $.addEvent('a', 'constructor', (_) => {
                 result++;
             });
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event2);
-            element1.dispatchEvent(event3);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event2);
-            element2.dispatchEvent(event3);
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
             return result;
-        })).toBe(6);
+        })).toBe(2);
+    });
+
+    test('adds events named toString', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('toString');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'toString', (_) => {
+                result++;
+            });
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('adds events named __proto__', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('__proto__');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', '__proto__', (_) => {
+                result++;
+            });
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(2);
     });
 
     test('adds a namespaced event to each node', async ({ page }) => {

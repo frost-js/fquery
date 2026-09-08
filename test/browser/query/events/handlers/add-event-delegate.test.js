@@ -102,7 +102,7 @@ test.describe('QuerySet #addEventDelegate', () => {
         })).toBe(16);
     });
 
-    test('restores event targets for later native listeners', async ({ page }) => {
+    test('restores currentTarget for later native listeners', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = false;
             const event = new Event('click', {
@@ -113,7 +113,25 @@ test.describe('QuerySet #addEventDelegate', () => {
             $(parent)
                     .addEventDelegate('click', 'a', (_) => null);
             parent.addEventListener('click', (e) => {
-                result = e.currentTarget === parent && e.delegateTarget === undefined;
+                result = e.currentTarget === parent;
+            });
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(true);
+    });
+
+    test('removes delegateTarget for later native listeners', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = false;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const parent = document.getElementById('parent1');
+            const element = document.getElementById('test1');
+            $(parent)
+                    .addEventDelegate('click', 'a', (_) => null);
+            parent.addEventListener('click', (e) => {
+                result = e.delegateTarget === undefined;
             });
             element.dispatchEvent(event);
             return result;
@@ -139,7 +157,7 @@ test.describe('QuerySet #addEventDelegate', () => {
         })).toBe(true);
     });
 
-    test('restores event targets when a delegated callback throws', async ({ page }) => {
+    test('restores currentTarget when a delegated callback throws', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = false;
             const event = new Event('click', {
@@ -155,7 +173,30 @@ test.describe('QuerySet #addEventDelegate', () => {
                         throw new Error('Test error');
                     });
             parent.addEventListener('click', (e) => {
-                result = e.currentTarget === parent && e.delegateTarget === undefined;
+                result = e.currentTarget === parent;
+            });
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(true);
+    });
+
+    test('removes delegateTarget when a delegated callback throws', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = false;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const parent = document.getElementById('parent1');
+            const element = document.getElementById('test1');
+            window.addEventListener('error', (e) => {
+                e.preventDefault();
+            }, { once: true });
+            $(parent)
+                    .addEventDelegate('click', 'a', (_) => {
+                        throw new Error('Test error');
+                    });
+            parent.addEventListener('click', (e) => {
+                result = e.delegateTarget === undefined;
             });
             element.dispatchEvent(event);
             return result;

@@ -3500,7 +3500,7 @@
 		}
 		if (data$1 && data.has(node)) {
 			const nodeData = data.get(node);
-			data.set(clone, { ...nodeData });
+			data.set(clone, Object.assign(Object.create(null), nodeData));
 		}
 		if (animations$1 && animations.has(node)) {
 			const nodeAnimations = animations.get(node);
@@ -3890,7 +3890,7 @@
 		});
 		const newData = parseData(key, value);
 		for (const node of nodes) {
-			if (!data.has(node)) data.set(node, {});
+			if (!data.has(node)) data.set(node, Object.create(null));
 			const nodeData = data.get(node);
 			Object.assign(nodeData, newData);
 		}

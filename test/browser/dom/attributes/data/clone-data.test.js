@@ -41,6 +41,20 @@ test.describe('#cloneData', () => {
         ]);
     });
 
+    test('clones data with a __proto__ key', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.setData('#test1', '__proto__', 'Test 1');
+            $.cloneData('#test1', '[data-toggle="noData"]');
+            return [
+                $.getData('#test3', '__proto__'),
+                $.getData('#test4', '__proto__'),
+            ];
+        })).toEqual([
+            'Test 1',
+            'Test 1',
+        ]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.cloneData(

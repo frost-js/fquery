@@ -42,11 +42,25 @@ test.describe('#children', () => {
         ]);
     });
 
-    test('returns form children when controls shadow child collections', async ({ page }) => {
+    test('returns form children when a control shadows children', async ({ page }) => {
         const ids = await page.evaluate((_) => {
             document.body.innerHTML =
-                '<form><input id="test1" name="children"><input id="test2" name="childNodes"></form>';
+                '<form><input id="test1" name="children"><input id="test2"></form>';
             const nodes = $.children('form');
+            return nodes.map((node) => node.id);
+        });
+
+        expect(ids).toEqual([
+            'test1',
+            'test2',
+        ]);
+    });
+
+    test('returns form child nodes when a control shadows childNodes', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form><input id="test1"><input id="test2" name="childNodes"></form>';
+            const nodes = $.children('form', null, { elementsOnly: false });
             return nodes.map((node) => node.id);
         });
 

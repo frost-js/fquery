@@ -27,6 +27,19 @@ test.describe('#triggerEvent', () => {
         })).toBe(2);
     });
 
+    test('triggers listeners on forms with a control named dispatchEvent', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="dispatchEvent"></form>';
+            let result = 0;
+            const callback = (_) => {
+                result++;
+            };
+            $.addEvent('form', 'click', callback);
+            $.triggerEvent('form', 'click');
+            return result;
+        })).toBe(1);
+    });
+
     test('triggers events for each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

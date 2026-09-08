@@ -42,6 +42,20 @@ test.describe('QuerySet #cloneData', () => {
         ]);
     });
 
+    test('clones data with a __proto__ key', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.setData('#test1', '__proto__', 'Test 1');
+            $('#test1').cloneData('[data-toggle="noData"]');
+            return [
+                $.getData('#test3', '__proto__'),
+                $.getData('#test4', '__proto__'),
+            ];
+        })).toEqual([
+            'Test 1',
+            'Test 1',
+        ]);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('[data-toggle="data"]');

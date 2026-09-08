@@ -33,12 +33,9 @@ test.describe('#removeEvent', () => {
         })).toBe(0);
     });
 
-    test('removes listeners from forms whose controls shadow event methods', async ({ page }) => {
+    test('removes listeners from forms with a control named removeEventListener', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form>' +
-                '<input name="addEventListener"><input name="removeEventListener"><input name="dispatchEvent">' +
-                '</form>';
+            document.body.innerHTML = '<form><input name="removeEventListener"></form>';
             let result = 0;
             const callback = (_) => {
                 result++;
@@ -95,27 +92,104 @@ test.describe('#removeEvent', () => {
         })).toBe(0);
     });
 
-    test('removes events with names inherited from Object.prototype', async ({ page }) => {
+    test('removes events named constructor', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
-            const event1 = new Event('constructor');
-            const event2 = new Event('toString');
-            const event3 = new Event('__proto__');
-            const event4 = new Event('click');
+            const event = new Event('constructor');
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
-            $.addEvent('a', 'constructor toString __proto__ click', (_) => {
+            $.addEvent('a', 'constructor', (_) => {
                 result++;
             });
-            $.removeEvent('a', 'constructor toString __proto__');
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event2);
-            element1.dispatchEvent(event3);
-            element1.dispatchEvent(event4);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event2);
-            element2.dispatchEvent(event3);
-            element2.dispatchEvent(event4);
+            $.addEvent('a', 'click', (_) => null);
+            $.removeEvent('a', 'constructor');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(0);
+    });
+
+    test('preserves other events when removing events named constructor', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'click', (_) => {
+                result++;
+            });
+            $.addEvent('a', 'constructor', (_) => null);
+            $.removeEvent('a', 'constructor');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('removes events named toString', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('toString');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'toString', (_) => {
+                result++;
+            });
+            $.addEvent('a', 'click', (_) => null);
+            $.removeEvent('a', 'toString');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(0);
+    });
+
+    test('preserves other events when removing events named toString', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'click', (_) => {
+                result++;
+            });
+            $.addEvent('a', 'toString', (_) => null);
+            $.removeEvent('a', 'toString');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('removes events named __proto__', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('__proto__');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', '__proto__', (_) => {
+                result++;
+            });
+            $.addEvent('a', 'click', (_) => null);
+            $.removeEvent('a', '__proto__');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(0);
+    });
+
+    test('preserves other events when removing events named __proto__', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'click', (_) => {
+                result++;
+            });
+            $.addEvent('a', '__proto__', (_) => null);
+            $.removeEvent('a', '__proto__');
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
             return result;
         })).toBe(2);
     });
@@ -143,10 +217,25 @@ test.describe('#removeEvent', () => {
     test('does not restore removed handlers when cloning nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let removedCount = 0;
-            let remainingCount = 0;
             const callback = (_) => {
                 removedCount++;
             };
+
+            $.addEvent('a', 'click', callback);
+            $.addEvent('a', 'click', (_) => null);
+            $.removeEvent('a', 'click', callback);
+
+            const clones = $.clone('a', { events: true });
+            $.triggerEvent(clones, 'click');
+
+            return removedCount;
+        })).toBe(0);
+    });
+
+    test('preserves remaining handlers when cloning after removal', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let remainingCount = 0;
+            const callback = (_) => null;
 
             $.addEvent('a', 'click', callback);
             $.addEvent('a', 'click', (_) => {
@@ -157,8 +246,8 @@ test.describe('#removeEvent', () => {
             const clones = $.clone('a', { events: true });
             $.triggerEvent(clones, 'click');
 
-            return removedCount === 0 && remainingCount === 2;
-        })).toBe(true);
+            return remainingCount;
+        })).toBe(2);
     });
 
     test('removes a namespaced event from each node', async ({ page }) => {

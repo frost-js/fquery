@@ -48,22 +48,13 @@ test.describe('#remove', () => {
         await expect(page.locator('head > meta')).toHaveCount(0);
     });
 
-    test('removes forms and descendant data when controls shadow cleanup properties', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            document.body.innerHTML =
-                '<form>' +
-                '<input name="children"><input name="shadowRoot"><input name="remove">' +
-                '<span id="test">Test</span>' +
-                '</form>';
-            const child = document.getElementById('test');
-            $.setData(child, 'test', 'Test');
+    test('removes forms with a control named remove', async ({ page }) => {
+        await page.evaluate(() => {
+            document.body.innerHTML = '<form><input name="remove"></form>';
 
             $.remove('form');
-
-            return $.getData(child, 'test');
         });
 
-        expect(value).toBeUndefined();
         await expect(page.locator('form')).toHaveCount(0);
     });
 
@@ -125,6 +116,42 @@ test.describe('#remove', () => {
             undefined,
             undefined,
         ]);
+    });
+
+    test('removes descendant data when a form control shadows children', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            document.body.innerHTML =
+                '<form>' +
+                '<input name="children">' +
+                '<span id="test">Test</span>' +
+                '</form>';
+            const child = document.getElementById('test');
+            $.setData(child, 'test', 'Test');
+
+            $.remove('form');
+
+            return $.getData(child, 'test');
+        });
+
+        expect(value).toBeUndefined();
+    });
+
+    test('removes descendant data when a form control shadows shadowRoot', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            document.body.innerHTML =
+                '<form>' +
+                '<input name="shadowRoot">' +
+                '<span id="test">Test</span>' +
+                '</form>';
+            const child = document.getElementById('test');
+            $.setData(child, 'test', 'Test');
+
+            $.remove('form');
+
+            return $.getData(child, 'test');
+        });
+
+        expect(value).toBeUndefined();
     });
 
     test('removes data recursively', async ({ page }) => {

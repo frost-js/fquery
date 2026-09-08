@@ -59,35 +59,140 @@ test.describe('#serialize', () => {
         })).toBe('test2=Test%202');
     });
 
-    test('excludes controls inside datalists', async ({ page }) => {
+    test('excludes button elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
                 '<form id="form">' +
-                '<datalist id="list">' +
+                '<button name="button" value="Button">Button</button>' +
                 '<input name="test1" type="text" value="Test 1">' +
-                '<span><input name="test2" type="text" value="Test 2"></span>' +
-                '<select name="test3"><option value="Test 3" selected>Test 3</option></select>' +
-                '<textarea name="test4">Test 4</textarea>' +
-                '</datalist>' +
-                '<input name="test5" type="text" value="Test 5" list="list">' +
                 '</form>';
             return $.serialize('#form');
-        })).toBe('test5=Test%205');
+        })).toBe('test1=Test%201');
     });
 
-    test('excludes controls in disabled fieldsets', async ({ page }) => {
+    test('excludes output elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<output name="output">Output</output>' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test1=Test%201');
+    });
+
+    test('excludes inputs inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist>' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '</datalist>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes inputs nested inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist>' +
+                '<span><input name="test1" type="text" value="Test 1"></span>' +
+                '</datalist>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes selects inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist>' +
+                '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
+                '</datalist>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes textareas inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist>' +
+                '<textarea name="test1">Test 1</textarea>' +
+                '</datalist>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('includes inputs associated with datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist id="list"><option value="Test 1"></option></datalist>' +
+                '<input name="test1" type="text" value="Test 1" list="list">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test1=Test%201');
+    });
+
+    test('excludes named fieldsets while including their controls', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset name="fieldset">' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '</fieldset>' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test1=Test%201');
+    });
+
+    test('excludes inputs in disabled fieldsets', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
                 '<form id="form">' +
                 '<fieldset disabled>' +
                 '<input name="test1" type="text" value="Test 1">' +
-                '<select name="test2"><option value="Test 2" selected>Test 2</option></select>' +
-                '<textarea name="test3">Test 3</textarea>' +
                 '</fieldset>' +
-                '<input name="test4" type="text" value="Test 4">' +
+                '<input name="test2" type="text" value="Test 2">' +
                 '</form>';
             return $.serialize('#form');
-        })).toBe('test4=Test%204');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes selects in disabled fieldsets', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
+                '</fieldset>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes textareas in disabled fieldsets', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<textarea name="test1">Test 1</textarea>' +
+                '</fieldset>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
     });
 
     test('includes enabled controls in the first legend of a disabled fieldset', async ({ page }) => {
@@ -95,19 +200,41 @@ test.describe('#serialize', () => {
             document.body.innerHTML =
                 '<form id="form">' +
                 '<fieldset disabled>' +
-                '<legend>' +
-                '<input name="test1" type="text" value="Test 1">' +
-                '<input name="test2" type="text" value="Test 2" disabled>' +
-                '</legend>' +
-                '<legend><input name="test3" type="text" value="Test 3"></legend>' +
-                '<input name="test4" type="text" value="Test 4">' +
+                '<legend><input name="test1" type="text" value="Test 1"></legend>' +
                 '</fieldset>' +
                 '</form>';
             return $.serialize('#form');
         })).toBe('test1=Test%201');
     });
 
-    test('excludes disabled selected options', async ({ page }) => {
+    test('excludes disabled controls in the first legend of a disabled fieldset', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<legend><input name="test1" type="text" value="Test 1" disabled></legend>' +
+                '</fieldset>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes controls in later legends of a disabled fieldset', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<fieldset disabled>' +
+                '<legend>Test</legend>' +
+                '<legend><input name="test1" type="text" value="Test 1"></legend>' +
+                '</fieldset>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes disabled selected options from single selects', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
                 '<form id="form">' +
@@ -115,19 +242,38 @@ test.describe('#serialize', () => {
                 '<option value="Test 1" selected disabled>Test 1</option>' +
                 '<option value="Other">Other</option>' +
                 '</select>' +
-                '<select name="test2[]" multiple>' +
-                '<option value="Test 2a" selected>Test 2a</option>' +
-                '<option value="Test 2b" selected disabled>Test 2b</option>' +
-                '<option value="Test 2c" selected>Test 2c</option>' +
-                '<option value="Other">Other</option>' +
-                '</select>' +
-                '<select name="test3"><option value="" selected>Test 3</option></select>' +
+                '<input name="test2" type="text" value="Test 2">' +
                 '</form>';
             return $.serialize('#form');
-        })).toBe('test2%5B%5D=Test%202a&test2%5B%5D=Test%202c&test3=');
+        })).toBe('test2=Test%202');
     });
 
-    test('excludes selected options in disabled optgroups', async ({ page }) => {
+    test('excludes disabled selected options from multiple selects', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1[]" multiple>' +
+                '<option value="Test 1a" selected>Test 1a</option>' +
+                '<option value="Test 1b" selected disabled>Test 1b</option>' +
+                '<option value="Test 1c" selected>Test 1c</option>' +
+                '<option value="Other">Other</option>' +
+                '</select>' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test1%5B%5D=Test%201a&test1%5B%5D=Test%201c');
+    });
+
+    test('includes selected options with empty values', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1"><option value="" selected>Test 1</option></select>' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test1=');
+    });
+
+    test('excludes selected options in disabled optgroups from single selects', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
                 '<form id="form">' +
@@ -137,18 +283,28 @@ test.describe('#serialize', () => {
                 '</optgroup>' +
                 '<option value="Other">Other</option>' +
                 '</select>' +
-                '<select name="test2[]" multiple>' +
-                '<option value="Test 2a" selected>Test 2a</option>' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes selected options in disabled optgroups from multiple selects', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<select name="test1[]" multiple>' +
+                '<option value="Test 1a" selected>Test 1a</option>' +
                 '<optgroup label="Disabled" disabled>' +
-                '<option value="Test 2b" selected>Test 2b</option>' +
+                '<option value="Test 1b" selected>Test 1b</option>' +
                 '</optgroup>' +
                 '<optgroup label="Enabled">' +
-                '<option value="Test 2c" selected>Test 2c</option>' +
+                '<option value="Test 1c" selected>Test 1c</option>' +
                 '</optgroup>' +
                 '</select>' +
                 '</form>';
             return $.serialize('#form');
-        })).toBe('test2%5B%5D=Test%202a&test2%5B%5D=Test%202c');
+        })).toBe('test1%5B%5D=Test%201a&test1%5B%5D=Test%201c');
     });
 
     test('serializes associated controls in document order', async ({ page }) => {
@@ -156,19 +312,35 @@ test.describe('#serialize', () => {
             document.body.innerHTML =
                 '<input name="test1" type="text" value="Test 1" form="form">' +
                 '<form id="form">' +
-                '<fieldset name="fieldset">' +
                 '<input name="test2" type="text" value="Test 2">' +
-                '</fieldset>' +
-                '<input name="other" type="text" value="Other" form="other">' +
-                '<button name="button" value="Button">Button</button>' +
-                '<output name="output">Output</output>' +
                 '</form>' +
                 '<select name="test3" form="form"><option value="Test 3" selected>Test 3</option></select>' +
-                '<textarea name="test4" form="form">Test 4</textarea>' +
-                '<input name="unrelated" type="text" value="Unrelated">' +
-                '<form id="other"></form>';
+                '<textarea name="test4" form="form">Test 4</textarea>';
             return $.serialize('#form');
         })).toBe('test1=Test%201&test2=Test%202&test3=Test%203&test4=Test%204');
+    });
+
+    test('excludes descendant controls associated with another form', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="test1" type="text" value="Test 1" form="other">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>' +
+                '<form id="other"></form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes controls outside the form without an association', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<input name="test1" type="text" value="Test 1">' +
+                '<form id="form">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $.serialize('#form');
+        })).toBe('test2=Test%202');
     });
 
     test('serializes forms with a control named elements', async ({ page }) => {

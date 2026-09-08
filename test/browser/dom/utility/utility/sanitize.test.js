@@ -56,21 +56,54 @@ test.describe('#sanitize', () => {
             ))).toBe('<form><button>Test</button></form>');
     });
 
-    test('sanitizes allowed forms whose controls shadow DOM properties', async ({ page }) => {
+    test('allows forms with a control named tagName', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<form><input name="tagName"></form>',
+                {
+                    form: [],
+                    input: ['name'],
+                },
+            ))).toBe('<form><input name="tagName"></form>');
+    });
+
+    test('removes disallowed form attributes when a control shadows attributes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.sanitize(
                 '<form onclick="window.alert(1)">' +
-                    '<input name="tagName"><input name="attributes"><input name="children"><input name="removeAttribute">' +
-                    '<span onclick="window.alert(1)">Test</span><script>window.alert(1)</script>' +
+                    '<input name="attributes">' +
                     '</form>',
                 {
                     form: [],
                     input: ['name'],
-                    span: [],
                 },
-            ))).toBe('<form>' +
-            '<input name="tagName"><input name="attributes"><input name="children"><input name="removeAttribute">' +
-            '<span>Test</span></form>');
+            ))).toBe('<form><input name="attributes"></form>');
+    });
+
+    test('removes disallowed form attributes when a control shadows removeAttribute', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<form onclick="window.alert(1)">' +
+                    '<input name="removeAttribute">' +
+                    '</form>',
+                {
+                    form: [],
+                    input: ['name'],
+                },
+            ))).toBe('<form><input name="removeAttribute"></form>');
+    });
+
+    test('removes disallowed form descendants when a control shadows children', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<form>' +
+                    '<input name="children"><script>window.alert(1)</script>' +
+                    '</form>',
+                {
+                    form: [],
+                    input: ['name'],
+                },
+            ))).toBe('<form><input name="children"></form>');
     });
 
     test('removes disallowed forms with a control named remove', async ({ page }) => {
@@ -126,25 +159,80 @@ test.describe('#sanitize', () => {
             '</div>');
     });
 
-    test('sanitizes contents of allowed templates recursively', async ({ page }) => {
+    test('removes disallowed elements from template contents', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.sanitize(
                 '<template id="template">' +
                     '<script>window.alert(123);</script>' +
-                    '<a href="#" onclick="window.alert(123)">Test 1</a>' +
-                    '<template onclick="window.alert(123)">' +
-                    '<script>window.alert(123);</script>' +
-                    '<a href="javascript:alert(1)" onclick="window.alert(123)">Test 2</a>' +
-                    '</template>' +
+                    '</template>',
+                {
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template"></template>');
+    });
+
+    test('removes disallowed attributes from template contents', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template">' +
+                    '<a href="#" onclick="window.alert(123)">Test</a>' +
                     '</template>',
                 {
                     a: ['href'],
                     template: ['id'],
                 },
-            ))).toBe('<template id="template">' +
-            '<a href="#">Test 1</a>' +
-            '<template><a>Test 2</a></template>' +
-            '</template>');
+            ))).toBe('<template id="template"><a href="#">Test</a></template>');
+    });
+
+    test('removes javascript URLs from template contents', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template">' +
+                    '<a href="javascript:alert(1)">Test</a>' +
+                    '</template>',
+                {
+                    a: ['href'],
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template"><a>Test</a></template>');
+    });
+
+    test('removes disallowed elements from nested template contents', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template"><template>' +
+                    '<script>window.alert(123);</script>' +
+                    '</template></template>',
+                {
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template"><template></template></template>');
+    });
+
+    test('removes disallowed attributes from nested template contents', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template"><template onclick="window.alert(123)">' +
+                    '<a href="#" onclick="window.alert(123)">Test</a>' +
+                    '</template></template>',
+                {
+                    a: ['href'],
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template"><template><a href="#">Test</a></template></template>');
+    });
+
+    test('removes javascript URLs from nested template contents', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<template id="template"><template>' +
+                    '<a href="javascript:alert(1)">Test</a>' +
+                    '</template></template>',
+                {
+                    a: ['href'],
+                    template: ['id'],
+                },
+            ))).toBe('<template id="template"><template><a>Test</a></template></template>');
     });
 
     test('matches string attribute rules exactly', async ({ page }) => {

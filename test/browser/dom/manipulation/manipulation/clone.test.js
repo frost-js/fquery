@@ -38,18 +38,16 @@ test.describe('#clone', () => {
         await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(2);
     });
 
-    test('clones forms and descendant data when controls shadow cloning properties', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            document.body.innerHTML =
-                '<form><input name="cloneNode"><input name="childNodes"><span id="test">Test</span></form>';
-            $.setData(document.getElementById('test'), 'test', 'Test');
+    test('clones forms with a control named cloneNode', async ({ page }) => {
+        await page.evaluate(() => {
+            document.body.innerHTML = '<form><input name="cloneNode"></form>';
 
-            const clone = $.clone('form', { data: true })[0];
-
-            return $.getData(clone.querySelector('span'), 'test');
+            const clone = $.clone('form')[0];
+            document.body.appendChild(clone);
         });
 
-        expect(value).toBe('Test');
+        await expect(page.locator('body > form')).toHaveCount(2);
+        await expect(page.locator('body > form').nth(1).locator('input')).toHaveAttribute('name', 'cloneNode');
     });
 
     test('shallow clones all nodes', async ({ page }) => {
@@ -167,6 +165,40 @@ test.describe('#clone', () => {
             'Test',
             'Test',
         ]);
+    });
+
+    test('clones descendant data when a form control shadows childNodes', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            document.body.innerHTML =
+                '<form><input name="childNodes"><span id="test">Test</span></form>';
+            $.setData(document.getElementById('test'), 'test', 'Test');
+
+            const clone = $.clone('form', { data: true })[0];
+
+            return $.getData(clone.querySelector('span'), 'test');
+        });
+
+        expect(value).toBe('Test');
+    });
+
+    test('clones data with a __proto__ key', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            $.setData('.test1', '__proto__', 'Test');
+            const [clone] = $.clone('.test1', { data: true });
+            return $.getData(clone, '__proto__');
+        });
+
+        expect(value).toBe('Test');
+    });
+
+    test('does not return an inherited constructor from cloned data', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            $.setData('.test1', 'test', 'Test');
+            const [clone] = $.clone('.test1', { data: true });
+            return $.getData(clone, 'constructor') === undefined;
+        });
+
+        expect(value).toBe(true);
     });
 
     test('clones data inside template contents', async ({ page }) => {

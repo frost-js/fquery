@@ -32,6 +32,21 @@ test.describe('#getData', () => {
             $.getData('div', 'invalid'))).toBe(undefined);
     });
 
+    test('does not return an inherited constructor', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.getData('div', 'constructor') === undefined)).toBe(true);
+    });
+
+    test('does not return an inherited toString method', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.getData('div', 'toString') === undefined)).toBe(true);
+    });
+
+    test('does not return an inherited __proto__ value', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.getData('div', '__proto__') === undefined)).toBe(true);
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.getData('#invalid', 'test'))).toBe(undefined);

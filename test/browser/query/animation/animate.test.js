@@ -46,7 +46,7 @@ test.describe('QuerySet #animate', () => {
         ]);
     });
 
-    test('writes and clears debug data on forms with a control named dataset', async ({ page }) => {
+    test('writes debug data on forms with a control named dataset', async ({ page }) => {
         await page.evaluate((_) => {
             document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
             $('form').animate((_) => { }, { duration: 100, type: 'linear', debug: true });
@@ -55,7 +55,14 @@ test.describe('QuerySet #animate', () => {
         expect(Number(await page.locator('#form').getAttribute('data-animation-progress'))).toBeCloseTo(0.5, 10);
         expect(await page.locator('#form').getAttribute('data-animation-start')).not.toBeNull();
         expect(await page.locator('#form').getAttribute('data-animation-time')).not.toBeNull();
-        await advanceClock(page, 100);
+    });
+
+    test('clears debug data on forms with a control named dataset', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
+            $('form').animate((_) => { }, { duration: 100, type: 'linear', debug: true });
+        });
+        await advanceClock(page, 150);
         expect(await page.locator('#form').getAttribute('data-animation-progress')).toBeNull();
         expect(await page.locator('#form').getAttribute('data-animation-start')).toBeNull();
         expect(await page.locator('#form').getAttribute('data-animation-time')).toBeNull();

@@ -107,7 +107,7 @@ export function setData(selector, key, value) {
 
     for (const node of nodes) {
         if (!data.has(node)) {
-            data.set(node, {});
+            data.set(node, Object.create(null));
         }
 
         const nodeData = data.get(node);

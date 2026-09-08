@@ -68,7 +68,7 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
 
     if (data && _data.has(node)) {
         const nodeData = _data.get(node);
-        _data.set(clone, { ...nodeData });
+        _data.set(clone, Object.assign(Object.create(null), nodeData));
     }
 
     if (animations && _animations.has(node)) {

@@ -55,6 +55,19 @@ test.describe('QuerySet #setData', () => {
         ]);
     });
 
+    test('stores __proto__ as a data key for all nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $('div').setData('__proto__', 'Test 1');
+            return [
+                $.getData('#test1', '__proto__'),
+                $.getData('#test2', '__proto__'),
+            ];
+        })).toEqual([
+            'Test 1',
+            'Test 1',
+        ]);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('div');
