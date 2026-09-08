@@ -185,14 +185,12 @@ export default class AjaxRequest {
             }
         };
 
-        if (!this.#options.isLocal) {
-            this.xhr.onerror = (e) =>
-                this.#reject({
-                    status: this.xhr.status,
-                    xhr: this.xhr,
-                    event: e,
-                });
-        }
+        this.xhr.onerror = (e) =>
+            this.#reject({
+                status: this.xhr.status,
+                xhr: this.xhr,
+                event: e,
+            });
 
         this.xhr.ontimeout = (e) =>
             this.#reject({

@@ -344,7 +344,7 @@ var AjaxRequest = class {
 				event: e
 			});
 		};
-		if (!this.#options.isLocal) this.xhr.onerror = (e) => this.#reject({
+		this.xhr.onerror = (e) => this.#reject({
 			status: this.xhr.status,
 			xhr: this.xhr,
 			event: e

@@ -1331,6 +1331,37 @@ test.describe('#ajax', () => {
         });
     });
 
+    test('throws on XHR error (local)', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            try {
+                const ajax = $.ajax({
+                    isLocal: true,
+                });
+                ajax.xhr.forceError = true;
+                ajax.xhr.status = 0;
+                await ajax;
+                return false;
+            } catch (error) {
+                error.xhr = error.xhr.data;
+                return error;
+            }
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            status: 0,
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                method: 'GET',
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('throws on timeout', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             try {
