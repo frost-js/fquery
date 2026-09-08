@@ -55,7 +55,7 @@ export const uriAttributes = new Set([
 
 export const eventLookup = {
     mousedown: ['mousemove', 'mouseup'],
-    touchstart: ['touchmove', 'touchend'],
+    touchstart: ['touchmove', 'touchend touchcancel'],
 };
 
 export const animations = new Map();

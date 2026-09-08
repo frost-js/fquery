@@ -300,4 +300,199 @@ test.describe('#mouseDragFactory', () => {
             return result;
         })).toBe(3);
     });
+
+    test('removes callbacks on touchcancel', async ({ page }) => {
+        const hasTouch = await page.evaluate((_) => {
+            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                return false;
+            }
+
+            try {
+                const touch = new Touch({
+                    identifier: 1,
+                    target: document.body,
+                });
+
+                new TouchEvent('touchstart', {
+                    touches: [touch],
+                });
+
+                return true;
+            } catch {
+                return false;
+            }
+        });
+
+        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+        expect(await page.evaluate((_) => {
+            const touch = new Touch({
+                identifier: 1,
+                target: document.body,
+            });
+
+            let result = 0;
+            const downEvent = new TouchEvent('touchstart', {
+                touches: [touch],
+            });
+            const moveEvent = new TouchEvent('touchmove', {
+                touches: [touch],
+                bubbles: true,
+            });
+            const cancelEvent = new TouchEvent('touchcancel', {
+                touches: [],
+                bubbles: true,
+            });
+            const upEvent = new TouchEvent('touchend', {
+                touches: [],
+                bubbles: true,
+            });
+            $.addEvent(
+                document.body,
+                'touchstart',
+                $.mouseDragFactory(
+                    null,
+                    (_) => {
+                        result++;
+                    },
+                    (_) => {
+                        result++;
+                    },
+                    { debounce: false },
+                ),
+            );
+            document.body.dispatchEvent(downEvent);
+            document.body.dispatchEvent(cancelEvent);
+            document.body.dispatchEvent(moveEvent);
+            document.body.dispatchEvent(upEvent);
+            document.body.dispatchEvent(cancelEvent);
+            return result;
+        })).toBe(1);
+    });
+
+    test('removes callbacks when multiple touches are cancelled', async ({ page }) => {
+        const hasTouch = await page.evaluate((_) => {
+            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                return false;
+            }
+
+            try {
+                const touch = new Touch({
+                    identifier: 1,
+                    target: document.body,
+                });
+
+                new TouchEvent('touchstart', {
+                    touches: [touch],
+                });
+
+                return true;
+            } catch {
+                return false;
+            }
+        });
+
+        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+        expect(await page.evaluate((_) => {
+            const touch1 = new Touch({
+                identifier: 1,
+                target: document.body,
+            });
+            const touch2 = new Touch({
+                identifier: 2,
+                target: document.body,
+            });
+
+            let result = 0;
+            const downEvent = new TouchEvent('touchstart', {
+                touches: [touch1, touch2],
+            });
+            const moveEvent = new TouchEvent('touchmove', {
+                touches: [touch1, touch2],
+                bubbles: true,
+            });
+            const cancelEvent = new TouchEvent('touchcancel', {
+                touches: [],
+                bubbles: true,
+            });
+            $.addEvent(
+                document.body,
+                'touchstart',
+                $.mouseDragFactory(
+                    null,
+                    (_) => {
+                        result++;
+                    },
+                    null,
+                    { debounce: false, touches: 2 },
+                ),
+            );
+            document.body.dispatchEvent(downEvent);
+            document.body.dispatchEvent(cancelEvent);
+            document.body.dispatchEvent(moveEvent);
+            return result;
+        })).toBe(0);
+    });
+
+    test('removes callbacks on touchcancel if up callback returns false', async ({ page }) => {
+        const hasTouch = await page.evaluate((_) => {
+            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                return false;
+            }
+
+            try {
+                const touch = new Touch({
+                    identifier: 1,
+                    target: document.body,
+                });
+
+                new TouchEvent('touchstart', {
+                    touches: [touch],
+                });
+
+                return true;
+            } catch {
+                return false;
+            }
+        });
+
+        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+        expect(await page.evaluate((_) => {
+            const touch = new Touch({
+                identifier: 1,
+                target: document.body,
+            });
+
+            let result = 0;
+            const downEvent = new TouchEvent('touchstart', {
+                touches: [touch],
+            });
+            const moveEvent = new TouchEvent('touchmove', {
+                touches: [touch],
+                bubbles: true,
+            });
+            const cancelEvent = new TouchEvent('touchcancel', {
+                touches: [],
+                bubbles: true,
+            });
+            $.addEvent(
+                document.body,
+                'touchstart',
+                $.mouseDragFactory(
+                    null,
+                    (_) => {
+                        result++;
+                    },
+                    (_) => false,
+                    { debounce: false },
+                ),
+            );
+            document.body.dispatchEvent(downEvent);
+            document.body.dispatchEvent(cancelEvent);
+            document.body.dispatchEvent(moveEvent);
+            return result;
+        })).toBe(0);
+    });
 });

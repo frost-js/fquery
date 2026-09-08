@@ -1091,7 +1091,7 @@ var uriAttributes = /* @__PURE__ */ new Set([
 ]);
 var eventLookup = {
 	mousedown: ["mousemove", "mouseup"],
-	touchstart: ["touchmove", "touchend"]
+	touchstart: ["touchmove", "touchend touchcancel"]
 };
 var animations = /* @__PURE__ */ new Map();
 var data = /* @__PURE__ */ new WeakMap();
@@ -3524,8 +3524,9 @@ function mouseDragFactory(down, move, up, { debounce: debounce$1 = true, passive
 			move(event);
 		};
 		const realUp = (event) => {
-			if (isTouch && event.touches.length !== touches - 1) return;
-			if (up && up(event) === false) return;
+			const isCancelled = event.type === "touchcancel";
+			if (isTouch && !isCancelled && event.touches.length !== touches - 1) return;
+			if (up && up(event) === false && !isCancelled) return;
 			if (preventDefault) event.preventDefault();
 			removeEvent$1(window, moveEvent, realMove);
 			removeEvent$1(window, upEvent, realUp);
@@ -3876,7 +3877,7 @@ function animate(callback, { queueName = "default", ...options } = {}) {
 * @returns {QuerySet} The QuerySet object.
 */
 function stop({ finish = true } = {}) {
-	this.clearQueue();
+	this.clearQueue({ queueName: null });
 	stop$1(this, { finish });
 	return this;
 }

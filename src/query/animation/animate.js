@@ -24,7 +24,7 @@ export function animate(callback, { queueName = 'default', ...options } = {}) {
  * @returns {QuerySet} The QuerySet object.
  */
 export function stop({ finish = true } = {}) {
-    this.clearQueue();
+    this.clearQueue({ queueName: null });
     _stop(this, { finish });
 
     return this;
