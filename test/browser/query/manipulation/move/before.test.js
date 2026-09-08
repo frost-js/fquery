@@ -124,6 +124,20 @@ test.describe('QuerySet #before', () => {
         expect(isSameNode).toBe(true);
     });
 
+    test('inserts the original node when the final target is detached', async ({ page }) => {
+        const isSameNode = await page.evaluate(() => {
+            const node = document.getElementById('parent1');
+            const detached = document.createElement('div');
+            const other = document.querySelector('.test1');
+
+            $([node, detached]).before(other);
+
+            return other.isSameNode(node.previousSibling);
+        });
+
+        expect(isSameNode).toBe(true);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         const returnsSameQuery = await page.evaluate(() => {
             const query = $('div');

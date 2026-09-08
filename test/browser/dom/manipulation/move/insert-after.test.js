@@ -124,6 +124,20 @@ test.describe('#insertAfter', () => {
         expect(isSameNode).toBe(true);
     });
 
+    test('inserts the original node when the final target is detached', async ({ page }) => {
+        const isSameNode = await page.evaluate(() => {
+            const node = document.getElementById('parent1');
+            const detached = document.createElement('div');
+            const other = document.querySelector('.test1');
+
+            $.insertAfter(other, [node, detached]);
+
+            return other.isSameNode(node.nextSibling);
+        });
+
+        expect(isSameNode).toBe(true);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const html = await page.evaluate(() => {
             $.insertAfter(document.querySelector('.test1'), 'div');

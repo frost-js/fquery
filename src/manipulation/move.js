@@ -13,7 +13,7 @@ export function after(selector, otherSelector) {
     // DocumentFragment and ShadowRoot nodes can not have siblings
     const nodes = parseNodes(selector, {
         node: true,
-    });
+    }).filter((node) => getDOMProperty(node, 'parentNode'));
 
     // ShadowRoot nodes can not be moved
     const others = parseNodes(otherSelector, {
@@ -101,7 +101,7 @@ export function before(selector, otherSelector) {
     // DocumentFragment and ShadowRoot nodes can not have siblings
     const nodes = parseNodes(selector, {
         node: true,
-    });
+    }).filter((node) => getDOMProperty(node, 'parentNode'));
 
     // ShadowRoot nodes can not be moved
     const others = parseNodes(otherSelector, {

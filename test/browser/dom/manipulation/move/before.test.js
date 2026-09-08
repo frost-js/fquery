@@ -124,6 +124,20 @@ test.describe('#before', () => {
         expect(isSameNode).toBe(true);
     });
 
+    test('inserts the original node when the final target is detached', async ({ page }) => {
+        const isSameNode = await page.evaluate(() => {
+            const node = document.getElementById('parent1');
+            const detached = document.createElement('div');
+            const other = document.querySelector('.test1');
+
+            $.before([node, detached], other);
+
+            return other.isSameNode(node.previousSibling);
+        });
+
+        expect(isSameNode).toBe(true);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const html = await page.evaluate(() => {
             $.before(document.getElementById('parent1'), 'a');

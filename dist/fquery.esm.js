@@ -3600,7 +3600,7 @@ function registerGlobals(window, document, query) {
 * @param {NodeInput} otherSelector The other node(s), or a query selector or HTML string.
 */
 function after$1(selector, otherSelector) {
-	const nodes = parseNodes(selector, { node: true });
+	const nodes = parseNodes(selector, { node: true }).filter((node) => getDOMProperty(node, "parentNode"));
 	const others = parseNodes(otherSelector, {
 		node: true,
 		fragment: true,
@@ -3660,7 +3660,7 @@ function appendTo$1(selector, otherSelector) {
 * @param {NodeInput} otherSelector The other node(s), or a query selector or HTML string.
 */
 function before$1(selector, otherSelector) {
-	const nodes = parseNodes(selector, { node: true });
+	const nodes = parseNodes(selector, { node: true }).filter((node) => getDOMProperty(node, "parentNode"));
 	const others = parseNodes(otherSelector, {
 		node: true,
 		fragment: true,
