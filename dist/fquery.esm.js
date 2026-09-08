@@ -318,7 +318,7 @@ var AjaxRequest = class {
 				else if (this.#options.contentType === "application/x-www-form-urlencoded") this.#options.data = parseParams(this.#options.data);
 				else this.#options.data = parseFormData(this.#options.data);
 			}
-			if (this.#options.method === "GET") {
+			if (["GET", "HEAD"].includes(this.#options.method)) {
 				const dataParams = createSearchParams(this.#options.data);
 				const searchParams = getSearchParams(this.#options.url);
 				for (const [key, value] of dataParams.entries()) searchParams.append(key, value);

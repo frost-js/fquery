@@ -136,7 +136,7 @@ export default class AjaxRequest {
                 }
             }
 
-            if (this.#options.method === 'GET') {
+            if (['GET', 'HEAD'].includes(this.#options.method)) {
                 const dataParams = createSearchParams(this.#options.data);
 
                 const searchParams = getSearchParams(this.#options.url);

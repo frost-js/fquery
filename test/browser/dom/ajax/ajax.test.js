@@ -178,6 +178,36 @@ test.describe('#ajax', () => {
         });
     });
 
+    test('performs an AJAX HEAD request with data', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                url: '/?test1=Test+1',
+                method: 'HEAD',
+                data: {
+                    test2: 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'HEAD',
+                status: 200,
+                url: 'http://localhost:3001/?test1=Test+1&test2=Test+2',
+            },
+        });
+    });
+
     test('performs an AJAX request with data (object)', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.ajax({
