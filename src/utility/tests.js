@@ -3,7 +3,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { callDOMMethod, camelCase, getDOMProperty, isDocument, isElement, isWindow } from '@fr0st/core';
+import { callDOMMethod, camelCase, getDOMProperty, isDocument, isElement, isFragment, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
 import { parseClasses } from './../helpers.js';
@@ -151,7 +151,7 @@ export function hasDescendent(selector, nodeFilter) {
  */
 export function hasFragment(selector) {
     return parseNodes(selector)
-        .some((node) => getDOMProperty(node, 'content'));
+        .some((node) => isFragment(getDOMProperty(node, 'content')));
 };
 
 /**

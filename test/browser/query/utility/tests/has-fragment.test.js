@@ -31,4 +31,11 @@ test.describe('QuerySet #hasFragment', () => {
             $('div')
                     .hasFragment())).toBe(false);
     });
+
+    test('returns false for meta nodes with content', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.head.innerHTML = '<meta name="description" content="Test">';
+            return $('meta').hasFragment();
+        })).toBe(false);
+    });
 });

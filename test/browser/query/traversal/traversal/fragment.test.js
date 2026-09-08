@@ -25,6 +25,18 @@ test.describe('QuerySet #fragment', () => {
         expect(hasFragment).toBe(true);
     });
 
+    test('returns an empty QuerySet for meta nodes with content', async ({ page }) => {
+        const isEmpty = await page.evaluate((_) => {
+            document.head.innerHTML = '<meta name="description" content="Test">';
+            const query = $('meta');
+            const fragment = query.fragment();
+
+            return fragment.length === 0;
+        });
+
+        expect(isEmpty).toBe(true);
+    });
+
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
             const query1 = $('template');

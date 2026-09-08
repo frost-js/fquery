@@ -30,6 +30,13 @@ test.describe('#hasFragment', () => {
             $.hasFragment('div'))).toBe(false);
     });
 
+    test('returns false for meta nodes with content', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.head.innerHTML = '<meta name="description" content="Test">';
+            return $.hasFragment('meta');
+        })).toBe(false);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.hasFragment(

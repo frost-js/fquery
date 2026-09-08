@@ -30,6 +30,15 @@ test.describe('#fragment', () => {
         expect(fragment).toBe(undefined);
     });
 
+    test('returns undefined for meta nodes with content', async ({ page }) => {
+        const fragment = await page.evaluate((_) => {
+            document.head.innerHTML = '<meta name="description" content="Test">';
+            return $.fragment('meta');
+        });
+
+        expect(fragment).toBe(undefined);
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         const fragment = await page.evaluate((_) => $.fragment('#invalid'));
 

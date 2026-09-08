@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isElement, merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isElement, isFragment, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './../utility/utility.js';
@@ -118,7 +118,11 @@ export function fragment(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'content');
+    const content = getDOMProperty(node, 'content');
+
+    if (isFragment(content)) {
+        return content;
+    }
 };
 
 /**

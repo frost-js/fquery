@@ -1981,7 +1981,8 @@ function contents$1(selector) {
 function fragment$1(selector) {
 	const node = parseNode(selector);
 	if (!node) return;
-	return getDOMProperty(node, "content");
+	const content = getDOMProperty(node, "content");
+	if (isFragment(content)) return content;
 }
 /**
 * Returns the next sibling for each node (optionally matching a filter).
@@ -5740,7 +5741,7 @@ function hasDescendent$1(selector, nodeFilter) {
 * @returns {boolean} Whether any of the nodes has a DocumentFragment.
 */
 function hasFragment$1(selector) {
-	return parseNodes(selector).some((node) => getDOMProperty(node, "content"));
+	return parseNodes(selector).some((node) => isFragment(getDOMProperty(node, "content")));
 }
 /**
 * Checks whether any of the nodes has a specified property.
