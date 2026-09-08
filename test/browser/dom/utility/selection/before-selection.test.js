@@ -52,6 +52,24 @@ test.describe('#beforeSelection', () => {
             '<div id="parent"></div>');
     });
 
+    test('preserves the selection with an empty array', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.beforeSelection([]);
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('t 1Test 2');
+    });
+
+    test('preserves the selection with an unmatched selector', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.beforeSelection('.missing');
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('t 1Test 2');
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.beforeSelection(

@@ -20,7 +20,7 @@ export function afterSelection(selector) {
 
     const selection = getWindow().getSelection();
 
-    if (!selection.rangeCount) {
+    if (!nodes.length || !selection.rangeCount) {
         return;
     }
 
@@ -48,7 +48,7 @@ export function beforeSelection(selector) {
 
     const selection = getWindow().getSelection();
 
-    if (!selection.rangeCount) {
+    if (!nodes.length || !selection.rangeCount) {
         return;
     }
 

@@ -5481,7 +5481,7 @@ function afterSelection$1(selector) {
 		html: true
 	}).reverse();
 	const selection = getWindow().getSelection();
-	if (!selection.rangeCount) return;
+	if (!nodes.length || !selection.rangeCount) return;
 	const range = selection.getRangeAt(0);
 	selection.removeAllRanges();
 	range.collapse();
@@ -5498,7 +5498,7 @@ function beforeSelection$1(selector) {
 		html: true
 	}).reverse();
 	const selection = getWindow().getSelection();
-	if (!selection.rangeCount) return;
+	if (!nodes.length || !selection.rangeCount) return;
 	const range = selection.getRangeAt(0);
 	selection.removeAllRanges();
 	for (const node of nodes) range.insertNode(node);

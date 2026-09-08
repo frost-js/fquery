@@ -53,6 +53,24 @@ test.describe('QuerySet #afterSelection', () => {
             '<div id="parent"></div>');
     });
 
+    test('preserves the selection with an empty array', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $([]).afterSelection();
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('Test 1Tes');
+    });
+
+    test('preserves the selection with an unmatched selector', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $('.missing').afterSelection();
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('Test 1Tes');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('a');
