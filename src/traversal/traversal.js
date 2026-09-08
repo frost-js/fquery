@@ -85,6 +85,12 @@ export function commonAncestor(selector) {
         return;
     }
 
+    const root = callDOMMethod(nodes[0], 'getRootNode');
+
+    if (nodes.some((node) => callDOMMethod(node, 'getRootNode') !== root)) {
+        return;
+    }
+
     const range = createRange();
 
     if (nodes.length === 1) {

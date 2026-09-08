@@ -2916,6 +2916,8 @@
 		const nodes = sort$1(selector);
 		if (!nodes.length) return;
 		if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
+		const root = callDOMMethod(nodes[0], "getRootNode");
+		if (nodes.some((node) => callDOMMethod(node, "getRootNode") !== root)) return;
 		const range = createRange();
 		if (nodes.length === 1) range.selectNode(nodes.shift());
 		else {

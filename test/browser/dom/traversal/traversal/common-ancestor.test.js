@@ -20,8 +20,53 @@ test.describe('#commonAncestor', () => {
         expect(id).toBe('child');
     });
 
+    test('returns the common ancestor within a detached tree', async ({ page }) => {
+        const id = await page.evaluate((_) => {
+            const parent = document.getElementById('parent');
+            parent.remove();
+
+            return $.commonAncestor(parent.querySelectorAll('a')).id;
+        });
+
+        expect(id).toBe('child');
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         const ancestor = await page.evaluate((_) => $.commonAncestor('#invalid'));
+
+        expect(ancestor).toBe(undefined);
+    });
+
+    test('returns undefined for nodes in separate detached trees', async ({ page }) => {
+        const ancestor = await page.evaluate((_) => {
+            const parent1 = document.createElement('div');
+            const parent2 = document.createElement('div');
+            const node1 = document.createElement('span');
+            const node2 = document.createElement('span');
+
+            parent1.appendChild(node1);
+            parent2.appendChild(node2);
+
+            return $.commonAncestor([node1, node2]);
+        });
+
+        expect(ancestor).toBe(undefined);
+    });
+
+    test('returns undefined when a middle node belongs to another tree', async ({ page }) => {
+        const ancestor = await page.evaluate((_) => {
+            const parent1 = document.createElement('div');
+            const parent2 = document.createElement('div');
+            const node1 = document.createElement('span');
+            const node2 = document.createElement('span');
+            const node3 = document.createElement('span');
+
+            parent1.appendChild(node1);
+            parent2.appendChild(node2);
+            parent1.appendChild(node3);
+
+            return $.commonAncestor([node1, node2, node3]);
+        });
 
         expect(ancestor).toBe(undefined);
     });
