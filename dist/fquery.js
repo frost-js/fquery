@@ -6523,7 +6523,7 @@
 		const fragment = range.extractContents();
 		const childNodes = merge([], fragment.childNodes);
 		for (const child of childNodes) callDOMMethod(deepest, "insertBefore", child, null);
-		for (const node of nodes) range.insertNode(node);
+		for (const node of nodes.reverse()) range.insertNode(node);
 	}
 
 //#endregion

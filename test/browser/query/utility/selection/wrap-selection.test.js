@@ -62,6 +62,34 @@ test.describe('QuerySet #wrapSelection', () => {
             '</div>');
     });
 
+    test('preserves the order of multiple wrapper nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const nodes = [document.querySelector('.outer'), document.createElement('section')];
+            $(nodes).wrapSelection();
+            return document.body.innerHTML;
+        })).toBe('<div id="select">' +
+            '<div id="div1">' +
+            '<span id="span1">Tes</span>' +
+            '</div>' +
+            '<div class="outer">' +
+            '<div class="inner">' +
+            '<div id="div1">' +
+            '<span id="span1">t 1</span>' +
+            '</div>' +
+            '<div id="div2">' +
+            '<span id="span2">Tes</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<section></section>' +
+            '<div id="div2">' +
+            '<span id="span2">t 2</span>' +
+            '</div>' +
+            '</div>' +
+            '<div id="wrapper">' +
+            '</div>');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('.outer');

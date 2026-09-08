@@ -222,7 +222,7 @@ export function wrapSelection(selector) {
         callDOMMethod(deepest, 'insertBefore', child, null);
     }
 
-    for (const node of nodes) {
+    for (const node of nodes.reverse()) {
         range.insertNode(node);
     }
 };
