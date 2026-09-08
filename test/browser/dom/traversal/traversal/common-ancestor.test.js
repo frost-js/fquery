@@ -31,6 +31,19 @@ test.describe('#commonAncestor', () => {
         expect(id).toBe('child');
     });
 
+    test('returns the common ancestor for reversed nodes within a detached tree', async ({ page }) => {
+        const id = await page.evaluate((_) => {
+            const parent = document.getElementById('parent');
+            const node1 = document.getElementById('a1');
+            const node2 = document.getElementById('a2');
+            parent.remove();
+
+            return $.commonAncestor([node2, node1]).id;
+        });
+
+        expect(id).toBe('child');
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         const ancestor = await page.evaluate((_) => $.commonAncestor('#invalid'));
 

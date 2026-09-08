@@ -1884,7 +1884,7 @@ function sort$1(selector) {
 				if (isOtherShadow && !otherConnected) return -1;
 				return nodeConnected ? 1 : -1;
 			}
-			return 0;
+			if (callDOMMethod(node, "getRootNode") !== callDOMMethod(other, "getRootNode")) return 0;
 		}
 		if (callDOMMethod(node, "isSameNode", other)) return 0;
 		const pos = callDOMMethod(node, "compareDocumentPosition", other);

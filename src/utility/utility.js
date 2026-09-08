@@ -231,7 +231,9 @@ export function sort(selector) {
                     -1;
             }
 
-            return 0;
+            if (callDOMMethod(node, 'getRootNode') !== callDOMMethod(other, 'getRootNode')) {
+                return 0;
+            }
         }
 
         if (callDOMMethod(node, 'isSameNode', other)) {

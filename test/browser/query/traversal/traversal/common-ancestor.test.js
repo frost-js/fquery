@@ -36,6 +36,21 @@ test.describe('QuerySet #commonAncestor', () => {
         ]);
     });
 
+    test('returns the common ancestor for reversed nodes within a detached tree', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            const parent = document.getElementById('parent');
+            const node1 = document.getElementById('a1');
+            const node2 = document.getElementById('a2');
+            parent.remove();
+
+            return $([node2, node1]).commonAncestor().get().map((node) => node.id);
+        });
+
+        expect(ids).toEqual([
+            'child',
+        ]);
+    });
+
     test('returns an empty QuerySet for nodes in separate detached trees', async ({ page }) => {
         const ids = await page.evaluate((_) => {
             const parent1 = document.createElement('div');

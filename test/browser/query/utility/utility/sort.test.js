@@ -48,6 +48,37 @@ test.describe('QuerySet #sort', () => {
         ]);
     });
 
+    test('sorts reversed nodes within a detached tree', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const parent = document.createElement('div');
+            const node1 = document.getElementById('div1');
+            const node2 = document.getElementById('div2');
+
+            parent.appendChild(node1);
+            parent.appendChild(node2);
+
+            return $([node2, node1]).sort().get().map((node) => node.id);
+        })).toEqual([
+            'div1',
+            'div2',
+        ]);
+    });
+
+    test('preserves the order of nodes in separate detached trees', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node1 = document.getElementById('div1');
+            const node2 = document.getElementById('div2');
+
+            node1.remove();
+            node2.remove();
+
+            return $([node2, node1]).sort().get().map((node) => node.id);
+        })).toEqual([
+            'div2',
+            'div1',
+        ]);
+    });
+
     test('returns a new QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query1 = $('div');
