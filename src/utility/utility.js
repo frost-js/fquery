@@ -116,7 +116,7 @@ export function serializeArray(selector) {
 
             if (
                 isElement(node) &&
-                callDOMMethod(node, 'matches', ':disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
+                callDOMMethod(node, 'matches', ':disabled, datalist *, input[type=button], input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
             ) {
                 return values;
             }

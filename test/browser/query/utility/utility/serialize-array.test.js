@@ -90,6 +90,43 @@ test.describe('QuerySet #serializeArray', () => {
         ]);
     });
 
+    test('excludes button inputs', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="test1" type="button" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $('#form').serializeArray();
+        })).toEqual([
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+        ]);
+    });
+
+    test('excludes controls inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist id="list">' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '<span><input name="test2" type="text" value="Test 2"></span>' +
+                '<select name="test3"><option value="Test 3" selected>Test 3</option></select>' +
+                '<textarea name="test4">Test 4</textarea>' +
+                '</datalist>' +
+                '<input name="test5" type="text" value="Test 5" list="list">' +
+                '</form>';
+            return $('#form').serializeArray();
+        })).toEqual([
+            {
+                name: 'test5',
+                value: 'Test 5',
+            },
+        ]);
+    });
+
     test('excludes controls in disabled fieldsets', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =

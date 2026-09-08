@@ -49,6 +49,33 @@ test.describe('QuerySet #serialize', () => {
                     .serialize())).toBe('test1=Test%201&test2=2&test3=Test%203&test4=42&test5%5B%5D=51&test5%5B%5D=52&test6=Test%206&test8=Test%208b&test9%5B%5D=Test%209a&test9%5B%5D=Test%209b');
     });
 
+    test('excludes button inputs', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<input name="test1" type="button" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">' +
+                '</form>';
+            return $('#form').serialize();
+        })).toBe('test2=Test%202');
+    });
+
+    test('excludes controls inside datalists', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form id="form">' +
+                '<datalist id="list">' +
+                '<input name="test1" type="text" value="Test 1">' +
+                '<span><input name="test2" type="text" value="Test 2"></span>' +
+                '<select name="test3"><option value="Test 3" selected>Test 3</option></select>' +
+                '<textarea name="test4">Test 4</textarea>' +
+                '</datalist>' +
+                '<input name="test5" type="text" value="Test 5" list="list">' +
+                '</form>';
+            return $('#form').serialize();
+        })).toBe('test5=Test%205');
+    });
+
     test('excludes controls in disabled fieldsets', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
