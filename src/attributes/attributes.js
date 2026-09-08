@@ -48,7 +48,11 @@ export function getDataset(selector, key) {
     if (key) {
         key = camelCase(key);
 
-        return parseDataset(getDOMProperty(node, 'dataset')[key]);
+        const dataset = getDOMProperty(node, 'dataset');
+
+        return Object.hasOwn(dataset, key) ?
+            parseDataset(dataset[key]) :
+            undefined;
     }
 
     return Object.fromEntries(

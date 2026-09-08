@@ -21,9 +21,40 @@ test.describe('#hasDataset', () => {
             $.hasDataset('div', 'text'))).toBe(true);
     });
 
+    test('returns true for an empty dataset value', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('div2').setAttribute('data-empty', '');
+            return $.hasDataset('div', 'empty');
+        })).toBe(true);
+    });
+
+    test('returns true for a data-constructor attribute', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('div2').setAttribute('data-constructor', 'Test');
+            return $.hasDataset('div', 'constructor');
+        })).toBe(true);
+    });
+
+    test('returns true for a data-to-string attribute', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('div2').setAttribute('data-to-string', 'Test');
+            return $.hasDataset('div', 'toString');
+        })).toBe(true);
+    });
+
     test('returns false if no nodes have a specified attribute', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.hasDataset('div:not([data-text])', 'text'))).toBe(false);
+    });
+
+    test('returns false for an inherited constructor', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.hasDataset('div', 'constructor'))).toBe(false);
+    });
+
+    test('returns false for an inherited toString method', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.hasDataset('div', 'toString'))).toBe(false);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

@@ -121,7 +121,7 @@ export function hasDataset(selector, key) {
     key = camelCase(key);
 
     return parseNodes(selector)
-        .some((node) => !!getDOMProperty(node, 'dataset')[key]);
+        .some((node) => Object.hasOwn(getDOMProperty(node, 'dataset'), key));
 };
 
 /**

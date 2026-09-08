@@ -34,6 +34,33 @@ test.describe('#getDataset', () => {
         expect(value).toBe('Test');
     });
 
+    test('returns a data-constructor attribute value', async ({ page }) => {
+        const value = await page.evaluate((_) => {
+            document.getElementById('test1').setAttribute('data-constructor', '123.456');
+            return $.getDataset('div', 'constructor');
+        });
+
+        expect(value).toBe(123.456);
+    });
+
+    test('returns a data-to-string attribute value', async ({ page }) => {
+        const value = await page.evaluate((_) => {
+            document.getElementById('test1').setAttribute('data-to-string', 'Test');
+            return $.getDataset('div', 'toString');
+        });
+
+        expect(value).toBe('Test');
+    });
+
+    test('returns an empty dataset value', async ({ page }) => {
+        const value = await page.evaluate((_) => {
+            document.getElementById('test1').setAttribute('data-empty', '');
+            return $.getDataset('div', 'empty');
+        });
+
+        expect(value).toBe('');
+    });
+
     test('parses number values', async ({ page }) => {
         const value = await page.evaluate((_) => $.getDataset('div', 'number'));
 
@@ -68,6 +95,18 @@ test.describe('#getDataset', () => {
         const value = await page.evaluate((_) => $.getDataset('div', 'object'));
 
         expect(value).toEqual({ a: 1 });
+    });
+
+    test('returns undefined for an inherited constructor', async ({ page }) => {
+        const value = await page.evaluate((_) => $.getDataset('div', 'constructor'));
+
+        expect(value).toBe(undefined);
+    });
+
+    test('returns undefined for an inherited toString method', async ({ page }) => {
+        const value = await page.evaluate((_) => $.getDataset('div', 'toString'));
+
+        expect(value).toBe(undefined);
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {

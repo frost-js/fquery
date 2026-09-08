@@ -3666,7 +3666,8 @@
 		if (!node) return;
 		if (key) {
 			key = camelCase(key);
-			return parseDataset(getDOMProperty(node, "dataset")[key]);
+			const dataset = getDOMProperty(node, "dataset");
+			return Object.hasOwn(dataset, key) ? parseDataset(dataset[key]) : void 0;
 		}
 		return Object.fromEntries(Object.entries(getDOMProperty(node, "dataset")).map(([key, value]) => [key, parseDataset(value)]));
 	}
@@ -6649,7 +6650,7 @@
 	*/
 	function hasDataset$1(selector, key) {
 		key = camelCase(key);
-		return parseNodes(selector).some((node) => !!getDOMProperty(node, "dataset")[key]);
+		return parseNodes(selector).some((node) => Object.hasOwn(getDOMProperty(node, "dataset"), key));
 	}
 	/**
 	* Checks whether any of the nodes contains a descendant matching a filter.
