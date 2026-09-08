@@ -55,6 +55,28 @@ test.describe('QuerySet #addEvent', () => {
         })).toBe(8);
     });
 
+    test('adds events with names inherited from Object.prototype', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event1 = new Event('constructor');
+            const event2 = new Event('toString');
+            const event3 = new Event('__proto__');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $('a')
+                    .addEvent('constructor toString __proto__', (_) => {
+                        result++;
+                    });
+            element1.dispatchEvent(event1);
+            element1.dispatchEvent(event2);
+            element1.dispatchEvent(event3);
+            element2.dispatchEvent(event1);
+            element2.dispatchEvent(event2);
+            element2.dispatchEvent(event3);
+            return result;
+        })).toBe(6);
+    });
+
     test('adds a namespaced event to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

@@ -3250,7 +3250,7 @@
 				passive
 			};
 			for (const node of nodes) {
-				if (!events.has(node)) events.set(node, {});
+				if (!events.has(node)) events.set(node, Object.create(null));
 				const nodeEvents = events.get(node);
 				let realCallback = callback;
 				if (selfDestruct) realCallback = selfDestructCallbackFactory(realCallback, (_) => removeEvent$1(node, eventName, callback, {
@@ -3351,7 +3351,7 @@
 		let eventLookup;
 		if (eventNames) {
 			eventNames = parseEvents(eventNames);
-			eventLookup = {};
+			eventLookup = Object.create(null);
 			for (const eventName of eventNames) {
 				const realEventName = parseEvent(eventName);
 				if (!(realEventName in eventLookup)) eventLookup[realEventName] = [];

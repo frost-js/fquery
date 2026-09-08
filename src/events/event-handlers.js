@@ -71,7 +71,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
 
         for (const node of nodes) {
             if (!events.has(node)) {
-                events.set(node, {});
+                events.set(node, Object.create(null));
             }
 
             const nodeEvents = events.get(node);
@@ -192,7 +192,7 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
     if (eventNames) {
         eventNames = parseEvents(eventNames);
 
-        eventLookup = {};
+        eventLookup = Object.create(null);
 
         for (const eventName of eventNames) {
             const realEventName = parseEvent(eventName);

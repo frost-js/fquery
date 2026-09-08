@@ -95,6 +95,31 @@ test.describe('#removeEvent', () => {
         })).toBe(0);
     });
 
+    test('removes events with names inherited from Object.prototype', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event1 = new Event('constructor');
+            const event2 = new Event('toString');
+            const event3 = new Event('__proto__');
+            const event4 = new Event('click');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            $.addEvent('a', 'constructor toString __proto__ click', (_) => {
+                result++;
+            });
+            $.removeEvent('a', 'constructor toString __proto__');
+            element1.dispatchEvent(event1);
+            element1.dispatchEvent(event2);
+            element1.dispatchEvent(event3);
+            element1.dispatchEvent(event4);
+            element2.dispatchEvent(event1);
+            element2.dispatchEvent(event2);
+            element2.dispatchEvent(event3);
+            element2.dispatchEvent(event4);
+            return result;
+        })).toBe(2);
+    });
+
     test('removes a specific event from each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
