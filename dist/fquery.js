@@ -6495,7 +6495,8 @@
 	* @param {NodeInput} selector The input node(s), or a query selector string.
 	*/
 	function selectAll$1(selector) {
-		const nodes = sort$1(selector);
+		let nodes = sort$1(selector);
+		nodes = nodes.filter((node) => !nodes.some((other) => other !== node && callDOMMethod(other, "contains", node)));
 		const selection = getWindow().getSelection();
 		if (selection.rangeCount) selection.removeAllRanges();
 		if (!nodes.length) return;

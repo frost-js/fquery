@@ -166,7 +166,13 @@ export function select(selector) {
  * @param {NodeInput} selector The input node(s), or a query selector string.
  */
 export function selectAll(selector) {
-    const nodes = sort(selector);
+    let nodes = sort(selector);
+
+    nodes = nodes.filter((node) =>
+        !nodes.some((other) =>
+            other !== node && callDOMMethod(other, 'contains', node),
+        ),
+    );
 
     const selection = getWindow().getSelection();
 
