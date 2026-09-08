@@ -303,7 +303,7 @@ export function triggerEvent(selector, events, { data = null, detail = null, bub
  * @param {EventTargetInput} selector The input node(s), or a query selector string.
  * @param {string} event The event name.
  * @param {TriggerEventOptions} [options] The event options.
- * @returns {boolean} Whether the event was dispatched without cancellation.
+ * @returns {boolean|undefined} Whether the event was dispatched without cancellation, or `undefined` if no node matches.
  */
 export function triggerOne(selector, event, { data = null, detail = null, bubbles = true, cancelable = true } = {}) {
     const node = parseNode(selector, {
@@ -311,6 +311,10 @@ export function triggerOne(selector, event, { data = null, detail = null, bubble
         document: true,
         window: true,
     });
+
+    if (!node) {
+        return;
+    }
 
     const realEvent = parseEvent(event);
 

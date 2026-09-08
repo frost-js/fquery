@@ -115,7 +115,7 @@ export function triggerEvent(events, { data = null, detail = null, bubbles = tru
  * Triggers an event for the first node.
  * @param {string} event The event name.
  * @param {TriggerEventOptions} [options] The event options.
- * @returns {boolean} Whether the event was dispatched without cancellation.
+ * @returns {boolean|undefined} Whether the event was dispatched without cancellation, or `undefined` if no node matches.
  */
 export function triggerOne(event, { data = null, detail = null, bubbles = true, cancelable = true } = {}) {
     return _triggerOne(this, event, { data, detail, bubbles, cancelable });

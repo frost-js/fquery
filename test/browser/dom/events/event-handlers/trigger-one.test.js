@@ -162,6 +162,16 @@ test.describe('#triggerOne', () => {
         })).toBe(0);
     });
 
+    test('returns undefined for an empty array', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.triggerOne([], 'click'))).toBe(undefined);
+    });
+
+    test('returns undefined for an unmatched selector', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.triggerOne('#invalid', 'click'))).toBe(undefined);
+    });
+
     test('returns false if the event is cancelled', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.addEvent('#test1', 'click', (e) => {

@@ -2481,7 +2481,7 @@ function triggerEvent$1(selector, events, { data = null, detail = null, bubbles 
 * @param {EventTargetInput} selector The input node(s), or a query selector string.
 * @param {string} event The event name.
 * @param {TriggerEventOptions} [options] The event options.
-* @returns {boolean} Whether the event was dispatched without cancellation.
+* @returns {boolean|undefined} Whether the event was dispatched without cancellation, or `undefined` if no node matches.
 */
 function triggerOne$1(selector, event, { data = null, detail = null, bubbles = true, cancelable = true } = {}) {
 	const node = parseNode(selector, {
@@ -2489,6 +2489,7 @@ function triggerOne$1(selector, event, { data = null, detail = null, bubbles = t
 		document: true,
 		window: true
 	});
+	if (!node) return;
 	const realEvent = parseEvent(event);
 	const eventData = createEvent(realEvent, {
 		detail,
@@ -4525,7 +4526,7 @@ function triggerEvent(events, { data = null, detail = null, bubbles = true, canc
 * Triggers an event for the first node.
 * @param {string} event The event name.
 * @param {TriggerEventOptions} [options] The event options.
-* @returns {boolean} Whether the event was dispatched without cancellation.
+* @returns {boolean|undefined} Whether the event was dispatched without cancellation, or `undefined` if no node matches.
 */
 function triggerOne(event, { data = null, detail = null, bubbles = true, cancelable = true } = {}) {
 	return triggerOne$1(this, event, {
