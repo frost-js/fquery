@@ -1396,6 +1396,7 @@
 		return new AjaxRequest({
 			url,
 			data,
+			method: "GET",
 			...options
 		});
 	}

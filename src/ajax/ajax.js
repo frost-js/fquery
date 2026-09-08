@@ -37,6 +37,7 @@ export function get(url, data, options) {
     return new AjaxRequest({
         url,
         data,
+        method: 'GET',
         ...options,
     });
 };

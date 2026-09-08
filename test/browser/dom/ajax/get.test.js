@@ -30,6 +30,37 @@ test.describe('#get', () => {
         });
     });
 
+    test('performs an AJAX GET request when the default method is POST', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                method: 'POST',
+            });
+
+            const response = await $.get('/test', {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/test?test1=Test+1&test2=Test+2',
+            },
+        });
+    });
+
     test('performs an AJAX GET request with URL', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.get('/test');
