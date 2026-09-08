@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { camelCase, isFragment, merge } from '@fr0st/core';
+import { callDOMMethod, camelCase, getDOMProperty, isFragment, merge } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
 import { parseData, parseDataset } from './../helpers.js';
 import { removeNode } from './../manipulation/manipulation.js';
@@ -23,11 +23,11 @@ export function getAttribute(selector, attribute) {
     }
 
     if (attribute) {
-        return node.getAttribute(attribute);
+        return callDOMMethod(node, 'getAttribute', attribute);
     }
 
     return Object.fromEntries(
-        merge([], node.attributes)
+        merge([], getDOMProperty(node, 'attributes'))
             .map((attribute) => [attribute.nodeName, attribute.nodeValue]),
     );
 };
@@ -48,11 +48,11 @@ export function getDataset(selector, key) {
     if (key) {
         key = camelCase(key);
 
-        return parseDataset(node.dataset[key]);
+        return parseDataset(getDOMProperty(node, 'dataset')[key]);
     }
 
     return Object.fromEntries(
-        Object.entries(node.dataset)
+        Object.entries(getDOMProperty(node, 'dataset'))
             .map(([key, value]) => [key, parseDataset(value)]),
     );
 };
@@ -63,7 +63,13 @@ export function getDataset(selector, key) {
  * @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
  */
 export function getHTML(selector) {
-    return getProperty(selector, 'innerHTML');
+    const node = parseNode(selector);
+
+    if (!node) {
+        return;
+    }
+
+    return getDOMProperty(node, 'innerHTML');
 };
 
 /**
@@ -88,7 +94,13 @@ export function getProperty(selector, property) {
  * @returns {string|null|undefined} The text contents, or `undefined` if no element matches.
  */
 export function getText(selector) {
-    return getProperty(selector, 'textContent');
+    const node = parseNode(selector);
+
+    if (!node) {
+        return;
+    }
+
+    return getDOMProperty(node, 'textContent');
 };
 
 /**
@@ -109,7 +121,7 @@ export function removeAttribute(selector, attribute) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        node.removeAttribute(attribute);
+        callDOMMethod(node, 'removeAttribute', attribute);
     }
 };
 
@@ -124,7 +136,7 @@ export function removeDataset(selector, key) {
     for (const node of nodes) {
         key = camelCase(key);
 
-        delete node.dataset[key];
+        delete getDOMProperty(node, 'dataset')[key];
     }
 };
 
@@ -154,7 +166,7 @@ export function setAttribute(selector, attribute, value) {
 
     for (const [key, value] of Object.entries(attributes)) {
         for (const node of nodes) {
-            node.setAttribute(key, value);
+            callDOMMethod(node, 'setAttribute', key, value);
         }
     }
 };
@@ -173,7 +185,7 @@ export function setDataset(selector, key, value) {
     for (let [key, value] of Object.entries(dataset)) {
         key = camelCase(key);
         for (const node of nodes) {
-            node.dataset[key] = value;
+            getDOMProperty(node, 'dataset')[key] = value;
         }
     }
 };
@@ -187,10 +199,11 @@ export function setHTML(selector, html) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        const target = isFragment(node.content) ?
-            node.content :
+        const content = getDOMProperty(node, 'content');
+        const target = isFragment(content) ?
+            content :
             node;
-        const childNodes = merge([], target.children);
+        const childNodes = merge([], getDOMProperty(target, 'children'));
 
         for (const child of childNodes) {
             removeNode(child);
@@ -227,7 +240,7 @@ export function setText(selector, text) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        const childNodes = merge([], node.children);
+        const childNodes = merge([], getDOMProperty(node, 'children'));
 
         for (const child of childNodes) {
             removeNode(child);

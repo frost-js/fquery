@@ -1,9 +1,8 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isElement, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
-import { isDocument, isElement } from './../helpers.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './../utility/utility.js';
 
@@ -37,8 +36,8 @@ export function children(selector, nodeFilter, { first = false, elementsOnly = t
 
     for (const node of nodes) {
         const childNodes = elementsOnly ?
-            merge([], node.children) :
-            merge([], node.childNodes);
+            merge([], getDOMProperty(node, 'children')) :
+            merge([], getDOMProperty(node, 'childNodes'));
 
         for (const child of childNodes) {
             if (!nodeFilter(child)) {
@@ -82,7 +81,7 @@ export function commonAncestor(selector) {
     }
 
     // Make sure all nodes have a parent
-    if (nodes.some((node) => !node.parentNode)) {
+    if (nodes.some((node) => !getDOMProperty(node, 'parentNode'))) {
         return;
     }
 
@@ -119,7 +118,7 @@ export function fragment(selector) {
         return;
     }
 
-    return node.content;
+    return getDOMProperty(node, 'content');
 };
 
 /**
@@ -139,7 +138,7 @@ export function next(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        while (node = node.nextSibling) {
+        while (node = getDOMProperty(node, 'nextSibling')) {
             if (!isElement(node)) {
                 continue;
             }
@@ -177,7 +176,7 @@ export function nextAll(selector, nodeFilter, limitFilter, { first = false } = {
     const results = [];
 
     for (let node of nodes) {
-        while (node = node.nextSibling) {
+        while (node = getDOMProperty(node, 'nextSibling')) {
             if (!isElement(node)) {
                 continue;
             }
@@ -215,7 +214,7 @@ export function offsetParent(selector) {
         return;
     }
 
-    return node.offsetParent;
+    return getDOMProperty(node, 'offsetParent');
 };
 
 /**
@@ -235,7 +234,7 @@ export function parent(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        node = node.parentNode;
+        node = getDOMProperty(node, 'parentNode');
 
         if (!node) {
             continue;
@@ -274,7 +273,7 @@ export function parents(selector, nodeFilter, limitFilter, { first = false } = {
 
     for (let node of nodes) {
         const parents = [];
-        while (node = node.parentNode) {
+        while (node = getDOMProperty(node, 'parentNode')) {
             if (isDocument(node)) {
                 break;
             }
@@ -319,7 +318,7 @@ export function prev(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        while (node = node.previousSibling) {
+        while (node = getDOMProperty(node, 'previousSibling')) {
             if (!isElement(node)) {
                 continue;
             }
@@ -358,7 +357,7 @@ export function prevAll(selector, nodeFilter, limitFilter, { first = false } = {
 
     for (let node of nodes) {
         const siblings = [];
-        while (node = node.previousSibling) {
+        while (node = getDOMProperty(node, 'previousSibling')) {
             if (!isElement(node)) {
                 continue;
             }
@@ -398,7 +397,7 @@ export function shadow(selector) {
         return;
     }
 
-    return node.shadowRoot;
+    return getDOMProperty(node, 'shadowRoot');
 };
 
 /**
@@ -419,19 +418,19 @@ export function siblings(selector, nodeFilter, { elementsOnly = true } = {}) {
     const results = [];
 
     for (const node of nodes) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
         }
 
         const siblings = elementsOnly ?
-            parent.children :
-            parent.childNodes;
+            getDOMProperty(parent, 'children') :
+            getDOMProperty(parent, 'childNodes');
 
         let sibling;
         for (sibling of siblings) {
-            if (node.isSameNode(sibling)) {
+            if (callDOMMethod(node, 'isSameNode', sibling)) {
                 continue;
             }
 

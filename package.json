@@ -55,7 +55,7 @@
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@fr0st/core": "^3.1.2"
+        "@fr0st/core": "^3.1.4"
     },
     "devDependencies": {
         "@fr0st/eslint-config": "^5.0.3",

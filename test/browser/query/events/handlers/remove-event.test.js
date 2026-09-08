@@ -34,6 +34,24 @@ test.describe('QuerySet #removeEvent', () => {
         })).toBe(0);
     });
 
+    test('removes listeners from forms whose controls shadow event methods', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form>' +
+                '<input name="addEventListener"><input name="removeEventListener"><input name="dispatchEvent">' +
+                '</form>';
+            let result = 0;
+            const callback = (_) => {
+                result++;
+            };
+            $('form').addEvent('click', callback);
+            $('form').triggerEvent('click');
+            $('form').removeEvent('click', callback);
+            $('form').triggerEvent('click');
+            return result;
+        })).toBe(1);
+    });
+
     test('removes all events of a type from each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

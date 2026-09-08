@@ -179,6 +179,19 @@ test.describe('QuerySet #find', () => {
         ]);
     });
 
+    test('finds descendants of forms with a control named querySelectorAll', async ({ page }) => {
+        const names = await page.evaluate(() => {
+            document.body.innerHTML = '<form><input name="querySelectorAll"><input name="test"></form>';
+            const nodes = $('form').find('input[name]').get();
+            return nodes.map((node) => node.name);
+        });
+
+        expect(names).toEqual([
+            'querySelectorAll',
+            'test',
+        ]);
+    });
+
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate(() => {
             const rootQuery = $(document.body);

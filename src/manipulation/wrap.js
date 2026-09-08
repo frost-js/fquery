@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { isFragment, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isFragment, merge } from '@fr0st/core';
 import { parseFilter, parseNodes } from './../filters.js';
 import { clone, remove } from './manipulation.js';
 
@@ -21,9 +21,9 @@ export function unwrap(selector, nodeFilter) {
     const parents = [];
 
     for (const node of nodes) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
-        if (!parent || !parent.parentNode) {
+        if (!parent || !getDOMProperty(parent, 'parentNode')) {
             continue;
         }
 
@@ -39,16 +39,16 @@ export function unwrap(selector, nodeFilter) {
     }
 
     for (const parent of parents) {
-        const outerParent = parent.parentNode;
+        const outerParent = getDOMProperty(parent, 'parentNode');
 
         if (!outerParent) {
             continue;
         }
 
-        const children = merge([], parent.childNodes);
+        const children = merge([], getDOMProperty(parent, 'childNodes'));
 
         for (const child of children) {
-            outerParent.insertBefore(child, parent);
+            callDOMMethod(outerParent, 'insertBefore', child, parent);
         }
     }
 
@@ -73,7 +73,7 @@ export function wrap(selector, otherSelector) {
     });
 
     for (const node of nodes) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -88,15 +88,15 @@ export function wrap(selector, otherSelector) {
         const firstClone = clones.slice().shift();
 
         const firstCloneNode = isFragment(firstClone) ?
-            firstClone.firstChild :
+            getDOMProperty(firstClone, 'firstChild') :
             firstClone;
-        const deepest = merge([], firstCloneNode.querySelectorAll('*')).find((node) => !node.childElementCount) || firstCloneNode;
+        const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
         for (const clone of clones) {
-            parent.insertBefore(clone, node);
+            callDOMMethod(parent, 'insertBefore', clone, node);
         }
 
-        deepest.insertBefore(node, null);
+        callDOMMethod(deepest, 'insertBefore', node, null);
     }
 };
 
@@ -129,7 +129,7 @@ export function wrapAll(selector, otherSelector) {
         return;
     }
 
-    const parent = firstNode.parentNode;
+    const parent = getDOMProperty(firstNode, 'parentNode');
 
     if (!parent) {
         return;
@@ -138,16 +138,16 @@ export function wrapAll(selector, otherSelector) {
     const firstClone = clones[0];
 
     const firstCloneNode = isFragment(firstClone) ?
-        firstClone.firstChild :
+        getDOMProperty(firstClone, 'firstChild') :
         firstClone;
-    const deepest = merge([], firstCloneNode.querySelectorAll('*')).find((node) => !node.childElementCount) || firstCloneNode;
+    const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
     for (const clone of clones) {
-        parent.insertBefore(clone, firstNode);
+        callDOMMethod(parent, 'insertBefore', clone, firstNode);
     }
 
     for (const node of nodes) {
-        deepest.insertBefore(node, null);
+        callDOMMethod(deepest, 'insertBefore', node, null);
     }
 };
 
@@ -170,7 +170,7 @@ export function wrapInner(selector, otherSelector) {
     });
 
     for (const node of nodes) {
-        const children = merge([], node.childNodes);
+        const children = merge([], getDOMProperty(node, 'childNodes'));
 
         const clones = clone(others, {
             events: true,
@@ -181,16 +181,16 @@ export function wrapInner(selector, otherSelector) {
         const firstClone = clones.slice().shift();
 
         const firstCloneNode = isFragment(firstClone) ?
-            firstClone.firstChild :
+            getDOMProperty(firstClone, 'firstChild') :
             firstClone;
-        const deepest = merge([], firstCloneNode.querySelectorAll('*')).find((node) => !node.childElementCount) || firstCloneNode;
+        const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
         for (const clone of clones) {
-            node.insertBefore(clone, null);
+            callDOMMethod(node, 'insertBefore', clone, null);
         }
 
         for (const child of children) {
-            deepest.insertBefore(child, null);
+            callDOMMethod(deepest, 'insertBefore', child, null);
         }
     }
 };

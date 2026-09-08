@@ -1,9 +1,9 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { isFragment, isShadow, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isElement, isFragment, isNode, isShadow, merge } from '@fr0st/core';
 import { addEvent } from './../events/event-handlers.js';
 import { parseNodes } from './../filters.js';
-import { createEvent, isElement, isNode } from './../helpers.js';
+import { createEvent } from './../helpers.js';
 import { animations as _animations, data as _data, events as _events, queues, styles } from './../vars.js';
 import { createFragment } from './create.js';
 
@@ -29,7 +29,7 @@ export function clone(selector, { deep = true, events = false, data = false, ani
     });
 
     return nodes.map((node) => {
-        const clone = node.cloneNode(deep);
+        const clone = callDOMMethod(node, 'cloneNode', deep);
 
         if (events || data || animations) {
             deepClone(node, clone, { deep, events, data, animations });
@@ -80,13 +80,14 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
     }
 
     if (deep) {
-        for (const [i, child] of node.childNodes.entries()) {
-            const childClone = clone.childNodes.item(i);
+        for (const [i, child] of getDOMProperty(node, 'childNodes').entries()) {
+            const childClone = getDOMProperty(clone, 'childNodes').item(i);
             deepClone(child, childClone, { deep, events, data, animations });
         }
 
-        if (isFragment(node.content)) {
-            deepClone(node.content, clone.content, { deep, events, data, animations });
+        const content = getDOMProperty(node, 'content');
+        if (isFragment(content)) {
+            deepClone(content, getDOMProperty(clone, 'content'), { deep, events, data, animations });
         }
     }
 };
@@ -103,7 +104,7 @@ export function detach(selector) {
     });
 
     for (const node of nodes) {
-        node.remove();
+        callDOMMethod(node, 'remove');
     }
 
     return nodes;
@@ -121,7 +122,7 @@ export function empty(selector) {
     });
 
     for (const node of nodes) {
-        const childNodes = merge([], node.childNodes);
+        const childNodes = merge([], getDOMProperty(node, 'childNodes'));
 
         // Remove descendant elements
         for (const child of childNodes) {
@@ -129,7 +130,7 @@ export function empty(selector) {
                 removeNode(child);
             }
 
-            child.remove();
+            callDOMMethod(child, 'remove');
         }
     }
 };
@@ -152,7 +153,7 @@ export function remove(selector) {
 
         // DocumentFragment and ShadowRoot nodes can not be removed
         if (isNode(node)) {
-            node.remove();
+            callDOMMethod(node, 'remove');
         }
     }
 };
@@ -171,12 +172,12 @@ export function removeNode(node) {
                 cancelable: false,
             });
 
-            node.dispatchEvent(eventData);
+            callDOMMethod(node, 'dispatchEvent', eventData);
         }
 
         for (const [realEventName, realEvents] of Object.entries(nodeEvents)) {
             for (const eventData of realEvents) {
-                node.removeEventListener(realEventName, eventData.realCallback, { capture: eventData.capture });
+                callDOMMethod(node, 'removeEventListener', realEventName, eventData.realCallback, { capture: eventData.capture });
             }
         }
 
@@ -203,20 +204,22 @@ export function removeNode(node) {
     }
 
     // Remove descendant elements
-    const childNodes = merge([], node.children);
+    const childNodes = merge([], getDOMProperty(node, 'children'));
 
     for (const child of childNodes) {
         removeNode(child);
     }
 
     // Remove ShadowRoot
-    if (node.shadowRoot) {
-        removeNode(node.shadowRoot);
+    const shadowRoot = getDOMProperty(node, 'shadowRoot');
+    if (shadowRoot) {
+        removeNode(shadowRoot);
     }
 
     // Remove DocumentFragment
-    if (isFragment(node.content)) {
-        removeNode(node.content);
+    const content = getDOMProperty(node, 'content');
+    if (isFragment(content)) {
+        removeNode(content);
     }
 };
 
@@ -248,11 +251,11 @@ export function replaceWith(selector, otherSelector) {
     });
 
     const isReplacementTarget = (node) =>
-        node.parentNode &&
+        getDOMProperty(node, 'parentNode') &&
         !others.includes(node) &&
         !nodes.some((other) =>
-            !other.isSameNode(node) &&
-            other.contains(node),
+            !callDOMMethod(other, 'isSameNode', node) &&
+            callDOMMethod(other, 'contains', node),
         );
 
     // Avoid detaching replacements when there is no target to replace.
@@ -273,7 +276,7 @@ export function replaceWith(selector, otherSelector) {
     nodes = nodes.filter(isReplacementTarget);
 
     for (const [i, node] of nodes.entries()) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -291,7 +294,7 @@ export function replaceWith(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            parent.insertBefore(clone, node);
+            callDOMMethod(parent, 'insertBefore', clone, node);
         }
     }
 

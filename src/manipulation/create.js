@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { camelCase, wrap } from '@fr0st/core';
+import { callDOMMethod, camelCase, getDOMProperty, wrap } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { parseNode } from './../filters.js';
 import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
@@ -30,7 +30,7 @@ export function attachShadow(selector, { open = true } = {}) {
         return;
     }
 
-    return node.attachShadow({
+    return callDOMMethod(node, 'attachShadow', {
         mode: open ?
             'open' :
             'closed',
@@ -44,7 +44,7 @@ export function attachShadow(selector, { open = true } = {}) {
  * @returns {HTMLElement} The new HTMLElement.
  */
 export function create(tagName = 'div', options = {}) {
-    const node = getContext().createElement(tagName);
+    const node = callDOMMethod(getContext(), 'createElement', tagName);
 
     if ('html' in options) {
         node.innerHTML = options.html;
@@ -55,7 +55,7 @@ export function create(tagName = 'div', options = {}) {
     if ('class' in options) {
         const classes = parseClasses(wrap(options.class));
 
-        node.classList.add(...classes);
+        getDOMProperty(node, 'classList').add(...classes);
     }
 
     if ('style' in options) {
@@ -63,7 +63,7 @@ export function create(tagName = 'div', options = {}) {
             style = normalizeCssProperty(style);
             value = normalizeCssValue(style, value);
 
-            node.style.setProperty(style, value);
+            getDOMProperty(node, 'style').setProperty(style, value);
         }
     }
 
@@ -73,7 +73,7 @@ export function create(tagName = 'div', options = {}) {
 
     if ('attributes' in options) {
         for (const [key, value] of Object.entries(options.attributes)) {
-            node.setAttribute(key, value);
+            callDOMMethod(node, 'setAttribute', key, value);
         }
     }
 
@@ -88,7 +88,7 @@ export function create(tagName = 'div', options = {}) {
 
         for (let [key, value] of Object.entries(dataset)) {
             key = camelCase(key);
-            node.dataset[key] = value;
+            getDOMProperty(node, 'dataset')[key] = value;
         }
     }
 
@@ -101,7 +101,7 @@ export function create(tagName = 'div', options = {}) {
  * @returns {Node} The new comment node.
  */
 export function createComment(comment) {
-    return getContext().createComment(comment);
+    return callDOMMethod(getContext(), 'createComment', comment);
 };
 
 /**
@@ -109,7 +109,7 @@ export function createComment(comment) {
  * @returns {DocumentFragment} The new DocumentFragment.
  */
 export function createFragment() {
-    return getContext().createDocumentFragment();
+    return callDOMMethod(getContext(), 'createDocumentFragment');
 };
 
 /**
@@ -117,7 +117,7 @@ export function createFragment() {
  * @returns {Range} The new Range.
  */
 export function createRange() {
-    return getContext().createRange();
+    return callDOMMethod(getContext(), 'createRange');
 };
 
 /**
@@ -126,5 +126,5 @@ export function createRange() {
  * @returns {Node} The new text node.
  */
 export function createText(text) {
-    return getContext().createTextNode(text);
+    return callDOMMethod(getContext(), 'createTextNode', text);
 };

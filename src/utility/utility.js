@@ -3,11 +3,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { isFragment, isShadow, isWindow, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isElement, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
 import { parseParams } from './../ajax/helpers.js';
 import { getContext, getWindow } from './../config.js';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
-import { isDocument, isElement } from './../helpers.js';
 
 /**
  * Executes a command in the document context.
@@ -16,7 +15,7 @@ import { isDocument, isElement } from './../helpers.js';
  * @returns {boolean} Whether the command was executed.
  */
 export function exec(command, value = null) {
-    return getContext().execCommand(command, false, value);
+    return callDOMMethod(getContext(), 'execCommand', command, false, value);
 };
 
 /**
@@ -29,11 +28,13 @@ export function index(selector) {
         node: true,
     });
 
-    if (!node || !node.parentNode) {
+    const parent = node && getDOMProperty(node, 'parentNode');
+
+    if (!parent) {
         return;
     }
 
-    return merge([], node.parentNode.children).indexOf(node);
+    return merge([], getDOMProperty(parent, 'children')).indexOf(node);
 };
 
 /**
@@ -65,7 +66,7 @@ export function normalize(selector) {
     });
 
     for (const node of nodes) {
-        node.normalize();
+        callDOMMethod(node, 'normalize');
     }
 };
 
@@ -86,25 +87,18 @@ export function serialize(selector) {
  * @returns {Array<{name: string, value: string}>} The serialized entries.
  */
 export function serializeArray(selector) {
-    const window = getWindow();
-
     return parseNodes(selector, {
         fragment: true,
         shadow: true,
     }).reduce(
         (values, node) => {
-            if (isElement(node) && window.Element.prototype.matches.call(node, 'form')) {
-                // Named controls can shadow the form's elements property.
-                const elements = Reflect.get(
-                    window.HTMLFormElement.prototype,
-                    'elements',
-                    node,
-                );
+            if (isElement(node) && callDOMMethod(node, 'matches', 'form')) {
+                const elements = getDOMProperty(node, 'elements');
 
                 return values.concat(
                     serializeArray(
                         merge([], elements)
-                            .filter((node) => node.matches('input, select, textarea')),
+                            .filter((node) => callDOMMethod(node, 'matches', 'input, select, textarea')),
                     ),
                 );
             }
@@ -115,28 +109,26 @@ export function serializeArray(selector) {
             ) {
                 return values.concat(
                     serializeArray(
-                        node.querySelectorAll(
-                            'input, select, textarea',
-                        ),
+                        callDOMMethod(node, 'querySelectorAll', 'input, select, textarea'),
                     ),
                 );
             }
 
             if (
                 isElement(node) &&
-                node.matches(':disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
+                callDOMMethod(node, 'matches', ':disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)')
             ) {
                 return values;
             }
 
-            const name = node.getAttribute('name');
+            const name = callDOMMethod(node, 'getAttribute', 'name');
             if (!name) {
                 return values;
             }
 
             if (
                 isElement(node) &&
-                node.matches('select')
+                callDOMMethod(node, 'matches', 'select')
             ) {
                 for (const option of node.selectedOptions) {
                     if (option.matches(':disabled')) {
@@ -215,17 +207,20 @@ export function sort(selector) {
             other = other.host;
         }
 
-        if (!node.isConnected || !other.isConnected) {
-            if (node.isConnected !== other.isConnected) {
-                if (isNodeShadow && !node.isConnected) {
+        const nodeConnected = getDOMProperty(node, 'isConnected');
+        const otherConnected = getDOMProperty(other, 'isConnected');
+
+        if (!nodeConnected || !otherConnected) {
+            if (nodeConnected !== otherConnected) {
+                if (isNodeShadow && !nodeConnected) {
                     return 1;
                 }
 
-                if (isOtherShadow && !other.isConnected) {
+                if (isOtherShadow && !otherConnected) {
                     return -1;
                 }
 
-                return node.isConnected ?
+                return nodeConnected ?
                     1 :
                     -1;
             }
@@ -233,11 +228,11 @@ export function sort(selector) {
             return 0;
         }
 
-        if (node.isSameNode(other)) {
+        if (callDOMMethod(node, 'isSameNode', other)) {
             return 0;
         }
 
-        const pos = node.compareDocumentPosition(other);
+        const pos = callDOMMethod(node, 'compareDocumentPosition', other);
 
         if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) {
             return -1;
@@ -263,5 +258,5 @@ export function tagName(selector) {
         return;
     }
 
-    return node.tagName.toLowerCase();
+    return getDOMProperty(node, 'tagName').toLowerCase();
 };

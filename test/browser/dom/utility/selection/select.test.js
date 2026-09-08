@@ -55,6 +55,15 @@ test.describe('#select', () => {
         })).toBe('Test 1');
     });
 
+    test('selects forms with a control named select', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="select"></form>';
+            const form = document.querySelector('form');
+            $.select('form');
+            return $.getSelection()[0] === form;
+        })).toBe(true);
+    });
+
     test('creates a selection on an input node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.select('#input');

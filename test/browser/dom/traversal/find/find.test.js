@@ -170,6 +170,19 @@ test.describe('#find', () => {
         ]);
     });
 
+    test('finds descendants of forms with a control named querySelectorAll', async ({ page }) => {
+        const names = await page.evaluate(() => {
+            document.body.innerHTML = '<form><input name="querySelectorAll"><input name="test"></form>';
+            const nodes = $.find('input[name]', document.querySelector('form'));
+            return nodes.map((node) => node.name);
+        });
+
+        expect(names).toEqual([
+            'querySelectorAll',
+            'test',
+        ]);
+    });
+
     test('returns an empty array for non-matching selector', async ({ page }) => {
         const ids = await page.evaluate(() => $.find('#invalid').map((node) => node.id));
 

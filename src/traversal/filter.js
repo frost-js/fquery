@@ -3,10 +3,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { isWindow } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isElement, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
-import { isDocument, isElement, parseClasses } from './../helpers.js';
+import { parseClasses } from './../helpers.js';
 import { closest } from './../traversal/traversal.js';
 import { animations, data } from './../vars.js';
 
@@ -20,7 +20,7 @@ export function connected(selector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).filter((node) => node.isConnected);
+    }).filter((node) => getDOMProperty(node, 'isConnected'));
 };
 
 /**
@@ -42,7 +42,7 @@ export function equal(selector, otherSelector) {
         shadow: true,
     }).filter((node) =>
         others.some((other) =>
-            node.isEqualNode(other),
+            callDOMMethod(node, 'isEqualNode', other),
         ),
     );
 };
@@ -108,14 +108,14 @@ export function hidden(selector) {
         window: true,
     }).filter((node) => {
         if (isWindow(node)) {
-            return node.document.visibilityState !== 'visible';
+            return getDOMProperty(node.document, 'visibilityState') !== 'visible';
         }
 
         if (isDocument(node)) {
-            return node.visibilityState !== 'visible';
+            return getDOMProperty(node, 'visibilityState') !== 'visible';
         }
 
-        return !isElement(node) || node.getClientRects().length === 0;
+        return !isElement(node) || callDOMMethod(node, 'getClientRects').length === 0;
     });
 };
 
@@ -170,7 +170,7 @@ export function same(selector, otherSelector) {
         shadow: true,
     }).filter((node) =>
         others.some((other) =>
-            node.isSameNode(other),
+            callDOMMethod(node, 'isSameNode', other),
         ),
     );
 };
@@ -187,14 +187,14 @@ export function visible(selector) {
         window: true,
     }).filter((node) => {
         if (isWindow(node)) {
-            return node.document.visibilityState === 'visible';
+            return getDOMProperty(node.document, 'visibilityState') === 'visible';
         }
 
         if (isDocument(node)) {
-            return node.visibilityState === 'visible';
+            return getDOMProperty(node, 'visibilityState') === 'visible';
         }
 
-        return isElement(node) && node.getClientRects().length > 0;
+        return isElement(node) && callDOMMethod(node, 'getClientRects').length > 0;
     });
 };
 
@@ -219,7 +219,7 @@ export function withAnimation(selector) {
 export function withAttribute(selector, attribute) {
     return parseNodes(selector)
         .filter((node) =>
-            node.hasAttribute(attribute),
+            callDOMMethod(node, 'hasAttribute', attribute),
         );
 };
 
@@ -234,7 +234,7 @@ export function withChildren(selector) {
         shadow: true,
         document: true,
     }).filter((node) =>
-        !!node.childElementCount,
+        !!getDOMProperty(node, 'childElementCount'),
     );
 };
 
@@ -250,7 +250,7 @@ export function withClass(selector, ...classes) {
     return parseNodes(selector)
         .filter((node) =>
             classes.some((className) =>
-                node.classList.contains(className),
+                getDOMProperty(node, 'classList').contains(className),
             ),
         );
 };

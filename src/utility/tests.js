@@ -3,10 +3,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { camelCase, isWindow } from '@fr0st/core';
+import { callDOMMethod, camelCase, getDOMProperty, isDocument, isElement, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
-import { isDocument, isElement, parseClasses } from './../helpers.js';
+import { parseClasses } from './../helpers.js';
 import { clone } from './../manipulation/manipulation.js';
 import { closest } from './../traversal/traversal.js';
 import { animations, data } from './../vars.js';
@@ -29,7 +29,7 @@ export function hasAnimation(selector) {
  */
 export function hasAttribute(selector, attribute) {
     return parseNodes(selector)
-        .some((node) => node.hasAttribute(attribute));
+        .some((node) => callDOMMethod(node, 'hasAttribute', attribute));
 };
 
 /**
@@ -42,7 +42,7 @@ export function hasChildren(selector) {
         fragment: true,
         shadow: true,
         document: true,
-    }).some((node) => node.childElementCount);
+    }).some((node) => getDOMProperty(node, 'childElementCount'));
 };
 
 /**
@@ -56,7 +56,7 @@ export function hasClass(selector, ...classes) {
 
     return parseNodes(selector)
         .some((node) =>
-            classes.some((className) => node.classList.contains(className)),
+            classes.some((className) => getDOMProperty(node, 'classList').contains(className)),
         );
 };
 
@@ -121,7 +121,7 @@ export function hasDataset(selector, key) {
     key = camelCase(key);
 
     return parseNodes(selector)
-        .some((node) => !!node.dataset[key]);
+        .some((node) => !!getDOMProperty(node, 'dataset')[key]);
 };
 
 /**
@@ -147,7 +147,7 @@ export function hasDescendent(selector, nodeFilter) {
  */
 export function hasFragment(selector) {
     return parseNodes(selector)
-        .some((node) => node.content);
+        .some((node) => getDOMProperty(node, 'content'));
 };
 
 /**
@@ -168,7 +168,7 @@ export function hasProperty(selector, property) {
  */
 export function hasShadow(selector) {
     return parseNodes(selector)
-        .some((node) => node.shadowRoot);
+        .some((node) => getDOMProperty(node, 'shadowRoot'));
 };
 
 /**
@@ -197,7 +197,7 @@ export function isConnected(selector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).some((node) => node.isConnected);
+    }).some((node) => getDOMProperty(node, 'isConnected'));
 };
 
 /**
@@ -226,7 +226,7 @@ export function isEqual(selector, otherSelector, { shallow = false } = {}) {
     }
 
     return nodes.some((node) =>
-        others.some((other) => node.isEqualNode(other)),
+        others.some((other) => callDOMMethod(node, 'isEqualNode', other)),
     );
 };
 
@@ -259,14 +259,14 @@ export function isHidden(selector) {
         window: true,
     }).some((node) => {
         if (isWindow(node)) {
-            return node.document.visibilityState !== 'visible';
+            return getDOMProperty(node.document, 'visibilityState') !== 'visible';
         }
 
         if (isDocument(node)) {
-            return node.visibilityState !== 'visible';
+            return getDOMProperty(node, 'visibilityState') !== 'visible';
         }
 
-        return !isElement(node) || node.getClientRects().length === 0;
+        return !isElement(node) || callDOMMethod(node, 'getClientRects').length === 0;
     });
 };
 
@@ -288,7 +288,7 @@ export function isSame(selector, otherSelector) {
         fragment: true,
         shadow: true,
     }).some((node) =>
-        others.some((other) => node.isSameNode(other)),
+        others.some((other) => callDOMMethod(node, 'isSameNode', other)),
     );
 };
 
@@ -304,13 +304,13 @@ export function isVisible(selector) {
         window: true,
     }).some((node) => {
         if (isWindow(node)) {
-            return node.document.visibilityState === 'visible';
+            return getDOMProperty(node.document, 'visibilityState') === 'visible';
         }
 
         if (isDocument(node)) {
-            return node.visibilityState === 'visible';
+            return getDOMProperty(node, 'visibilityState') === 'visible';
         }
 
-        return isElement(node) && node.getClientRects().length > 0;
+        return isElement(node) && callDOMMethod(node, 'getClientRects').length > 0;
     });
 };

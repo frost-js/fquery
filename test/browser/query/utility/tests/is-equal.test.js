@@ -39,6 +39,14 @@ test.describe('QuerySet #isEqual', () => {
                     .isEqual('#parent3 a'))).toBe(false);
     });
 
+    test('compares forms with a control named isEqualNode', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form><input name="isEqualNode"></form><form><input name="isEqualNode"></form>';
+            return $('form').first().isEqual($('form').last());
+        })).toBe(true);
+    });
+
     test('works with shallow option', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1 span')

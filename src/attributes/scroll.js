@@ -1,8 +1,7 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { isWindow } from '@fr0st/core';
+import { getDOMProperty, isDocument, isWindow } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
-import { isDocument } from './../helpers.js';
 
 /**
  * Gets the scroll X position of the first node.
@@ -24,10 +23,11 @@ export function getScrollX(selector) {
     }
 
     if (isDocument(node)) {
-        return node.scrollingElement.scrollLeft;
+        const scrollingElement = getDOMProperty(node, 'scrollingElement');
+        return getDOMProperty(scrollingElement, 'scrollLeft');
     }
 
-    return node.scrollLeft;
+    return getDOMProperty(node, 'scrollLeft');
 };
 
 /**
@@ -50,10 +50,11 @@ export function getScrollY(selector) {
     }
 
     if (isDocument(node)) {
-        return node.scrollingElement.scrollTop;
+        const scrollingElement = getDOMProperty(node, 'scrollingElement');
+        return getDOMProperty(scrollingElement, 'scrollTop');
     }
 
-    return node.scrollTop;
+    return getDOMProperty(node, 'scrollTop');
 };
 
 /**
@@ -72,8 +73,8 @@ export function setScroll(selector, x, y) {
         if (isWindow(node)) {
             node.scroll(x, y);
         } else if (isDocument(node)) {
-            node.scrollingElement.scrollLeft = x;
-            node.scrollingElement.scrollTop = y;
+            getDOMProperty(node, 'scrollingElement').scrollLeft = x;
+            getDOMProperty(node, 'scrollingElement').scrollTop = y;
         } else {
             node.scrollLeft = x;
             node.scrollTop = y;
@@ -96,7 +97,7 @@ export function setScrollX(selector, x) {
         if (isWindow(node)) {
             node.scroll(x, node.scrollY);
         } else if (isDocument(node)) {
-            node.scrollingElement.scrollLeft = x;
+            getDOMProperty(node, 'scrollingElement').scrollLeft = x;
         } else {
             node.scrollLeft = x;
         }
@@ -118,7 +119,7 @@ export function setScrollY(selector, y) {
         if (isWindow(node)) {
             node.scroll(node.scrollX, y);
         } else if (isDocument(node)) {
-            node.scrollingElement.scrollTop = y;
+            getDOMProperty(node, 'scrollingElement').scrollTop = y;
         } else {
             node.scrollTop = y;
         }

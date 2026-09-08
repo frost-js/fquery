@@ -24,6 +24,15 @@ test.describe('QuerySet #getProperty', () => {
         expect(value).toBe('Test 1');
     });
 
+    test('preserves named form property access', async ({ page }) => {
+        const value = await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="style" value="Test"></form>';
+            return $('form').getProperty('style').value;
+        });
+
+        expect(value).toBe('Test');
+    });
+
     test('returns undefined for an undefined property', async ({ page }) => {
         const value = await page.evaluate((_) => $('input').getProperty('invalid'));
 

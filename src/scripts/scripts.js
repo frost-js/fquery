@@ -1,4 +1,4 @@
-import { isString } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isString } from '@fr0st/core';
 import { appendQueryString } from './../ajax/helpers.js';
 import { getContext } from './../config.js';
 
@@ -50,10 +50,10 @@ export function loadScript(url, attributes, { cache = true, context = getContext
     };
 
     if (!cache) {
-        attributes.src = appendQueryString(attributes.src, '_', Date.now(), context.baseURI);
+        attributes.src = appendQueryString(attributes.src, '_', Date.now(), getDOMProperty(context, 'baseURI'));
     }
 
-    const script = context.createElement('script');
+    const script = callDOMMethod(context, 'createElement', 'script');
 
     // Dynamically inserted scripts execute in insertion order only when async is disabled.
     script.async = 'async' in attributes ?
@@ -64,7 +64,7 @@ export function loadScript(url, attributes, { cache = true, context = getContext
         setScriptAttribute(script, key, value);
     }
 
-    context.head.appendChild(script);
+    getDOMProperty(context, 'head').appendChild(script);
 
     return new Promise((resolve, reject) => {
         script.onload = (_) => resolve();

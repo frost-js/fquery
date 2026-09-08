@@ -23,6 +23,7 @@
 //#region node_modules/@fr0st/core/dist/frost-core.esm.js
 	var frost_core_esm_exports = /* @__PURE__ */ __exportAll({
 		animation: () => animation,
+		callDOMMethod: () => callDOMMethod,
 		camelCase: () => camelCase,
 		capitalize: () => capitalize,
 		clamp: () => clamp,
@@ -38,6 +39,7 @@
 		extend: () => extend,
 		flatten: () => flatten,
 		forgetDot: () => forgetDot,
+		getDOMProperty: () => getDOMProperty,
 		getDot: () => getDot,
 		hasDot: () => hasDot,
 		humanize: () => humanize,
@@ -46,12 +48,12 @@
 		isArray: () => isArray,
 		isArrayLike: () => isArrayLike,
 		isBoolean: () => isBoolean,
-		isDocument: () => isDocument$1,
-		isElement: () => isElement$1,
+		isDocument: () => isDocument,
+		isElement: () => isElement,
 		isFragment: () => isFragment,
 		isFunction: () => isFunction,
 		isNaN: () => isNaN,
-		isNode: () => isNode$1,
+		isNode: () => isNode,
 		isNull: () => isNull,
 		isNumeric: () => isNumeric,
 		isObject: () => isObject,
@@ -86,6 +88,27 @@
 		wrap: () => wrap$2
 	});
 	/**
+	* DOM methods
+	*/
+	/**
+	* Calls a DOM method without named-property collisions, preserving the receiver.
+	* @param {*} node The node or ordinary value.
+	* @param {string|symbol} method The method to call.
+	* @param {...*} args The arguments to pass.
+	* @returns {*} The method's return value.
+	*/
+	var callDOMMethod = (node, method, ...args) => Reflect.apply(getDOMProperty(node, method), node, args);
+	/**
+	* Reads a DOM prototype property without named-property collisions, or an ordinary property for non-DOM values.
+	* @param {*} node The node or ordinary value.
+	* @param {string|symbol} property The property to read.
+	* @returns {*} The property value.
+	*/
+	var getDOMProperty = (node, property) => {
+		const prototype = Object.getPrototypeOf(node);
+		return prototype && "nodeType" in prototype ? Reflect.get(prototype, property, node) : node[property];
+	};
+	/**
 	* Testing methods
 	*/
 	var ELEMENT_NODE = 1;
@@ -93,6 +116,12 @@
 	var COMMENT_NODE = 8;
 	var DOCUMENT_NODE = 9;
 	var DOCUMENT_FRAGMENT_NODE = 11;
+	/**
+	* Reads a node type without named-property collisions.
+	* @param {*} value The value to read.
+	* @returns {*} The node type, or the input if falsy.
+	*/
+	var getNodeType = (value) => value && getDOMProperty(value, "nodeType");
 	/**
 	* Checks whether a value is an array.
 	* @param {*} value The value to test.
@@ -104,31 +133,37 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is array-like.
 	*/
-	var isArrayLike = (value) => isArray(value) || isObject(value) && !isFunction(value) && !isWindow(value) && !isElement$1(value) && (Symbol.iterator in value && isFunction(value[Symbol.iterator]) || "length" in value && isNumeric(value.length) && (!value.length || value.length - 1 in value));
+	var isArrayLike = (value) => {
+		if (isArray(value)) return true;
+		if (!isObject(value) || isFunction(value) || isWindow(value) || isElement(value)) return false;
+		if (isFunction(value[Symbol.iterator])) return true;
+		const length = value.length;
+		return isNumeric(length) && (!length || length - 1 in value);
+	};
 	/**
 	* Checks whether a value is a boolean.
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a boolean.
 	*/
-	var isBoolean = (value) => value === !!value;
+	var isBoolean = (value) => typeof value === "boolean";
 	/**
 	* Checks whether a value is a Document.
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a Document.
 	*/
-	var isDocument$1 = (value) => !!value && value.nodeType === DOCUMENT_NODE;
+	var isDocument = (value) => getNodeType(value) === DOCUMENT_NODE;
 	/**
 	* Checks whether a value is an Element.
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is an Element.
 	*/
-	var isElement$1 = (value) => !!value && value.nodeType === ELEMENT_NODE;
+	var isElement = (value) => getNodeType(value) === ELEMENT_NODE;
 	/**
 	* Checks whether a value is a DocumentFragment (and not a ShadowRoot).
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a DocumentFragment.
 	*/
-	var isFragment = (value) => !!value && value.nodeType === DOCUMENT_FRAGMENT_NODE && !value.host;
+	var isFragment = (value) => getNodeType(value) === DOCUMENT_FRAGMENT_NODE && !value.host;
 	/**
 	* Checks whether a value is a function.
 	* @param {*} value The value to test.
@@ -146,7 +181,10 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is an Element, Text node, or Comment node.
 	*/
-	var isNode$1 = (value) => !!value && (value.nodeType === ELEMENT_NODE || value.nodeType === TEXT_NODE || value.nodeType === COMMENT_NODE);
+	var isNode = (value) => {
+		const nodeType = getNodeType(value);
+		return nodeType === ELEMENT_NODE || nodeType === TEXT_NODE || nodeType === COMMENT_NODE;
+	};
 	/**
 	* Checks whether a value is null.
 	* @param {*} value The value to test.
@@ -158,13 +196,13 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is numeric.
 	*/
-	var isNumeric = (value) => (() => {
+	var isNumeric = (value) => {
 		try {
 			return !isNaN(parseFloat(value)) && isFinite(value);
 		} catch {
 			return false;
 		}
-	})();
+	};
 	/**
 	* Checks whether a value is an object-like reference, including arrays and functions.
 	* @param {*} value The value to test.
@@ -176,13 +214,17 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a plain object.
 	*/
-	var isPlainObject = (value) => isObject(value) && (Object.getPrototypeOf(value) === null || Object.getPrototypeOf(value) === Object.prototype);
+	var isPlainObject = (value) => {
+		if (!isObject(value)) return false;
+		const prototype = Object.getPrototypeOf(value);
+		return prototype === null || Object.getPrototypeOf(prototype) === null;
+	};
 	/**
 	* Checks whether a value is a ShadowRoot.
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a ShadowRoot.
 	*/
-	var isShadow = (value) => !!value && value.nodeType === DOCUMENT_FRAGMENT_NODE && !!value.host;
+	var isShadow = (value) => getNodeType(value) === DOCUMENT_FRAGMENT_NODE && !!value.host;
 	/**
 	* Checks whether a value is a string.
 	* @param {*} value The value to test.
@@ -194,7 +236,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a text Node.
 	*/
-	var isText = (value) => !!value && value.nodeType === TEXT_NODE;
+	var isText = (value) => getNodeType(value) === TEXT_NODE;
 	/**
 	* Checks whether a value is undefined.
 	* @param {*} value The value to test.
@@ -206,7 +248,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a Window.
 	*/
-	var isWindow = (value) => !!value && !!value.document && value.document.defaultView === value;
+	var isWindow = (value) => !!value && !!value.document && getDOMProperty(value.document, "defaultView") === value;
 	/**
 	* Math methods
 	*/
@@ -294,7 +336,7 @@
 		const min = Math.ceil(Math.min(a, isNull(b) ? 0 : b));
 		const max = Math.ceil(Math.max(a, isNull(b) ? 0 : b));
 		if (min >= max) throw new RangeError("The bounds do not contain an integer");
-		return Math.floor(random(min, max));
+		return min + Math.floor(Math.random() * (max - min));
 	};
 	/**
 	* Constrains a number to a specified step size.
@@ -368,13 +410,13 @@
 	*/
 	var range = (start, end, step = 1) => {
 		if (step === 0) return [];
-		const sign = Math.sign(end - start);
 		step = Math.abs(step);
-		const ratio = Math.abs(end - start) / step;
-		const nearest = Math.round(ratio);
-		const landsOnEnd = Math.abs(ratio - nearest) <= Number.EPSILON * Math.max(1, ratio);
-		const intervals = landsOnEnd ? nearest : Math.floor(ratio);
-		return new Array(intervals + 1).fill().map((_, i) => i === intervals && landsOnEnd ? end : start + toStep(i * step * sign, step));
+		const direction = Math.sign(end - start);
+		const steps = toStep(Math.abs(end - start) / step, 1e-10);
+		return Array.from({ length: Math.floor(steps) + 1 }, (_, index) => {
+			if (index > 0 && index === steps) return end;
+			return start + toStep(index * step * direction, step);
+		});
 	};
 	/**
 	* Removes duplicate elements from an array.
@@ -403,11 +445,15 @@
 	* @template {(...args: any[]) => any} T
 	* @typedef {((...args: Parameters<T>) => void) & { cancel: () => void }} CancelableWrapper
 	*/
+	/**
+	* Whether the browser animation frame API is available.
+	* @type {boolean}
+	*/
 	var isBrowser = typeof window !== "undefined" && "requestAnimationFrame" in window;
 	/**
-	* Schedules a callback on the next animation frame.
+	* Schedules a callback on the next animation frame, using a timer outside browsers.
 	* @param {Function} callback The callback to execute.
-	* @returns {number} The request ID.
+	* @returns {number|ReturnType<typeof setTimeout>} The animation frame ID or timer handle.
 	*/
 	var _requestAnimationFrame = isBrowser ? (callback) => window.requestAnimationFrame(callback) : (callback) => setTimeout(callback, 1e3 / 60);
 	/**
@@ -572,7 +618,8 @@
 	* @returns {(...args: any[]) => ReturnType<T>} The wrapped function.
 	*/
 	var partial = (callback, ...defaultArgs) => function(...args) {
-		return callback.call(this, ...defaultArgs.slice().map((v) => isUndefined(v) ? args.shift() : v).concat(args));
+		const preparedArgs = defaultArgs.map((value) => isUndefined(value) ? args.shift() : value);
+		return callback.apply(this, preparedArgs.concat(args));
 	};
 	/**
 	* Creates a wrapped function that executes each callback in order,
@@ -655,7 +702,20 @@
 	/**
 	* Object methods
 	*/
+	/**
+	* Checks whether an object has an own property.
+	* @param {object} object The input object.
+	* @param {string} key The key to check.
+	* @returns {boolean} Whether the property belongs to the object itself.
+	*/
 	var hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+	/**
+	* Assigns an own property, creating new properties without invoking inherited setters.
+	* @param {object} object The object to modify.
+	* @param {string} key The key to assign.
+	* @param {*} value The value to assign.
+	* @returns {void} Nothing.
+	*/
 	var assignOwn = (object, key, value) => {
 		if (hasOwn(object, key)) {
 			object[key] = value;
@@ -668,9 +728,16 @@
 			writable: true
 		});
 	};
+	/**
+	* Sets a value using path segments, including wildcards.
+	* @param {object} object The object to modify.
+	* @param {string[]} keys The remaining path segments.
+	* @param {*} value The value to assign.
+	* @param {boolean} overwrite Whether existing values may be overwritten.
+	* @returns {void} Nothing.
+	*/
 	var setDotSegments = (object, keys, value, overwrite) => {
 		const [key, ...remainingKeys] = keys;
-		if (!key) return;
 		if (key === "*") {
 			for (const childKey of Object.keys(object)) {
 				if (!remainingKeys.length) {
@@ -703,17 +770,22 @@
 	* @param {...object} objects The objects to merge.
 	* @returns {object} The extended object.
 	*/
-	var extend = (object, ...objects) => objects.reduce((acc, val) => {
-		if (val == null) return acc;
-		for (const k of Object.keys(val)) {
-			const value = val[k];
-			const currentValue = hasOwn(acc, k) ? acc[k] : void 0;
-			if (isArray(value)) assignOwn(acc, k, extend(isArray(currentValue) ? currentValue : [], value));
-			else if (isPlainObject(value)) assignOwn(acc, k, extend(isPlainObject(currentValue) ? currentValue : {}, value));
-			else assignOwn(acc, k, value);
+	var extend = (object, ...objects) => {
+		for (const source of objects) {
+			if (source == null) continue;
+			for (const key of Object.keys(source)) {
+				let value = source[key];
+				const currentValue = hasOwn(object, key) ? object[key] : void 0;
+				if (isArray(value)) {
+					const target = isArray(currentValue) ? currentValue : [];
+					target.length = Math.max(target.length, value.length);
+					value = extend(target, value);
+				} else if (isPlainObject(value)) value = extend(isPlainObject(currentValue) ? currentValue : {}, value);
+				assignOwn(object, key, value);
+			}
 		}
-		return acc;
-	}, object);
+		return object;
+	};
 	/**
 	* Flattens an object using dot notation while preserving empty plain objects.
 	* @param {object} object The input object.
@@ -736,7 +808,8 @@
 	*/
 	var forgetDot = (object, key) => {
 		const keys = key.split(".");
-		while (key = keys.shift()) {
+		while (keys.length) {
+			key = keys.shift();
 			if (!isObject(object) || !hasOwn(object, key)) break;
 			if (keys.length) object = object[key];
 			else delete object[key];
@@ -751,7 +824,8 @@
 	*/
 	var getDot = (object, key, defaultValue) => {
 		const keys = key.split(".");
-		while (key = keys.shift()) {
+		while (keys.length) {
+			key = keys.shift();
 			if (!isObject(object) || !hasOwn(object, key)) return defaultValue;
 			object = object[key];
 		}
@@ -765,7 +839,8 @@
 	*/
 	var hasDot = (object, key) => {
 		const keys = key.split(".");
-		while (key = keys.shift()) {
+		while (keys.length) {
+			key = keys.shift();
 			if (!isObject(object) || !hasOwn(object, key)) return false;
 			object = object[key];
 		}
@@ -811,7 +886,7 @@
 	* @param {string} string The input string.
 	* @returns {string[]} The split parts of the string.
 	*/
-	var _splitString = (string) => `${string}`.split(/[^a-zA-Z0-9']|(?=[A-Z])/).reduce((acc, word) => {
+	var _splitString = (string) => `${string}`.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/([A-Z])([A-Z][a-z])/g, "$1 $2").split(/[^a-zA-Z0-9']/).reduce((acc, word) => {
 		word = word.replace(/[^\w]/g, "").toLowerCase();
 		if (word) acc.push(word);
 		return acc;
@@ -851,7 +926,7 @@
 	* @param {string} string The input string.
 	* @returns {string} The kebab-cased string.
 	*/
-	var kebabCase = (string) => _splitString(string).join("-").toLowerCase();
+	var kebabCase = (string) => _splitString(string).join("-");
 	/**
 	* Converts a string to PascalCase.
 	* @param {string} string The input string.
@@ -875,289 +950,13 @@
 	* @param {string} string The input string.
 	* @returns {string} The snake_cased string.
 	*/
-	var snakeCase = (string) => _splitString(string).join("_").toLowerCase();
+	var snakeCase = (string) => _splitString(string).join("_");
 	/**
 	* Unescapes HTML entities in a string into their corresponding characters.
 	* @param {string} string The input string.
 	* @returns {string} The unescaped string.
 	*/
 	var unescape = (string) => string.replace(/&(amp|lt|gt|quot|apos);/g, (_, code) => unescapeChars[code]);
-
-//#endregion
-//#region src/query/query-set-core.js
-/**
-	* Represents an ordered, chainable collection of DOM nodes.
-	*/
-	var QuerySet = class QuerySet {
-		#nodes;
-		/**
-		* Creates a QuerySet.
-		* @param {Array<Node|Window>} [nodes=[]] The input nodes.
-		*/
-		constructor(nodes = []) {
-			this.#nodes = nodes;
-		}
-		/**
-		* Gets the number of nodes.
-		* @returns {number} The number of nodes.
-		*/
-		get length() {
-			return this.#nodes.length;
-		}
-		/**
-		* Executes a function for each node in the set.
-		* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
-		* @returns {this} The current QuerySet.
-		*/
-		each(callback) {
-			this.#nodes.forEach((v, i) => callback(v, i));
-			return this;
-		}
-		/**
-		* Retrieves the DOM node(s) contained in the QuerySet.
-		* @param {number} [index=null] The index of the node.
-		* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
-		*/
-		get(index = null) {
-			if (index === null) return this.#nodes;
-			return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
-		}
-		/**
-		* Executes a function for each node in the set.
-		* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
-		* @returns {QuerySet} A new QuerySet object.
-		*/
-		map(callback) {
-			const nodes = this.#nodes.map(callback);
-			return new QuerySet(nodes);
-		}
-		/**
-		* Reduces the set of matched nodes to a subset specified by a range of indices.
-		* @param {number} [begin] The index to slice from.
-		* @param {number} [end]  The index to slice to.
-		* @returns {QuerySet} A new QuerySet object.
-		*/
-		slice(begin, end) {
-			const nodes = this.#nodes.slice(begin, end);
-			return new QuerySet(nodes);
-		}
-		/**
-		* Returns an iterable from the nodes.
-		* @returns {IterableIterator<Node|Window>} The node iterator.
-		*/
-		[Symbol.iterator]() {
-			return this.#nodes.values();
-		}
-	};
-
-//#endregion
-//#region src/helpers.js
-/**
-	* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
-	*/
-	/**
-	* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
-	*/
-	/**
-	* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
-	*/
-	/**
-	* @callback NodeFilterCallback
-	* @param {Node|Window} node The node to test.
-	* @returns {boolean} Whether the node matches.
-	*/
-	/**
-	* Creates a custom event.
-	* @param {string} type The event type.
-	* @param {CustomEventInit} [options] The event options.
-	* @returns {CustomEvent} The custom event.
-	*/
-	function createEvent(type, options) {
-		const { CustomEvent } = getWindow();
-		return new CustomEvent(type, options);
-	}
-	/**
-	* Creates a wrapped version of a function that executes once per tick.
-	* @template {(...args: any[]) => any} T
-	* @param {T} callback The callback to debounce.
-	* @returns {(...args: Parameters<T>) => void} The wrapped function.
-	*/
-	function debounce(callback) {
-		let running;
-		return (...args) => {
-			if (running) return;
-			running = true;
-			Promise.resolve().then((_) => {
-				try {
-					callback(...args);
-				} finally {
-					running = false;
-				}
-			});
-		};
-	}
-	/**
-	* Escapes a string for use as a CSS identifier.
-	* @param {string} value The value to escape.
-	* @returns {string} The escaped value.
-	*/
-	function escapeCSS(value) {
-		return getWindow().CSS.escape(value);
-	}
-	/**
-	* Returns a RegExp for testing a namespaced event.
-	* @param {string} event The namespaced event.
-	* @returns {RegExp} The namespaced event RegExp.
-	*/
-	function eventNamespacedRegExp(event) {
-		return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
-	}
-	/**
-	* Returns a DOM property from the prototype chain, bypassing own properties.
-	* @param {Node} node The node to read from.
-	* @param {string} property The property name.
-	* @returns {*} The property value.
-	*/
-	function getDOMProperty(node, property) {
-		return Reflect.get(Object.getPrototypeOf(node), property, node);
-	}
-	/**
-	* Returns a node type, using the prototype property when available.
-	* @param {*} value The value to read from.
-	* @returns {*} The node type.
-	*/
-	function getNodeType(value) {
-		return value && Object.getPrototypeOf(value) ? getDOMProperty(value, "nodeType") ?? value.nodeType : value?.nodeType;
-	}
-	/**
-	* Checks whether a value is a Document, ignoring named properties.
-	* @param {*} value The value to test.
-	* @returns {boolean} Whether the value is a Document.
-	*/
-	function isDocument(value) {
-		return isDocument$1({ nodeType: getNodeType(value) });
-	}
-	/**
-	* Checks whether a value is an Element, ignoring named properties.
-	* @param {*} value The value to test.
-	* @returns {boolean} Whether the value is an Element.
-	*/
-	function isElement(value) {
-		return isElement$1({ nodeType: getNodeType(value) });
-	}
-	/**
-	* Checks whether a value is an Element, Text node, or Comment node, ignoring named properties.
-	* @param {*} value The value to test.
-	* @returns {boolean} Whether the value is an Element, Text node, or Comment node.
-	*/
-	function isNode(value) {
-		return isNode$1({ nodeType: getNodeType(value) });
-	}
-	/**
-	* Normalizes a CSS property name.
-	* @param {string} style The CSS property name.
-	* @returns {string} The normalized CSS property name.
-	*/
-	function normalizeCssProperty(style) {
-		return style.startsWith("--") ? style : kebabCase(style);
-	}
-	/**
-	* Normalizes a CSS property value.
-	* @param {string} style The CSS property name.
-	* @param {string|number} value The CSS property value.
-	* @returns {string|number} The normalized CSS property value.
-	*/
-	function normalizeCssValue(style, value) {
-		if (style.startsWith("--") || !value || !isNumeric(value)) return value;
-		const { CSS } = getWindow();
-		return !CSS.supports(style, value) ? `${value}px` : value;
-	}
-	/**
-	* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
-	* @param {Array<string|string[]>} classList The classes to parse.
-	* @returns {string[]} The parsed classes.
-	*/
-	function parseClasses(classList) {
-		return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
-	}
-	/**
-	* Normalizes a key and value, or an existing data object, into a data object.
-	* @param {string|Record<string, *>} key The data key, or an object containing data.
-	* @param {*} [value] The data value.
-	* @param {{json?: boolean}} [options] The options for parsing data.
-	* @returns {Record<string, *>} The data object.
-	*/
-	function parseData(key, value, { json = false } = {}) {
-		const result = isString(key) ? { [key]: value } : key;
-		if (!json) return result;
-		return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
-	}
-	/**
-	* Parses a dataset string into a JavaScript value.
-	* @param {string} value The input value.
-	* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
-	*/
-	function parseDataset(value) {
-		if (isUndefined(value)) return value;
-		const lower = value.toLowerCase().trim();
-		if (["true", "on"].includes(lower)) return true;
-		if (["false", "off"].includes(lower)) return false;
-		if (lower === "null") return null;
-		if (isNumeric(lower)) return parseFloat(lower);
-		if (["{", "["].includes(lower.charAt(0))) try {
-			return JSON.parse(value);
-		} catch {}
-		return value;
-	}
-	/**
-	* Returns the base event name from a namespaced event.
-	* @param {string} event The namespaced event.
-	* @returns {string} The real event.
-	*/
-	function parseEvent(event) {
-		return event.split(".").shift();
-	}
-	/**
-	* Returns an array of events from a space-separated string.
-	* @param {string} events The events.
-	* @returns {string[]} The parsed events.
-	*/
-	function parseEvents(events) {
-		return events.split(" ");
-	}
-	/**
-	* Resolves a single node.
-	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-	* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
-	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-	* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
-	*/
-	function resolveNode(nodes, stringCallback, nodeFilter) {
-		if (isString(nodes)) return stringCallback(nodes);
-		if (nodeFilter(nodes)) return nodes;
-		if (nodes instanceof QuerySet) {
-			const node = nodes.get(0);
-			return nodeFilter(node) ? node : void 0;
-		}
-		if (nodes && typeof nodes.item === "function") {
-			const node = nodes.item(0);
-			return nodeFilter(node) ? node : void 0;
-		}
-	}
-	/**
-	* Resolves multiple nodes.
-	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
-	* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
-	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
-	* @returns {Array<Node|Window>} The resolved nodes.
-	*/
-	function resolveNodes(nodes, stringCallback, nodeFilter) {
-		if (isString(nodes)) return stringCallback(nodes);
-		if (nodeFilter(nodes)) return [nodes];
-		if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
-		if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
-		return [];
-	}
 
 //#endregion
 //#region src/config.js
@@ -1297,7 +1096,7 @@
 	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
 	* @returns {URL} The URL.
 	*/
-	function createUrl(url, baseURI = getWindow().document.baseURI) {
+	function createUrl(url, baseURI = getDOMProperty(getWindow().document, "baseURI")) {
 		const { URL } = getWindow();
 		return new URL(url, baseURI);
 	}
@@ -1632,6 +1431,241 @@
 	}
 
 //#endregion
+//#region src/query/query-set-core.js
+/**
+	* Represents an ordered, chainable collection of DOM nodes.
+	*/
+	var QuerySet = class QuerySet {
+		#nodes;
+		/**
+		* Creates a QuerySet.
+		* @param {Array<Node|Window>} [nodes=[]] The input nodes.
+		*/
+		constructor(nodes = []) {
+			this.#nodes = nodes;
+		}
+		/**
+		* Gets the number of nodes.
+		* @returns {number} The number of nodes.
+		*/
+		get length() {
+			return this.#nodes.length;
+		}
+		/**
+		* Executes a function for each node in the set.
+		* @param {((node: Node|Window, index: number) => void)} callback The callback to execute.
+		* @returns {this} The current QuerySet.
+		*/
+		each(callback) {
+			this.#nodes.forEach((v, i) => callback(v, i));
+			return this;
+		}
+		/**
+		* Retrieves the DOM node(s) contained in the QuerySet.
+		* @param {number} [index=null] The index of the node.
+		* @returns {Array<Node|Window>|Node|Window|undefined} The nodes, or the node at the specified index.
+		*/
+		get(index = null) {
+			if (index === null) return this.#nodes;
+			return index < 0 ? this.#nodes[index + this.#nodes.length] : this.#nodes[index];
+		}
+		/**
+		* Executes a function for each node in the set.
+		* @param {((node: Node|Window, index: number) => (Node|Window))} callback The callback to execute.
+		* @returns {QuerySet} A new QuerySet object.
+		*/
+		map(callback) {
+			const nodes = this.#nodes.map(callback);
+			return new QuerySet(nodes);
+		}
+		/**
+		* Reduces the set of matched nodes to a subset specified by a range of indices.
+		* @param {number} [begin] The index to slice from.
+		* @param {number} [end]  The index to slice to.
+		* @returns {QuerySet} A new QuerySet object.
+		*/
+		slice(begin, end) {
+			const nodes = this.#nodes.slice(begin, end);
+			return new QuerySet(nodes);
+		}
+		/**
+		* Returns an iterable from the nodes.
+		* @returns {IterableIterator<Node|Window>} The node iterator.
+		*/
+		[Symbol.iterator]() {
+			return this.#nodes.values();
+		}
+	};
+
+//#endregion
+//#region src/helpers.js
+/**
+	* @typedef {string|Element|Array<string|Element>|NodeList|HTMLCollection|QuerySet} ElementInput
+	*/
+	/**
+	* @typedef {string|Node|Array<string|Node>|NodeList|HTMLCollection|QuerySet} NodeInput
+	*/
+	/**
+	* @typedef {string|Node|Window|Array<string|Node|Window>|NodeList|HTMLCollection|QuerySet} QueryInput
+	*/
+	/**
+	* @callback NodeFilterCallback
+	* @param {Node|Window} node The node to test.
+	* @returns {boolean} Whether the node matches.
+	*/
+	/**
+	* Creates a custom event.
+	* @param {string} type The event type.
+	* @param {CustomEventInit} [options] The event options.
+	* @returns {CustomEvent} The custom event.
+	*/
+	function createEvent(type, options) {
+		const { CustomEvent } = getWindow();
+		return new CustomEvent(type, options);
+	}
+	/**
+	* Creates a wrapped version of a function that executes once per tick.
+	* @template {(...args: any[]) => any} T
+	* @param {T} callback The callback to debounce.
+	* @returns {(...args: Parameters<T>) => void} The wrapped function.
+	*/
+	function debounce(callback) {
+		let running;
+		return (...args) => {
+			if (running) return;
+			running = true;
+			Promise.resolve().then((_) => {
+				try {
+					callback(...args);
+				} finally {
+					running = false;
+				}
+			});
+		};
+	}
+	/**
+	* Escapes a string for use as a CSS identifier.
+	* @param {string} value The value to escape.
+	* @returns {string} The escaped value.
+	*/
+	function escapeCSS(value) {
+		return getWindow().CSS.escape(value);
+	}
+	/**
+	* Returns a RegExp for testing a namespaced event.
+	* @param {string} event The namespaced event.
+	* @returns {RegExp} The namespaced event RegExp.
+	*/
+	function eventNamespacedRegExp(event) {
+		return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
+	}
+	/**
+	* Normalizes a CSS property name.
+	* @param {string} style The CSS property name.
+	* @returns {string} The normalized CSS property name.
+	*/
+	function normalizeCssProperty(style) {
+		return style.startsWith("--") ? style : kebabCase(style);
+	}
+	/**
+	* Normalizes a CSS property value.
+	* @param {string} style The CSS property name.
+	* @param {string|number} value The CSS property value.
+	* @returns {string|number} The normalized CSS property value.
+	*/
+	function normalizeCssValue(style, value) {
+		if (style.startsWith("--") || !value || !isNumeric(value)) return value;
+		const { CSS } = getWindow();
+		return !CSS.supports(style, value) ? `${value}px` : value;
+	}
+	/**
+	* Returns a one-dimensional array of classes from nested arrays or space-separated strings.
+	* @param {Array<string|string[]>} classList The classes to parse.
+	* @returns {string[]} The parsed classes.
+	*/
+	function parseClasses(classList) {
+		return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
+	}
+	/**
+	* Normalizes a key and value, or an existing data object, into a data object.
+	* @param {string|Record<string, *>} key The data key, or an object containing data.
+	* @param {*} [value] The data value.
+	* @param {{json?: boolean}} [options] The options for parsing data.
+	* @returns {Record<string, *>} The data object.
+	*/
+	function parseData(key, value, { json = false } = {}) {
+		const result = isString(key) ? { [key]: value } : key;
+		if (!json) return result;
+		return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]));
+	}
+	/**
+	* Parses a dataset string into a JavaScript value.
+	* @param {string} value The input value.
+	* @returns {boolean|number|Record<string, *>|Array<*>|string|null|undefined} The parsed value.
+	*/
+	function parseDataset(value) {
+		if (isUndefined(value)) return value;
+		const lower = value.toLowerCase().trim();
+		if (["true", "on"].includes(lower)) return true;
+		if (["false", "off"].includes(lower)) return false;
+		if (lower === "null") return null;
+		if (isNumeric(lower)) return parseFloat(lower);
+		if (["{", "["].includes(lower.charAt(0))) try {
+			return JSON.parse(value);
+		} catch {}
+		return value;
+	}
+	/**
+	* Returns the base event name from a namespaced event.
+	* @param {string} event The namespaced event.
+	* @returns {string} The real event.
+	*/
+	function parseEvent(event) {
+		return event.split(".").shift();
+	}
+	/**
+	* Returns an array of events from a space-separated string.
+	* @param {string} events The events.
+	* @returns {string[]} The parsed events.
+	*/
+	function parseEvents(events) {
+		return events.split(" ");
+	}
+	/**
+	* Resolves a single node.
+	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+	* @param {((value: string) => (Node|Window|null|undefined))} stringCallback The callback used to resolve strings.
+	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+	* @returns {Node|Window|null|undefined} The resolved node, or `undefined` if none matches.
+	*/
+	function resolveNode(nodes, stringCallback, nodeFilter) {
+		if (isString(nodes)) return stringCallback(nodes);
+		if (nodeFilter(nodes)) return nodes;
+		if (nodes instanceof QuerySet) {
+			const node = nodes.get(0);
+			return nodeFilter(node) ? node : void 0;
+		}
+		if (nodes && typeof nodes.item === "function") {
+			const node = nodes.item(0);
+			return nodeFilter(node) ? node : void 0;
+		}
+	}
+	/**
+	* Resolves multiple nodes.
+	* @param {QueryInput} nodes The input node(s), or a query selector or HTML string.
+	* @param {((value: string) => Array<Node|Window>)} stringCallback The callback used to resolve strings.
+	* @param {NodeFilterCallback} nodeFilter The callback used to filter nodes.
+	* @returns {Array<Node|Window>} The resolved nodes.
+	*/
+	function resolveNodes(nodes, stringCallback, nodeFilter) {
+		if (isString(nodes)) return stringCallback(nodes);
+		if (nodeFilter(nodes)) return [nodes];
+		if (nodes instanceof QuerySet) return nodes.get().filter(nodeFilter);
+		if (nodes && typeof nodes.item === "function") return merge([], nodes).filter(nodeFilter);
+		return [];
+	}
+
+//#endregion
 //#region src/parser/parser.js
 /**
 	* Creates a Document object from a string.
@@ -1649,7 +1683,7 @@
 	* @returns {Element[]} The parsed elements.
 	*/
 	function parseHTML(html) {
-		const childNodes = getContext().createRange().createContextualFragment(html).children;
+		const childNodes = callDOMMethod(getContext(), "createRange").createContextualFragment(html).children;
 		return merge([], childNodes);
 	}
 
@@ -1688,11 +1722,11 @@
 			if (match[1] === ".") return findByClass$1(match[2], context);
 			return findByTag$1(match[2], context);
 		}
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = node.querySelectorAll(selector);
+			const newNodes = callDOMMethod(node, "querySelectorAll", selector);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1704,13 +1738,13 @@
 	* @returns {Element[]} The matching nodes.
 	*/
 	function findByClass$1(className, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return merge([], context.getElementsByClassName(className));
+		if (isDocument(context) || isElement(context)) return merge([], callDOMMethod(context, "getElementsByClassName", className));
 		const selector = `.${escapeCSS(className)}`;
-		if (isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
+		if (isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = isFragment(node) || isShadow(node) ? node.querySelectorAll(selector) : node.getElementsByClassName(className);
+			const newNodes = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelectorAll", selector) : callDOMMethod(node, "getElementsByClassName", className);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1723,11 +1757,11 @@
 	*/
 	function findById$1(id, context = getContext()) {
 		const selector = `#${escapeCSS(id)}`;
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(selector));
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = node.querySelectorAll(selector);
+			const newNodes = callDOMMethod(node, "querySelectorAll", selector);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1739,12 +1773,12 @@
 	* @returns {Element[]} The matching nodes.
 	*/
 	function findByTag$1(tagName, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return merge([], context.getElementsByTagName(tagName));
-		if (isFragment(context) || isShadow(context)) return merge([], context.querySelectorAll(tagName));
+		if (isDocument(context) || isElement(context)) return merge([], callDOMMethod(context, "getElementsByTagName", tagName));
+		if (isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", tagName));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = isFragment(node) || isShadow(node) ? node.querySelectorAll(tagName) : node.getElementsByTagName(tagName);
+			const newNodes = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelectorAll", tagName) : callDOMMethod(node, "getElementsByTagName", tagName);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1763,11 +1797,11 @@
 			if (match[1] === ".") return findOneByClass$1(match[2], context);
 			return findOneByTag$1(match[2], context);
 		}
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = node.querySelector(selector);
+			const result = callDOMMethod(node, "querySelector", selector);
 			if (result) return result;
 		}
 		return null;
@@ -1779,13 +1813,13 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneByClass$1(className, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return context.getElementsByClassName(className).item(0);
+		if (isDocument(context) || isElement(context)) return callDOMMethod(context, "getElementsByClassName", className).item(0);
 		const selector = `.${escapeCSS(className)}`;
-		if (isFragment(context) || isShadow(context)) return context.querySelector(selector);
+		if (isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isFragment(node) || isShadow(node) ? node.querySelector(selector) : node.getElementsByClassName(className).item(0);
+			const result = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelector", selector) : callDOMMethod(node, "getElementsByClassName", className).item(0);
 			if (result) return result;
 		}
 		return null;
@@ -1797,13 +1831,13 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneById$1(id, context = getContext()) {
-		if (isDocument(context)) return context.getElementById(id);
+		if (isDocument(context)) return callDOMMethod(context, "getElementById", id);
 		const selector = `#${escapeCSS(id)}`;
-		if (isElement(context) || isFragment(context) || isShadow(context)) return context.querySelector(selector);
+		if (isElement(context) || isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isDocument(node) ? node.getElementById(id) : node.querySelector(selector);
+			const result = isDocument(node) ? callDOMMethod(node, "getElementById", id) : callDOMMethod(node, "querySelector", selector);
 			if (result) return result;
 		}
 		return null;
@@ -1815,12 +1849,12 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneByTag$1(tagName, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return context.getElementsByTagName(tagName).item(0);
-		if (isFragment(context) || isShadow(context)) return context.querySelector(tagName);
+		if (isDocument(context) || isElement(context)) return callDOMMethod(context, "getElementsByTagName", tagName).item(0);
+		if (isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", tagName);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isFragment(node) || isShadow(node) ? node.querySelector(tagName) : node.getElementsByTagName(tagName).item(0);
+			const result = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelector", tagName) : callDOMMethod(node, "getElementsByTagName", tagName).item(0);
 			if (result) return result;
 		}
 		return null;
@@ -1854,8 +1888,8 @@
 	function parseFilter(filter, defaultValue = true) {
 		if (!filter) return (_) => defaultValue;
 		if (isFunction(filter)) return filter;
-		if (isString(filter)) return (node) => isElement(node) && node.matches(filter);
-		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.isSameNode(filter);
+		if (isString(filter)) return (node) => isElement(node) && callDOMMethod(node, "matches", filter);
+		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => callDOMMethod(node, "isSameNode", filter);
 		filter = parseNodes(filter, {
 			node: true,
 			fragment: true,
@@ -1872,15 +1906,15 @@
 	*/
 	function parseFilterContains(filter, defaultValue = true) {
 		if (!filter) return (_) => defaultValue;
-		if (isFunction(filter)) return (node) => merge([], node.querySelectorAll("*")).some(filter);
+		if (isFunction(filter)) return (node) => merge([], callDOMMethod(node, "querySelectorAll", "*")).some(filter);
 		if (isString(filter)) return (node) => !!findOne$1(filter, node);
-		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node.contains(filter);
+		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => callDOMMethod(node, "contains", filter);
 		filter = parseNodes(filter, {
 			node: true,
 			fragment: true,
 			shadow: true
 		});
-		if (filter.length) return (node) => filter.some((other) => node.contains(other));
+		if (filter.length) return (node) => filter.some((other) => callDOMMethod(node, "contains", other));
 		return (_) => !defaultValue;
 	}
 	/**
@@ -2157,7 +2191,7 @@
 				...options
 			};
 			if (!("start" in this.#options)) this.#options.start = getTime();
-			if (this.#options.debug) this.#node.dataset.animationStart = this.#options.start;
+			if (this.#options.debug) getDOMProperty(this.#node, "dataset").animationStart = this.#options.start;
 			this.#promise = new Promise((resolve, reject) => {
 				this.#resolve = resolve;
 				this.#reject = reject;
@@ -2232,16 +2266,18 @@
 				}
 			}
 			if (this.#options.debug) {
-				this.#node.dataset.animationTime = time;
-				this.#node.dataset.animationProgress = progress;
+				const dataset = getDOMProperty(this.#node, "dataset");
+				dataset.animationTime = time;
+				dataset.animationProgress = progress;
 			}
 			try {
 				this.#callback(this.#node, progress, this.#options);
 			} catch (error) {
 				if (this.#options.debug) {
-					delete this.#node.dataset.animationStart;
-					delete this.#node.dataset.animationTime;
-					delete this.#node.dataset.animationProgress;
+					const dataset = getDOMProperty(this.#node, "dataset");
+					delete dataset.animationStart;
+					delete dataset.animationTime;
+					delete dataset.animationProgress;
 				}
 				this.#isFinished = true;
 				this.#reject(error);
@@ -2249,9 +2285,10 @@
 			}
 			if (progress < 1) return false;
 			if (this.#options.debug) {
-				delete this.#node.dataset.animationStart;
-				delete this.#node.dataset.animationTime;
-				delete this.#node.dataset.animationProgress;
+				const dataset = getDOMProperty(this.#node, "dataset");
+				delete dataset.animationStart;
+				delete dataset.animationTime;
+				delete dataset.animationProgress;
 			}
 			if (!this.#isFinished) {
 				this.#isFinished = true;
@@ -2341,7 +2378,7 @@
 	* @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 	*/
 	function fadeIn$1(selector, options) {
-		return animateEffect(selector, ["opacity"], (node, progress) => node.style.setProperty("opacity", progress.toFixed(2)), options);
+		return animateEffect(selector, ["opacity"], (node, progress) => getDOMProperty(node, "style").setProperty("opacity", progress.toFixed(2)), options);
 	}
 	/**
 	* Fades the opacity of each node out.
@@ -2350,7 +2387,7 @@
 	* @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 	*/
 	function fadeOut$1(selector, options) {
-		return animateEffect(selector, ["opacity"], (node, progress) => node.style.setProperty("opacity", (1 - progress).toFixed(2)), options);
+		return animateEffect(selector, ["opacity"], (node, progress) => getDOMProperty(node, "style").setProperty("opacity", (1 - progress).toFixed(2)), options);
 	}
 	/**
 	* Rotates each node in on an X, Y or Z.
@@ -2361,7 +2398,7 @@
 	function rotateIn$1(selector, options) {
 		return animateEffect(selector, ["transform"], (node, progress, options) => {
 			const amount = ((90 - progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-			node.style.setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+			getDOMProperty(node, "style").setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 		}, {
 			x: 0,
 			y: 1,
@@ -2378,7 +2415,7 @@
 	function rotateOut$1(selector, options) {
 		return animateEffect(selector, ["transform"], (node, progress, options) => {
 			const amount = (progress * 90 * (options.inverse ? -1 : 1)).toFixed(2);
-			node.style.setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+			getDOMProperty(node, "style").setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 		}, {
 			x: 0,
 			y: 1,
@@ -2404,17 +2441,17 @@
 			let translateStyle;
 			let inverse;
 			if (["top", "bottom"].includes(dir)) {
-				size = node.clientHeight;
+				size = getDOMProperty(node, "clientHeight");
 				translateStyle = options.useGpu ? "Y" : "margin-top";
 				inverse = dir === "top";
 			} else {
-				size = node.clientWidth;
+				size = getDOMProperty(node, "clientWidth");
 				translateStyle = options.useGpu ? "X" : "margin-left";
 				inverse = dir === "left";
 			}
 			const translateAmount = ((size - size * progress) * (inverse ? -1 : 1)).toFixed(2);
-			if (options.useGpu) node.style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-			else node.style.setProperty(translateStyle, `${translateAmount}px`);
+			if (options.useGpu) getDOMProperty(node, "style").setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
+			else getDOMProperty(node, "style").setProperty(translateStyle, `${translateAmount}px`);
 		}, options);
 	}
 	/**
@@ -2435,17 +2472,17 @@
 			let translateStyle;
 			let inverse;
 			if (["top", "bottom"].includes(dir)) {
-				size = node.clientHeight;
+				size = getDOMProperty(node, "clientHeight");
 				translateStyle = options.useGpu ? "Y" : "margin-top";
 				inverse = dir === "top";
 			} else {
-				size = node.clientWidth;
+				size = getDOMProperty(node, "clientWidth");
 				translateStyle = options.useGpu ? "X" : "margin-left";
 				inverse = dir === "left";
 			}
 			const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-			if (options.useGpu) node.style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-			else node.style.setProperty(translateStyle, `${translateAmount}px`);
+			if (options.useGpu) getDOMProperty(node, "style").setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
+			else getDOMProperty(node, "style").setProperty(translateStyle, `${translateAmount}px`);
 		}, options);
 	}
 	/**
@@ -2472,28 +2509,29 @@
 			"overflow",
 			"width"
 		], (node, progress, options, initialStyles) => {
-			node.style.setProperty("height", initialStyles.height.value);
-			node.style.setProperty("width", initialStyles.width.value);
-			node.style.setProperty("overflow", "hidden");
+			const style = getDOMProperty(node, "style");
+			style.setProperty("height", initialStyles.height.value);
+			style.setProperty("width", initialStyles.width.value);
+			style.setProperty("overflow", "hidden");
 			const dir = evaluate(options.direction);
 			let size;
 			let sizeStyle;
 			let translateStyle;
 			if (["top", "bottom"].includes(dir)) {
-				size = node.clientHeight;
+				size = getDOMProperty(node, "clientHeight");
 				sizeStyle = "height";
 				if (dir === "top") translateStyle = options.useGpu ? "Y" : "margin-top";
 			} else {
-				size = node.clientWidth;
+				size = getDOMProperty(node, "clientWidth");
 				sizeStyle = "width";
 				if (dir === "left") translateStyle = options.useGpu ? "X" : "margin-left";
 			}
 			const amount = (size * progress).toFixed(2);
-			node.style.setProperty(sizeStyle, `${amount}px`);
+			style.setProperty(sizeStyle, `${amount}px`);
 			if (translateStyle) {
 				const translateAmount = (size - amount).toFixed(2);
-				if (options.useGpu) node.style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-				else node.style.setProperty(translateStyle, `${translateAmount}px`);
+				if (options.useGpu) style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
+				else style.setProperty(translateStyle, `${translateAmount}px`);
 			}
 		}, options);
 	}
@@ -2521,28 +2559,29 @@
 			"overflow",
 			"width"
 		], (node, progress, options, initialStyles) => {
-			node.style.setProperty("height", initialStyles.height.value);
-			node.style.setProperty("width", initialStyles.width.value);
-			node.style.setProperty("overflow", "hidden");
+			const style = getDOMProperty(node, "style");
+			style.setProperty("height", initialStyles.height.value);
+			style.setProperty("width", initialStyles.width.value);
+			style.setProperty("overflow", "hidden");
 			const dir = evaluate(options.direction);
 			let size;
 			let sizeStyle;
 			let translateStyle;
 			if (["top", "bottom"].includes(dir)) {
-				size = node.clientHeight;
+				size = getDOMProperty(node, "clientHeight");
 				sizeStyle = "height";
 				if (dir === "top") translateStyle = options.useGpu ? "Y" : "margin-top";
 			} else {
-				size = node.clientWidth;
+				size = getDOMProperty(node, "clientWidth");
 				sizeStyle = "width";
 				if (dir === "left") translateStyle = options.useGpu ? "X" : "margin-left";
 			}
 			const amount = (size - size * progress).toFixed(2);
-			node.style.setProperty(sizeStyle, `${amount}px`);
+			style.setProperty(sizeStyle, `${amount}px`);
 			if (translateStyle) {
 				const translateAmount = (size - amount).toFixed(2);
-				if (options.useGpu) node.style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-				else node.style.setProperty(translateStyle, `${translateAmount}px`);
+				if (options.useGpu) style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
+				else style.setProperty(translateStyle, `${translateAmount}px`);
 			}
 		}, options);
 	}
@@ -2557,16 +2596,17 @@
 	function animateEffect(selector, properties, callback, options) {
 		const initialStyles = /* @__PURE__ */ new WeakMap();
 		return animate$1(selector, (node, progress, options) => {
+			const style = getDOMProperty(node, "style");
 			if (!initialStyles.has(node)) initialStyles.set(node, Object.fromEntries(properties.map((property) => [property, {
-				priority: node.style.getPropertyPriority(property),
-				value: node.style.getPropertyValue(property)
+				priority: style.getPropertyPriority(property),
+				value: style.getPropertyValue(property)
 			}])));
 			const styles = initialStyles.get(node);
 			if (progress < 1) {
 				callback(node, progress, options, styles);
 				return;
 			}
-			for (const [property, { priority, value }] of Object.entries(styles)) node.style.setProperty(property, value, priority);
+			for (const [property, { priority, value }] of Object.entries(styles)) style.setProperty(property, value, priority);
 		}, options);
 	}
 
@@ -2593,7 +2633,7 @@
 	function attachShadow$1(selector, { open = true } = {}) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return node.attachShadow({ mode: open ? "open" : "closed" });
+		return callDOMMethod(node, "attachShadow", { mode: open ? "open" : "closed" });
 	}
 	/**
 	* Creates a new DOM element.
@@ -2602,26 +2642,26 @@
 	* @returns {HTMLElement} The new HTMLElement.
 	*/
 	function create(tagName = "div", options = {}) {
-		const node = getContext().createElement(tagName);
+		const node = callDOMMethod(getContext(), "createElement", tagName);
 		if ("html" in options) node.innerHTML = options.html;
 		else if ("text" in options) node.textContent = options.text;
 		if ("class" in options) {
 			const classes = parseClasses(wrap$2(options.class));
-			node.classList.add(...classes);
+			getDOMProperty(node, "classList").add(...classes);
 		}
 		if ("style" in options) for (let [style, value] of Object.entries(options.style)) {
 			style = normalizeCssProperty(style);
 			value = normalizeCssValue(style, value);
-			node.style.setProperty(style, value);
+			getDOMProperty(node, "style").setProperty(style, value);
 		}
 		if ("value" in options) node.value = options.value;
-		if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) node.setAttribute(key, value);
+		if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) callDOMMethod(node, "setAttribute", key, value);
 		if ("properties" in options) for (const [key, value] of Object.entries(options.properties)) node[key] = value;
 		if ("dataset" in options) {
 			const dataset = parseData(options.dataset, null, { json: true });
 			for (let [key, value] of Object.entries(dataset)) {
 				key = camelCase(key);
-				node.dataset[key] = value;
+				getDOMProperty(node, "dataset")[key] = value;
 			}
 		}
 		return node;
@@ -2632,21 +2672,21 @@
 	* @returns {Node} The new comment node.
 	*/
 	function createComment(comment) {
-		return getContext().createComment(comment);
+		return callDOMMethod(getContext(), "createComment", comment);
 	}
 	/**
 	* Creates a new document fragment.
 	* @returns {DocumentFragment} The new DocumentFragment.
 	*/
 	function createFragment() {
-		return getContext().createDocumentFragment();
+		return callDOMMethod(getContext(), "createDocumentFragment");
 	}
 	/**
 	* Creates a new range object.
 	* @returns {Range} The new Range.
 	*/
 	function createRange() {
-		return getContext().createRange();
+		return callDOMMethod(getContext(), "createRange");
 	}
 	/**
 	* Creates a new text node.
@@ -2654,7 +2694,7 @@
 	* @returns {Node} The new text node.
 	*/
 	function createText(text) {
-		return getContext().createTextNode(text);
+		return callDOMMethod(getContext(), "createTextNode", text);
 	}
 
 //#endregion
@@ -2670,7 +2710,7 @@
 	* @returns {boolean} Whether the command was executed.
 	*/
 	function exec(command, value = null) {
-		return getContext().execCommand(command, false, value);
+		return callDOMMethod(getContext(), "execCommand", command, false, value);
 	}
 	/**
 	* Gets the index of the first node relative to its parent.
@@ -2679,8 +2719,9 @@
 	*/
 	function index$1(selector) {
 		const node = parseNode(selector, { node: true });
-		if (!node || !node.parentNode) return;
-		return merge([], node.parentNode.children).indexOf(node);
+		const parent = node && getDOMProperty(node, "parentNode");
+		if (!parent) return;
+		return merge([], getDOMProperty(parent, "children")).indexOf(node);
 	}
 	/**
 	* Gets the index of the first node matching a filter.
@@ -2707,7 +2748,7 @@
 			shadow: true,
 			document: true
 		});
-		for (const node of nodes) node.normalize();
+		for (const node of nodes) callDOMMethod(node, "normalize");
 	}
 	/**
 	* Returns a serialized string containing names and values of all form nodes.
@@ -2723,20 +2764,19 @@
 	* @returns {Array<{name: string, value: string}>} The serialized entries.
 	*/
 	function serializeArray$1(selector) {
-		const window = getWindow();
 		return parseNodes(selector, {
 			fragment: true,
 			shadow: true
 		}).reduce((values, node) => {
-			if (isElement(node) && window.Element.prototype.matches.call(node, "form")) {
-				const elements = Reflect.get(window.HTMLFormElement.prototype, "elements", node);
-				return values.concat(serializeArray$1(merge([], elements).filter((node) => node.matches("input, select, textarea"))));
+			if (isElement(node) && callDOMMethod(node, "matches", "form")) {
+				const elements = getDOMProperty(node, "elements");
+				return values.concat(serializeArray$1(merge([], elements).filter((node) => callDOMMethod(node, "matches", "input, select, textarea"))));
 			}
-			if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(node.querySelectorAll("input, select, textarea")));
-			if (isElement(node) && node.matches(":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
-			const name = node.getAttribute("name");
+			if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(callDOMMethod(node, "querySelectorAll", "input, select, textarea")));
+			if (isElement(node) && callDOMMethod(node, "matches", ":disabled, input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
+			const name = callDOMMethod(node, "getAttribute", "name");
 			if (!name) return values;
-			if (isElement(node) && node.matches("select")) for (const option of node.selectedOptions) {
+			if (isElement(node) && callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
 				if (option.matches(":disabled")) continue;
 				values.push({
 					name,
@@ -2774,16 +2814,18 @@
 			const isOtherShadow = isShadow(other);
 			if (isNodeShadow) node = node.host;
 			if (isOtherShadow) other = other.host;
-			if (!node.isConnected || !other.isConnected) {
-				if (node.isConnected !== other.isConnected) {
-					if (isNodeShadow && !node.isConnected) return 1;
-					if (isOtherShadow && !other.isConnected) return -1;
-					return node.isConnected ? 1 : -1;
+			const nodeConnected = getDOMProperty(node, "isConnected");
+			const otherConnected = getDOMProperty(other, "isConnected");
+			if (!nodeConnected || !otherConnected) {
+				if (nodeConnected !== otherConnected) {
+					if (isNodeShadow && !nodeConnected) return 1;
+					if (isOtherShadow && !otherConnected) return -1;
+					return nodeConnected ? 1 : -1;
 				}
 				return 0;
 			}
-			if (node.isSameNode(other)) return 0;
-			const pos = node.compareDocumentPosition(other);
+			if (callDOMMethod(node, "isSameNode", other)) return 0;
+			const pos = callDOMMethod(node, "compareDocumentPosition", other);
 			if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) return -1;
 			if (pos & Node.DOCUMENT_POSITION_PRECEDING || pos & Node.DOCUMENT_POSITION_CONTAINS) return 1;
 			return 0;
@@ -2797,7 +2839,7 @@
 	function tagName$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return node.tagName.toLowerCase();
+		return getDOMProperty(node, "tagName").toLowerCase();
 	}
 
 //#endregion
@@ -2829,7 +2871,7 @@
 		});
 		const results = [];
 		for (const node of nodes) {
-			const childNodes = elementsOnly ? merge([], node.children) : merge([], node.childNodes);
+			const childNodes = elementsOnly ? merge([], getDOMProperty(node, "children")) : merge([], getDOMProperty(node, "childNodes"));
 			for (const child of childNodes) {
 				if (!nodeFilter(child)) continue;
 				results.push(child);
@@ -2856,7 +2898,7 @@
 	function commonAncestor$1(selector) {
 		const nodes = sort$1(selector);
 		if (!nodes.length) return;
-		if (nodes.some((node) => !node.parentNode)) return;
+		if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
 		const range = createRange();
 		if (nodes.length === 1) range.selectNode(nodes.shift());
 		else {
@@ -2881,7 +2923,7 @@
 	function fragment$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return node.content;
+		return getDOMProperty(node, "content");
 	}
 	/**
 	* Returns the next sibling for each node (optionally matching a filter).
@@ -2893,7 +2935,7 @@
 		nodeFilter = parseFilter(nodeFilter);
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
-		for (let node of nodes) while (node = node.nextSibling) {
+		for (let node of nodes) while (node = getDOMProperty(node, "nextSibling")) {
 			if (!isElement(node)) continue;
 			if (nodeFilter(node)) results.push(node);
 			break;
@@ -2913,7 +2955,7 @@
 		limitFilter = parseFilter(limitFilter, false);
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
-		for (let node of nodes) while (node = node.nextSibling) {
+		for (let node of nodes) while (node = getDOMProperty(node, "nextSibling")) {
 			if (!isElement(node)) continue;
 			if (limitFilter(node)) break;
 			if (!nodeFilter(node)) continue;
@@ -2930,7 +2972,7 @@
 	function offsetParent$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return node.offsetParent;
+		return getDOMProperty(node, "offsetParent");
 	}
 	/**
 	* Returns the parent of each node (optionally matching a filter).
@@ -2943,7 +2985,7 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (let node of nodes) {
-			node = node.parentNode;
+			node = getDOMProperty(node, "parentNode");
 			if (!node) continue;
 			if (!nodeFilter(node)) continue;
 			results.push(node);
@@ -2965,7 +3007,7 @@
 		const results = [];
 		for (let node of nodes) {
 			const parents = [];
-			while (node = node.parentNode) {
+			while (node = getDOMProperty(node, "parentNode")) {
 				if (isDocument(node)) break;
 				if (limitFilter(node)) break;
 				if (!nodeFilter(node)) continue;
@@ -2986,7 +3028,7 @@
 		nodeFilter = parseFilter(nodeFilter);
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
-		for (let node of nodes) while (node = node.previousSibling) {
+		for (let node of nodes) while (node = getDOMProperty(node, "previousSibling")) {
 			if (!isElement(node)) continue;
 			if (nodeFilter(node)) results.push(node);
 			break;
@@ -3008,7 +3050,7 @@
 		const results = [];
 		for (let node of nodes) {
 			const siblings = [];
-			while (node = node.previousSibling) {
+			while (node = getDOMProperty(node, "previousSibling")) {
 				if (!isElement(node)) continue;
 				if (limitFilter(node)) break;
 				if (!nodeFilter(node)) continue;
@@ -3027,7 +3069,7 @@
 	function shadow$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return node.shadowRoot;
+		return getDOMProperty(node, "shadowRoot");
 	}
 	/**
 	* Returns all siblings for each node (optionally matching a filter).
@@ -3041,12 +3083,12 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (const node of nodes) {
-			const parent = node.parentNode;
+			const parent = getDOMProperty(node, "parentNode");
 			if (!parent) continue;
-			const siblings = elementsOnly ? parent.children : parent.childNodes;
+			const siblings = elementsOnly ? getDOMProperty(parent, "children") : getDOMProperty(parent, "childNodes");
 			let sibling;
 			for (sibling of siblings) {
-				if (node.isSameNode(sibling)) continue;
+				if (callDOMMethod(node, "isSameNode", sibling)) continue;
 				if (!nodeFilter(sibling)) continue;
 				results.push(sibling);
 			}
@@ -3070,10 +3112,10 @@
 	*/
 	function getDelegateContainsFactory(node, selector) {
 		return (target) => {
-			const matches = merge([], node.querySelectorAll(selector));
+			const matches = merge([], callDOMMethod(node, "querySelectorAll", selector));
 			if (!matches.length) return false;
 			if (matches.includes(target)) return target;
-			return closest$1(target, (parent) => matches.includes(parent), (parent) => parent.isSameNode(node)).shift();
+			return closest$1(target, (parent) => matches.includes(parent), (parent) => callDOMMethod(parent, "isSameNode", node)).shift();
 		};
 	}
 	/**
@@ -3083,7 +3125,7 @@
 	* @returns {DelegateCallback} The callback for finding the matching delegate.
 	*/
 	function getDelegateMatchFactory(node, selector) {
-		return (target) => target.matches && target.matches(selector) ? target : closest$1(target, (parent) => parent.matches(selector), (parent) => parent.isSameNode(node)).shift();
+		return (target) => getDOMProperty(target, "matches") && callDOMMethod(target, "matches", selector) ? target : closest$1(target, (parent) => callDOMMethod(parent, "matches", selector), (parent) => callDOMMethod(parent, "isSameNode", node)).shift();
 	}
 	/**
 	* Returns a wrapped event callback that executes on a delegate selector.
@@ -3095,7 +3137,7 @@
 	function delegateFactory(node, selector, callback) {
 		const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ? getDelegateContainsFactory(node, selector) : getDelegateMatchFactory(node, selector);
 		return (event) => {
-			if (node.isSameNode(event.target)) return;
+			if (callDOMMethod(node, "isSameNode", event.target)) return;
 			const delegate = getDelegate(event.target);
 			if (!delegate) return;
 			Object.defineProperty(event, "currentTarget", {
@@ -3223,7 +3265,7 @@
 				eventData.realEventName = realEventName;
 				if (!nodeEvents[realEventName]) nodeEvents[realEventName] = [];
 				nodeEvents[realEventName].push({ ...eventData });
-				node.addEventListener(realEventName, realCallback, {
+				callDOMMethod(node, "addEventListener", realEventName, realCallback, {
 					capture,
 					passive
 				});
@@ -3330,7 +3372,7 @@
 					if (callback && callback !== eventData.callback) return true;
 					if (delegate && delegate !== eventData.delegate) return true;
 					if (capture !== null && capture !== eventData.capture) return true;
-					node.removeEventListener(realEventName, eventData.realCallback, eventData.capture);
+					callDOMMethod(node, "removeEventListener", realEventName, eventData.realCallback, eventData.capture);
 					return false;
 				});
 				if (!otherEvents.length) delete nodeEvents[realEventName];
@@ -3378,7 +3420,7 @@
 				eventData.namespace = event.substring(realEvent.length + 1);
 				eventData.namespaceRegExp = eventNamespacedRegExp(event);
 			}
-			for (const node of nodes) node.dispatchEvent(eventData);
+			for (const node of nodes) callDOMMethod(node, "dispatchEvent", eventData);
 		}
 	}
 	/**
@@ -3405,7 +3447,7 @@
 			eventData.namespace = event.substring(realEvent.length + 1);
 			eventData.namespaceRegExp = eventNamespacedRegExp(event);
 		}
-		return node.dispatchEvent(eventData);
+		return callDOMMethod(node, "dispatchEvent", eventData);
 	}
 
 //#endregion
@@ -3429,7 +3471,7 @@
 			node: true,
 			fragment: true
 		}).map((node) => {
-			const clone = node.cloneNode(deep);
+			const clone = callDOMMethod(node, "cloneNode", deep);
 			if (events || data || animations) deepClone(node, clone, {
 				deep,
 				events,
@@ -3464,13 +3506,14 @@
 			for (const animation of nodeAnimations) animation.clone(clone);
 		}
 		if (deep) {
-			for (const [i, child] of node.childNodes.entries()) deepClone(child, clone.childNodes.item(i), {
+			for (const [i, child] of getDOMProperty(node, "childNodes").entries()) deepClone(child, getDOMProperty(clone, "childNodes").item(i), {
 				deep,
 				events: events$1,
 				data: data$1,
 				animations: animations$1
 			});
-			if (isFragment(node.content)) deepClone(node.content, clone.content, {
+			const content = getDOMProperty(node, "content");
+			if (isFragment(content)) deepClone(content, getDOMProperty(clone, "content"), {
 				deep,
 				events: events$1,
 				data: data$1,
@@ -3485,7 +3528,7 @@
 	*/
 	function detach$1(selector) {
 		const nodes = parseNodes(selector, { node: true });
-		for (const node of nodes) node.remove();
+		for (const node of nodes) callDOMMethod(node, "remove");
 		return nodes;
 	}
 	/**
@@ -3499,10 +3542,10 @@
 			document: true
 		});
 		for (const node of nodes) {
-			const childNodes = merge([], node.childNodes);
+			const childNodes = merge([], getDOMProperty(node, "childNodes"));
 			for (const child of childNodes) {
 				if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
-				child.remove();
+				callDOMMethod(child, "remove");
 			}
 		}
 	}
@@ -3518,7 +3561,7 @@
 		});
 		for (const node of nodes) {
 			if (isElement(node) || isFragment(node) || isShadow(node)) removeNode(node);
-			if (isNode(node)) node.remove();
+			if (isNode(node)) callDOMMethod(node, "remove");
 		}
 	}
 	/**
@@ -3533,9 +3576,9 @@
 					bubbles: false,
 					cancelable: false
 				});
-				node.dispatchEvent(eventData);
+				callDOMMethod(node, "dispatchEvent", eventData);
 			}
-			for (const [realEventName, realEvents] of Object.entries(nodeEvents)) for (const eventData of realEvents) node.removeEventListener(realEventName, eventData.realCallback, { capture: eventData.capture });
+			for (const [realEventName, realEvents] of Object.entries(nodeEvents)) for (const eventData of realEvents) callDOMMethod(node, "removeEventListener", realEventName, eventData.realCallback, { capture: eventData.capture });
 			events.delete(node);
 		}
 		if (queues.has(node)) queues.delete(node);
@@ -3545,10 +3588,12 @@
 		}
 		if (styles.has(node)) styles.delete(node);
 		if (data.has(node)) data.delete(node);
-		const childNodes = merge([], node.children);
+		const childNodes = merge([], getDOMProperty(node, "children"));
 		for (const child of childNodes) removeNode(child);
-		if (node.shadowRoot) removeNode(node.shadowRoot);
-		if (isFragment(node.content)) removeNode(node.content);
+		const shadowRoot = getDOMProperty(node, "shadowRoot");
+		if (shadowRoot) removeNode(shadowRoot);
+		const content = getDOMProperty(node, "content");
+		if (isFragment(content)) removeNode(content);
 	}
 	/**
 	* Replaces each other node with nodes.
@@ -3570,14 +3615,14 @@
 			fragment: true,
 			html: true
 		});
-		const isReplacementTarget = (node) => node.parentNode && !others.includes(node) && !nodes.some((other) => !other.isSameNode(node) && other.contains(node));
+		const isReplacementTarget = (node) => getDOMProperty(node, "parentNode") && !others.includes(node) && !nodes.some((other) => !callDOMMethod(other, "isSameNode", node) && callDOMMethod(other, "contains", node));
 		if (!nodes.some(isReplacementTarget)) return;
 		const fragment = createFragment();
 		for (const other of others) fragment.insertBefore(other, null);
 		others = merge([], fragment.childNodes);
 		nodes = nodes.filter(isReplacementTarget);
 		for (const [i, node] of nodes.entries()) {
-			const parent = node.parentNode;
+			const parent = getDOMProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -3586,7 +3631,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) parent.insertBefore(clone, node);
+			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
 		}
 		remove$1(nodes);
 	}
@@ -3606,8 +3651,8 @@
 	function getAttribute$1(selector, attribute) {
 		const node = parseNode(selector);
 		if (!node) return;
-		if (attribute) return node.getAttribute(attribute);
-		return Object.fromEntries(merge([], node.attributes).map((attribute) => [attribute.nodeName, attribute.nodeValue]));
+		if (attribute) return callDOMMethod(node, "getAttribute", attribute);
+		return Object.fromEntries(merge([], getDOMProperty(node, "attributes")).map((attribute) => [attribute.nodeName, attribute.nodeValue]));
 	}
 	/**
 	* Gets dataset value(s) for the first node.
@@ -3620,9 +3665,9 @@
 		if (!node) return;
 		if (key) {
 			key = camelCase(key);
-			return parseDataset(node.dataset[key]);
+			return parseDataset(getDOMProperty(node, "dataset")[key]);
 		}
-		return Object.fromEntries(Object.entries(node.dataset).map(([key, value]) => [key, parseDataset(value)]));
+		return Object.fromEntries(Object.entries(getDOMProperty(node, "dataset")).map(([key, value]) => [key, parseDataset(value)]));
 	}
 	/**
 	* Gets the HTML contents of the first node.
@@ -3630,7 +3675,9 @@
 	* @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
 	*/
 	function getHTML$1(selector) {
-		return getProperty$1(selector, "innerHTML");
+		const node = parseNode(selector);
+		if (!node) return;
+		return getDOMProperty(node, "innerHTML");
 	}
 	/**
 	* Gets a property value for the first node.
@@ -3649,7 +3696,9 @@
 	* @returns {string|null|undefined} The text contents, or `undefined` if no element matches.
 	*/
 	function getText$1(selector) {
-		return getProperty$1(selector, "textContent");
+		const node = parseNode(selector);
+		if (!node) return;
+		return getDOMProperty(node, "textContent");
 	}
 	/**
 	* Gets the value property of the first node.
@@ -3666,7 +3715,7 @@
 	*/
 	function removeAttribute$1(selector, attribute) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) node.removeAttribute(attribute);
+		for (const node of nodes) callDOMMethod(node, "removeAttribute", attribute);
 	}
 	/**
 	* Removes a dataset value from each node.
@@ -3677,7 +3726,7 @@
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
 			key = camelCase(key);
-			delete node.dataset[key];
+			delete getDOMProperty(node, "dataset")[key];
 		}
 	}
 	/**
@@ -3698,7 +3747,7 @@
 	function setAttribute$1(selector, attribute, value) {
 		const nodes = parseNodes(selector);
 		const attributes = parseData(attribute, value);
-		for (const [key, value] of Object.entries(attributes)) for (const node of nodes) node.setAttribute(key, value);
+		for (const [key, value] of Object.entries(attributes)) for (const node of nodes) callDOMMethod(node, "setAttribute", key, value);
 	}
 	/**
 	* Sets a dataset value for each node.
@@ -3711,7 +3760,7 @@
 		const dataset = parseData(key, value, { json: true });
 		for (let [key, value] of Object.entries(dataset)) {
 			key = camelCase(key);
-			for (const node of nodes) node.dataset[key] = value;
+			for (const node of nodes) getDOMProperty(node, "dataset")[key] = value;
 		}
 	}
 	/**
@@ -3722,8 +3771,9 @@
 	function setHTML$1(selector, html) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
-			const target = isFragment(node.content) ? node.content : node;
-			const childNodes = merge([], target.children);
+			const content = getDOMProperty(node, "content");
+			const target = isFragment(content) ? content : node;
+			const childNodes = merge([], getDOMProperty(target, "children"));
 			for (const child of childNodes) removeNode(child);
 			node.innerHTML = html;
 		}
@@ -3747,7 +3797,7 @@
 	function setText$1(selector, text) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
-			const childNodes = merge([], node.children);
+			const childNodes = merge([], getDOMProperty(node, "children"));
 			for (const child of childNodes) removeNode(child);
 			node.textContent = text;
 		}
@@ -3858,7 +3908,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) node.classList.add(...classes);
+		for (const node of nodes) getDOMProperty(node, "classList").add(...classes);
 	}
 	/**
 	* Gets computed CSS style value(s) for the first node.
@@ -3890,10 +3940,11 @@
 		if (!node) return;
 		if (style) {
 			style = normalizeCssProperty(style);
-			return node.style.getPropertyValue(style);
+			return getDOMProperty(node, "style").getPropertyValue(style);
 		}
 		const styles = {};
-		for (const style of node.style) styles[style] = node.style.getPropertyValue(style);
+		const inlineStyles = getDOMProperty(node, "style");
+		for (const style of inlineStyles) styles[style] = inlineStyles.getPropertyValue(style);
 		return styles;
 	}
 	/**
@@ -3902,7 +3953,7 @@
 	*/
 	function hide$1(selector) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) node.style.setProperty("display", "none");
+		for (const node of nodes) getDOMProperty(node, "style").setProperty("display", "none");
 	}
 	/**
 	* Removes classes from each node.
@@ -3913,7 +3964,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) node.classList.remove(...classes);
+		for (const node of nodes) getDOMProperty(node, "classList").remove(...classes);
 	}
 	/**
 	* Removes a style property from each node.
@@ -3923,7 +3974,7 @@
 	function removeStyle$1(selector, style) {
 		const nodes = parseNodes(selector);
 		style = normalizeCssProperty(style);
-		for (const node of nodes) node.style.removeProperty(style);
+		for (const node of nodes) getDOMProperty(node, "style").removeProperty(style);
 	}
 	/**
 	* Sets style properties for each node.
@@ -3938,7 +3989,7 @@
 		for (let [style, value] of Object.entries(styles)) {
 			style = normalizeCssProperty(style);
 			value = normalizeCssValue(style, value);
-			for (const node of nodes) node.style.setProperty(style, value, important ? "important" : "");
+			for (const node of nodes) getDOMProperty(node, "style").setProperty(style, value, important ? "important" : "");
 		}
 	}
 	/**
@@ -3947,7 +3998,7 @@
 	*/
 	function show$1(selector) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) node.style.setProperty("display", "");
+		for (const node of nodes) getDOMProperty(node, "style").setProperty("display", "");
 	}
 	/**
 	* Toggles the visibility of each node.
@@ -3955,7 +4006,10 @@
 	*/
 	function toggle$1(selector) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) node.style.setProperty("display", node.style.display === "none" ? "" : "none");
+		for (const node of nodes) {
+			const style = getDOMProperty(node, "style");
+			style.setProperty("display", style.display === "none" ? "" : "none");
+		}
 	}
 	/**
 	* Toggles classes for each node.
@@ -3966,7 +4020,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) for (const className of classes) node.classList.toggle(className);
+		for (const node of nodes) for (const className of classes) getDOMProperty(node, "classList").toggle(className);
 	}
 
 //#endregion
@@ -4007,21 +4061,21 @@
 		const containerBox = rect$1(containerSelector);
 		if (!containerBox) return;
 		const nodes = parseNodes(selector);
-		const context = getContext();
+		const documentElement = getDOMProperty(getContext(), "documentElement");
 		const window = getWindow();
-		const getScrollX = (_) => context.documentElement.scrollHeight > window.outerHeight;
-		const getScrollY = (_) => context.documentElement.scrollWidth > window.outerWidth;
+		const getScrollX = (_) => getDOMProperty(documentElement, "scrollHeight") > window.outerHeight;
+		const getScrollY = (_) => getDOMProperty(documentElement, "scrollWidth") > window.outerWidth;
 		const preScrollX = getScrollX();
 		const preScrollY = getScrollY();
 		for (const node of nodes) {
 			let nodeBox = rect$1(node);
 			let resized = false;
 			if (nodeBox.height > containerBox.height) {
-				node.style.setProperty("height", `${containerBox.height}px`);
+				getDOMProperty(node, "style").setProperty("height", `${containerBox.height}px`);
 				resized = true;
 			}
 			if (nodeBox.width > containerBox.width) {
-				node.style.setProperty("width", `${containerBox.width}px`);
+				getDOMProperty(node, "style").setProperty("width", `${containerBox.width}px`);
 				resized = true;
 			}
 			if (resized) nodeBox = rect$1(node);
@@ -4031,7 +4085,7 @@
 			if (leftOffset) {
 				const oldLeft = css$1(node, "left");
 				const trueLeft = oldLeft && oldLeft !== "auto" ? parseFloat(oldLeft) : 0;
-				node.style.setProperty("left", `${trueLeft - leftOffset}px`);
+				getDOMProperty(node, "style").setProperty("left", `${trueLeft - leftOffset}px`);
 			}
 			let topOffset;
 			if (nodeBox.top - containerBox.top < 0) topOffset = nodeBox.top - containerBox.top;
@@ -4039,9 +4093,9 @@
 			if (topOffset) {
 				const oldTop = css$1(node, "top");
 				const trueTop = oldTop && oldTop !== "auto" ? parseFloat(oldTop) : 0;
-				node.style.setProperty("top", `${trueTop - topOffset}px`);
+				getDOMProperty(node, "style").setProperty("top", `${trueTop - topOffset}px`);
 			}
-			if (css$1(node, "position") === "static") node.style.setProperty("position", "relative");
+			if (css$1(node, "position") === "static") getDOMProperty(node, "style").setProperty("position", "relative");
 		}
 		const postScrollX = getScrollX();
 		const postScrollY = getScrollY();
@@ -4139,14 +4193,14 @@
 		const node = parseNode(selector);
 		if (!node) return;
 		const result = {
-			x: node.offsetLeft,
-			y: node.offsetTop
+			x: getDOMProperty(node, "offsetLeft"),
+			y: getDOMProperty(node, "offsetTop")
 		};
 		if (offset) {
 			let offsetParent = node;
-			while (offsetParent = offsetParent.offsetParent) {
-				result.x += offsetParent.offsetLeft;
-				result.y += offsetParent.offsetTop;
+			while (offsetParent = getDOMProperty(offsetParent, "offsetParent")) {
+				result.x += getDOMProperty(offsetParent, "offsetLeft");
+				result.y += getDOMProperty(offsetParent, "offsetTop");
 			}
 		}
 		return result;
@@ -4160,7 +4214,7 @@
 	function rect$1(selector, { offset = false } = {}) {
 		const node = parseNode(selector);
 		if (!node) return;
-		const result = node.getBoundingClientRect();
+		const result = callDOMMethod(node, "getBoundingClientRect");
 		if (offset) {
 			const window = getWindow();
 			result.x += window.scrollX;
@@ -4184,8 +4238,11 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return node.scrollX;
-		if (isDocument(node)) return node.scrollingElement.scrollLeft;
-		return node.scrollLeft;
+		if (isDocument(node)) {
+			const scrollingElement = getDOMProperty(node, "scrollingElement");
+			return getDOMProperty(scrollingElement, "scrollLeft");
+		}
+		return getDOMProperty(node, "scrollLeft");
 	}
 	/**
 	* Gets the scroll Y position of the first node.
@@ -4199,8 +4256,11 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return node.scrollY;
-		if (isDocument(node)) return node.scrollingElement.scrollTop;
-		return node.scrollTop;
+		if (isDocument(node)) {
+			const scrollingElement = getDOMProperty(node, "scrollingElement");
+			return getDOMProperty(scrollingElement, "scrollTop");
+		}
+		return getDOMProperty(node, "scrollTop");
 	}
 	/**
 	* Scrolls each node to an X,Y position.
@@ -4215,8 +4275,8 @@
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(x, y);
 		else if (isDocument(node)) {
-			node.scrollingElement.scrollLeft = x;
-			node.scrollingElement.scrollTop = y;
+			getDOMProperty(node, "scrollingElement").scrollLeft = x;
+			getDOMProperty(node, "scrollingElement").scrollTop = y;
 		} else {
 			node.scrollLeft = x;
 			node.scrollTop = y;
@@ -4233,7 +4293,7 @@
 			window: true
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(x, node.scrollY);
-		else if (isDocument(node)) node.scrollingElement.scrollLeft = x;
+		else if (isDocument(node)) getDOMProperty(node, "scrollingElement").scrollLeft = x;
 		else node.scrollLeft = x;
 	}
 	/**
@@ -4247,7 +4307,7 @@
 			window: true
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(node.scrollX, y);
-		else if (isDocument(node)) node.scrollingElement.scrollTop = y;
+		else if (isDocument(node)) getDOMProperty(node, "scrollingElement").scrollTop = y;
 		else node.scrollTop = y;
 	}
 
@@ -4272,9 +4332,9 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return outer ? node.outerHeight : node.innerHeight;
-		if (isDocument(node)) node = node.documentElement;
-		if (boxSize >= 4) return node.scrollHeight;
-		let result = node.clientHeight;
+		if (isDocument(node)) node = getDOMProperty(node, "documentElement");
+		if (boxSize >= 4) return getDOMProperty(node, "scrollHeight");
+		let result = getDOMProperty(node, "clientHeight");
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-top"));
 			result -= parseInt(css$1(node, "padding-bottom"));
@@ -4302,9 +4362,9 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return outer ? node.outerWidth : node.innerWidth;
-		if (isDocument(node)) node = node.documentElement;
-		if (boxSize >= 4) return node.scrollWidth;
-		let result = node.clientWidth;
+		if (isDocument(node)) node = getDOMProperty(node, "documentElement");
+		if (boxSize >= 4) return getDOMProperty(node, "scrollWidth");
+		let result = getDOMProperty(node, "clientWidth");
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-left"));
 			result -= parseInt(css$1(node, "padding-right"));
@@ -4329,7 +4389,7 @@
 	*/
 	function getCookie(name) {
 		const prefix = `${name}=`;
-		const cookie = getContext().cookie.split(";").find((cookie) => cookie.trimStart().startsWith(prefix));
+		const cookie = getDOMProperty(getContext(), "cookie").split(";").find((cookie) => cookie.trimStart().startsWith(prefix));
 		if (!cookie) return null;
 		return decodeURIComponent(cookie.trimStart().substring(prefix.length));
 	}
@@ -4417,7 +4477,7 @@
 	function blur$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		node.blur();
+		callDOMMethod(node, "blur");
 	}
 	/**
 	* Triggers a click event on the first node.
@@ -4426,7 +4486,7 @@
 	function click$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		node.click();
+		callDOMMethod(node, "click");
 	}
 	/**
 	* Triggers a focus event on the first node.
@@ -4435,14 +4495,14 @@
 	function focus$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		node.focus();
+		callDOMMethod(node, "focus");
 	}
 	/**
 	* Adds a function to the ready queue.
 	* @param {EventCallback} callback The callback to execute.
 	*/
 	function ready(callback) {
-		if (getContext().readyState !== "loading") callback();
+		if (getDOMProperty(getContext(), "readyState") !== "loading") callback();
 		else getWindow().addEventListener("DOMContentLoaded", callback, { once: true });
 	}
 
@@ -4489,7 +4549,7 @@
 			html: true
 		}).reverse();
 		for (const [i, node] of nodes.entries()) {
-			const parent = node.parentNode;
+			const parent = getDOMProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -4498,7 +4558,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) parent.insertBefore(clone, node.nextSibling);
+			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, getDOMProperty(node, "nextSibling"));
 		}
 	}
 	/**
@@ -4525,7 +4585,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) node.insertBefore(clone, null);
+			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
 		}
 	}
 	/**
@@ -4549,7 +4609,7 @@
 			html: true
 		});
 		for (const [i, node] of nodes.entries()) {
-			const parent = node.parentNode;
+			const parent = getDOMProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -4558,7 +4618,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) parent.insertBefore(clone, node);
+			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
 		}
 	}
 	/**
@@ -4594,7 +4654,7 @@
 			html: true
 		});
 		for (const [i, node] of nodes.entries()) {
-			const firstChild = node.firstChild;
+			const firstChild = getDOMProperty(node, "firstChild");
 			let clones;
 			if (i === nodes.length - 1) clones = others;
 			else clones = clone$1(others, {
@@ -4602,7 +4662,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) node.insertBefore(clone, firstChild);
+			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, firstChild);
 		}
 	}
 	/**
@@ -4628,17 +4688,17 @@
 		nodeFilter = parseFilter(nodeFilter);
 		const parents = [];
 		for (const node of nodes) {
-			const parent = node.parentNode;
-			if (!parent || !parent.parentNode) continue;
+			const parent = getDOMProperty(node, "parentNode");
+			if (!parent || !getDOMProperty(parent, "parentNode")) continue;
 			if (parents.includes(parent)) continue;
 			if (!nodeFilter(parent)) continue;
 			parents.push(parent);
 		}
 		for (const parent of parents) {
-			const outerParent = parent.parentNode;
+			const outerParent = getDOMProperty(parent, "parentNode");
 			if (!outerParent) continue;
-			const children = merge([], parent.childNodes);
-			for (const child of children) outerParent.insertBefore(child, parent);
+			const children = merge([], getDOMProperty(parent, "childNodes"));
+			for (const child of children) callDOMMethod(outerParent, "insertBefore", child, parent);
 		}
 		remove$1(parents);
 	}
@@ -4654,7 +4714,7 @@
 			html: true
 		});
 		for (const node of nodes) {
-			const parent = node.parentNode;
+			const parent = getDOMProperty(node, "parentNode");
 			if (!parent) continue;
 			const clones = clone$1(others, {
 				events: true,
@@ -4662,10 +4722,10 @@
 				animations: true
 			});
 			const firstClone = clones.slice().shift();
-			const firstCloneNode = isFragment(firstClone) ? firstClone.firstChild : firstClone;
-			const deepest = merge([], firstCloneNode.querySelectorAll("*")).find((node) => !node.childElementCount) || firstCloneNode;
-			for (const clone of clones) parent.insertBefore(clone, node);
-			deepest.insertBefore(node, null);
+			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
+			callDOMMethod(deepest, "insertBefore", node, null);
 		}
 	}
 	/**
@@ -4686,13 +4746,13 @@
 		});
 		const firstNode = nodes[0];
 		if (!firstNode) return;
-		const parent = firstNode.parentNode;
+		const parent = getDOMProperty(firstNode, "parentNode");
 		if (!parent) return;
 		const firstClone = clones[0];
-		const firstCloneNode = isFragment(firstClone) ? firstClone.firstChild : firstClone;
-		const deepest = merge([], firstCloneNode.querySelectorAll("*")).find((node) => !node.childElementCount) || firstCloneNode;
-		for (const clone of clones) parent.insertBefore(clone, firstNode);
-		for (const node of nodes) deepest.insertBefore(node, null);
+		const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+		const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+		for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, firstNode);
+		for (const node of nodes) callDOMMethod(deepest, "insertBefore", node, null);
 	}
 	/**
 	* Wraps the contents of each node with other nodes.
@@ -4710,17 +4770,17 @@
 			html: true
 		});
 		for (const node of nodes) {
-			const children = merge([], node.childNodes);
+			const children = merge([], getDOMProperty(node, "childNodes"));
 			const clones = clone$1(others, {
 				events: true,
 				data: true,
 				animations: true
 			});
 			const firstClone = clones.slice().shift();
-			const firstCloneNode = isFragment(firstClone) ? firstClone.firstChild : firstClone;
-			const deepest = merge([], firstCloneNode.querySelectorAll("*")).find((node) => !node.childElementCount) || firstCloneNode;
-			for (const clone of clones) node.insertBefore(clone, null);
-			for (const child of children) deepest.insertBefore(child, null);
+			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
+			for (const child of children) callDOMMethod(deepest, "insertBefore", child, null);
 		}
 	}
 
@@ -5745,7 +5805,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => node.isConnected);
+		}).filter((node) => getDOMProperty(node, "isConnected"));
 	}
 	/**
 	* Returns all nodes considered equal to any of the other nodes.
@@ -5763,7 +5823,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => others.some((other) => node.isEqualNode(other)));
+		}).filter((node) => others.some((other) => callDOMMethod(node, "isEqualNode", other)));
 	}
 	/**
 	* Returns all nodes matching a filter.
@@ -5812,9 +5872,9 @@
 			document: true,
 			window: true
 		}).filter((node) => {
-			if (isWindow(node)) return node.document.visibilityState !== "visible";
-			if (isDocument(node)) return node.visibilityState !== "visible";
-			return !isElement(node) || node.getClientRects().length === 0;
+			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") !== "visible";
+			if (isDocument(node)) return getDOMProperty(node, "visibilityState") !== "visible";
+			return !isElement(node) || callDOMMethod(node, "getClientRects").length === 0;
 		});
 	}
 	/**
@@ -5861,7 +5921,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => others.some((other) => node.isSameNode(other)));
+		}).filter((node) => others.some((other) => callDOMMethod(node, "isSameNode", other)));
 	}
 	/**
 	* Returns all visible nodes.
@@ -5874,9 +5934,9 @@
 			document: true,
 			window: true
 		}).filter((node) => {
-			if (isWindow(node)) return node.document.visibilityState === "visible";
-			if (isDocument(node)) return node.visibilityState === "visible";
-			return isElement(node) && node.getClientRects().length > 0;
+			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") === "visible";
+			if (isDocument(node)) return getDOMProperty(node, "visibilityState") === "visible";
+			return isElement(node) && callDOMMethod(node, "getClientRects").length > 0;
 		});
 	}
 	/**
@@ -5894,7 +5954,7 @@
 	* @returns {Node[]} The filtered nodes.
 	*/
 	function withAttribute$1(selector, attribute) {
-		return parseNodes(selector).filter((node) => node.hasAttribute(attribute));
+		return parseNodes(selector).filter((node) => callDOMMethod(node, "hasAttribute", attribute));
 	}
 	/**
 	* Returns all nodes with child elements.
@@ -5906,7 +5966,7 @@
 			fragment: true,
 			shadow: true,
 			document: true
-		}).filter((node) => !!node.childElementCount);
+		}).filter((node) => !!getDOMProperty(node, "childElementCount"));
 	}
 	/**
 	* Returns all nodes with any of the specified classes.
@@ -5916,7 +5976,7 @@
 	*/
 	function withClass$1(selector, ...classes) {
 		classes = parseClasses(classes);
-		return parseNodes(selector).filter((node) => classes.some((className) => node.classList.contains(className)));
+		return parseNodes(selector).filter((node) => classes.some((className) => getDOMProperty(node, "classList").contains(className)));
 	}
 	/**
 	* Returns all nodes with a CSS animation.
@@ -6387,14 +6447,14 @@
 		const range = selection.getRangeAt(0);
 		if (range.collapsed) return [];
 		const commonAncestor = range.commonAncestorContainer;
-		if (typeof commonAncestor.querySelectorAll !== "function") return [commonAncestor];
-		const nodes = merge([], commonAncestor.childNodes);
+		if (typeof getDOMProperty(commonAncestor, "querySelectorAll") !== "function") return [commonAncestor];
+		const nodes = merge([], getDOMProperty(commonAncestor, "childNodes"));
 		if (!nodes.length) return [commonAncestor];
 		const selectedNodes = nodes.filter((node) => range.intersectsNode(node));
 		const results = [];
 		let lastNode;
 		for (const node of selectedNodes) {
-			if (lastNode && lastNode.contains(node)) continue;
+			if (lastNode && callDOMMethod(lastNode, "contains", node)) continue;
 			lastNode = node;
 			results.push(node);
 		}
@@ -6406,8 +6466,9 @@
 	*/
 	function select$1(selector) {
 		const node = parseNode(selector, { node: true });
-		if (node && "select" in node) {
-			node.select();
+		const select = node && getDOMProperty(node, "select");
+		if (typeof select === "function") {
+			select.call(node);
 			return;
 		}
 		const selection = getWindow().getSelection();
@@ -6448,10 +6509,10 @@
 		const range = selection.getRangeAt(0);
 		selection.removeAllRanges();
 		const node = nodes.slice().shift();
-		const deepest = merge([], node.querySelectorAll("*")).find((node) => !node.childElementCount) || node;
+		const deepest = merge([], callDOMMethod(node, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || node;
 		const fragment = range.extractContents();
 		const childNodes = merge([], fragment.childNodes);
-		for (const child of childNodes) deepest.insertBefore(child, null);
+		for (const child of childNodes) callDOMMethod(deepest, "insertBefore", child, null);
 		for (const node of nodes) range.insertNode(node);
 	}
 
@@ -6520,7 +6581,7 @@
 	* @returns {boolean} Whether any of the nodes has the attribute.
 	*/
 	function hasAttribute$1(selector, attribute) {
-		return parseNodes(selector).some((node) => node.hasAttribute(attribute));
+		return parseNodes(selector).some((node) => callDOMMethod(node, "hasAttribute", attribute));
 	}
 	/**
 	* Checks whether any of the nodes has child nodes.
@@ -6532,7 +6593,7 @@
 			fragment: true,
 			shadow: true,
 			document: true
-		}).some((node) => node.childElementCount);
+		}).some((node) => getDOMProperty(node, "childElementCount"));
 	}
 	/**
 	* Checks whether any of the nodes has any of the specified classes.
@@ -6542,7 +6603,7 @@
 	*/
 	function hasClass$1(selector, ...classes) {
 		classes = parseClasses(classes);
-		return parseNodes(selector).some((node) => classes.some((className) => node.classList.contains(className)));
+		return parseNodes(selector).some((node) => classes.some((className) => getDOMProperty(node, "classList").contains(className)));
 	}
 	/**
 	* Checks whether any of the nodes has a CSS animation.
@@ -6587,7 +6648,7 @@
 	*/
 	function hasDataset$1(selector, key) {
 		key = camelCase(key);
-		return parseNodes(selector).some((node) => !!node.dataset[key]);
+		return parseNodes(selector).some((node) => !!getDOMProperty(node, "dataset")[key]);
 	}
 	/**
 	* Checks whether any of the nodes contains a descendant matching a filter.
@@ -6609,7 +6670,7 @@
 	* @returns {boolean} Whether any of the nodes has a DocumentFragment.
 	*/
 	function hasFragment$1(selector) {
-		return parseNodes(selector).some((node) => node.content);
+		return parseNodes(selector).some((node) => getDOMProperty(node, "content"));
 	}
 	/**
 	* Checks whether any of the nodes has a specified property.
@@ -6626,7 +6687,7 @@
 	* @returns {boolean} Whether any of the nodes has a ShadowRoot.
 	*/
 	function hasShadow$1(selector) {
-		return parseNodes(selector).some((node) => node.shadowRoot);
+		return parseNodes(selector).some((node) => getDOMProperty(node, "shadowRoot"));
 	}
 	/**
 	* Checks whether any of the nodes matches a filter.
@@ -6652,7 +6713,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).some((node) => node.isConnected);
+		}).some((node) => getDOMProperty(node, "isConnected"));
 	}
 	/**
 	* Checks whether any of the nodes is considered equal to any of the other nodes.
@@ -6676,7 +6737,7 @@
 			nodes = clone$1(nodes, { deep: false });
 			others = clone$1(others, { deep: false });
 		}
-		return nodes.some((node) => others.some((other) => node.isEqualNode(other)));
+		return nodes.some((node) => others.some((other) => callDOMMethod(node, "isEqualNode", other)));
 	}
 	/**
 	* Checks whether any of the nodes or a parent of any of the nodes is "fixed".
@@ -6697,9 +6758,9 @@
 			document: true,
 			window: true
 		}).some((node) => {
-			if (isWindow(node)) return node.document.visibilityState !== "visible";
-			if (isDocument(node)) return node.visibilityState !== "visible";
-			return !isElement(node) || node.getClientRects().length === 0;
+			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") !== "visible";
+			if (isDocument(node)) return getDOMProperty(node, "visibilityState") !== "visible";
+			return !isElement(node) || callDOMMethod(node, "getClientRects").length === 0;
 		});
 	}
 	/**
@@ -6718,7 +6779,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).some((node) => others.some((other) => node.isSameNode(other)));
+		}).some((node) => others.some((other) => callDOMMethod(node, "isSameNode", other)));
 	}
 	/**
 	* Checks whether any of the nodes is visible.
@@ -6731,9 +6792,9 @@
 			document: true,
 			window: true
 		}).some((node) => {
-			if (isWindow(node)) return node.document.visibilityState === "visible";
-			if (isDocument(node)) return node.visibilityState === "visible";
-			return isElement(node) && node.getClientRects().length > 0;
+			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") === "visible";
+			if (isDocument(node)) return getDOMProperty(node, "visibilityState") === "visible";
+			return isElement(node) && callDOMMethod(node, "getClientRects").length > 0;
 		});
 	}
 
@@ -7248,11 +7309,11 @@
 			type: "text/javascript",
 			...attributes
 		};
-		if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now(), context.baseURI);
-		const script = context.createElement("script");
+		if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now(), getDOMProperty(context, "baseURI"));
+		const script = callDOMMethod(context, "createElement", "script");
 		script.async = "async" in attributes ? isEnabled(attributes.async) : false;
 		for (const [key, value] of Object.entries(attributes)) setScriptAttribute(script, key, value);
-		context.head.appendChild(script);
+		getDOMProperty(context, "head").appendChild(script);
 		return new Promise((resolve, reject) => {
 			script.onload = (_) => resolve();
 			script.onerror = (error) => reject(error);
@@ -7296,10 +7357,10 @@
 			rel: "stylesheet",
 			...attributes
 		};
-		if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now(), context.baseURI);
-		const link = context.createElement("link");
+		if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now(), getDOMProperty(context, "baseURI"));
+		const link = callDOMMethod(context, "createElement", "link");
 		for (const [key, value] of Object.entries(attributes)) link.setAttribute(key, value);
-		context.head.appendChild(link);
+		getDOMProperty(context, "head").appendChild(link);
 		return new Promise((resolve, reject) => {
 			link.onload = (_) => resolve();
 			link.onerror = (error) => reject(error);
@@ -7331,7 +7392,7 @@
 	* @returns {string} The sanitized HTML string.
 	*/
 	function sanitize(html, allowedTags$1 = allowedTags) {
-		const template = getContext().createElement("template");
+		const template = callDOMMethod(getContext(), "createElement", "template");
 		template.innerHTML = html;
 		const fragment = template.content;
 		const childNodes = merge([], fragment.children);
@@ -7350,7 +7411,7 @@
 		if (!isAllowed || !uriAttributes.has(name)) return isAllowed;
 		try {
 			const { URL } = getWindow();
-			return new URL(attribute.nodeValue, getContext().baseURI).protocol !== "javascript:";
+			return new URL(attribute.nodeValue, getDOMProperty(getContext(), "baseURI")).protocol !== "javascript:";
 		} catch {
 			return false;
 		}
@@ -7361,17 +7422,18 @@
 	* @param {AllowedTags} [allowedTags] The allowed tags and attributes.
 	*/
 	function sanitizeNode(node, allowedTags$2 = allowedTags) {
-		const name = node.tagName.toLowerCase();
+		const name = getDOMProperty(node, "tagName").toLowerCase();
 		if (!Object.hasOwn(allowedTags$2, name)) {
-			node.remove();
+			callDOMMethod(node, "remove");
 			return;
 		}
 		const allowedAttributes = [];
 		if (Object.hasOwn(allowedTags$2, "*")) allowedAttributes.push(...allowedTags$2["*"]);
 		allowedAttributes.push(...allowedTags$2[name]);
-		const attributes = merge([], node.attributes);
-		for (const attribute of attributes) if (!isAllowedAttribute(attribute, allowedAttributes)) node.removeAttribute(attribute.nodeName);
-		const childNodes = merge([], isFragment(node.content) ? node.content.children : node.children);
+		const attributes = merge([], getDOMProperty(node, "attributes"));
+		for (const attribute of attributes) if (!isAllowedAttribute(attribute, allowedAttributes)) callDOMMethod(node, "removeAttribute", attribute.nodeName);
+		const content = getDOMProperty(node, "content");
+		const childNodes = merge([], isFragment(content) ? content.children : getDOMProperty(node, "children"));
 		for (const child of childNodes) sanitizeNode(child, allowedTags$2);
 	}
 
@@ -7592,12 +7654,7 @@
 		wrapInner: wrapInner$1,
 		wrapSelection: wrapSelection$1
 	});
-	for (const [key, value] of Object.entries({
-		...frost_core_esm_exports,
-		isDocument,
-		isElement,
-		isNode
-	})) query[`_${key}`] = value;
+	for (const [key, value] of Object.entries(frost_core_esm_exports)) query[`_${key}`] = value;
 	var fquery_default = query;
 
 //#endregion

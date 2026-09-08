@@ -14,6 +14,13 @@ test.describe('#create', () => {
         await expect(page.locator('body > div')).toHaveCount(1);
     });
 
+    test('creates nodes when a form shadows document.createElement', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form name="createElement"></form>';
+            return $.create('span', { text: 'Test' }).textContent;
+        })).toBe('Test');
+    });
+
     test('creates a new node with HTML', async ({ page }) => {
         await page.evaluate(() => {
             document.body.appendChild($.create('div', {

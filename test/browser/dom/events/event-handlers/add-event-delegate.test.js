@@ -49,6 +49,21 @@ test.describe('#addEventDelegate', () => {
         })).toBe(8);
     });
 
+    test('matches form targets with a control named matches', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="matches"></form>';
+            let result = 0;
+            const callback = (_) => {
+                result++;
+            };
+            $.addEventDelegate('body', 'click', 'form', callback);
+            document.querySelector('form').dispatchEvent(new Event('click', {
+                bubbles: true,
+            }));
+            return result;
+        })).toBe(1);
+    });
+
     test('adds delegated events to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

@@ -1,6 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, merge, unique } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { createRange } from './../manipulation/create.js';
@@ -100,11 +100,11 @@ export function getSelection() {
 
     const commonAncestor = range.commonAncestorContainer;
 
-    if (typeof commonAncestor.querySelectorAll !== 'function') {
+    if (typeof getDOMProperty(commonAncestor, 'querySelectorAll') !== 'function') {
         return [commonAncestor];
     }
 
-    const nodes = merge([], commonAncestor.childNodes);
+    const nodes = merge([], getDOMProperty(commonAncestor, 'childNodes'));
 
     if (!nodes.length) {
         return [commonAncestor];
@@ -117,7 +117,7 @@ export function getSelection() {
 
     let lastNode;
     for (const node of selectedNodes) {
-        if (lastNode && lastNode.contains(node)) {
+        if (lastNode && callDOMMethod(lastNode, 'contains', node)) {
             continue;
         }
 
@@ -139,8 +139,10 @@ export function select(selector) {
         node: true,
     });
 
-    if (node && 'select' in node) {
-        node.select();
+    const select = node && getDOMProperty(node, 'select');
+
+    if (typeof select === 'function') {
+        select.call(node);
         return;
     }
 
@@ -210,14 +212,14 @@ export function wrapSelection(selector) {
     selection.removeAllRanges();
 
     const node = nodes.slice().shift();
-    const deepest = merge([], node.querySelectorAll('*')).find((node) => !node.childElementCount) || node;
+    const deepest = merge([], callDOMMethod(node, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || node;
 
     const fragment = range.extractContents();
 
     const childNodes = merge([], fragment.childNodes);
 
     for (const child of childNodes) {
-        deepest.insertBefore(child, null);
+        callDOMMethod(deepest, 'insertBefore', child, null);
     }
 
     for (const node of nodes) {

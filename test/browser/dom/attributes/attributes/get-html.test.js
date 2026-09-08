@@ -20,6 +20,15 @@ test.describe('#getHTML', () => {
         expect(html).toBe('<span>Test</span>');
     });
 
+    test('reads form contents when a control shadows innerHTML', async ({ page }) => {
+        const html = await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="innerHTML"><span>Test</span></form>';
+            return $.getHTML('form');
+        });
+
+        expect(html).toBe('<input name="innerHTML"><span>Test</span>');
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         const html = await page.evaluate((_) => $.getHTML('#invalid'));
 

@@ -1,6 +1,7 @@
 /** @import { ElementInput } from '../helpers.js'; */
 /** @import { EventCallback } from './event-handlers.js'; */
 
+import { callDOMMethod, getDOMProperty } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 import { parseNode } from './../filters.js';
 
@@ -15,7 +16,7 @@ export function blur(selector) {
         return;
     }
 
-    node.blur();
+    callDOMMethod(node, 'blur');
 };
 
 /**
@@ -29,7 +30,7 @@ export function click(selector) {
         return;
     }
 
-    node.click();
+    callDOMMethod(node, 'click');
 };
 
 /**
@@ -43,7 +44,7 @@ export function focus(selector) {
         return;
     }
 
-    node.focus();
+    callDOMMethod(node, 'focus');
 };
 
 /**
@@ -51,7 +52,7 @@ export function focus(selector) {
  * @param {EventCallback} callback The callback to execute.
  */
 export function ready(callback) {
-    if (getContext().readyState !== 'loading') {
+    if (getDOMProperty(getContext(), 'readyState') !== 'loading') {
         callback();
     } else {
         getWindow().addEventListener('DOMContentLoaded', callback, { once: true });

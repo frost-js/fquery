@@ -38,6 +38,20 @@ test.describe('#clone', () => {
         await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(2);
     });
 
+    test('clones forms and descendant data when controls shadow cloning properties', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            document.body.innerHTML =
+                '<form><input name="cloneNode"><input name="childNodes"><span id="test">Test</span></form>';
+            $.setData(document.getElementById('test'), 'test', 'Test');
+
+            const clone = $.clone('form', { data: true })[0];
+
+            return $.getData(clone.querySelector('span'), 'test');
+        });
+
+        expect(value).toBe('Test');
+    });
+
     test('shallow clones all nodes', async ({ page }) => {
         await page.evaluate(() => {
             const clones = $.clone('div', { deep: false });

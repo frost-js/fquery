@@ -42,6 +42,20 @@ test.describe('#children', () => {
         ]);
     });
 
+    test('returns form children when controls shadow child collections', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form><input id="test1" name="children"><input id="test2" name="childNodes"></form>';
+            const nodes = $.children('form');
+            return nodes.map((node) => node.id);
+        });
+
+        expect(ids).toEqual([
+            'test1',
+            'test2',
+        ]);
+    });
+
     test('returns an empty array for empty nodes', async ({ page }) => {
         const ids = await page.evaluate((_) => $.children('#invalid'));
 

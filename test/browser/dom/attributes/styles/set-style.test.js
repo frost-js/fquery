@@ -37,6 +37,15 @@ test.describe('#setStyle', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: block;');
     });
 
+    test('sets styles on forms with a control whose name is style', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.body.innerHTML = '<form id="form"><input name="style"></form>';
+            $.setStyle('form', 'color', 'red');
+        });
+
+        await expect(page.locator('#form')).toHaveAttribute('style', 'color: red;');
+    });
+
     test('sets custom properties', async ({ page }) => {
         await page.evaluate((_) => {
             $.setStyle('div', '--brandColor', 'red');

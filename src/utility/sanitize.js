@@ -1,4 +1,4 @@
-import { isFragment, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isFragment, merge } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 import { allowedTags as _allowedTags, uriAttributes } from './../vars.js';
 
@@ -11,7 +11,7 @@ import { allowedTags as _allowedTags, uriAttributes } from './../vars.js';
  * @returns {string} The sanitized HTML string.
  */
 export function sanitize(html, allowedTags = _allowedTags) {
-    const template = getContext().createElement('template');
+    const template = callDOMMethod(getContext(), 'createElement', 'template');
     template.innerHTML = html;
     const fragment = template.content;
     const childNodes = merge([], fragment.children);
@@ -43,7 +43,7 @@ function isAllowedAttribute(attribute, allowedAttributes) {
 
     try {
         const { URL } = getWindow();
-        return new URL(attribute.nodeValue, getContext().baseURI).protocol !== 'javascript:';
+        return new URL(attribute.nodeValue, getDOMProperty(getContext(), 'baseURI')).protocol !== 'javascript:';
     } catch {
         return false;
     }
@@ -56,10 +56,10 @@ function isAllowedAttribute(attribute, allowedAttributes) {
  */
 function sanitizeNode(node, allowedTags = _allowedTags) {
     // check node
-    const name = node.tagName.toLowerCase();
+    const name = getDOMProperty(node, 'tagName').toLowerCase();
 
     if (!Object.hasOwn(allowedTags, name)) {
-        node.remove();
+        callDOMMethod(node, 'remove');
         return;
     }
 
@@ -72,20 +72,21 @@ function sanitizeNode(node, allowedTags = _allowedTags) {
 
     allowedAttributes.push(...allowedTags[name]);
 
-    const attributes = merge([], node.attributes);
+    const attributes = merge([], getDOMProperty(node, 'attributes'));
 
     for (const attribute of attributes) {
         if (!isAllowedAttribute(attribute, allowedAttributes)) {
-            node.removeAttribute(attribute.nodeName);
+            callDOMMethod(node, 'removeAttribute', attribute.nodeName);
         }
     }
 
     // check children
+    const content = getDOMProperty(node, 'content');
     const childNodes = merge(
         [],
-        isFragment(node.content) ?
-            node.content.children :
-            node.children,
+        isFragment(content) ?
+            content.children :
+            getDOMProperty(node, 'children'),
     );
     for (const child of childNodes) {
         sanitizeNode(child, allowedTags);

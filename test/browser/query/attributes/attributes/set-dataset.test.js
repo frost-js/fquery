@@ -39,6 +39,16 @@ test.describe('QuerySet #setDataset', () => {
         await expect(page.locator('#test2')).toHaveAttribute('data-text', 'Test');
     });
 
+    test('sets dataset values on forms with a control whose id is dataset', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.body.innerHTML = '<form id="form"><input id="dataset"></form>';
+            $('form').setDataset('test', 'Test');
+        });
+
+        await expect(page.locator('#form')).toHaveAttribute('data-test', 'Test');
+        expect(await page.locator('input').getAttribute('data-test')).toBeNull();
+    });
+
     test('formats boolean true values', async ({ page }) => {
         await page.evaluate((_) => {
             $('#test1').setDataset({

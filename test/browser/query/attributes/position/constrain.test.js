@@ -35,6 +35,48 @@ test.describe('QuerySet #constrain', () => {
             '</div>');
     });
 
+    test('recalculates positions when the context root has a control named scrollHeight', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const form = document.createElement('form');
+            form.style.cssText = 'display: flex; flex-direction: row; align-items: flex-start; margin: 0;';
+            form.innerHTML =
+                '<input type="hidden" name="scrollHeight">' +
+                '<div id="test" style="flex-shrink: 0; width: 2000px; height: 2000px;"></div>' +
+                '<div id="container" style="flex-shrink: 0; width: 100px; height: 100px;"></div>';
+            document.body.replaceChildren(form);
+            const node = document.getElementById('test');
+            const container = document.getElementById('container');
+            // Use the form as the context root while retaining a normal HTML document for layout.
+            $.setContext({
+                nodeType: Node.DOCUMENT_NODE,
+                documentElement: form,
+            });
+            $(node).constrain(container);
+            return node.style.left;
+        })).toBe('100px');
+    });
+
+    test('recalculates positions when the context root has a control named scrollWidth', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const form = document.createElement('form');
+            form.style.cssText = 'display: flex; flex-direction: column; align-items: flex-start; margin: 0;';
+            form.innerHTML =
+                '<input type="hidden" name="scrollWidth">' +
+                '<div id="test" style="flex-shrink: 0; width: 2000px; height: 2000px;"></div>' +
+                '<div id="container" style="flex-shrink: 0; width: 100px; height: 100px;"></div>';
+            document.body.replaceChildren(form);
+            const node = document.getElementById('test');
+            const container = document.getElementById('container');
+            // Use the form as the context root while retaining a normal HTML document for layout.
+            $.setContext({
+                nodeType: Node.DOCUMENT_NODE,
+                documentElement: form,
+            });
+            $(node).constrain(container);
+            return node.style.top;
+        })).toBe('100px');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('[data-toggle="from"]');

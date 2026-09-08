@@ -20,6 +20,15 @@ test.describe('QuerySet #getText', () => {
         expect(text).toBe('Test');
     });
 
+    test('reads form contents when a control shadows textContent', async ({ page }) => {
+        const text = await page.evaluate((_) => {
+            document.body.innerHTML = '<form><input name="textContent"><span>Test</span></form>';
+            return $('form').getText();
+        });
+
+        expect(text).toBe('Test');
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         const text = await page.evaluate((_) => $('#invalid').getText());
 

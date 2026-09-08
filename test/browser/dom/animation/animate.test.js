@@ -46,6 +46,21 @@ test.describe('#animate', () => {
         ]);
     });
 
+    test('writes and clears debug data on forms with a control named dataset', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
+            $.animate('form', (_) => { }, { duration: 100, type: 'linear', debug: true });
+        });
+        await advanceClock(page, 50);
+        expect(Number(await page.locator('#form').getAttribute('data-animation-progress'))).toBeCloseTo(0.5, 10);
+        expect(await page.locator('#form').getAttribute('data-animation-start')).not.toBeNull();
+        expect(await page.locator('#form').getAttribute('data-animation-time')).not.toBeNull();
+        await advanceClock(page, 100);
+        expect(await page.locator('#form').getAttribute('data-animation-progress')).toBeNull();
+        expect(await page.locator('#form').getAttribute('data-animation-start')).toBeNull();
+        expect(await page.locator('#form').getAttribute('data-animation-time')).toBeNull();
+    });
+
     test('adds an animation to each node with duration', async ({ page }) => {
         await page.evaluate((_) => {
             $.animate(

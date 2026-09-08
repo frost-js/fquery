@@ -1,5 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
+import { getDOMProperty } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
@@ -22,7 +23,7 @@ export function addClass(selector, ...classes) {
     }
 
     for (const node of nodes) {
-        node.classList.add(...classes);
+        getDOMProperty(node, 'classList').add(...classes);
     }
 };
 
@@ -79,13 +80,14 @@ export function getStyle(selector, style) {
     if (style) {
         style = normalizeCssProperty(style);
 
-        return node.style.getPropertyValue(style);
+        return getDOMProperty(node, 'style').getPropertyValue(style);
     }
 
     const styles = {};
+    const inlineStyles = getDOMProperty(node, 'style');
 
-    for (const style of node.style) {
-        styles[style] = node.style.getPropertyValue(style);
+    for (const style of inlineStyles) {
+        styles[style] = inlineStyles.getPropertyValue(style);
     }
 
     return styles;
@@ -99,7 +101,7 @@ export function hide(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        node.style.setProperty('display', 'none');
+        getDOMProperty(node, 'style').setProperty('display', 'none');
     }
 };
 
@@ -118,7 +120,7 @@ export function removeClass(selector, ...classes) {
     }
 
     for (const node of nodes) {
-        node.classList.remove(...classes);
+        getDOMProperty(node, 'classList').remove(...classes);
     }
 };
 
@@ -133,7 +135,7 @@ export function removeStyle(selector, style) {
     style = normalizeCssProperty(style);
 
     for (const node of nodes) {
-        node.style.removeProperty(style);
+        getDOMProperty(node, 'style').removeProperty(style);
     }
 };
 
@@ -154,7 +156,7 @@ export function setStyle(selector, style, value, { important = false } = {}) {
         value = normalizeCssValue(style, value);
 
         for (const node of nodes) {
-            node.style.setProperty(
+            getDOMProperty(node, 'style').setProperty(
                 style,
                 value,
                 important ?
@@ -173,7 +175,7 @@ export function show(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        node.style.setProperty('display', '');
+        getDOMProperty(node, 'style').setProperty('display', '');
     }
 };
 
@@ -185,9 +187,10 @@ export function toggle(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        node.style.setProperty(
+        const style = getDOMProperty(node, 'style');
+        style.setProperty(
             'display',
-            node.style.display === 'none' ?
+            style.display === 'none' ?
                 '' :
                 'none',
         );
@@ -210,7 +213,7 @@ export function toggleClass(selector, ...classes) {
 
     for (const node of nodes) {
         for (const className of classes) {
-            node.classList.toggle(className);
+            getDOMProperty(node, 'classList').toggle(className);
         }
     }
 };

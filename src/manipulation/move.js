@@ -1,5 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
+import { callDOMMethod, getDOMProperty } from '@fr0st/core';
 import { parseNodes } from './../filters.js';
 import { clone } from './manipulation.js';
 
@@ -22,7 +23,7 @@ export function after(selector, otherSelector) {
     }).reverse();
 
     for (const [i, node] of nodes.entries()) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -40,7 +41,7 @@ export function after(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            parent.insertBefore(clone, node.nextSibling);
+            callDOMMethod(parent, 'insertBefore', clone, getDOMProperty(node, 'nextSibling'));
         }
     }
 };
@@ -77,7 +78,7 @@ export function append(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            node.insertBefore(clone, null);
+            callDOMMethod(node, 'insertBefore', clone, null);
         }
     }
 };
@@ -110,7 +111,7 @@ export function before(selector, otherSelector) {
     });
 
     for (const [i, node] of nodes.entries()) {
-        const parent = node.parentNode;
+        const parent = getDOMProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -128,7 +129,7 @@ export function before(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            parent.insertBefore(clone, node);
+            callDOMMethod(parent, 'insertBefore', clone, node);
         }
     }
 };
@@ -171,7 +172,7 @@ export function prepend(selector, otherSelector) {
     });
 
     for (const [i, node] of nodes.entries()) {
-        const firstChild = node.firstChild;
+        const firstChild = getDOMProperty(node, 'firstChild');
 
         let clones;
         if (i === nodes.length - 1) {
@@ -185,7 +186,7 @@ export function prepend(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            node.insertBefore(clone, firstChild);
+            callDOMMethod(node, 'insertBefore', clone, firstChild);
         }
     }
 };

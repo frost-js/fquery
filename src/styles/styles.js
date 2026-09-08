@@ -1,4 +1,4 @@
-import { isString } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isString } from '@fr0st/core';
 import { appendQueryString } from './../ajax/helpers.js';
 import { getContext } from './../config.js';
 
@@ -27,16 +27,16 @@ export function loadStyle(url, attributes, { cache = true, context = getContext(
     };
 
     if (!cache) {
-        attributes.href = appendQueryString(attributes.href, '_', Date.now(), context.baseURI);
+        attributes.href = appendQueryString(attributes.href, '_', Date.now(), getDOMProperty(context, 'baseURI'));
     }
 
-    const link = context.createElement('link');
+    const link = callDOMMethod(context, 'createElement', 'link');
 
     for (const [key, value] of Object.entries(attributes)) {
         link.setAttribute(key, value);
     }
 
-    context.head.appendChild(link);
+    getDOMProperty(context, 'head').appendChild(link);
 
     return new Promise((resolve, reject) => {
         link.onload = (_) => resolve();

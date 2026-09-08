@@ -48,6 +48,25 @@ test.describe('QuerySet #remove', () => {
         await expect(page.locator('head > meta')).toHaveCount(0);
     });
 
+    test('removes forms and descendant data when controls shadow cleanup properties', async ({ page }) => {
+        const value = await page.evaluate(() => {
+            document.body.innerHTML =
+                '<form>' +
+                '<input name="children"><input name="shadowRoot"><input name="remove">' +
+                '<span id="test">Test</span>' +
+                '</form>';
+            const child = document.getElementById('test');
+            $.setData(child, 'test', 'Test');
+
+            $('form').remove();
+
+            return $.getData(child, 'test');
+        });
+
+        expect(value).toBeUndefined();
+        await expect(page.locator('form')).toHaveCount(0);
+    });
+
     test('removes events', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;

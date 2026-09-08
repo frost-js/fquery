@@ -21,6 +21,16 @@ test.describe('#width', () => {
             $.width('div'))).toBe(1250);
     });
 
+    test('measures forms with a control named clientWidth', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form style="width: 100px; padding: 0; border: 0;">' +
+                '<input type="hidden" name="clientWidth">' +
+                '</form>';
+            return $.width('form');
+        })).toBe(100);
+    });
+
     test('returns the content box width of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.width('div', { boxSize: $.CONTENT_BOX }))).toBe(1200);

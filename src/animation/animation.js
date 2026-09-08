@@ -1,4 +1,4 @@
-import { clamp } from '@fr0st/core';
+import { clamp, getDOMProperty } from '@fr0st/core';
 import { getAnimationDefaults } from './../config.js';
 import { animations } from './../vars.js';
 import { getTime } from './helpers.js';
@@ -76,7 +76,7 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            this.#node.dataset.animationStart = this.#options.start;
+            getDOMProperty(this.#node, 'dataset').animationStart = this.#options.start;
         }
 
         this.#promise = new Promise((resolve, reject) => {
@@ -194,17 +194,19 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            this.#node.dataset.animationTime = time;
-            this.#node.dataset.animationProgress = progress;
+            const dataset = getDOMProperty(this.#node, 'dataset');
+            dataset.animationTime = time;
+            dataset.animationProgress = progress;
         }
 
         try {
             this.#callback(this.#node, progress, this.#options);
         } catch (error) {
             if (this.#options.debug) {
-                delete this.#node.dataset.animationStart;
-                delete this.#node.dataset.animationTime;
-                delete this.#node.dataset.animationProgress;
+                const dataset = getDOMProperty(this.#node, 'dataset');
+                delete dataset.animationStart;
+                delete dataset.animationTime;
+                delete dataset.animationProgress;
             }
 
             this.#isFinished = true;
@@ -218,9 +220,10 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            delete this.#node.dataset.animationStart;
-            delete this.#node.dataset.animationTime;
-            delete this.#node.dataset.animationProgress;
+            const dataset = getDOMProperty(this.#node, 'dataset');
+            delete dataset.animationStart;
+            delete dataset.animationTime;
+            delete dataset.animationProgress;
         }
 
         if (!this.#isFinished) {

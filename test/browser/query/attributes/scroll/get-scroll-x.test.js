@@ -38,6 +38,16 @@ test.describe('QuerySet #getScrollX', () => {
         })).toBe(100);
     });
 
+    test('works with a form document root whose control shadows scrollLeft', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const doc = document.implementation.createHTMLDocument('');
+            const form = doc.createElement('form');
+            form.innerHTML = '<input name="scrollLeft">';
+            doc.replaceChild(form, doc.documentElement);
+            return $(doc).getScrollX();
+        })).toBe(0);
+    });
+
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="block; width: 1000px; height: 1000px;"></div>';

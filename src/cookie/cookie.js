@@ -1,3 +1,4 @@
+import { getDOMProperty } from '@fr0st/core';
 import { getContext } from './../config.js';
 
 /**
@@ -7,7 +8,7 @@ import { getContext } from './../config.js';
  */
 export function getCookie(name) {
     const prefix = `${name}=`;
-    const cookie = getContext().cookie
+    const cookie = getDOMProperty(getContext(), 'cookie')
         .split(';')
         .find((cookie) =>
             cookie

@@ -1,8 +1,7 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { isWindow } from '@fr0st/core';
+import { getDOMProperty, isDocument, isWindow } from '@fr0st/core';
 import { parseNode } from './../filters.js';
-import { isDocument } from './../helpers.js';
 import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from './../vars.js';
 import { css } from './styles.js';
 
@@ -35,14 +34,14 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     }
 
     if (isDocument(node)) {
-        node = node.documentElement;
+        node = getDOMProperty(node, 'documentElement');
     }
 
     if (boxSize >= SCROLL_BOX) {
-        return node.scrollHeight;
+        return getDOMProperty(node, 'scrollHeight');
     }
 
-    let result = node.clientHeight;
+    let result = getDOMProperty(node, 'clientHeight');
 
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-top'));
@@ -85,14 +84,14 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     }
 
     if (isDocument(node)) {
-        node = node.documentElement;
+        node = getDOMProperty(node, 'documentElement');
     }
 
     if (boxSize >= SCROLL_BOX) {
-        return node.scrollWidth;
+        return getDOMProperty(node, 'scrollWidth');
     }
 
-    let result = node.clientWidth;
+    let result = getDOMProperty(node, 'clientWidth');
 
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-left'));

@@ -2,7 +2,7 @@
 /** @import AnimationSet from './animation-set.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { evaluate } from '@fr0st/core';
+import { evaluate, getDOMProperty } from '@fr0st/core';
 import { animate } from './animate.js';
 
 /**
@@ -61,7 +61,7 @@ export function fadeIn(selector, options) {
         selector,
         ['opacity'],
         (node, progress) =>
-            node.style.setProperty(
+            getDOMProperty(node, 'style').setProperty(
                 'opacity',
                 progress.toFixed(2),
             ),
@@ -80,7 +80,7 @@ export function fadeOut(selector, options) {
         selector,
         ['opacity'],
         (node, progress) =>
-            node.style.setProperty(
+            getDOMProperty(node, 'style').setProperty(
                 'opacity',
                 (1 - progress).toFixed(2),
             ),
@@ -100,7 +100,7 @@ export function rotateIn(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((90 - (progress * 90)) * (options.inverse ? -1 : 1)).toFixed(2);
-            node.style.setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            getDOMProperty(node, 'style').setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -123,7 +123,7 @@ export function rotateOut(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-            node.style.setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            getDOMProperty(node, 'style').setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -157,13 +157,13 @@ export function slideIn(selector, options) {
 
             let size; let translateStyle; let inverse;
             if (['top', 'bottom'].includes(dir)) {
-                size = node.clientHeight;
+                size = getDOMProperty(node, 'clientHeight');
                 translateStyle = options.useGpu ?
                     'Y' :
                     'margin-top';
                 inverse = dir === 'top';
             } else {
-                size = node.clientWidth;
+                size = getDOMProperty(node, 'clientWidth');
                 translateStyle = options.useGpu ?
                     'X' :
                     'margin-left';
@@ -172,9 +172,9 @@ export function slideIn(selector, options) {
 
             const translateAmount = ((size - (size * progress)) * (inverse ? -1 : 1)).toFixed(2);
             if (options.useGpu) {
-                node.style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
+                getDOMProperty(node, 'style').setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
             } else {
-                node.style.setProperty(translateStyle, `${translateAmount}px`);
+                getDOMProperty(node, 'style').setProperty(translateStyle, `${translateAmount}px`);
             }
         },
         options,
@@ -204,13 +204,13 @@ export function slideOut(selector, options) {
 
             let size; let translateStyle; let inverse;
             if (['top', 'bottom'].includes(dir)) {
-                size = node.clientHeight;
+                size = getDOMProperty(node, 'clientHeight');
                 translateStyle = options.useGpu ?
                     'Y' :
                     'margin-top';
                 inverse = dir === 'top';
             } else {
-                size = node.clientWidth;
+                size = getDOMProperty(node, 'clientWidth');
                 translateStyle = options.useGpu ?
                     'X' :
                     'margin-left';
@@ -219,9 +219,9 @@ export function slideOut(selector, options) {
 
             const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
             if (options.useGpu) {
-                node.style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
+                getDOMProperty(node, 'style').setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
             } else {
-                node.style.setProperty(translateStyle, `${translateAmount}px`);
+                getDOMProperty(node, 'style').setProperty(translateStyle, `${translateAmount}px`);
             }
         },
         options,
@@ -247,15 +247,16 @@ export function squeezeIn(selector, options) {
             ['height', 'overflow', 'transform', 'width'] :
             ['height', 'margin-left', 'margin-top', 'overflow', 'width'],
         (node, progress, options, initialStyles) => {
-            node.style.setProperty('height', initialStyles.height.value);
-            node.style.setProperty('width', initialStyles.width.value);
-            node.style.setProperty('overflow', 'hidden');
+            const style = getDOMProperty(node, 'style');
+            style.setProperty('height', initialStyles.height.value);
+            style.setProperty('width', initialStyles.width.value);
+            style.setProperty('overflow', 'hidden');
 
             const dir = evaluate(options.direction);
 
             let size; let sizeStyle; let translateStyle;
             if (['top', 'bottom'].includes(dir)) {
-                size = node.clientHeight;
+                size = getDOMProperty(node, 'clientHeight');
                 sizeStyle = 'height';
                 if (dir === 'top') {
                     translateStyle = options.useGpu ?
@@ -263,7 +264,7 @@ export function squeezeIn(selector, options) {
                         'margin-top';
                 }
             } else {
-                size = node.clientWidth;
+                size = getDOMProperty(node, 'clientWidth');
                 sizeStyle = 'width';
                 if (dir === 'left') {
                     translateStyle = options.useGpu ?
@@ -274,14 +275,14 @@ export function squeezeIn(selector, options) {
 
             const amount = (size * progress).toFixed(2);
 
-            node.style.setProperty(sizeStyle, `${amount}px`);
+            style.setProperty(sizeStyle, `${amount}px`);
 
             if (translateStyle) {
                 const translateAmount = (size - amount).toFixed(2);
                 if (options.useGpu) {
-                    node.style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
+                    style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
                 } else {
-                    node.style.setProperty(translateStyle, `${translateAmount}px`);
+                    style.setProperty(translateStyle, `${translateAmount}px`);
                 }
             }
         },
@@ -308,15 +309,16 @@ export function squeezeOut(selector, options) {
             ['height', 'overflow', 'transform', 'width'] :
             ['height', 'margin-left', 'margin-top', 'overflow', 'width'],
         (node, progress, options, initialStyles) => {
-            node.style.setProperty('height', initialStyles.height.value);
-            node.style.setProperty('width', initialStyles.width.value);
-            node.style.setProperty('overflow', 'hidden');
+            const style = getDOMProperty(node, 'style');
+            style.setProperty('height', initialStyles.height.value);
+            style.setProperty('width', initialStyles.width.value);
+            style.setProperty('overflow', 'hidden');
 
             const dir = evaluate(options.direction);
 
             let size; let sizeStyle; let translateStyle;
             if (['top', 'bottom'].includes(dir)) {
-                size = node.clientHeight;
+                size = getDOMProperty(node, 'clientHeight');
                 sizeStyle = 'height';
                 if (dir === 'top') {
                     translateStyle = options.useGpu ?
@@ -324,7 +326,7 @@ export function squeezeOut(selector, options) {
                         'margin-top';
                 }
             } else {
-                size = node.clientWidth;
+                size = getDOMProperty(node, 'clientWidth');
                 sizeStyle = 'width';
                 if (dir === 'left') {
                     translateStyle = options.useGpu ?
@@ -335,14 +337,14 @@ export function squeezeOut(selector, options) {
 
             const amount = (size - (size * progress)).toFixed(2);
 
-            node.style.setProperty(sizeStyle, `${amount}px`);
+            style.setProperty(sizeStyle, `${amount}px`);
 
             if (translateStyle) {
                 const translateAmount = (size - amount).toFixed(2);
                 if (options.useGpu) {
-                    node.style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
+                    style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
                 } else {
-                    node.style.setProperty(translateStyle, `${translateAmount}px`);
+                    style.setProperty(translateStyle, `${translateAmount}px`);
                 }
             }
         },
@@ -362,6 +364,8 @@ function animateEffect(selector, properties, callback, options) {
     const initialStyles = new WeakMap;
 
     return animate(selector, (node, progress, options) => {
+        const style = getDOMProperty(node, 'style');
+
         if (!initialStyles.has(node)) {
             initialStyles.set(
                 node,
@@ -369,8 +373,8 @@ function animateEffect(selector, properties, callback, options) {
                     properties.map((property) => [
                         property,
                         {
-                            priority: node.style.getPropertyPriority(property),
-                            value: node.style.getPropertyValue(property),
+                            priority: style.getPropertyPriority(property),
+                            value: style.getPropertyValue(property),
                         },
                     ]),
                 ),
@@ -385,7 +389,7 @@ function animateEffect(selector, properties, callback, options) {
         }
 
         for (const [property, { priority, value }] of Object.entries(styles)) {
-            node.style.setProperty(property, value, priority);
+            style.setProperty(property, value, priority);
         }
     }, options);
 };

@@ -1,5 +1,6 @@
 /** @import QuerySet from '../query/query-set.js'; */
 
+import { callDOMMethod } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
 import { createEvent, eventNamespacedRegExp, parseEvent, parseEvents } from './../helpers.js';
 import { events } from './../vars.js';
@@ -102,7 +103,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
 
             nodeEvents[realEventName].push({ ...eventData });
 
-            node.addEventListener(realEventName, realCallback, { capture, passive });
+            callDOMMethod(node, 'addEventListener', realEventName, realCallback, { capture, passive });
         }
     }
 };
@@ -241,7 +242,7 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
                     return true;
                 }
 
-                node.removeEventListener(realEventName, eventData.realCallback, eventData.capture);
+                callDOMMethod(node, 'removeEventListener', realEventName, eventData.realCallback, eventData.capture);
 
                 return false;
             });
@@ -305,7 +306,7 @@ export function triggerEvent(selector, events, { data = null, detail = null, bub
         }
 
         for (const node of nodes) {
-            node.dispatchEvent(eventData);
+            callDOMMethod(node, 'dispatchEvent', eventData);
         }
     }
 };
@@ -341,5 +342,5 @@ export function triggerOne(selector, event, { data = null, detail = null, bubble
         eventData.namespaceRegExp = eventNamespacedRegExp(event);
     }
 
-    return node.dispatchEvent(eventData);
+    return callDOMMethod(node, 'dispatchEvent', eventData);
 };

@@ -1,6 +1,6 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
-import { merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, merge } from '@fr0st/core';
 import { closest } from './../traversal/traversal.js';
 
 /**
@@ -17,7 +17,7 @@ import { closest } from './../traversal/traversal.js';
  */
 function getDelegateContainsFactory(node, selector) {
     return (target) => {
-        const matches = merge([], node.querySelectorAll(selector));
+        const matches = merge([], callDOMMethod(node, 'querySelectorAll', selector));
 
         if (!matches.length) {
             return false;
@@ -30,7 +30,7 @@ function getDelegateContainsFactory(node, selector) {
         return closest(
             target,
             (parent) => matches.includes(parent),
-            (parent) => parent.isSameNode(node),
+            (parent) => callDOMMethod(parent, 'isSameNode', node),
         ).shift();
     };
 };
@@ -43,12 +43,12 @@ function getDelegateContainsFactory(node, selector) {
  */
 function getDelegateMatchFactory(node, selector) {
     return (target) =>
-        target.matches && target.matches(selector) ?
+        getDOMProperty(target, 'matches') && callDOMMethod(target, 'matches', selector) ?
             target :
             closest(
                 target,
-                (parent) => parent.matches(selector),
-                (parent) => parent.isSameNode(node),
+                (parent) => callDOMMethod(parent, 'matches', selector),
+                (parent) => callDOMMethod(parent, 'isSameNode', node),
             ).shift();
 };
 
@@ -65,7 +65,7 @@ export function delegateFactory(node, selector, callback) {
         getDelegateMatchFactory(node, selector);
 
     return (event) => {
-        if (node.isSameNode(event.target)) {
+        if (callDOMMethod(node, 'isSameNode', event.target)) {
             return;
         }
 

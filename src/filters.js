@@ -3,9 +3,9 @@
 /** @import { QueryContextInput } from './traversal/find.js'; */
 /** @import { QueryInput } from './helpers.js'; */
 
-import { isArray, isFragment, isFunction, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
+import { callDOMMethod, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
-import { isDocument, isElement, isNode, resolveNode, resolveNodes } from './helpers.js';
+import { resolveNode, resolveNodes } from './helpers.js';
 import { parseHTML } from './parser/parser.js';
 import { find, findOne } from './traversal/find.js';
 
@@ -40,11 +40,11 @@ export function parseFilter(filter, defaultValue = true) {
     }
 
     if (isString(filter)) {
-        return (node) => isElement(node) && node.matches(filter);
+        return (node) => isElement(node) && callDOMMethod(node, 'matches', filter);
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
-        return (node) => node.isSameNode(filter);
+        return (node) => callDOMMethod(node, 'isSameNode', filter);
     }
 
     filter = parseNodes(filter, {
@@ -72,7 +72,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     }
 
     if (isFunction(filter)) {
-        return (node) => merge([], node.querySelectorAll('*')).some(filter);
+        return (node) => merge([], callDOMMethod(node, 'querySelectorAll', '*')).some(filter);
     }
 
     if (isString(filter)) {
@@ -80,7 +80,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
-        return (node) => node.contains(filter);
+        return (node) => callDOMMethod(node, 'contains', filter);
     }
 
     filter = parseNodes(filter, {
@@ -90,7 +90,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     });
 
     if (filter.length) {
-        return (node) => filter.some((other) => node.contains(other));
+        return (node) => filter.some((other) => callDOMMethod(node, 'contains', other));
     }
 
     return (_) => !defaultValue;

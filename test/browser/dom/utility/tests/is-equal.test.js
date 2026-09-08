@@ -37,6 +37,14 @@ test.describe('#isEqual', () => {
             $.isEqual('#parent1 span', '#parent3 a'))).toBe(false);
     });
 
+    test('compares forms with a control named isEqualNode', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<form><input name="isEqualNode"></form><form><input name="isEqualNode"></form>';
+            return $.isEqual(document.querySelector('form'), document.querySelectorAll('form')[1]);
+        })).toBe(true);
+    });
+
     test('works with shallow option', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.isEqual('#parent1 span', '#parent2 span', { shallow: true }))).toBe(true);

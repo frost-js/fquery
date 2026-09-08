@@ -56,6 +56,28 @@ test.describe('#sanitize', () => {
             ))).toBe('<form><button>Test</button></form>');
     });
 
+    test('sanitizes allowed forms whose controls shadow DOM properties', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize(
+                '<form onclick="window.alert(1)">' +
+                    '<input name="tagName"><input name="attributes"><input name="children"><input name="removeAttribute">' +
+                    '<span onclick="window.alert(1)">Test</span><script>window.alert(1)</script>' +
+                    '</form>',
+                {
+                    form: [],
+                    input: ['name'],
+                    span: [],
+                },
+            ))).toBe('<form>' +
+            '<input name="tagName"><input name="attributes"><input name="children"><input name="removeAttribute">' +
+            '<span>Test</span></form>');
+    });
+
+    test('removes disallowed forms with a control named remove', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.sanitize('<form><input name="remove"></form>', {}))).toBe('');
+    });
+
     test('allows non-javascript URLs', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.sanitize(

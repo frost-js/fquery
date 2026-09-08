@@ -17,7 +17,7 @@ import { mouseDragFactory } from './events/event-factory.js';
 import { addEvent, addEventDelegate, addEventDelegateOnce, addEventOnce, cloneEvents, removeEvent, removeEventDelegate, triggerEvent, triggerOne } from './events/event-handlers.js';
 import { blur, click, focus, ready } from './events/events.js';
 import { noConflict } from './globals.js';
-import { debounce, isDocument, isElement, isNode } from './helpers.js';
+import { debounce } from './helpers.js';
 import { attachShadow, create, createComment, createFragment, createRange, createText } from './manipulation/create.js';
 import { clone, detach, empty, remove, replaceAll, replaceWith } from './manipulation/manipulation.js';
 import { after, append, appendTo, before, insertAfter, insertBefore, prepend, prependTo } from './manipulation/move.js';
@@ -253,7 +253,7 @@ Object.assign(query, {
     wrapSelection,
 });
 
-for (const [key, value] of Object.entries({ ..._, isDocument, isElement, isNode })) {
+for (const [key, value] of Object.entries(_)) {
     query[`_${key}`] = value;
 }
 

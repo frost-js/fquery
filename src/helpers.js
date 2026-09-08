@@ -1,4 +1,4 @@
-import { escapeRegExp, isArray, isDocument as _isDocument, isElement as _isElement, isNode as _isNode, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
+import { escapeRegExp, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
 import { getWindow } from './config.js';
 import QuerySet from './query/query-set-core.js';
 
@@ -74,54 +74,6 @@ export function escapeCSS(value) {
  */
 export function eventNamespacedRegExp(event) {
     return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, 'i');
-};
-
-/**
- * Returns a DOM property from the prototype chain, bypassing own properties.
- * @param {Node} node The node to read from.
- * @param {string} property The property name.
- * @returns {*} The property value.
- */
-export function getDOMProperty(node, property) {
-    return Reflect.get(Object.getPrototypeOf(node), property, node);
-};
-
-/**
- * Returns a node type, using the prototype property when available.
- * @param {*} value The value to read from.
- * @returns {*} The node type.
- */
-function getNodeType(value) {
-    return value && Object.getPrototypeOf(value) ?
-        getDOMProperty(value, 'nodeType') ?? value.nodeType :
-        value?.nodeType;
-};
-
-/**
- * Checks whether a value is a Document, ignoring named properties.
- * @param {*} value The value to test.
- * @returns {boolean} Whether the value is a Document.
- */
-export function isDocument(value) {
-    return _isDocument({ nodeType: getNodeType(value) });
-};
-
-/**
- * Checks whether a value is an Element, ignoring named properties.
- * @param {*} value The value to test.
- * @returns {boolean} Whether the value is an Element.
- */
-export function isElement(value) {
-    return _isElement({ nodeType: getNodeType(value) });
-};
-
-/**
- * Checks whether a value is an Element, Text node, or Comment node, ignoring named properties.
- * @param {*} value The value to test.
- * @returns {boolean} Whether the value is an Element, Text node, or Comment node.
- */
-export function isNode(value) {
-    return _isNode({ nodeType: getNodeType(value) });
 };
 
 /**
