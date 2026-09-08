@@ -50,8 +50,8 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     }
 
     if (boxSize >= BORDER_BOX) {
-        result += parseInt(css(node, 'border-top-width'));
-        result += parseInt(css(node, 'border-bottom-width'));
+        result = getDOMProperty(node, 'offsetHeight') ??
+            result + parseInt(css(node, 'border-top-width')) + parseInt(css(node, 'border-bottom-width'));
     }
 
     if (boxSize >= MARGIN_BOX) {
@@ -101,8 +101,8 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     }
 
     if (boxSize >= BORDER_BOX) {
-        result += parseInt(css(node, 'border-left-width'));
-        result += parseInt(css(node, 'border-right-width'));
+        result = getDOMProperty(node, 'offsetWidth') ??
+            result + parseInt(css(node, 'border-left-width')) + parseInt(css(node, 'border-right-width'));
     }
 
     if (boxSize >= MARGIN_BOX) {

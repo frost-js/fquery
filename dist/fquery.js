@@ -4370,10 +4370,7 @@
 			result -= parseInt(css$1(node, "padding-bottom"));
 			result = Math.max(0, result);
 		}
-		if (boxSize >= 2) {
-			result += parseInt(css$1(node, "border-top-width"));
-			result += parseInt(css$1(node, "border-bottom-width"));
-		}
+		if (boxSize >= 2) result = getDOMProperty(node, "offsetHeight") ?? result + parseInt(css$1(node, "border-top-width")) + parseInt(css$1(node, "border-bottom-width"));
 		if (boxSize >= 3) {
 			result += parseInt(css$1(node, "margin-top"));
 			result += parseInt(css$1(node, "margin-bottom"));
@@ -4401,10 +4398,7 @@
 			result -= parseInt(css$1(node, "padding-right"));
 			result = Math.max(0, result);
 		}
-		if (boxSize >= 2) {
-			result += parseInt(css$1(node, "border-left-width"));
-			result += parseInt(css$1(node, "border-right-width"));
-		}
+		if (boxSize >= 2) result = getDOMProperty(node, "offsetWidth") ?? result + parseInt(css$1(node, "border-left-width")) + parseInt(css$1(node, "border-right-width"));
 		if (boxSize >= 3) {
 			result += parseInt(css$1(node, "margin-left"));
 			result += parseInt(css$1(node, "margin-right"));
