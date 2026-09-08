@@ -2310,7 +2310,7 @@ function addEvent$1(selector, eventNames, callback, { capture = false, delegate 
 			if (!events.has(node)) events.set(node, Object.create(null));
 			const nodeEvents = events.get(node);
 			let realCallback = callback;
-			if (selfDestruct) realCallback = selfDestructCallbackFactory(realCallback, (_) => removeEvent$1(node, eventName, callback, {
+			if (selfDestruct) realCallback = selfDestructCallbackFactory(realCallback, (_) => removeEvent$1(node, eventName, realCallback, {
 				capture,
 				delegate
 			}));
@@ -2426,7 +2426,7 @@ function removeEvent$1(selector, eventNames, callback, { capture = null, delegat
 					const regExp = eventNamespacedRegExp(eventName);
 					return eventData.eventName.match(regExp);
 				})) return true;
-				if (callback && callback !== eventData.callback) return true;
+				if (callback && callback !== eventData.callback && callback !== eventData.realCallback) return true;
 				if (delegate && delegate !== eventData.delegate) return true;
 				if (capture !== null && capture !== eventData.capture) return true;
 				callDOMMethod(node, "removeEventListener", realEventName, eventData.realCallback, eventData.capture);

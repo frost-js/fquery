@@ -49,6 +49,27 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
         })).toBe(2);
     });
 
+    test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test3');
+            const callback = (_) => {
+                result++;
+            };
+            $('div').addEventDelegate('click', 'a', callback);
+            $('div').addEventDelegateOnce('click', 'a', callback);
+            element1.dispatchEvent(event);
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(6);
+    });
+
     test('adds self-destructing delegated events to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

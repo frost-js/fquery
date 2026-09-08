@@ -31,6 +31,25 @@ test.describe('#addEventOnce', () => {
         })).toBe(2);
     });
 
+    test('preserves persistent handlers with the same callback', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click');
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            const callback = (_) => {
+                result++;
+            };
+            $.addEvent('a', 'click', callback);
+            $.addEventOnce('a', 'click', callback);
+            element1.dispatchEvent(event);
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            return result;
+        })).toBe(6);
+    });
+
     test('adds self-destructing events to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

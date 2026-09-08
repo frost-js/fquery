@@ -81,7 +81,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
             if (selfDestruct) {
                 realCallback = selfDestructCallbackFactory(
                     realCallback,
-                    (_) => removeEvent(node, eventName, callback, { capture, delegate }),
+                    (_) => removeEvent(node, eventName, realCallback, { capture, delegate }),
                 );
             }
 
@@ -230,7 +230,11 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
                     return true;
                 }
 
-                if (callback && callback !== eventData.callback) {
+                if (
+                    callback &&
+                    callback !== eventData.callback &&
+                    callback !== eventData.realCallback
+                ) {
                     return true;
                 }
 
