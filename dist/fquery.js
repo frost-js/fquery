@@ -4737,7 +4737,8 @@
 				animations: true
 			});
 			const firstClone = clones.slice().shift();
-			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+			if (!firstCloneNode) continue;
 			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
 			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
 			callDOMMethod(deepest, "insertBefore", node, null);
@@ -4764,7 +4765,8 @@
 		const parent = getDOMProperty(firstNode, "parentNode");
 		if (!parent) return;
 		const firstClone = clones[0];
-		const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+		const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+		if (!firstCloneNode) return;
 		const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
 		for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, firstNode);
 		for (const node of nodes) callDOMMethod(deepest, "insertBefore", node, null);
@@ -4792,7 +4794,8 @@
 				animations: true
 			});
 			const firstClone = clones.slice().shift();
-			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstChild") : firstClone;
+			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+			if (!firstCloneNode) continue;
 			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
 			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
 			for (const child of children) callDOMMethod(deepest, "insertBefore", child, null);

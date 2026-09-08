@@ -397,6 +397,71 @@ test.describe('#wrap', () => {
             '</div>');
     });
 
+    test('works with DocumentFragment other nodes with leading whitespace', async ({ page }) => {
+        const html = await page.evaluate(() => {
+            const range = document.createRange();
+            const fragment = range.createContextualFragment(
+                '\n<div><span></span></div>',
+            );
+
+            $.wrap('#parent1 > a', fragment);
+
+            return document.getElementById('parent1').innerHTML;
+        });
+
+        expect(html).toBe('\n' +
+            '<div>' +
+            '<span>' +
+            '<a href="#" id="test1">Test</a>' +
+            '</span>' +
+            '</div>' +
+            '\n' +
+            '<div>' +
+            '<span>' +
+            '<a href="#" id="test2">Test</a>' +
+            '</span>' +
+            '</div>');
+    });
+
+    test('works with DocumentFragment other nodes with a leading comment', async ({ page }) => {
+        const html = await page.evaluate(() => {
+            const range = document.createRange();
+            const fragment = range.createContextualFragment(
+                '<!-- Test --><div><span></span></div>',
+            );
+
+            $.wrap('#parent1 > a', fragment);
+
+            return document.getElementById('parent1').innerHTML;
+        });
+
+        expect(html).toBe('<!-- Test -->' +
+            '<div>' +
+            '<span>' +
+            '<a href="#" id="test1">Test</a>' +
+            '</span>' +
+            '</div>' +
+            '<!-- Test -->' +
+            '<div>' +
+            '<span>' +
+            '<a href="#" id="test2">Test</a>' +
+            '</span>' +
+            '</div>');
+    });
+
+    test('ignores DocumentFragment other nodes without an element', async ({ page }) => {
+        const html = await page.evaluate(() => {
+            const range = document.createRange();
+            const fragment = range.createContextualFragment('Test');
+
+            $.wrap('a', fragment);
+
+            return document.body.innerHTML;
+        });
+
+        expect(html).toBe(WRAP_HTML);
+    });
+
     test('works with array other nodes', async ({ page }) => {
         const html = await page.evaluate(() => {
             $.wrap('a', [

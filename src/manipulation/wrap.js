@@ -88,8 +88,13 @@ export function wrap(selector, otherSelector) {
         const firstClone = clones.slice().shift();
 
         const firstCloneNode = isFragment(firstClone) ?
-            getDOMProperty(firstClone, 'firstChild') :
+            getDOMProperty(firstClone, 'firstElementChild') :
             firstClone;
+
+        if (!firstCloneNode) {
+            continue;
+        }
+
         const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
         for (const clone of clones) {
@@ -138,8 +143,13 @@ export function wrapAll(selector, otherSelector) {
     const firstClone = clones[0];
 
     const firstCloneNode = isFragment(firstClone) ?
-        getDOMProperty(firstClone, 'firstChild') :
+        getDOMProperty(firstClone, 'firstElementChild') :
         firstClone;
+
+    if (!firstCloneNode) {
+        return;
+    }
+
     const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
     for (const clone of clones) {
@@ -181,8 +191,13 @@ export function wrapInner(selector, otherSelector) {
         const firstClone = clones.slice().shift();
 
         const firstCloneNode = isFragment(firstClone) ?
-            getDOMProperty(firstClone, 'firstChild') :
+            getDOMProperty(firstClone, 'firstElementChild') :
             firstClone;
+
+        if (!firstCloneNode) {
+            continue;
+        }
+
         const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
 
         for (const clone of clones) {
