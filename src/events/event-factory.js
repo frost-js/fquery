@@ -67,7 +67,7 @@ export function mouseDragFactory(down, move, up, { debounce = true, passive = tr
         const realUp = (event) => {
             const isCancelled = event.type === 'touchcancel';
 
-            if (isTouch && !isCancelled && event.touches.length !== touches - 1) {
+            if (isTouch && !isCancelled && event.touches.length >= touches) {
                 return;
             }
 

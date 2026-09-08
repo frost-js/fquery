@@ -4488,7 +4488,7 @@
 			};
 			const realUp = (event) => {
 				const isCancelled = event.type === "touchcancel";
-				if (isTouch && !isCancelled && event.touches.length !== touches - 1) return;
+				if (isTouch && !isCancelled && event.touches.length >= touches) return;
 				if (up && up(event) === false && !isCancelled) return;
 				if (preventDefault) event.preventDefault();
 				removeEvent$1(window, moveEvent, realMove);
