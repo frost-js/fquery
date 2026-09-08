@@ -3710,9 +3710,8 @@ function prepend$1(selector, otherSelector) {
 		node: true,
 		fragment: true,
 		html: true
-	});
+	}).reverse();
 	for (const [i, node] of nodes.entries()) {
-		const firstChild = getDOMProperty(node, "firstChild");
 		let clones;
 		if (i === nodes.length - 1) clones = others;
 		else clones = clone$1(others, {
@@ -3720,7 +3719,7 @@ function prepend$1(selector, otherSelector) {
 			data: true,
 			animations: true
 		});
-		for (const clone of clones) callDOMMethod(node, "insertBefore", clone, firstChild);
+		for (const clone of clones) callDOMMethod(node, "insertBefore", clone, getDOMProperty(node, "firstChild"));
 	}
 }
 /**

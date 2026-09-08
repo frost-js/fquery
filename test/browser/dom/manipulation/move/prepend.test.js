@@ -48,6 +48,22 @@ test.describe('#prepend', () => {
         });
     });
 
+    test('preserves order when prepending existing children', async ({ page }) => {
+        const html = await page.evaluate(() => {
+            const node = document.getElementById('parent1');
+
+            $.prepend(node, node.children);
+
+            return node.innerHTML;
+        });
+
+        expect(html).toBe(
+            '<span></span>' +
+            '<a href="#" class="test1">Test</a>' +
+            '<a href="#" class="test2">Test</a>',
+        );
+    });
+
     test('preserves events for other nodes', async ({ page }) => {
         const clickCount = await page.evaluate(() => {
             let count = 0;

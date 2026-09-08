@@ -169,11 +169,9 @@ export function prepend(selector, otherSelector) {
         node: true,
         fragment: true,
         html: true,
-    });
+    }).reverse();
 
     for (const [i, node] of nodes.entries()) {
-        const firstChild = getDOMProperty(node, 'firstChild');
-
         let clones;
         if (i === nodes.length - 1) {
             clones = others;
@@ -186,7 +184,7 @@ export function prepend(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(node, 'insertBefore', clone, firstChild);
+            callDOMMethod(node, 'insertBefore', clone, getDOMProperty(node, 'firstChild'));
         }
     }
 };
