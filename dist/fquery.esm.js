@@ -2465,20 +2465,12 @@ function triggerEvent$1(selector, events, { data = null, detail = null, bubbles 
 		window: true
 	});
 	events = parseEvents(events);
-	for (const event of events) {
-		const realEvent = parseEvent(event);
-		const eventData = createEvent(realEvent, {
-			detail,
-			bubbles,
-			cancelable
-		});
-		if (data) Object.assign(eventData, data);
-		if (realEvent !== event) {
-			eventData.namespace = event.substring(realEvent.length + 1);
-			eventData.namespaceRegExp = eventNamespacedRegExp(event);
-		}
-		for (const node of nodes) callDOMMethod(node, "dispatchEvent", eventData);
-	}
+	for (const event of events) for (const node of nodes) triggerOne$1(node, event, {
+		data,
+		detail,
+		bubbles,
+		cancelable
+	});
 }
 /**
 * Triggers an event for the first node.

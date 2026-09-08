@@ -292,25 +292,8 @@ export function triggerEvent(selector, events, { data = null, detail = null, bub
     events = parseEvents(events);
 
     for (const event of events) {
-        const realEvent = parseEvent(event);
-
-        const eventData = createEvent(realEvent, {
-            detail,
-            bubbles,
-            cancelable,
-        });
-
-        if (data) {
-            Object.assign(eventData, data);
-        }
-
-        if (realEvent !== event) {
-            eventData.namespace = event.substring(realEvent.length + 1);
-            eventData.namespaceRegExp = eventNamespacedRegExp(event);
-        }
-
         for (const node of nodes) {
-            callDOMMethod(node, 'dispatchEvent', eventData);
+            triggerOne(node, event, { data, detail, bubbles, cancelable });
         }
     }
 };

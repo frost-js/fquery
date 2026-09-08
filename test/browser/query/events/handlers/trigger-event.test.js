@@ -295,6 +295,20 @@ test.describe('QuerySet #triggerEvent', () => {
         })).toBe(true);
     });
 
+    test('does not carry cancellation between nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result;
+            $.addEvent('#test1', 'click', (e) => {
+                e.preventDefault();
+            });
+            $.addEvent('#test2', 'click', (e) => {
+                result = e.defaultPrevented;
+            });
+            $('a').triggerEvent('click');
+            return result;
+        })).toBe(false);
+    });
+
     test('can be prevented from being cancelled', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result;
