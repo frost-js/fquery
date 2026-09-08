@@ -62,16 +62,35 @@ export function constrain(selector, containerSelector) {
     const preScrollY = getScrollY();
 
     for (const node of nodes) {
+        const contentBox = css(node, 'box-sizing') === 'content-box';
         let nodeBox = rect(node);
         let resized = false;
 
         if (nodeBox.height > containerBox.height) {
-            getDOMProperty(node, 'style').setProperty('height', `${containerBox.height}px`);
+            let height = containerBox.height;
+
+            if (contentBox) {
+                height -= parseFloat(css(node, 'padding-top'));
+                height -= parseFloat(css(node, 'padding-bottom'));
+                height -= parseFloat(css(node, 'border-top-width'));
+                height -= parseFloat(css(node, 'border-bottom-width'));
+            }
+
+            getDOMProperty(node, 'style').setProperty('height', `${Math.max(0, height)}px`);
             resized = true;
         }
 
         if (nodeBox.width > containerBox.width) {
-            getDOMProperty(node, 'style').setProperty('width', `${containerBox.width}px`);
+            let width = containerBox.width;
+
+            if (contentBox) {
+                width -= parseFloat(css(node, 'padding-left'));
+                width -= parseFloat(css(node, 'padding-right'));
+                width -= parseFloat(css(node, 'border-left-width'));
+                width -= parseFloat(css(node, 'border-right-width'));
+            }
+
+            getDOMProperty(node, 'style').setProperty('width', `${Math.max(0, width)}px`);
             resized = true;
         }
 

@@ -34,6 +34,42 @@ test.describe('#constrain', () => {
             '</div>');
     });
 
+    test('constrains the width of content-box nodes with padding and borders', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('test1');
+            node.style.cssText = 'box-sizing: content-box; width: 600px; height: 100px; padding: 10.25px 20.5px; border: 2px solid;';
+            $.constrain(node, '#test3');
+            return node.getBoundingClientRect().width;
+        })).toBe(500);
+    });
+
+    test('constrains the height of content-box nodes with padding and borders', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('test1');
+            node.style.cssText = 'box-sizing: content-box; width: 100px; height: 600px; padding: 10.25px 20.5px; border: 2px solid;';
+            $.constrain(node, '#test3');
+            return node.getBoundingClientRect().height;
+        })).toBe(500);
+    });
+
+    test('constrains the width of border-box nodes with padding and borders', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('test1');
+            node.style.cssText = 'box-sizing: border-box; width: 600px; height: 100px; padding: 10.25px 20.5px; border: 2px solid;';
+            $.constrain(node, '#test3');
+            return node.getBoundingClientRect().width;
+        })).toBe(500);
+    });
+
+    test('constrains the height of border-box nodes with padding and borders', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('test1');
+            node.style.cssText = 'box-sizing: border-box; width: 100px; height: 600px; padding: 10.25px 20.5px; border: 2px solid;';
+            $.constrain(node, '#test3');
+            return node.getBoundingClientRect().height;
+        })).toBe(500);
+    });
+
     test('recalculates positions when the context root has a control named scrollHeight', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const form = document.createElement('form');

@@ -4078,14 +4078,29 @@
 		const preScrollX = getScrollX();
 		const preScrollY = getScrollY();
 		for (const node of nodes) {
+			const contentBox = css$1(node, "box-sizing") === "content-box";
 			let nodeBox = rect$1(node);
 			let resized = false;
 			if (nodeBox.height > containerBox.height) {
-				getDOMProperty(node, "style").setProperty("height", `${containerBox.height}px`);
+				let height = containerBox.height;
+				if (contentBox) {
+					height -= parseFloat(css$1(node, "padding-top"));
+					height -= parseFloat(css$1(node, "padding-bottom"));
+					height -= parseFloat(css$1(node, "border-top-width"));
+					height -= parseFloat(css$1(node, "border-bottom-width"));
+				}
+				getDOMProperty(node, "style").setProperty("height", `${Math.max(0, height)}px`);
 				resized = true;
 			}
 			if (nodeBox.width > containerBox.width) {
-				getDOMProperty(node, "style").setProperty("width", `${containerBox.width}px`);
+				let width = containerBox.width;
+				if (contentBox) {
+					width -= parseFloat(css$1(node, "padding-left"));
+					width -= parseFloat(css$1(node, "padding-right"));
+					width -= parseFloat(css$1(node, "border-left-width"));
+					width -= parseFloat(css$1(node, "border-right-width"));
+				}
+				getDOMProperty(node, "style").setProperty("width", `${Math.max(0, width)}px`);
 				resized = true;
 			}
 			if (resized) nodeBox = rect$1(node);
