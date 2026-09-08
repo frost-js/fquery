@@ -602,6 +602,40 @@ test.describe('#post', () => {
         });
     });
 
+    test('performs an AJAX POST request overriding a default header through method options', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'X-Test': 'Test 1',
+                },
+            });
+            const response = await $.post(null, null, {
+                headers: {
+                    'x-test': 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-test': 'Test 2',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX POST request without cache', async ({ page }) => {
         const response = await page.evaluate(async (_) => {
             const response = await $.post(null, null, {

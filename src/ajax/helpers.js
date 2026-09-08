@@ -57,6 +57,23 @@ export function getSearchParams(url, baseURI) {
 };
 
 /**
+ * Merges headers case-insensitively, preserving the last value and spelling.
+ * @param {...(Record<string, string>|null|undefined)} sources The header collections, in precedence order.
+ * @returns {Record<string, string>} The merged headers.
+ */
+export function mergeHeaders(...sources) {
+    const headers = new Map();
+
+    for (const source of sources) {
+        for (const [key, value] of Object.entries(source || {})) {
+            headers.set(key.toLowerCase(), [key, value]);
+        }
+    }
+
+    return Object.fromEntries(headers.values());
+};
+
+/**
  * Returns a FormData object from form entries or a data object.
  * @param {FormInput} data The input data.
  * @returns {FormData} The parsed FormData object.

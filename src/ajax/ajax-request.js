@@ -1,6 +1,6 @@
 import { extend, isObject } from '@fr0st/core';
 import { getAjaxDefaults, getWindow } from './../config.js';
-import { appendQueryString, createSearchParams, getSearchParams, parseFormData, parseParams, setSearchParams } from './helpers.js';
+import { appendQueryString, createSearchParams, getSearchParams, mergeHeaders, parseFormData, parseParams, setSearchParams } from './helpers.js';
 
 /**
  * @typedef {boolean|string|Array<*>|Record<string, *>|FormData|null} AjaxData
@@ -76,10 +76,11 @@ export default class AjaxRequest {
      */
     constructor(options) {
         const { location } = getWindow();
+        const defaults = getAjaxDefaults();
 
         this.#options = extend(
             {},
-            getAjaxDefaults(),
+            defaults,
             options,
         );
         this.#options.method = this.#options.method.toUpperCase();
@@ -94,17 +95,21 @@ export default class AjaxRequest {
             this.#options.url = appendQueryString(this.#options.url, '_', Date.now());
         }
 
-        if (!isFormData && !('Content-Type' in this.#options.headers) && this.#options.contentType) {
-            this.#options.headers['Content-Type'] = this.#options.contentType;
-        }
-
         if (this.#options.isLocal === null) {
             this.#options.isLocal = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/.test(location.protocol);
         }
 
-        if (!this.#options.isLocal && !('X-Requested-With' in this.#options.headers)) {
-            this.#options.headers['X-Requested-With'] = 'XMLHttpRequest';
+        const headers = {};
+
+        if (!isFormData && this.#options.contentType) {
+            headers['Content-Type'] = this.#options.contentType;
         }
+
+        if (!this.#options.isLocal) {
+            headers['X-Requested-With'] = 'XMLHttpRequest';
+        }
+
+        this.#options.headers = mergeHeaders(headers, defaults.headers, options?.headers);
 
         this.#promise = new Promise((resolve, reject) => {
             this.#resolve = (value) => {

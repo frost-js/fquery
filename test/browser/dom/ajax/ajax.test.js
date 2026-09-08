@@ -735,6 +735,341 @@ test.describe('#ajax', () => {
         });
     });
 
+    test('performs an AJAX request with a lowercase content-type header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'content-type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with a mixed-case content-type header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                headers: {
+                    'cOnTeNt-TyPe': 'application/json',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'cOnTeNt-TyPe': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with a lowercase x-requested-with header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                headers: {
+                    'x-requested-with': 'Test',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-requested-with': 'Test',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with a mixed-case x-requested-with header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                headers: {
+                    'x-ReQuEsTeD-wItH': 'Test',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-ReQuEsTeD-wItH': 'Test',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with a default content-type header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+            const response = await $.ajax();
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'content-type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with a default x-requested-with header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'x-requested-with': 'Test',
+                },
+            });
+            const response = await $.ajax();
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-requested-with': 'Test',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request overriding a default content-type header with different casing', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+            });
+            const response = await $.ajax({
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'content-type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request overriding a default x-requested-with header with different casing', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'X-Requested-With': 'Test 1',
+                },
+            });
+            const response = await $.ajax({
+                headers: {
+                    'x-ReQuEsTeD-wItH': 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-ReQuEsTeD-wItH': 'Test 2',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request overriding a custom default header with different casing', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'X-Test': 'Test 1',
+                },
+            });
+            const response = await $.ajax({
+                headers: {
+                    'x-test': 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-test': 'Test 2',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request with headers from defaults and request options', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'X-Default': 'Test 1',
+                },
+            });
+            const response = await $.ajax({
+                headers: {
+                    'X-Test': 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Default': 'Test 1',
+                    'X-Test': 'Test 2',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX request using the last spelling and value of a repeated header', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.ajax({
+                headers: {
+                    'X-Test': 'Test 1',
+                    'x-test': 'Test 2',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-test': 'Test 2',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX request without cache', async ({ page }) => {
         const response = await page.evaluate(async (_) => {
             const response = await $.ajax({

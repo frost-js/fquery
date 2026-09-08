@@ -959,6 +959,121 @@
 	var unescape = (string) => string.replace(/&(amp|lt|gt|quot|apos);/g, (_, code) => unescapeChars[code]);
 
 //#endregion
+//#region src/ajax/helpers.js
+/** @typedef {{name: string, value: *}} FormEntry */
+	/** @typedef {FormEntry[]|Record<string, *>} FormInput */
+	/** @typedef {[string, *]} ParamEntry */
+	/**
+	* Appends a query string to a URL.
+	* @param {string} url The input URL.
+	* @param {string} key The query string key.
+	* @param {string|number} value The query string value.
+	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @returns {string} The new URL.
+	*/
+	function appendQueryString(url, key, value, baseURI) {
+		const searchParams = getSearchParams(url, baseURI);
+		searchParams.append(key, value);
+		return setSearchParams(url, searchParams, baseURI);
+	}
+	/**
+	* Creates URLSearchParams from input data.
+	* @param {*} data The input data.
+	* @returns {URLSearchParams} The URLSearchParams.
+	*/
+	function createSearchParams(data) {
+		const { URLSearchParams } = getWindow();
+		return new URLSearchParams(data);
+	}
+	/**
+	* Creates a URL from a URL string.
+	* @param {string} url The URL.
+	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @returns {URL} The URL.
+	*/
+	function createUrl(url, baseURI = getDOMProperty(getWindow().document, "baseURI")) {
+		const { URL } = getWindow();
+		return new URL(url, baseURI);
+	}
+	/**
+	* Gets the URLSearchParams from a URL string.
+	* @param {string} url The URL.
+	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @returns {URLSearchParams} The URLSearchParams.
+	*/
+	function getSearchParams(url, baseURI) {
+		return createUrl(url, baseURI).searchParams;
+	}
+	/**
+	* Merges headers case-insensitively, preserving the last value and spelling.
+	* @param {...(Record<string, string>|null|undefined)} sources The header collections, in precedence order.
+	* @returns {Record<string, string>} The merged headers.
+	*/
+	function mergeHeaders(...sources) {
+		const headers = /* @__PURE__ */ new Map();
+		for (const source of sources) for (const [key, value] of Object.entries(source || {})) headers.set(key.toLowerCase(), [key, value]);
+		return Object.fromEntries(headers.values());
+	}
+	/**
+	* Returns a FormData object from form entries or a data object.
+	* @param {FormInput} data The input data.
+	* @returns {FormData} The parsed FormData object.
+	*/
+	function parseFormData(data) {
+		const { FormData } = getWindow();
+		const values = parseValues(data);
+		const formData = new FormData();
+		for (const [key, value] of values) if (key.substring(key.length - 2) === "[]") formData.append(key, value);
+		else formData.set(key, value);
+		return formData;
+	}
+	/**
+	* Returns a URI-encoded attribute string from form entries or a data object.
+	* @param {FormInput} data The input data.
+	* @returns {string} The URI-encoded attribute string.
+	*/
+	function parseParams(data) {
+		return parseValues(data).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
+	}
+	/**
+	* Returns flattened parameter entries for a key and value.
+	* @param {string} key The input key.
+	* @param {*} [value] The input value.
+	* @returns {ParamEntry[]} The parsed parameter entries.
+	*/
+	function parseValue(key, value) {
+		if (value === null || isUndefined(value)) return [];
+		if (isArray(value)) {
+			if (key.substring(key.length - 2) !== "[]") key += "[]";
+			return value.flatMap((val) => parseValue(key, val));
+		}
+		if (isObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
+		return [[key, value]];
+	}
+	/**
+	* Returns flattened parameter entries from form entries or a data object.
+	* @param {FormInput} data The input data.
+	* @returns {ParamEntry[]} The parsed parameter entries.
+	*/
+	function parseValues(data) {
+		if (isArray(data)) return data.flatMap((value) => parseValue(value.name, value.value));
+		if (isObject(data)) return Object.entries(data).flatMap(([key, value]) => parseValue(key, value));
+		return data;
+	}
+	/**
+	* Sets the URLSearchParams for a URL string.
+	* @param {string} url The URL.
+	* @param {URLSearchParams} searchParams The URLSearchParams.
+	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @returns {string} The new URL string.
+	*/
+	function setSearchParams(url, searchParams, baseURI) {
+		const urlData = createUrl(url, baseURI);
+		urlData.search = searchParams.toString();
+		return urlData.toString();
+	}
+
+//#endregion
 //#region src/config.js
 /** @import { AjaxOptions } from './ajax/ajax-request.js'; */
 	/** @import { AnimationOptions } from './animation/animation.js'; */
@@ -1028,7 +1143,9 @@
 	* @param {Partial<AjaxOptions>} options The AJAX default options.
 	*/
 	function setAjaxDefaults(options) {
+		const headers = mergeHeaders(ajaxDefaults.headers, options?.headers);
 		extend(ajaxDefaults, options);
+		ajaxDefaults.headers = headers;
 	}
 	/**
 	* Sets the animation defaults.
@@ -1061,111 +1178,6 @@
 	*/
 	function useTimeout(enable = true) {
 		config.useTimeout = enable;
-	}
-
-//#endregion
-//#region src/ajax/helpers.js
-/** @typedef {{name: string, value: *}} FormEntry */
-	/** @typedef {FormEntry[]|Record<string, *>} FormInput */
-	/** @typedef {[string, *]} ParamEntry */
-	/**
-	* Appends a query string to a URL.
-	* @param {string} url The input URL.
-	* @param {string} key The query string key.
-	* @param {string|number} value The query string value.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {string} The new URL.
-	*/
-	function appendQueryString(url, key, value, baseURI) {
-		const searchParams = getSearchParams(url, baseURI);
-		searchParams.append(key, value);
-		return setSearchParams(url, searchParams, baseURI);
-	}
-	/**
-	* Creates URLSearchParams from input data.
-	* @param {*} data The input data.
-	* @returns {URLSearchParams} The URLSearchParams.
-	*/
-	function createSearchParams(data) {
-		const { URLSearchParams } = getWindow();
-		return new URLSearchParams(data);
-	}
-	/**
-	* Creates a URL from a URL string.
-	* @param {string} url The URL.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {URL} The URL.
-	*/
-	function createUrl(url, baseURI = getDOMProperty(getWindow().document, "baseURI")) {
-		const { URL } = getWindow();
-		return new URL(url, baseURI);
-	}
-	/**
-	* Gets the URLSearchParams from a URL string.
-	* @param {string} url The URL.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {URLSearchParams} The URLSearchParams.
-	*/
-	function getSearchParams(url, baseURI) {
-		return createUrl(url, baseURI).searchParams;
-	}
-	/**
-	* Returns a FormData object from form entries or a data object.
-	* @param {FormInput} data The input data.
-	* @returns {FormData} The parsed FormData object.
-	*/
-	function parseFormData(data) {
-		const { FormData } = getWindow();
-		const values = parseValues(data);
-		const formData = new FormData();
-		for (const [key, value] of values) if (key.substring(key.length - 2) === "[]") formData.append(key, value);
-		else formData.set(key, value);
-		return formData;
-	}
-	/**
-	* Returns a URI-encoded attribute string from form entries or a data object.
-	* @param {FormInput} data The input data.
-	* @returns {string} The URI-encoded attribute string.
-	*/
-	function parseParams(data) {
-		return parseValues(data).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
-	}
-	/**
-	* Returns flattened parameter entries for a key and value.
-	* @param {string} key The input key.
-	* @param {*} [value] The input value.
-	* @returns {ParamEntry[]} The parsed parameter entries.
-	*/
-	function parseValue(key, value) {
-		if (value === null || isUndefined(value)) return [];
-		if (isArray(value)) {
-			if (key.substring(key.length - 2) !== "[]") key += "[]";
-			return value.flatMap((val) => parseValue(key, val));
-		}
-		if (isObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
-		return [[key, value]];
-	}
-	/**
-	* Returns flattened parameter entries from form entries or a data object.
-	* @param {FormInput} data The input data.
-	* @returns {ParamEntry[]} The parsed parameter entries.
-	*/
-	function parseValues(data) {
-		if (isArray(data)) return data.flatMap((value) => parseValue(value.name, value.value));
-		if (isObject(data)) return Object.entries(data).flatMap(([key, value]) => parseValue(key, value));
-		return data;
-	}
-	/**
-	* Sets the URLSearchParams for a URL string.
-	* @param {string} url The URL.
-	* @param {URLSearchParams} searchParams The URLSearchParams.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {string} The new URL string.
-	*/
-	function setSearchParams(url, searchParams, baseURI) {
-		const urlData = createUrl(url, baseURI);
-		urlData.search = searchParams.toString();
-		return urlData.toString();
 	}
 
 //#endregion
@@ -1237,14 +1249,17 @@
 		*/
 		constructor(options) {
 			const { location } = getWindow();
-			this.#options = extend({}, getAjaxDefaults(), options);
+			const defaults = getAjaxDefaults();
+			this.#options = extend({}, defaults, options);
 			this.#options.method = this.#options.method.toUpperCase();
 			const isFormData = Object.prototype.toString.call(this.#options.data) === "[object FormData]";
 			if (!this.#options.url) this.#options.url = location.href;
 			if (!this.#options.cache) this.#options.url = appendQueryString(this.#options.url, "_", Date.now());
-			if (!isFormData && !("Content-Type" in this.#options.headers) && this.#options.contentType) this.#options.headers["Content-Type"] = this.#options.contentType;
 			if (this.#options.isLocal === null) this.#options.isLocal = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/.test(location.protocol);
-			if (!this.#options.isLocal && !("X-Requested-With" in this.#options.headers)) this.#options.headers["X-Requested-With"] = "XMLHttpRequest";
+			const headers = {};
+			if (!isFormData && this.#options.contentType) headers["Content-Type"] = this.#options.contentType;
+			if (!this.#options.isLocal) headers["X-Requested-With"] = "XMLHttpRequest";
+			this.#options.headers = mergeHeaders(headers, defaults.headers, options?.headers);
 			this.#promise = new Promise((resolve, reject) => {
 				this.#resolve = (value) => {
 					this.#isResolved = true;

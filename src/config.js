@@ -2,6 +2,7 @@
 /** @import { AnimationOptions } from './animation/animation.js'; */
 
 import { extend, isDocument, isWindow } from '@fr0st/core';
+import { mergeHeaders } from './ajax/helpers.js';
 
 const ajaxDefaults = {
     afterSend: null,
@@ -76,7 +77,10 @@ export function getWindow() {
  * @param {Partial<AjaxOptions>} options The AJAX default options.
  */
 export function setAjaxDefaults(options) {
+    const headers = mergeHeaders(ajaxDefaults.headers, options?.headers);
+
     extend(ajaxDefaults, options);
+    ajaxDefaults.headers = headers;
 };
 
 /**
