@@ -387,6 +387,108 @@ test.describe('#post', () => {
         });
     });
 
+    test('performs an AJAX POST request with repeated FormData names', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, [
+                {
+                    name: 'test1',
+                    value: 'Test 1',
+                },
+                {
+                    name: 'test2',
+                    value: 'Test 2',
+                },
+                {
+                    name: 'test1',
+                    value: 'Test 3',
+                },
+            ], {
+                contentType: null,
+            });
+            response.xhr = response.xhr.data;
+            const results = [];
+            for (const [key, value] of response.xhr.body.entries()) {
+                results.push({ key, value });
+            }
+            response.xhr.body = results;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: [
+                    {
+                        key: 'test1',
+                        value: 'Test 1',
+                    },
+                    {
+                        key: 'test2',
+                        value: 'Test 2',
+                    },
+                    {
+                        key: 'test1',
+                        value: 'Test 3',
+                    },
+                ],
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX POST request with FormData from a multiple select named tags', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            document.body.innerHTML =
+                '<form>' +
+                '<select name="tags" multiple>' +
+                '<option value="Test 1" selected>Test 1</option>' +
+                '<option value="Test 2" selected>Test 2</option>' +
+                '</select>' +
+                '</form>';
+            const response = await $.post(null, $.serializeArray('form'), {
+                contentType: null,
+            });
+            response.xhr = response.xhr.data;
+            const results = [];
+            for (const [key, value] of response.xhr.body.entries()) {
+                results.push({ key, value });
+            }
+            response.xhr.body = results;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: [
+                    {
+                        key: 'tags',
+                        value: 'Test 1',
+                    },
+                    {
+                        key: 'tags',
+                        value: 'Test 2',
+                    },
+                ],
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX POST request with content type', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.post(null, null, {

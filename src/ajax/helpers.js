@@ -85,11 +85,7 @@ export function parseFormData(data) {
     const formData = new FormData;
 
     for (const [key, value] of values) {
-        if (key.substring(key.length - 2) === '[]') {
-            formData.append(key, value);
-        } else {
-            formData.set(key, value);
-        }
+        formData.append(key, value);
     }
 
     return formData;

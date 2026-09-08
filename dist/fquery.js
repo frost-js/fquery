@@ -1023,8 +1023,7 @@
 		const { FormData } = getWindow();
 		const values = parseValues(data);
 		const formData = new FormData();
-		for (const [key, value] of values) if (key.substring(key.length - 2) === "[]") formData.append(key, value);
-		else formData.set(key, value);
+		for (const [key, value] of values) formData.append(key, value);
 		return formData;
 	}
 	/**
