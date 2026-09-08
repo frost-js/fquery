@@ -2187,15 +2187,16 @@ function getDelegateMatchFactory(node, selector) {
 }
 /**
 * Returns a wrapped event callback that executes on a delegate selector.
-* @param {Element|ShadowRoot|Document} node The input node.
+* @param {Element|ShadowRoot|Document|Window} node The input node.
 * @param {string} selector The delegate query selector.
 * @param {EventCallback} callback The event callback.
 * @returns {EventCallback} The delegated event callback.
 */
 function delegateFactory(node, selector, callback) {
-	const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ? getDelegateContainsFactory(node, selector) : getDelegateMatchFactory(node, selector);
+	const context = isWindow(node) ? node.document : node;
+	const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ? getDelegateContainsFactory(context, selector) : getDelegateMatchFactory(context, selector);
 	return (event) => {
-		if (callDOMMethod(node, "isSameNode", event.target)) return;
+		if (node === event.target) return;
 		const delegate = getDelegate(event.target);
 		if (!delegate) return;
 		Object.defineProperty(event, "currentTarget", {

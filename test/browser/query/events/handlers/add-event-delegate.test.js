@@ -382,6 +382,38 @@ test.describe('QuerySet #addEventDelegate', () => {
         })).toBe(8);
     });
 
+    test('works with Window nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element = document.getElementById('test2');
+            $(window).addEventDelegate('click', 'span', (_) => {
+                result++;
+            });
+            element.dispatchEvent(event);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('works with Window nodes and scoped selectors', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element = document.getElementById('test1');
+            $(window).addEventDelegate('click', ':scope > body > div > a', (_) => {
+                result++;
+            });
+            element.dispatchEvent(event);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
     test('does not capture events', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;

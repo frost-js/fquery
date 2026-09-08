@@ -1,6 +1,6 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
-import { callDOMMethod, getDOMProperty, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isWindow, merge } from '@fr0st/core';
 import { closest } from './../traversal/traversal.js';
 
 /**
@@ -54,18 +54,20 @@ function getDelegateMatchFactory(node, selector) {
 
 /**
  * Returns a wrapped event callback that executes on a delegate selector.
- * @param {Element|ShadowRoot|Document} node The input node.
+ * @param {Element|ShadowRoot|Document|Window} node The input node.
  * @param {string} selector The delegate query selector.
  * @param {EventCallback} callback The event callback.
  * @returns {EventCallback} The delegated event callback.
  */
 export function delegateFactory(node, selector, callback) {
+    const context = isWindow(node) ? node.document : node;
+
     const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ?
-        getDelegateContainsFactory(node, selector) :
-        getDelegateMatchFactory(node, selector);
+        getDelegateContainsFactory(context, selector) :
+        getDelegateMatchFactory(context, selector);
 
     return (event) => {
-        if (callDOMMethod(node, 'isSameNode', event.target)) {
+        if (node === event.target) {
             return;
         }
 

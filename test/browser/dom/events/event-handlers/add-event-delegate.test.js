@@ -452,6 +452,38 @@ test.describe('#addEventDelegate', () => {
         })).toBe(8);
     });
 
+    test('works with Window nodes', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element = document.getElementById('test2');
+            $.addEventDelegate(window, 'click', 'span', (_) => {
+                result++;
+            });
+            element.dispatchEvent(event);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('works with Window nodes and scoped selectors', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element = document.getElementById('test1');
+            $.addEventDelegate(window, 'click', ':scope > body > div > a', (_) => {
+                result++;
+            });
+            element.dispatchEvent(event);
+            element.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
     test('works with array nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
