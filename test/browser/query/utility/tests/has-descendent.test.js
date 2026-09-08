@@ -30,10 +30,20 @@ test.describe('QuerySet #hasDescendent', () => {
                     .hasDescendent('a'))).toBe(true);
     });
 
+    test('returns true if any node has a descendent without a filter', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $('div').hasDescendent())).toBe(true);
+    });
+
     test('returns false if no nodes have a descendent matching a filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('div:not(.test)')
                     .hasDescendent('a'))).toBe(false);
+    });
+
+    test('returns false if no nodes have a descendent without a filter', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $('div:not(.test)').hasDescendent())).toBe(false);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {

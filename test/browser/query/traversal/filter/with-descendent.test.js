@@ -24,6 +24,23 @@ test.describe('QuerySet #withDescendent', () => {
         ]);
     });
 
+    test('returns nodes with a descendent without a filter', async ({ page }) => {
+        const ids = await page.evaluate((_) =>
+            $('div').withDescendent().get().map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+            'div3',
+        ]);
+    });
+
+    test('returns an empty QuerySet for empty elements without a filter', async ({ page }) => {
+        const ids = await page.evaluate((_) =>
+            $('#div2, #div4').withDescendent().get().map((node) => node.id));
+
+        expect(ids).toEqual([]);
+    });
+
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
             const query1 = $('div');

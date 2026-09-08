@@ -963,7 +963,7 @@ function parseFilter(filter, defaultValue = true) {
 * @returns {NodeFilterCallback} The node contains filter callback.
 */
 function parseFilterContains(filter, defaultValue = true) {
-	if (!filter) return (_) => defaultValue;
+	if (!filter) return (node) => defaultValue && !!getDOMProperty(node, "firstElementChild");
 	if (isFunction(filter)) return (node) => merge([], callDOMMethod(node, "querySelectorAll", "*")).some(filter);
 	if (isString(filter)) return (node) => !!findOne$1(filter, node);
 	if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node !== filter && callDOMMethod(node, "contains", filter);

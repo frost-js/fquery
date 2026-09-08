@@ -3,7 +3,7 @@
 /** @import { QueryContextInput } from './traversal/find.js'; */
 /** @import { QueryInput } from './helpers.js'; */
 
-import { callDOMMethod, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
 import { resolveNode, resolveNodes } from './helpers.js';
 import { parseHTML } from './parser/parser.js';
@@ -68,7 +68,7 @@ export function parseFilter(filter, defaultValue = true) {
  */
 export function parseFilterContains(filter, defaultValue = true) {
     if (!filter) {
-        return (_) => defaultValue;
+        return (node) => defaultValue && !!getDOMProperty(node, 'firstElementChild');
     }
 
     if (isFunction(filter)) {

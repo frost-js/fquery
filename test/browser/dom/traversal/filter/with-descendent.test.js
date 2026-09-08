@@ -24,6 +24,23 @@ test.describe('#withDescendent', () => {
         ]);
     });
 
+    test('returns nodes with a descendent without a filter', async ({ page }) => {
+        const ids = await page.evaluate((_) =>
+            $.withDescendent('div').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+            'div3',
+        ]);
+    });
+
+    test('returns no nodes for empty elements without a filter', async ({ page }) => {
+        const ids = await page.evaluate((_) =>
+            $.withDescendent('#div2, #div4').map((node) => node.id));
+
+        expect(ids).toEqual([]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $.withDescendent(document.getElementById('div1'), 'a').map((node) => node.id));

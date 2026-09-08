@@ -29,9 +29,19 @@ test.describe('#hasDescendent', () => {
             $.hasDescendent('div', 'a'))).toBe(true);
     });
 
+    test('returns true if any node has a descendent without a filter', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.hasDescendent('div'))).toBe(true);
+    });
+
     test('returns false if no nodes have a descendent matching a filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.hasDescendent('div:not(.test)', 'a'))).toBe(false);
+    });
+
+    test('returns false if no nodes have a descendent without a filter', async ({ page }) => {
+        expect(await page.evaluate((_) =>
+            $.hasDescendent('div:not(.test)'))).toBe(false);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
