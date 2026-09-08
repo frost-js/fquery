@@ -25,6 +25,27 @@ test.describe('#withCSSTransition', () => {
         ]);
     });
 
+    test('returns nodes with a later nonzero CSS transition duration', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 1s; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.withCSSTransition('div').map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+            'div3',
+        ]);
+    });
+
+    test('returns no nodes when all CSS transition durations are zero', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 0s; }' });
+
+        const ids = await page.evaluate((_) =>
+            $.withCSSTransition('div').map((node) => node.id));
+
+        expect(ids).toEqual([]);
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $.withCSSTransition(document.getElementById('div1')).map((node) => node.id));

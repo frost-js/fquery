@@ -263,7 +263,9 @@ export function withClass(selector, ...classes) {
 export function withCSSAnimation(selector) {
     return parseNodes(selector)
         .filter((node) =>
-            parseFloat(css(node, 'animation-duration')),
+            css(node, 'animation-duration')
+                .split(',')
+                .some((duration) => parseFloat(duration)),
         );
 };
 
@@ -275,7 +277,9 @@ export function withCSSAnimation(selector) {
 export function withCSSTransition(selector) {
     return parseNodes(selector)
         .filter((node) =>
-            parseFloat(css(node, 'transition-duration')),
+            css(node, 'transition-duration')
+                .split(',')
+                .some((duration) => parseFloat(duration)),
         );
 };
 

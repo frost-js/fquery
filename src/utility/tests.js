@@ -68,7 +68,9 @@ export function hasClass(selector, ...classes) {
 export function hasCSSAnimation(selector) {
     return parseNodes(selector)
         .some((node) =>
-            parseFloat(css(node, 'animation-duration')),
+            css(node, 'animation-duration')
+                .split(',')
+                .some((duration) => parseFloat(duration)),
         );
 };
 
@@ -80,7 +82,9 @@ export function hasCSSAnimation(selector) {
 export function hasCSSTransition(selector) {
     return parseNodes(selector)
         .some((node) =>
-            parseFloat(css(node, 'transition-duration')),
+            css(node, 'transition-duration')
+                .split(',')
+                .some((duration) => parseFloat(duration)),
         );
 };
 

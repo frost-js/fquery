@@ -22,6 +22,20 @@ test.describe('#hasCSSTransition', () => {
             $.hasCSSTransition('div'))).toBe(true);
     });
 
+    test('returns true if a later CSS transition duration is nonzero', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 1s; }' });
+
+        expect(await page.evaluate((_) =>
+            $.hasCSSTransition('div'))).toBe(true);
+    });
+
+    test('returns false if all CSS transition durations are zero', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 0s; }' });
+
+        expect(await page.evaluate((_) =>
+            $.hasCSSTransition('div'))).toBe(false);
+    });
+
     test('returns false if no nodes have a CSS transition', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.hasCSSTransition('div:not(.test)'))).toBe(false);

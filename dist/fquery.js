@@ -5996,7 +5996,7 @@
 	* @returns {Node[]} The filtered nodes.
 	*/
 	function withCSSAnimation$1(selector) {
-		return parseNodes(selector).filter((node) => parseFloat(css$1(node, "animation-duration")));
+		return parseNodes(selector).filter((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
 	* Returns all nodes with a CSS transition.
@@ -6004,7 +6004,7 @@
 	* @returns {Node[]} The filtered nodes.
 	*/
 	function withCSSTransition$1(selector) {
-		return parseNodes(selector).filter((node) => parseFloat(css$1(node, "transition-duration")));
+		return parseNodes(selector).filter((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
 	* Returns all nodes with custom data.
@@ -6624,7 +6624,7 @@
 	* @returns {boolean} Whether any of the nodes has a CSS animation.
 	*/
 	function hasCSSAnimation$1(selector) {
-		return parseNodes(selector).some((node) => parseFloat(css$1(node, "animation-duration")));
+		return parseNodes(selector).some((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
 	* Checks whether any of the nodes has a CSS transition.
@@ -6632,7 +6632,7 @@
 	* @returns {boolean} Whether any of the nodes has a CSS transition.
 	*/
 	function hasCSSTransition$1(selector) {
-		return parseNodes(selector).some((node) => parseFloat(css$1(node, "transition-duration")));
+		return parseNodes(selector).some((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
 	* Checks whether any of the nodes has custom data.

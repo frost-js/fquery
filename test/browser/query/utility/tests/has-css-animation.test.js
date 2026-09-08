@@ -24,6 +24,20 @@ test.describe('QuerySet #hasCSSAnimation', () => {
                     .hasCSSAnimation())).toBe(true);
     });
 
+    test('returns true if a later CSS animation duration is nonzero', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin 1s linear infinite; }' });
+
+        expect(await page.evaluate((_) =>
+            $('div').hasCSSAnimation())).toBe(true);
+    });
+
+    test('returns false if all CSS animation durations are zero', async ({ page }) => {
+        await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin 0s linear infinite; }' });
+
+        expect(await page.evaluate((_) =>
+            $('div').hasCSSAnimation())).toBe(false);
+    });
+
     test('returns false if no nodes have a CSS animation', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('div:not(.test)')
