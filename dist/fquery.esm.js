@@ -5560,7 +5560,7 @@ function wrapSelection$1(selector) {
 		html: true
 	});
 	const selection = getWindow().getSelection();
-	if (!selection.rangeCount) return;
+	if (!nodes.length || !selection.rangeCount) return;
 	const range = selection.getRangeAt(0);
 	selection.removeAllRanges();
 	const node = nodes.slice().shift();

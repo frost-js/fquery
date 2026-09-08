@@ -62,6 +62,24 @@ test.describe('QuerySet #wrapSelection', () => {
             '</div>');
     });
 
+    test('preserves the selection with an empty array', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $([]).wrapSelection();
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('t 1Tes');
+    });
+
+    test('preserves the selection with an unmatched selector', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $('.missing').wrapSelection();
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.toString();
+        })).toBe('t 1Tes');
+    });
+
     test('preserves the order of multiple wrapper nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const nodes = [document.querySelector('.outer'), document.createElement('section')];

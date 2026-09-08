@@ -209,7 +209,7 @@ export function wrapSelection(selector) {
 
     const selection = getWindow().getSelection();
 
-    if (!selection.rangeCount) {
+    if (!nodes.length || !selection.rangeCount) {
         return;
     }
 
