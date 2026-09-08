@@ -259,6 +259,38 @@ test.describe('QuerySet #animate', () => {
         ]);
     });
 
+    test('completes animations started on the same node inside a callback', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test2')
+                .animate(
+                    (node, progress) => {
+                        if (progress !== 1) {
+                            return;
+                        }
+
+                        $.animate(
+                            node,
+                            (node, progress) => {
+                                node.dataset.test = progress;
+                            },
+                            {
+                                duration: 100,
+                                type: 'linear',
+                            },
+                        ).then((_) => {
+                            node.dataset.completed = 'true';
+                        });
+                    },
+                    {
+                        duration: 100,
+                    },
+                );
+        });
+        await advanceClock(page, 250);
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expect(page.locator('#test2')).toHaveAttribute('data-completed', 'true');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('.animate');

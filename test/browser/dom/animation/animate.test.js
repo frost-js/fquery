@@ -390,6 +390,38 @@ test.describe('#animate', () => {
         ]);
     });
 
+    test('completes animations started on the same node inside a callback', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.animate(
+                '#test2',
+                (node, progress) => {
+                    if (progress !== 1) {
+                        return;
+                    }
+
+                    $.animate(
+                        node,
+                        (node, progress) => {
+                            node.dataset.test = progress;
+                        },
+                        {
+                            duration: 100,
+                            type: 'linear',
+                        },
+                    ).then((_) => {
+                        node.dataset.completed = 'true';
+                    });
+                },
+                {
+                    duration: 100,
+                },
+            );
+        });
+        await advanceClock(page, 250);
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expect(page.locator('#test2')).toHaveAttribute('data-completed', 'true');
+    });
+
     test('rejects callback errors without freezing later animations', async ({ page }) => {
         await page.evaluate((_) => {
             window.animationError = null;

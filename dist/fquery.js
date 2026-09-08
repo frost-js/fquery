@@ -2119,8 +2119,9 @@
 	function update() {
 		const { requestAnimationFrame, setTimeout } = getWindow();
 		const time = getTime();
-		for (const [node, currentAnimations] of animations) {
-			const otherAnimations = currentAnimations.filter((animation) => !animation.update(time));
+		for (const [node, currentAnimations] of [...animations]) {
+			const finishedAnimations = currentAnimations.slice().filter((animation) => animation.update(time));
+			const otherAnimations = (animations.get(node) || []).filter((animation) => !finishedAnimations.includes(animation));
 			if (!otherAnimations.length) animations.delete(node);
 			else animations.set(node, otherAnimations);
 		}
