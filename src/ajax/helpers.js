@@ -1,4 +1,4 @@
-import { getDOMProperty, isArray, isObject, isUndefined } from '@fr0st/core';
+import { getDOMProperty, isArray, isObject, isPlainObject, isUndefined } from '@fr0st/core';
 import { getWindow } from './../config.js';
 
 /** @typedef {{name: string, value: *}} FormEntry */
@@ -125,7 +125,7 @@ function parseValue(key, value) {
         return value.flatMap((val) => parseValue(key, val));
     }
 
-    if (isObject(value)) {
+    if (isPlainObject(value)) {
         return Object.entries(value)
             .flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
     }

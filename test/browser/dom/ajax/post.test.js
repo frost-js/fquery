@@ -387,6 +387,102 @@ test.describe('#post', () => {
         });
     });
 
+    test('performs an AJAX POST request with a File in FormData', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, {
+                test1: new File(['Test 1'], 'test.txt', { type: 'text/plain' }),
+            }, {
+                contentType: null,
+            });
+            response.xhr = response.xhr.data;
+            const results = [];
+            for (const [key, value] of response.xhr.body.entries()) {
+                results.push({
+                    key,
+                    value: {
+                        name: value.name,
+                        type: value.type,
+                        text: await value.text(),
+                    },
+                });
+            }
+            response.xhr.body = results;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: [
+                    {
+                        key: 'test1',
+                        value: {
+                            name: 'test.txt',
+                            type: 'text/plain',
+                            text: 'Test 1',
+                        },
+                    },
+                ],
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX POST request with a Blob in FormData', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, {
+                test1: new Blob(['Test 1'], { type: 'text/plain' }),
+            }, {
+                contentType: null,
+            });
+            response.xhr = response.xhr.data;
+            const results = [];
+            for (const [key, value] of response.xhr.body.entries()) {
+                results.push({
+                    key,
+                    value: {
+                        name: value.name,
+                        type: value.type,
+                        text: await value.text(),
+                    },
+                });
+            }
+            response.xhr.body = results;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: [
+                    {
+                        key: 'test1',
+                        value: {
+                            name: 'blob',
+                            type: 'text/plain',
+                            text: 'Test 1',
+                        },
+                    },
+                ],
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX POST request with repeated FormData names', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.post(null, [

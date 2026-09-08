@@ -1046,7 +1046,7 @@
 			if (key.substring(key.length - 2) !== "[]") key += "[]";
 			return value.flatMap((val) => parseValue(key, val));
 		}
-		if (isObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
+		if (isPlainObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
 		return [[key, value]];
 	}
 	/**

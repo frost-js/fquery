@@ -1,5 +1,5 @@
 import * as _ from "@fr0st/core";
-import { callDOMMethod, camelCase, clamp, clampPercent, dist, escapeRegExp, evaluate, extend, getDOMProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isNumeric, isObject, isShadow, isString, isUndefined, isWindow, kebabCase, merge, unique, wrap } from "@fr0st/core";
+import { callDOMMethod, camelCase, clamp, clampPercent, dist, escapeRegExp, evaluate, extend, getDOMProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isNumeric, isObject, isPlainObject, isShadow, isString, isUndefined, isWindow, kebabCase, merge, unique, wrap } from "@fr0st/core";
 
 //#region src/ajax/helpers.js
 /** @typedef {{name: string, value: *}} FormEntry */
@@ -88,7 +88,7 @@ function parseValue(key, value) {
 		if (key.substring(key.length - 2) !== "[]") key += "[]";
 		return value.flatMap((val) => parseValue(key, val));
 	}
-	if (isObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
+	if (isPlainObject(value)) return Object.entries(value).flatMap(([subKey, val]) => parseValue(`${key}[${subKey}]`, val));
 	return [[key, value]];
 }
 /**
