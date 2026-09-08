@@ -94,6 +94,16 @@ test.describe('QuerySet #withDescendent', () => {
         ]);
     });
 
+    test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+
+            return $(node).withDescendent(node).get().map((node) => node.id);
+        });
+
+        expect(ids).toEqual([]);
+    });
+
     test('works with NodeList filter', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $('div').withDescendent(document.querySelectorAll('a')).get().map((node) => node.id));
@@ -107,6 +117,29 @@ test.describe('QuerySet #withDescendent', () => {
     test('works with HTMLCollection filter', async ({ page }) => {
         const ids = await page.evaluate((_) =>
             $('div').withDescendent(document.getElementById('span1').children).get().map((node) => node.id));
+
+        expect(ids).toEqual([
+            'div1',
+        ]);
+    });
+
+    test('does not match the node itself with an array filter', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+
+            return $(node).withDescendent([node]).get().map((node) => node.id);
+        });
+
+        expect(ids).toEqual([]);
+    });
+
+    test('matches a descendent when the array filter also contains the node itself', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+            const child = document.getElementById('span1');
+
+            return $(node).withDescendent([node, child]).get().map((node) => node.id);
+        });
 
         expect(ids).toEqual([
             'div1',

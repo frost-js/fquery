@@ -1924,13 +1924,13 @@
 		if (!filter) return (_) => defaultValue;
 		if (isFunction(filter)) return (node) => merge([], callDOMMethod(node, "querySelectorAll", "*")).some(filter);
 		if (isString(filter)) return (node) => !!findOne$1(filter, node);
-		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => callDOMMethod(node, "contains", filter);
+		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node !== filter && callDOMMethod(node, "contains", filter);
 		filter = parseNodes(filter, {
 			node: true,
 			fragment: true,
 			shadow: true
 		});
-		if (filter.length) return (node) => filter.some((other) => callDOMMethod(node, "contains", other));
+		if (filter.length) return (node) => filter.some((other) => node !== other && callDOMMethod(node, "contains", other));
 		return (_) => !defaultValue;
 	}
 	/**

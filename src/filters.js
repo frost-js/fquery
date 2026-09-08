@@ -80,7 +80,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
-        return (node) => callDOMMethod(node, 'contains', filter);
+        return (node) => node !== filter && callDOMMethod(node, 'contains', filter);
     }
 
     filter = parseNodes(filter, {
@@ -90,7 +90,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     });
 
     if (filter.length) {
-        return (node) => filter.some((other) => callDOMMethod(node, 'contains', other));
+        return (node) => filter.some((other) => node !== other && callDOMMethod(node, 'contains', other));
     }
 
     return (_) => !defaultValue;

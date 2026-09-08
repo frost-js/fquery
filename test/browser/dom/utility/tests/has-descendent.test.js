@@ -112,6 +112,13 @@ test.describe('#hasDescendent', () => {
             ))).toBe(true);
     });
 
+    test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+            return $.hasDescendent(node, node);
+        })).toBe(false);
+    });
+
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.hasDescendent(
@@ -126,6 +133,21 @@ test.describe('#hasDescendent', () => {
                 'div',
                 document.getElementById('span1').children,
             ))).toBe(true);
+    });
+
+    test('does not match the node itself with an array filter', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+            return $.hasDescendent(node, [node]);
+        })).toBe(false);
+    });
+
+    test('matches a descendent when the array filter also contains the node itself', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const node = document.getElementById('div1');
+            const child = document.getElementById('span1');
+            return $.hasDescendent(node, [node, child]);
+        })).toBe(true);
     });
 
     test('works with array filter', async ({ page }) => {
