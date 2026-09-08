@@ -1231,6 +1231,7 @@ var Animation = class Animation {
 	#callback;
 	#isFinished;
 	#isStopped;
+	#isStopping;
 	#node;
 	#options;
 	#promise;
@@ -1287,12 +1288,14 @@ var Animation = class Animation {
 	* @param {StopAnimationOptions} [options] The stopping options.
 	*/
 	stop({ finish = true } = {}) {
-		if (this.#isStopped || this.#isFinished) return;
+		if (this.#isStopped || this.#isStopping || this.#isFinished) return;
+		this.#isStopping = true;
 		const otherAnimations = animations.get(this.#node).filter((animation) => animation !== this);
 		if (!otherAnimations.length) animations.delete(this.#node);
 		else animations.set(this.#node, otherAnimations);
 		if (finish) this.update();
 		this.#isStopped = true;
+		this.#isStopping = false;
 		if (!finish) this.#reject(this.#node);
 	}
 	/**

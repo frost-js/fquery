@@ -318,6 +318,39 @@ test.describe('#animate', () => {
         ]);
     });
 
+    test('resolves when the animation is stopped from its callback', async ({ page }) => {
+        const animationHandle = await page.evaluateHandle((_) => {
+            const animation = $.animate(
+                '#test2',
+                (node, progress) => {
+                    node.dataset.test = progress;
+
+                    if (progress >= 0.5) {
+                        animation.stop();
+                    }
+                },
+                {
+                    duration: 100,
+                    type: 'linear',
+                    debug: true,
+                },
+            );
+
+            return { animation };
+        });
+        await advanceClock(page, 50);
+        await animationHandle.evaluate(async ({ animation }) => {
+            await animation;
+        });
+        await animationHandle.dispose();
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test1', '#test2', '#test3', '#test4'],
+            },
+        ]);
+    });
+
     test('throws when the animation is stopped (without finishing)', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             try {

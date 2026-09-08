@@ -50,6 +50,7 @@ export default class Animation {
     #callback;
     #isFinished;
     #isStopped;
+    #isStopping;
     #node;
     #options;
     #promise;
@@ -123,9 +124,11 @@ export default class Animation {
      * @param {StopAnimationOptions} [options] The stopping options.
      */
     stop({ finish = true } = {}) {
-        if (this.#isStopped || this.#isFinished) {
+        if (this.#isStopped || this.#isStopping || this.#isFinished) {
             return;
         }
+
+        this.#isStopping = true;
 
         const otherAnimations = animations.get(this.#node)
             .filter((animation) => animation !== this);
@@ -141,6 +144,7 @@ export default class Animation {
         }
 
         this.#isStopped = true;
+        this.#isStopping = false;
 
         if (!finish) {
             this.#reject(this.#node);
