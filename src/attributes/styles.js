@@ -175,25 +175,32 @@ export function show(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        getDOMProperty(node, 'style').setProperty('display', '');
+        const style = getDOMProperty(node, 'style');
+
+        if (style.display === 'none') {
+            style.setProperty('display', '');
+        }
+
+        if (css(node, 'display') === 'none') {
+            style.setProperty('display', 'revert');
+        }
     }
 };
 
 /**
  * Toggles the visibility of each node.
  * @param {ElementInput} selector The input node(s), or a query selector string.
+ * @param {boolean} [force] Whether to show or hide. Omit to toggle the current state.
  */
-export function toggle(selector) {
+export function toggle(selector, force) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        const style = getDOMProperty(node, 'style');
-        style.setProperty(
-            'display',
-            style.display === 'none' ?
-                '' :
-                'none',
-        );
+        if (force ?? (getDOMProperty(node, 'style').display === 'none' || css(node, 'display') === 'none')) {
+            show(node);
+        } else {
+            hide(node);
+        }
     }
 };
 

@@ -89,10 +89,11 @@ export function show() {
 
 /**
  * Toggles the visibility of each node.
+ * @param {boolean} [force] Whether to show or hide. Omit to toggle the current state.
  * @returns {QuerySet} The QuerySet object.
  */
-export function toggle() {
-    _toggle(this);
+export function toggle(force) {
+    _toggle(this, force);
 
     return this;
 };

@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
     await resetPage(page);
 });
 
-test.describe('#show', () => {
+test.describe('QuerySet #show', () => {
     test.beforeEach(async ({ page }) => {
         await page.evaluate((html) => {
             document.body.innerHTML = html;
@@ -16,7 +16,7 @@ test.describe('#show', () => {
 
     test('shows all nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.show('div');
+            $('div').show();
         });
 
         await expect(page.locator('#test1')).toHaveAttribute('style', '');
@@ -27,7 +27,7 @@ test.describe('#show', () => {
         await page.addStyleTag({ content: '.hidden { display: none; }' });
         await page.evaluate((_) => {
             document.getElementById('test1').classList.add('hidden');
-            $.show('#test1');
+            $('#test1').show();
         });
 
         await expect(page.locator('#test1')).toHaveCSS('display', 'block');
@@ -37,7 +37,7 @@ test.describe('#show', () => {
         await page.addStyleTag({ content: '.hidden { display: none; }' });
         await page.evaluate((_) => {
             document.body.innerHTML = '<span id="test1" class="hidden">Test</span>';
-            $.show('#test1');
+            $('#test1').show();
         });
 
         await expect(page.locator('#test1')).toHaveCSS('display', 'inline');
@@ -47,7 +47,7 @@ test.describe('#show', () => {
         await page.addStyleTag({ content: '.hidden { display: none; }' });
         await page.evaluate((_) => {
             document.body.innerHTML = '<table><tbody><tr id="test1" class="hidden"><td>Test</td></tr></tbody></table>';
-            $.show('#test1');
+            $('#test1').show();
         });
 
         await expect(page.locator('#test1')).toHaveCSS('display', 'table-row');
@@ -56,48 +56,16 @@ test.describe('#show', () => {
     test('preserves a visible inline display value', async ({ page }) => {
         await page.evaluate((_) => {
             document.getElementById('test1').style.display = 'flex';
-            $.show('#test1');
+            $('#test1').show();
         });
 
         await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
     });
 
-    test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.show(document.getElementById('test1'));
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none;');
-    });
-
-    test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.show(document.querySelectorAll('div'));
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '');
-    });
-
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.show(document.body.children);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '');
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.show([
-                document.getElementById('test1'),
-                document.getElementById('test2'),
-            ]);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '');
+    test('returns the QuerySet', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const query = $('div');
+            return query === query.show();
+        })).toBe(true);
     });
 });

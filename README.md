@@ -257,7 +257,7 @@ Custom data is stored separately from DOM attributes and `dataset`.
 - `getStyle(style)`: read inline style values from the first node.
 - `setStyle(style, value, { important? })`: set one or more inline styles.
 - `removeStyle(style)`: remove an inline style.
-- `hide()` / `show()` / `toggle()`: change element visibility.
+- `hide()` / `show()` / `toggle(force?)`: change element visibility. Pass `true` to `toggle()` to show or `false` to hide; omit it to toggle the current state.
 
 ### Size, position, and scrolling
 

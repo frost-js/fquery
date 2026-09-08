@@ -4016,18 +4016,21 @@
 	*/
 	function show$1(selector) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) getDOMProperty(node, "style").setProperty("display", "");
+		for (const node of nodes) {
+			const style = getDOMProperty(node, "style");
+			if (style.display === "none") style.setProperty("display", "");
+			if (css$1(node, "display") === "none") style.setProperty("display", "revert");
+		}
 	}
 	/**
 	* Toggles the visibility of each node.
 	* @param {ElementInput} selector The input node(s), or a query selector string.
+	* @param {boolean} [force] Whether to show or hide. Omit to toggle the current state.
 	*/
-	function toggle$1(selector) {
+	function toggle$1(selector, force) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) {
-			const style = getDOMProperty(node, "style");
-			style.setProperty("display", style.display === "none" ? "" : "none");
-		}
+		for (const node of nodes) if (force ?? (getDOMProperty(node, "style").display === "none" || css$1(node, "display") === "none")) show$1(node);
+		else hide$1(node);
 	}
 	/**
 	* Toggles classes for each node.
@@ -5352,10 +5355,11 @@
 	}
 	/**
 	* Toggles the visibility of each node.
+	* @param {boolean} [force] Whether to show or hide. Omit to toggle the current state.
 	* @returns {QuerySet} The QuerySet object.
 	*/
-	function toggle() {
-		toggle$1(this);
+	function toggle(force) {
+		toggle$1(this, force);
 		return this;
 	}
 	/**
