@@ -127,7 +127,10 @@ export default class AjaxRequest {
 
         if (this.#options.data !== null && this.#options.data !== undefined) {
             if (!isFormData && this.#options.processData && isObject(this.#options.data)) {
-                const contentType = (this.#options.contentType || '').split(';')[0].trim().toLowerCase();
+                const contentTypeHeader = Object.entries(this.#options.headers)
+                    .find(([key]) => key.toLowerCase() === 'content-type')?.[1];
+
+                const contentType = (contentTypeHeader || '').split(';')[0].trim().toLowerCase();
 
                 if (contentType === 'application/json') {
                     this.#options.data = JSON.stringify(this.#options.data);

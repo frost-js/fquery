@@ -403,6 +403,69 @@ test.describe('#post', () => {
         });
     });
 
+    test('performs an AJAX POST request with data (JSON from a content-type header)', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            }, {
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: '{"test1":"Test 1","test2":"Test 2"}',
+                headers: {
+                    'content-type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX POST request with data (JSON from a default content-type header)', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            $.setAjaxDefaults({
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const response = await $.post(null, {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: '{"test1":"Test 1","test2":"Test 2"}',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX POST request with FormData', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.post(null, {
