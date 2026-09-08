@@ -5,7 +5,7 @@ import { cloneData, getData, removeData, setData } from './attributes/data.js';
 import { center, constrain, distTo, distToNode, nearestTo, nearestToNode, percentX, percentY, position, rect } from './attributes/position.js';
 import { getScrollX, getScrollY, setScroll, setScrollX, setScrollY } from './attributes/scroll.js';
 import { height, width } from './attributes/size.js';
-import { addClass, css, getStyle, hide, removeClass, removeStyle, setStyle, show, toggle, toggleClass } from './attributes/styles.js';
+import { addClass, css, getStyle, hide, removeClass, removeStyle, setStyle, setStyleLock, show, toggle, toggleClass } from './attributes/styles.js';
 import { addEvent, addEventDelegate, addEventDelegateOnce, addEventOnce, cloneEvents, removeEvent, removeEventDelegate, triggerEvent, triggerOne } from './events/event-handlers.js';
 import { blur, click, focus } from './events/events.js';
 import { attachShadow } from './manipulation/create.js';
@@ -159,6 +159,7 @@ const methods = {
     setScrollX,
     setScrollY,
     setStyle,
+    setStyleLock,
     setText,
     setValue,
     shadow,

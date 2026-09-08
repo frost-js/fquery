@@ -72,6 +72,16 @@ test.describe('#toggle', () => {
         })).toBe('');
     });
 
+    test('restores the inline display after toggling twice', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            $.toggle('#test1');
+            $.toggle('#test1');
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
+    });
+
     test('works with HTMLElement nodes', async ({ page }) => {
         await page.evaluate((_) => {
             $.toggle(document.getElementById('test1'));

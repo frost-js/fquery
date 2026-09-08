@@ -5,8 +5,11 @@ import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
 import { styles } from './../vars.js';
+import { assertStyleUnlocked, setStyleLock } from './style-locks.js';
 
 /** @typedef {Record<string, string|number>} StyleValues */
+
+const displayLocks = new WeakMap();
 
 /**
  * Adds classes to each node.
@@ -101,7 +104,17 @@ export function hide(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        getDOMProperty(node, 'style').setProperty('display', 'none');
+        if (!displayLocks.has(node)) {
+            assertStyleUnlocked(node, 'display');
+        }
+    }
+
+    for (const node of nodes) {
+        if (!displayLocks.has(node)) {
+            displayLocks.set(node, setStyleLock(node, 'display', 'none'));
+        } else {
+            getDOMProperty(node, 'style').setProperty('display', 'none');
+        }
     }
 };
 
@@ -175,6 +188,13 @@ export function show(selector) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
+        const release = displayLocks.get(node);
+
+        if (release) {
+            displayLocks.delete(node);
+            release();
+        }
+
         const style = getDOMProperty(node, 'style');
 
         if (style.display === 'none') {

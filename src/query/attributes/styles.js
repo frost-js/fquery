@@ -1,6 +1,7 @@
 /** @import QuerySet from '../query-set.js'; */
 /** @import { StyleValues } from '../../attributes/styles.js'; */
 
+import { setStyleLock as _setStyleLock } from './../../attributes/style-locks.js';
 import { addClass as _addClass, css as _css, getStyle as _getStyle, hide as _hide, removeClass as _removeClass, removeStyle as _removeStyle, setStyle as _setStyle, show as _show, toggle as _toggle, toggleClass as _toggleClass } from './../../attributes/styles.js';
 
 /**
@@ -75,6 +76,18 @@ export function setStyle(style, value, { important = false } = {}) {
     _setStyle(this, style, value, { important });
 
     return this;
+};
+
+/**
+ * Temporarily sets and locks one inline style property for each node.
+ * @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
+ * @param {string|number} value The temporary style value.
+ * @param {{important?: boolean}} [options] The style options.
+ * @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
+ * @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+ */
+export function setStyleLock(property, value, { important = false } = {}) {
+    return _setStyleLock(this, property, value, { important });
 };
 
 /**

@@ -1,0 +1,171 @@
+import { expect, test } from '#test';
+import { resetPage } from '../../../../setup/browser.js';
+
+const bodyMarkup = '<div id="test1"></div><div id="test2"></div>';
+
+test.beforeEach(async ({ page }) => {
+    await resetPage(page);
+});
+
+test.describe('QuerySet #setStyleLock', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.evaluate((html) => {
+            document.body.innerHTML = html;
+        }, bodyMarkup);
+    });
+
+    test('sets a style value for all nodes', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('div').setStyleLock('display', 'none');
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none;');
+    });
+
+    test('sets a style value with important', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('div').setStyleLock('display', 'none', { important: true });
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none !important;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none !important;');
+    });
+
+    test('normalizes camelCase property names', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test1').setStyleLock('marginTop', '10px');
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'margin-top: 10px;');
+    });
+
+    test('converts number values to pixels', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test1').setStyleLock('width', 100);
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px;');
+    });
+
+    test('returns a release function', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            return typeof $('#test1').setStyleLock('display', 'none');
+        })).toBe('function');
+    });
+
+    test('restores the original value for each node', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            document.getElementById('test2').style.display = 'grid';
+            const release = $('div').setStyleLock('display', 'none');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
+    });
+
+    test('removes a declaration that was originally absent', async ({ page }) => {
+        await page.evaluate((_) => {
+            const release = $('div').setStyleLock('display', 'none');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '');
+        await expect(page.locator('#test2')).toHaveAttribute('style', '');
+    });
+
+    test('restores the original important priority', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('display', 'flex', 'important');
+            const release = $('#test1').setStyleLock('display', 'none');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex !important;');
+    });
+
+    test('restores custom property values', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('--brandColor', 'red');
+            const release = $('#test1').setStyleLock('--brandColor', 'blue');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '--brandColor: red;');
+    });
+
+    test('allows independent property locks', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            const release = $('#test1').setStyleLock('display', 'none');
+            $('#test1').setStyleLock('opacity', 0.5);
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex; opacity: 0.5;');
+    });
+
+    test('does not release a newer lock when called again', async ({ page }) => {
+        await page.evaluate((_) => {
+            const release = $('#test1').setStyleLock('display', 'none');
+            release();
+            $('#test1').setStyleLock('display', 'grid');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid;');
+    });
+
+    test('rejects a property that is already locked', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $('#test1').setStyleLock('display', 'none');
+            try {
+                $('#test1').setStyleLock('display', 'block');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('CSS property "display" is already locked.');
+    });
+
+    test('rejects shorthand properties', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            try {
+                $('#test1').setStyleLock('margin', '10px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "margin". Use a supported longhand or custom property.');
+    });
+
+    test('rejects invalid property values', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            try {
+                $('#test1').setStyleLock('display', 'invalid');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Invalid value for CSS property "display".');
+    });
+
+    test('releases duplicate nodes only once', async ({ page }) => {
+        await page.evaluate((_) => {
+            const node = document.getElementById('test1');
+            node.style.display = 'flex';
+            const query = $('div').map((_) => node);
+            const release = query.setStyleLock('display', 'none');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
+    });
+
+    test('works with an empty selection', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const release = $('.missing').setStyleLock('display', 'none');
+            release();
+            return typeof release;
+        })).toBe('function');
+    });
+});

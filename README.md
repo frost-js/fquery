@@ -256,8 +256,21 @@ Custom data is stored separately from DOM attributes and `dataset`.
 - `css(style)`: read one or more computed CSS values from the first node.
 - `getStyle(style)`: read inline style values from the first node.
 - `setStyle(style, value, { important? })`: set one or more inline styles.
+- `setStyleLock(property, value, { important? })`: temporarily set and lock one inline property on every matched element. Returns a release function.
 - `removeStyle(style)`: remove an inline style.
 - `hide()` / `show()` / `toggle(force?)`: change element visibility. Pass `true` to `toggle()` to show or `false` to hide; omit it to toggle the current state.
+
+Style locks accept supported longhand properties and CSS custom properties. Shorthands, aliases, invalid values, and attempts to lock an already locked property throw before any matched element is changed. Property names and numeric values use the same normalization as `setStyle()`.
+
+```js
+const release = $('.panel').setStyleLock('display', 'none');
+
+release(); // Restore each element's original inline value and !important priority.
+```
+
+The static form is `$.setStyleLock(selector, property, value, options?)`. Calling the release function again does nothing. Locks are cooperative: ordinary `setStyle()` calls and direct DOM writes can still change the property, and releasing restores the original declaration. Different properties can be locked independently.
+
+`hide()` holds a display lock until `show()` releases it, preserving the original inline display value across repeated hides and toggle cycles. Hiding an element whose display is already locked by another caller throws; `show()` only releases locks created by `hide()`.
 
 ### Size, position, and scrolling
 

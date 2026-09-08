@@ -72,6 +72,16 @@ test.describe('QuerySet #toggle', () => {
         })).toBe('');
     });
 
+    test('restores the inline display after toggling twice', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            $('#test1').toggle();
+            $('#test1').toggle();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('div');

@@ -3914,9 +3914,83 @@
 	}
 
 //#endregion
+//#region src/attributes/style-locks.js
+/** @import { ElementInput } from '../helpers.js'; */
+	var styleLocks = /* @__PURE__ */ new WeakMap();
+	/**
+	* Checks that a node's property is available for a style lock.
+	* @param {Element} node The input element.
+	* @param {string} property The normalized CSS property name.
+	* @throws {Error} When the property is already locked.
+	*/
+	function assertStyleUnlocked(node, property) {
+		if (styleLocks.get(node)?.has(property)) throw new Error(`CSS property "${property}" is already locked.`);
+	}
+	/**
+	* Temporarily sets and locks one inline style property for each node.
+	* @param {ElementInput} selector The input node(s), or a query selector string.
+	* @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
+	* @param {string|number} value The temporary style value.
+	* @param {{important?: boolean}} [options] The style options.
+	* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
+	* @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+	*/
+	function setStyleLock$1(selector, property, value, { important = false } = {}) {
+		property = normalizeCssProperty(property);
+		value = normalizeCssValue(property, value);
+		validateStyleLock(property, value);
+		const originals = unique(parseNodes(selector)).map((node) => {
+			assertStyleUnlocked(node, property);
+			const style = getDOMProperty(node, "style");
+			return {
+				node,
+				style,
+				present: [...style].includes(property),
+				value: style.getPropertyValue(property),
+				priority: style.getPropertyPriority(property)
+			};
+		});
+		for (const { node } of originals) {
+			if (!styleLocks.has(node)) styleLocks.set(node, /* @__PURE__ */ new Set());
+			styleLocks.get(node).add(property);
+		}
+		for (const { style } of originals) style.setProperty(property, value, important ? "important" : "");
+		let released = false;
+		return () => {
+			if (released) return;
+			released = true;
+			for (const { style, value, priority, present } of originals) {
+				style.setProperty(property, value, priority);
+				if (present && value === "") style.cssText += ` ${escapeCSS(property)}:${priority ? "!important" : ""};`;
+			}
+			for (const { node } of originals) {
+				const locks = styleLocks.get(node);
+				locks.delete(property);
+				if (!locks.size) styleLocks.delete(node);
+			}
+		};
+	}
+	/**
+	* Validates a property and value before acquiring style locks.
+	* @param {string} property The normalized CSS property name.
+	* @param {string|number} value The normalized CSS value.
+	* @throws {Error} When the property or value is unsupported.
+	*/
+	function validateStyleLock(property, value) {
+		const node = callDOMMethod(getContext(), "createElementNS", "http://www.w3.org/1999/xhtml", "div");
+		const style = getDOMProperty(node, "style");
+		style.setProperty(property, "initial");
+		if (property === "all" || style.length !== 1 || style.item(0) !== property) throw new Error(`Cannot lock CSS property "${property}". Use a supported longhand or custom property.`);
+		style.cssText = "";
+		style.setProperty(property, value);
+		if (value !== "" && !style.length) throw new Error(`Invalid value for CSS property "${property}".`);
+	}
+
+//#endregion
 //#region src/attributes/styles.js
 /** @import { ElementInput } from '../helpers.js'; */
 	/** @typedef {Record<string, string|number>} StyleValues */
+	var displayLocks = /* @__PURE__ */ new WeakMap();
 	/**
 	* Adds classes to each node.
 	* @param {ElementInput} selector The input node(s), or a query selector string.
@@ -3971,7 +4045,9 @@
 	*/
 	function hide$1(selector) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) getDOMProperty(node, "style").setProperty("display", "none");
+		for (const node of nodes) if (!displayLocks.has(node)) assertStyleUnlocked(node, "display");
+		for (const node of nodes) if (!displayLocks.has(node)) displayLocks.set(node, setStyleLock$1(node, "display", "none"));
+		else getDOMProperty(node, "style").setProperty("display", "none");
 	}
 	/**
 	* Removes classes from each node.
@@ -4017,6 +4093,11 @@
 	function show$1(selector) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
+			const release = displayLocks.get(node);
+			if (release) {
+				displayLocks.delete(node);
+				release();
+			}
 			const style = getDOMProperty(node, "style");
 			if (style.display === "none") style.setProperty("display", "");
 			if (css$1(node, "display") === "none") style.setProperty("display", "revert");
@@ -5344,6 +5425,17 @@
 	function setStyle(style, value, { important = false } = {}) {
 		setStyle$1(this, style, value, { important });
 		return this;
+	}
+	/**
+	* Temporarily sets and locks one inline style property for each node.
+	* @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
+	* @param {string|number} value The temporary style value.
+	* @param {{important?: boolean}} [options] The style options.
+	* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
+	* @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+	*/
+	function setStyleLock(property, value, { important = false } = {}) {
+		return setStyleLock$1(this, property, value, { important });
 	}
 	/**
 	* Displays each hidden node.
@@ -7223,6 +7315,7 @@
 		setScrollX,
 		setScrollY,
 		setStyle,
+		setStyleLock,
 		setText,
 		setValue,
 		shadow,
@@ -7656,6 +7749,7 @@
 		setScrollX: setScrollX$1,
 		setScrollY: setScrollY$1,
 		setStyle: setStyle$1,
+		setStyleLock: setStyleLock$1,
 		setText: setText$1,
 		setValue: setValue$1,
 		setWindow,

@@ -10,6 +10,7 @@ import { cloneData, getData, removeData, setData } from './attributes/data.js';
 import { center, constrain, distTo, distToNode, nearestTo, nearestToNode, percentX, percentY, position, rect } from './attributes/position.js';
 import { getScrollX, getScrollY, setScroll, setScrollX, setScrollY } from './attributes/scroll.js';
 import { height, width } from './attributes/size.js';
+import { setStyleLock } from './attributes/style-locks.js';
 import { addClass, css, getStyle, hide, removeClass, removeStyle, setStyle, show, toggle, toggleClass } from './attributes/styles.js';
 import { getAjaxDefaults, getAnimationDefaults, getContext, getWindow, setAjaxDefaults, setAnimationDefaults, setContext, setWindow, useTimeout } from './config.js';
 import { getCookie, removeCookie, setCookie } from './cookie/cookie.js';
@@ -217,6 +218,7 @@ Object.assign(query, {
     setScrollX,
     setScrollY,
     setStyle,
+    setStyleLock,
     setText,
     setValue,
     setWindow,
