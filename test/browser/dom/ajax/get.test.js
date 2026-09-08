@@ -199,6 +199,35 @@ test.describe('#get', () => {
         });
     });
 
+    test('performs an AJAX GET request with object data and a JSON content type', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.get(null, {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            }, {
+                contentType: 'application/json',
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                status: 200,
+                url: 'http://localhost:3001/?test1=Test+1&test2=Test+2',
+            },
+        });
+    });
+
     test('performs an AJAX GET request with data (deep object)', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.get(null, {

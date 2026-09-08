@@ -132,10 +132,10 @@ export default class AjaxRequest {
 
                 const contentType = (contentTypeHeader || '').split(';')[0].trim().toLowerCase();
 
-                if (contentType === 'application/json') {
-                    this.#options.data = JSON.stringify(this.#options.data);
-                } else if (contentType === 'application/x-www-form-urlencoded') {
+                if (['GET', 'HEAD'].includes(this.#options.method) || contentType === 'application/x-www-form-urlencoded') {
                     this.#options.data = parseParams(this.#options.data);
+                } else if (contentType === 'application/json') {
+                    this.#options.data = JSON.stringify(this.#options.data);
                 } else {
                     this.#options.data = parseFormData(this.#options.data);
                 }
