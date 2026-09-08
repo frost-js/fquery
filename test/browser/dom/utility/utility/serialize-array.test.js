@@ -105,6 +105,20 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
+    test('excludes directly selected image inputs', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<input name="test1" type="image" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $.serializeArray('input');
+        })).toEqual([
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+        ]);
+    });
+
     test('excludes button elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
@@ -121,6 +135,20 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
+    test('excludes directly selected button elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<button name="test1" value="Test 1">Test 1</button>' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $.serializeArray('button, input');
+        })).toEqual([
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+        ]);
+    });
+
     test('excludes output elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
@@ -133,6 +161,20 @@ test.describe('#serializeArray', () => {
             {
                 name: 'test1',
                 value: 'Test 1',
+            },
+        ]);
+    });
+
+    test('excludes directly selected output elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<output name="test1">Test 1</output>' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $.serializeArray('output, input');
+        })).toEqual([
+            {
+                name: 'test2',
+                value: 'Test 2',
             },
         ]);
     });

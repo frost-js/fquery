@@ -60,6 +60,15 @@ test.describe('QuerySet #serialize', () => {
         })).toBe('test2=Test%202');
     });
 
+    test('excludes directly selected image inputs', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<input name="test1" type="image" value="Test 1">' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $('input').serialize();
+        })).toBe('test2=Test%202');
+    });
+
     test('excludes button elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
@@ -71,6 +80,15 @@ test.describe('QuerySet #serialize', () => {
         })).toBe('test1=Test%201');
     });
 
+    test('excludes directly selected button elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<button name="test1" value="Test 1">Test 1</button>' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $('button, input').serialize();
+        })).toBe('test2=Test%202');
+    });
+
     test('excludes output elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
@@ -80,6 +98,15 @@ test.describe('QuerySet #serialize', () => {
                 '</form>';
             return $('#form').serialize();
         })).toBe('test1=Test%201');
+    });
+
+    test('excludes directly selected output elements', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.body.innerHTML =
+                '<output name="test1">Test 1</output>' +
+                '<input name="test2" type="text" value="Test 2">';
+            return $('output, input').serialize();
+        })).toBe('test2=Test%202');
     });
 
     test('excludes inputs inside datalists', async ({ page }) => {

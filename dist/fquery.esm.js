@@ -1830,7 +1830,7 @@ function serializeArray$1(selector) {
 			return values.concat(serializeArray$1(merge([], elements).filter((node) => callDOMMethod(node, "matches", "input, select, textarea"))));
 		}
 		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(callDOMMethod(node, "querySelectorAll", "input, select, textarea")));
-		if (isElement(node) && callDOMMethod(node, "matches", ":disabled, datalist *, input[type=button], input[type=submit], input[type=reset], input[type=file], input[type=radio]:not(:checked), input[type=checkbox]:not(:checked)")) return values;
+		if (isElement(node) && callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) return values;
 		const name = callDOMMethod(node, "getAttribute", "name");
 		if (!name) return values;
 		if (isElement(node) && callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
