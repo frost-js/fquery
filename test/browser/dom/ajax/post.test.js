@@ -81,6 +81,35 @@ test.describe('#post', () => {
         });
     });
 
+    test('performs an AJAX POST request with data (object with charset)', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            }, {
+                contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: 'test1=Test%201&test2=Test%202',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
     test('performs an AJAX POST request with data (deep object)', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             const response = await $.post(null, {
@@ -336,6 +365,35 @@ test.describe('#post', () => {
                 body: '{"test1":"Test 1","test2":"Test 2"}',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'POST',
+                status: 200,
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('performs an AJAX POST request with data (JSON with charset)', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            const response = await $.post(null, {
+                test1: 'Test 1',
+                test2: 'Test 2',
+            }, {
+                contentType: 'application/json; charset=utf-8',
+            });
+            response.xhr = response.xhr.data;
+            return response;
+        })).toEqual({
+            event: {
+                isTrusted: false,
+            },
+            response: 'Test',
+            xhr: {
+                async: true,
+                body: '{"test1":"Test 1","test2":"Test 2"}',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
                 method: 'POST',

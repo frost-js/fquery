@@ -314,8 +314,9 @@ var AjaxRequest = class {
 		this.xhr = this.#options.xhr();
 		if (this.#options.data !== null && this.#options.data !== void 0) {
 			if (!isFormData && this.#options.processData && isObject(this.#options.data)) {
-				if (this.#options.contentType === "application/json") this.#options.data = JSON.stringify(this.#options.data);
-				else if (this.#options.contentType === "application/x-www-form-urlencoded") this.#options.data = parseParams(this.#options.data);
+				const contentType = (this.#options.contentType || "").split(";")[0].trim().toLowerCase();
+				if (contentType === "application/json") this.#options.data = JSON.stringify(this.#options.data);
+				else if (contentType === "application/x-www-form-urlencoded") this.#options.data = parseParams(this.#options.data);
 				else this.#options.data = parseFormData(this.#options.data);
 			}
 			if (["GET", "HEAD"].includes(this.#options.method)) {

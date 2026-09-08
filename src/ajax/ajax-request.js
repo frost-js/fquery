@@ -127,9 +127,11 @@ export default class AjaxRequest {
 
         if (this.#options.data !== null && this.#options.data !== undefined) {
             if (!isFormData && this.#options.processData && isObject(this.#options.data)) {
-                if (this.#options.contentType === 'application/json') {
+                const contentType = (this.#options.contentType || '').split(';')[0].trim().toLowerCase();
+
+                if (contentType === 'application/json') {
                     this.#options.data = JSON.stringify(this.#options.data);
-                } else if (this.#options.contentType === 'application/x-www-form-urlencoded') {
+                } else if (contentType === 'application/x-www-form-urlencoded') {
                     this.#options.data = parseParams(this.#options.data);
                 } else {
                     this.#options.data = parseFormData(this.#options.data);
