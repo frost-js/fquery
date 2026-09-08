@@ -38,6 +38,13 @@ test.describe('QuerySet #width', () => {
                     .width({ boxSize: $.CONTENT_BOX }))).toBe(1200);
     });
 
+    test('returns zero content box width for a hidden element with padding', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'display: none; padding: 10px;';
+            return $('#test1').width({ boxSize: $.CONTENT_BOX });
+        })).toBe(0);
+    });
+
     test('returns the border box width of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('div')

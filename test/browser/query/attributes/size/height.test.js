@@ -28,6 +28,13 @@ test.describe('QuerySet #height', () => {
                     .height({ boxSize: $.CONTENT_BOX }))).toBe(1000);
     });
 
+    test('returns zero content box height for a hidden element with padding', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'display: none; padding: 10px;';
+            return $('#test1').height({ boxSize: $.CONTENT_BOX });
+        })).toBe(0);
+    });
+
     test('returns the border box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('div')

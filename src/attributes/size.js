@@ -46,6 +46,7 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-top'));
         result -= parseInt(css(node, 'padding-bottom'));
+        result = Math.max(0, result);
     }
 
     if (boxSize >= BORDER_BOX) {
@@ -96,6 +97,7 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-left'));
         result -= parseInt(css(node, 'padding-right'));
+        result = Math.max(0, result);
     }
 
     if (boxSize >= BORDER_BOX) {

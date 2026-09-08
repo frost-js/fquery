@@ -4368,6 +4368,7 @@
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-top"));
 			result -= parseInt(css$1(node, "padding-bottom"));
+			result = Math.max(0, result);
 		}
 		if (boxSize >= 2) {
 			result += parseInt(css$1(node, "border-top-width"));
@@ -4398,6 +4399,7 @@
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-left"));
 			result -= parseInt(css$1(node, "padding-right"));
+			result = Math.max(0, result);
 		}
 		if (boxSize >= 2) {
 			result += parseInt(css$1(node, "border-left-width"));
