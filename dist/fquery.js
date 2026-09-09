@@ -2516,8 +2516,12 @@
 	function hide$1(selector) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) if (!displayLocks.has(node)) assertStyleUnlocked(node, "display");
-		for (const node of nodes) if (!displayLocks.has(node)) displayLocks.set(node, setStyleLock$1(node, "display", "none"));
-		else getDOMProperty(node, "style").setProperty("display", "none");
+		for (const node of nodes) {
+			const style = getDOMProperty(node, "style");
+			const priority = style.getPropertyPriority("display");
+			if (!displayLocks.has(node)) displayLocks.set(node, setStyleLock$1(node, "display", "none", { important: priority === "important" }));
+			else style.setProperty("display", "none", priority);
+		}
 	}
 	/**
 	* Removes classes from each node.

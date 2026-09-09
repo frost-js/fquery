@@ -23,6 +23,27 @@ test.describe('#hide', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none;');
     });
 
+    test('preserves the inline display priority', async ({ page }) => {
+        await page.addStyleTag({ content: '#test1 { display: flex !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('display', 'grid', 'important');
+            $.hide('#test1');
+        });
+
+        await expect(page.locator('#test1')).toHaveCSS('display', 'none');
+    });
+
+    test('preserves the inline display priority after repeated hides', async ({ page }) => {
+        await page.addStyleTag({ content: '#test1 { display: flex !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.setProperty('display', 'grid', 'important');
+            $.hide('#test1');
+            $.hide('#test1');
+        });
+
+        await expect(page.locator('#test1')).toHaveCSS('display', 'none');
+    });
+
     test('hides again after an ordinary style write', async ({ page }) => {
         await page.evaluate((_) => {
             $.hide('#test1');

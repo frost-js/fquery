@@ -110,10 +110,15 @@ export function hide(selector) {
     }
 
     for (const node of nodes) {
+        const style = getDOMProperty(node, 'style');
+        const priority = style.getPropertyPriority('display');
+
         if (!displayLocks.has(node)) {
-            displayLocks.set(node, setStyleLock(node, 'display', 'none'));
+            displayLocks.set(node, setStyleLock(node, 'display', 'none', {
+                important: priority === 'important',
+            }));
         } else {
-            getDOMProperty(node, 'style').setProperty('display', 'none');
+            style.setProperty('display', 'none', priority);
         }
     }
 };
