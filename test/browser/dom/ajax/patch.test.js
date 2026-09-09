@@ -49,267 +49,87 @@ test.describe('#patch', () => {
         });
     });
 
-    test('performs an AJAX PATCH request with data (object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, {
-                test1: 'Test 1',
-                test2: 'Test 2',
+    for (const [name, data, body] of [
+        ['object', {
+            test1: 'Test 1',
+            test2: 'Test 2',
+        }, 'test1=Test%201&test2=Test%202'],
+        ['deep object', {
+            test1: 'Test 1',
+            test2: {
+                a: '1',
+                b: '2',
+            },
+        }, 'test1=Test%201&test2%5Ba%5D=1&test2%5Bb%5D=2'],
+        ['implicit deep object', {
+            'test1': 'Test 1',
+            'test2[a]': '1',
+            'test2[b]': '2',
+        }, 'test1=Test%201&test2%5Ba%5D=1&test2%5Bb%5D=2'],
+        ['object with array', {
+            test1: 'Test 1',
+            test2: ['1', '2'],
+        }, 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2'],
+        ['object with implicit array', {
+            'test1': 'Test 1',
+            'test2[]': ['1', '2'],
+        }, 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2'],
+        ['array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+        ], 'test1=Test%201&test2=Test%202'],
+        ['deep array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: ['1', '2'],
+            },
+        ], 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2'],
+        ['implicit deep array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2[]',
+                value: ['1', '2'],
+            },
+        ], 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2'],
+        ['string', 'test1=Test%201&test2=Test%202', 'test1=Test%201&test2=Test%202'],
+    ]) {
+        test(`performs an AJAX PATCH request with data (${name})`, async ({ page }) => {
+            expect(await page.evaluate(async (data) => {
+                const response = await $.patch(null, data);
+                response.xhr = response.xhr.data;
+                return response;
+            }, data)).toEqual({
+                event: {
+                    isTrusted: false,
+                },
+                response: 'Test',
+                xhr: {
+                    async: true,
+                    body,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    method: 'PATCH',
+                    status: 200,
+                    url: 'http://localhost:3001/',
+                },
             });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2=Test%202',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
         });
-    });
-
-    test('performs an AJAX PATCH request with data (deep object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, {
-                test1: 'Test 1',
-                test2: {
-                    a: '1',
-                    b: '2',
-                },
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5Ba%5D=1&test2%5Bb%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (implicit deep object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, {
-                'test1': 'Test 1',
-                'test2[a]': '1',
-                'test2[b]': '2',
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5Ba%5D=1&test2%5Bb%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (object with array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, {
-                test1: 'Test 1',
-                test2: ['1', '2'],
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (object with implicit array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, {
-                'test1': 'Test 1',
-                'test2[]': ['1', '2'],
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2',
-                    value: 'Test 2',
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2=Test%202',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (deep array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2',
-                    value: ['1', '2'],
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (implicit deep array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2[]',
-                    value: ['1', '2'],
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2%5B%5D=1&test2%5B%5D=2',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
-
-    test('performs an AJAX PATCH request with data (string)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.patch(null, 'test1=Test%201&test2=Test%202');
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: 'test1=Test%201&test2=Test%202',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'PATCH',
-                status: 200,
-                url: 'http://localhost:3001/',
-            },
-        });
-    });
+    }
 
     test('performs an AJAX PATCH request with data (JSON)', async ({ page }) => {
         expect(await page.evaluate(async (_) => {

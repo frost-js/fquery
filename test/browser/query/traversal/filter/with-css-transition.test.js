@@ -18,26 +18,19 @@ test.describe('QuerySet #withCSSTransition', () => {
         ]);
     });
 
-    test('returns nodes with a later nonzero CSS transition duration', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 1s; }' });
+    for (const [duration, expected] of [
+        ['1s', ['div1', 'div3']],
+        ['0s', []],
+    ]) {
+        test(`filters nodes with CSS transition durations of 0s, ${duration}`, async ({ page }) => {
+            await page.addStyleTag({ content: '.test { transition: opacity 0s, transform ' + duration + '; }' });
 
-        const ids = await page.evaluate((_) =>
-            $('div').withCSSTransition().get().map((node) => node.id));
+            const ids = await page.evaluate((_) =>
+                $('div').withCSSTransition().get().map((node) => node.id));
 
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('returns no nodes when all CSS transition durations are zero', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { transition: opacity 0s, transform 0s; }' });
-
-        const ids = await page.evaluate((_) =>
-            $('div').withCSSTransition().get().map((node) => node.id));
-
-        expect(ids).toEqual([]);
-    });
+            expect(ids).toEqual(expected);
+        });
+    }
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

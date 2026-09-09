@@ -87,107 +87,41 @@ test.describe('#removeEvent', () => {
         })).toBe(0);
     });
 
-    test('removes events named constructor', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('constructor');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', 'constructor', (_) => {
-                result++;
-            });
-            $.addEvent('a', 'click', (_) => null);
-            $.removeEvent('a', 'constructor');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(0);
-    });
+    for (const eventName of ['constructor', 'toString', '__proto__']) {
+        test(`removes events named ${eventName}`, async ({ page }) => {
+            expect(await page.evaluate((eventName) => {
+                let result = 0;
+                const event = new Event(eventName);
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                $.addEvent('a', eventName, (_) => {
+                    result++;
+                });
+                $.addEvent('a', 'click', (_) => null);
+                $.removeEvent('a', eventName);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, eventName)).toBe(0);
+        });
 
-    test('preserves other events when removing events named constructor', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', 'click', (_) => {
-                result++;
-            });
-            $.addEvent('a', 'constructor', (_) => null);
-            $.removeEvent('a', 'constructor');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('removes events named toString', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('toString');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', 'toString', (_) => {
-                result++;
-            });
-            $.addEvent('a', 'click', (_) => null);
-            $.removeEvent('a', 'toString');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(0);
-    });
-
-    test('preserves other events when removing events named toString', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', 'click', (_) => {
-                result++;
-            });
-            $.addEvent('a', 'toString', (_) => null);
-            $.removeEvent('a', 'toString');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('removes events named __proto__', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('__proto__');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', '__proto__', (_) => {
-                result++;
-            });
-            $.addEvent('a', 'click', (_) => null);
-            $.removeEvent('a', '__proto__');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(0);
-    });
-
-    test('preserves other events when removing events named __proto__', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $.addEvent('a', 'click', (_) => {
-                result++;
-            });
-            $.addEvent('a', '__proto__', (_) => null);
-            $.removeEvent('a', '__proto__');
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
+        test(`preserves other events when removing events named ${eventName}`, async ({ page }) => {
+            expect(await page.evaluate((eventName) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                $.addEvent('a', 'click', (_) => {
+                    result++;
+                });
+                $.addEvent('a', eventName, (_) => null);
+                $.removeEvent('a', eventName);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, eventName)).toBe(2);
+        });
+    }
 
     test('removes a specific event from each node', async ({ page }) => {
         expect(await page.evaluate((_) => {

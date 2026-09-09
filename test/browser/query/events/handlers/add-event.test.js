@@ -63,53 +63,23 @@ test.describe('QuerySet #addEvent', () => {
         })).toBe(8);
     });
 
-    test('adds events named constructor', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('constructor');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $('a')
-                    .addEvent('constructor', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('adds events named toString', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('toString');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $('a')
-                    .addEvent('toString', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('adds events named __proto__', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('__proto__');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            $('a')
-                    .addEvent('__proto__', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
+    for (const eventName of ['constructor', 'toString', '__proto__']) {
+        test(`adds events named ${eventName}`, async ({ page }) => {
+            expect(await page.evaluate((eventName) => {
+                let result = 0;
+                const event = new Event(eventName);
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                $('a')
+                        .addEvent(eventName, (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, eventName)).toBe(2);
+        });
+    }
 
     test('adds a namespaced event to each node', async ({ page }) => {
         expect(await page.evaluate((_) => {

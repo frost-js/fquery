@@ -174,77 +174,30 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
-    test('excludes inputs inside datalists', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<datalist>' +
-                '<input name="test1" type="text" value="Test 1">' +
-                '</datalist>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
-
-    test('excludes inputs nested inside datalists', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<datalist>' +
-                '<span><input name="test1" type="text" value="Test 1"></span>' +
-                '</datalist>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
-
-    test('excludes selects inside datalists', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<datalist>' +
-                '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
-                '</datalist>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
-
-    test('excludes textareas inside datalists', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<datalist>' +
-                '<textarea name="test1">Test 1</textarea>' +
-                '</datalist>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
+    for (const [control, html] of [
+        ['inputs', '<input name="test1" type="text" value="Test 1">'],
+        ['nested inputs', '<span><input name="test1" type="text" value="Test 1"></span>'],
+        ['selects', '<select name="test1"><option value="Test 1" selected>Test 1</option></select>'],
+        ['textareas', '<textarea name="test1">Test 1</textarea>'],
+    ]) {
+        test(`excludes ${control} inside datalists`, async ({ page }) => {
+            expect(await page.evaluate((html) => {
+                document.body.innerHTML =
+                    '<form id="form">' +
+                    '<datalist>' +
+                    html +
+                    '</datalist>' +
+                    '<input name="test2" type="text" value="Test 2">' +
+                    '</form>';
+                return $.serializeArray('#form');
+            }, html)).toEqual([
+                {
+                    name: 'test2',
+                    value: 'Test 2',
+                },
+            ]);
+        });
+    }
 
     test('includes inputs associated with datalists', async ({ page }) => {
         expect(await page.evaluate((_) => {
@@ -279,59 +232,29 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
-    test('excludes inputs in disabled fieldsets', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<fieldset disabled>' +
-                '<input name="test1" type="text" value="Test 1">' +
-                '</fieldset>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
-
-    test('excludes selects in disabled fieldsets', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<fieldset disabled>' +
-                '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
-                '</fieldset>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
-
-    test('excludes textareas in disabled fieldsets', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<fieldset disabled>' +
-                '<textarea name="test1">Test 1</textarea>' +
-                '</fieldset>' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-        ]);
-    });
+    for (const [control, html] of [
+        ['inputs', '<input name="test1" type="text" value="Test 1">'],
+        ['selects', '<select name="test1"><option value="Test 1" selected>Test 1</option></select>'],
+        ['textareas', '<textarea name="test1">Test 1</textarea>'],
+    ]) {
+        test(`excludes ${control} in disabled fieldsets`, async ({ page }) => {
+            expect(await page.evaluate((html) => {
+                document.body.innerHTML =
+                    '<form id="form">' +
+                    '<fieldset disabled>' +
+                    html +
+                    '</fieldset>' +
+                    '<input name="test2" type="text" value="Test 2">' +
+                    '</form>';
+                return $.serializeArray('#form');
+            }, html)).toEqual([
+                {
+                    name: 'test2',
+                    value: 'Test 2',
+                },
+            ]);
+        });
+    }
 
     test('includes enabled controls in the first legend of a disabled fieldset', async ({ page }) => {
         expect(await page.evaluate((_) => {
@@ -556,105 +479,57 @@ test.describe('#serializeArray', () => {
         ]);
     });
 
-    test('serializes forms with a control named elements', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<input name="elements" type="text" value="Test 1">' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>' +
-                '<input name="test3" type="text" value="Test 3" form="form">';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'elements',
-                value: 'Test 1',
-            },
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-            {
-                name: 'test3',
-                value: 'Test 3',
-            },
-        ]);
-    });
+    for (const key of ['elements', 'matches']) {
+        test(`serializes forms with a control named ${key}`, async ({ page }) => {
+            expect(await page.evaluate((key) => {
+                document.body.innerHTML =
+                    '<form id="form">' +
+                    '<input name="' + key + '" type="text" value="Test 1">' +
+                    '<input name="test2" type="text" value="Test 2">' +
+                    '</form>' +
+                    '<input name="test3" type="text" value="Test 3" form="form">';
+                return $.serializeArray('#form');
+            }, key)).toEqual([
+                {
+                    name: key,
+                    value: 'Test 1',
+                },
+                {
+                    name: 'test2',
+                    value: 'Test 2',
+                },
+                {
+                    name: 'test3',
+                    value: 'Test 3',
+                },
+            ]);
+        });
 
-    test('serializes forms with a control whose id is elements', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<input name="test1" type="text" id="elements" value="Test 1">' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>' +
-                '<input name="test3" type="text" value="Test 3" form="form">';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test1',
-                value: 'Test 1',
-            },
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-            {
-                name: 'test3',
-                value: 'Test 3',
-            },
-        ]);
-    });
-
-    test('serializes forms with a control named matches', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<input name="matches" type="text" value="Test 1">' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>' +
-                '<input name="test3" type="text" value="Test 3" form="form">';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'matches',
-                value: 'Test 1',
-            },
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-            {
-                name: 'test3',
-                value: 'Test 3',
-            },
-        ]);
-    });
-
-    test('serializes forms with a control whose id is matches', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form id="form">' +
-                '<input name="test1" type="text" id="matches" value="Test 1">' +
-                '<input name="test2" type="text" value="Test 2">' +
-                '</form>' +
-                '<input name="test3" type="text" value="Test 3" form="form">';
-            return $.serializeArray('#form');
-        })).toEqual([
-            {
-                name: 'test1',
-                value: 'Test 1',
-            },
-            {
-                name: 'test2',
-                value: 'Test 2',
-            },
-            {
-                name: 'test3',
-                value: 'Test 3',
-            },
-        ]);
-    });
+        test(`serializes forms with a control whose id is ${key}`, async ({ page }) => {
+            expect(await page.evaluate((key) => {
+                document.body.innerHTML =
+                    '<form id="form">' +
+                    '<input name="test1" type="text" id="' + key + '" value="Test 1">' +
+                    '<input name="test2" type="text" value="Test 2">' +
+                    '</form>' +
+                    '<input name="test3" type="text" value="Test 3" form="form">';
+                return $.serializeArray('#form');
+            }, key)).toEqual([
+                {
+                    name: 'test1',
+                    value: 'Test 1',
+                },
+                {
+                    name: 'test2',
+                    value: 'Test 2',
+                },
+                {
+                    name: 'test3',
+                    value: 'Test 3',
+                },
+            ]);
+        });
+    }
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

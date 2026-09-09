@@ -30,20 +30,12 @@ test.describe('QuerySet #getData', () => {
                     .getData('invalid'))).toBe(undefined);
     });
 
-    test('does not return an inherited constructor', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').getData('constructor') === undefined)).toBe(true);
-    });
-
-    test('does not return an inherited toString method', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').getData('toString') === undefined)).toBe(true);
-    });
-
-    test('does not return an inherited __proto__ value', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').getData('__proto__') === undefined)).toBe(true);
-    });
+    for (const key of ['constructor', 'toString', '__proto__']) {
+        test(`does not return an inherited ${key} property`, async ({ page }) => {
+            expect(await page.evaluate((key) =>
+                $('div').getData(key) === undefined, key)).toBe(true);
+        });
+    }
 
     test('returns undefined for empty nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

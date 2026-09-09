@@ -27,23 +27,19 @@ test.describe('#getDataset', () => {
         expect(value).toBe('Test');
     });
 
-    test('returns a data-constructor attribute value', async ({ page }) => {
-        const value = await page.evaluate((_) => {
-            document.getElementById('test1').setAttribute('data-constructor', '123.456');
-            return $.getDataset('div', 'constructor');
+    for (const [attribute, key, raw, expected] of [
+        ['data-constructor', 'constructor', '123.456', 123.456],
+        ['data-to-string', 'toString', 'Test', 'Test'],
+    ]) {
+        test(`returns a ${attribute} attribute value`, async ({ page }) => {
+            const value = await page.evaluate(([attribute, key, raw]) => {
+                document.getElementById('test1').setAttribute(attribute, raw);
+                return $.getDataset('div', key);
+            }, [attribute, key, raw]);
+
+            expect(value).toBe(expected);
         });
-
-        expect(value).toBe(123.456);
-    });
-
-    test('returns a data-to-string attribute value', async ({ page }) => {
-        const value = await page.evaluate((_) => {
-            document.getElementById('test1').setAttribute('data-to-string', 'Test');
-            return $.getDataset('div', 'toString');
-        });
-
-        expect(value).toBe('Test');
-    });
+    }
 
     test('returns an empty dataset value', async ({ page }) => {
         const value = await page.evaluate((_) => {
@@ -90,17 +86,13 @@ test.describe('#getDataset', () => {
         expect(value).toEqual({ a: 1 });
     });
 
-    test('returns undefined for an inherited constructor', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getDataset('div', 'constructor'));
+    for (const key of ['constructor', 'toString']) {
+        test(`returns undefined for an inherited ${key} property`, async ({ page }) => {
+            const value = await page.evaluate((key) => $.getDataset('div', key), key);
 
-        expect(value).toBe(undefined);
-    });
-
-    test('returns undefined for an inherited toString method', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getDataset('div', 'toString'));
-
-        expect(value).toBe(undefined);
-    });
+            expect(value).toBe(undefined);
+        });
+    }
 
     test('returns undefined for empty nodes', async ({ page }) => {
         const value = await page.evaluate((_) => $.getDataset('#invalid', 'text'));

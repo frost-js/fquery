@@ -167,32 +167,87 @@ test.describe('#get', () => {
         });
     });
 
-    test('performs an AJAX GET request with data (object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, {
-                test1: 'Test 1',
-                test2: 'Test 2',
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
+    for (const [name, data, url] of [
+        ['object', {
+            test1: 'Test 1',
+            test2: 'Test 2',
+        }, 'http://localhost:3001/?test1=Test+1&test2=Test+2'],
+        ['deep object', {
+            test1: 'Test 1',
+            test2: {
+                a: '1',
+                b: '2',
             },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
+        }, 'http://localhost:3001/?test1=Test+1&test2%5Ba%5D=1&test2%5Bb%5D=2'],
+        ['implicit deep object', {
+            'test1': 'Test 1',
+            'test2[a]': '1',
+            'test2[b]': '2',
+        }, 'http://localhost:3001/?test1=Test+1&test2%5Ba%5D=1&test2%5Bb%5D=2'],
+        ['object with array', {
+            test1: 'Test 1',
+            test2: ['1', '2'],
+        }, 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2'],
+        ['object with implicit array', {
+            'test1': 'Test 1',
+            'test2[]': ['1', '2'],
+        }, 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2'],
+        ['array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: 'Test 2',
+            },
+        ], 'http://localhost:3001/?test1=Test+1&test2=Test+2'],
+        ['deep array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2',
+                value: ['1', '2'],
+            },
+        ], 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2'],
+        ['implicit deep array', [
+            {
+                name: 'test1',
+                value: 'Test 1',
+            },
+            {
+                name: 'test2[]',
+                value: ['1', '2'],
+            },
+        ], 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2'],
+        ['string', 'test1=Test%201&test2=Test%202', 'http://localhost:3001/?test1=Test+1&test2=Test+2'],
+    ]) {
+        test(`performs an AJAX GET request with data (${name})`, async ({ page }) => {
+            expect(await page.evaluate(async (data) => {
+                const response = await $.get(null, data);
+                response.xhr = response.xhr.data;
+                return response;
+            }, data)).toEqual({
+                event: {
+                    isTrusted: false,
                 },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2=Test+2',
-            },
+                response: 'Test',
+                xhr: {
+                    async: true,
+                    body: null,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    method: 'GET',
+                    status: 200,
+                    url,
+                },
+            });
         });
-    });
+    }
 
     test('performs an AJAX GET request with object data and a JSON content type', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
@@ -214,241 +269,6 @@ test.describe('#get', () => {
                 body: null,
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2=Test+2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (deep object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, {
-                test1: 'Test 1',
-                test2: {
-                    a: '1',
-                    b: '2',
-                },
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5Ba%5D=1&test2%5Bb%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (implicit deep object)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, {
-                'test1': 'Test 1',
-                'test2[a]': '1',
-                'test2[b]': '2',
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5Ba%5D=1&test2%5Bb%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (object with array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, {
-                test1: 'Test 1',
-                test2: ['1', '2'],
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (object with implicit array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, {
-                'test1': 'Test 1',
-                'test2[]': ['1', '2'],
-            });
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2',
-                    value: 'Test 2',
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2=Test+2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (deep array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2',
-                    value: ['1', '2'],
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (implicit deep array)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, [
-                {
-                    name: 'test1',
-                    value: 'Test 1',
-                },
-                {
-                    name: 'test2[]',
-                    value: ['1', '2'],
-                },
-            ]);
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                method: 'GET',
-                status: 200,
-                url: 'http://localhost:3001/?test1=Test+1&test2%5B%5D=1&test2%5B%5D=2',
-            },
-        });
-    });
-
-    test('performs an AJAX GET request with data (string)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            const response = await $.get(null, 'test1=Test%201&test2=Test%202');
-            response.xhr = response.xhr.data;
-            return response;
-        })).toEqual({
-            event: {
-                isTrusted: false,
-            },
-            response: 'Test',
-            xhr: {
-                async: true,
-                body: null,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
                 method: 'GET',

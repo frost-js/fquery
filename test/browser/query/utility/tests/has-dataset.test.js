@@ -24,19 +24,17 @@ test.describe('QuerySet #hasDataset', () => {
         })).toBe(true);
     });
 
-    test('returns true for a data-constructor attribute', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.getElementById('div2').setAttribute('data-constructor', 'Test');
-            return $('div').hasDataset('constructor');
-        })).toBe(true);
-    });
-
-    test('returns true for a data-to-string attribute', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.getElementById('div2').setAttribute('data-to-string', 'Test');
-            return $('div').hasDataset('toString');
-        })).toBe(true);
-    });
+    for (const [attribute, key] of [
+        ['data-constructor', 'constructor'],
+        ['data-to-string', 'toString'],
+    ]) {
+        test(`returns true for a ${attribute} attribute`, async ({ page }) => {
+            expect(await page.evaluate(([attribute, key]) => {
+                document.getElementById('div2').setAttribute(attribute, 'Test');
+                return $('div').hasDataset(key);
+            }, [attribute, key])).toBe(true);
+        });
+    }
 
     test('returns false if no nodes have a specified attribute', async ({ page }) => {
         expect(await page.evaluate((_) =>
@@ -44,13 +42,10 @@ test.describe('QuerySet #hasDataset', () => {
                     .hasDataset('text'))).toBe(false);
     });
 
-    test('returns false for an inherited constructor', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').hasDataset('constructor'))).toBe(false);
-    });
-
-    test('returns false for an inherited toString method', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').hasDataset('toString'))).toBe(false);
-    });
+    for (const key of ['constructor', 'toString']) {
+        test(`returns false for an inherited ${key} property`, async ({ page }) => {
+            expect(await page.evaluate((key) =>
+                $('div').hasDataset(key), key)).toBe(false);
+        });
+    }
 });

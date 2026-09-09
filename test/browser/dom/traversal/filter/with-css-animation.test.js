@@ -20,26 +20,19 @@ test.describe('#withCSSAnimation', () => {
         ]);
     });
 
-    test('returns nodes with a later nonzero CSS animation duration', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin 1s linear infinite; }' });
+    for (const [duration, expected] of [
+        ['1s', ['div1', 'div3']],
+        ['0s', []],
+    ]) {
+        test(`filters nodes with CSS animation durations of 0s, ${duration}`, async ({ page }) => {
+            await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin ' + duration + ' linear infinite; }' });
 
-        const ids = await page.evaluate((_) =>
-            $.withCSSAnimation('div').map((node) => node.id));
+            const ids = await page.evaluate((_) =>
+                $.withCSSAnimation('div').map((node) => node.id));
 
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('returns no nodes when all CSS animation durations are zero', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin 0s linear infinite; }' });
-
-        const ids = await page.evaluate((_) =>
-            $.withCSSAnimation('div').map((node) => node.id));
-
-        expect(ids).toEqual([]);
-    });
+            expect(ids).toEqual(expected);
+        });
+    }
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
