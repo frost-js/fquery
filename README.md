@@ -270,7 +270,7 @@ const release = $('.panel').setStyleLock('display', 'none');
 release(); // Restore each element's original inline value and !important priority.
 ```
 
-The static form is `$.setStyleLock(selector, property, value, options?)`. Calling the release function again does nothing. Locks are cooperative: ordinary `setStyle()` calls and direct DOM writes can still change the property, and releasing restores the original declaration. Different properties can be locked independently.
+The static form is `$.setStyleLock(selector, property, value, options?)`. Use `release({ restore: false })` to unlock while keeping the current declaration. Calling the release function again does nothing. Locks are cooperative: ordinary `setStyle()` calls and direct DOM writes can still change the property, and releasing restores the original declaration by default. Different properties can be locked independently.
 
 `hide()` holds a display lock until `show()` releases it, preserving the original inline display value across repeated hides and toggle cycles. Hiding an element whose display is already locked by another caller throws; `show()` only releases locks created by `hide()`.
 
@@ -363,7 +363,9 @@ Common animation options are:
 - `squeezeIn(options?)` / `squeezeOut(options?)`: animate dimensions from or toward a direction.
 - `stop({ finish? })`: stop active animations, finishing them by default.
 
-Built-in effects restore the inline styles they change when they complete or are stopped with `finish: true`. Stopping with `finish: false` leaves the current animated styles in place.
+Slide and drop effects use transforms for movement. Squeeze effects animate width or height and use transforms for positional offsets.
+
+Built-in effects lock the inline properties they change and restore them when they complete or are stopped with `finish: true`. Stopping with `finish: false` releases the locks while leaving the current animated styles in place. Failed effects release their locks and restore their original styles. Effects reject if a property is already locked or its original declaration cannot be safely restored; effects using different properties can run together.
 
 The static forms return an `AnimationSet`. QuerySet forms queue the work and return the current set.
 

@@ -18,6 +18,54 @@ test.describe('QuerySet #fadeIn', () => {
         });
     });
 
+    test('holds an opacity lock while the animation is active', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test2').fadeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        expect(await page.evaluate((_) => {
+            try {
+                $('#test2').setStyleLock('opacity', 0.25);
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('CSS property "opacity" is already locked.');
+    });
+
+    test('releases opacity before the next queued effect starts', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test2').fadeIn({ duration: 100 }).fadeOut({ duration: 100 });
+        });
+        await advanceClock(page, 150);
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2'],
+                styles: { opacity: '0.5' },
+            },
+        ]);
+    });
+
+    test('releases opacity without restoring when stopped without finishing', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test2').fadeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            $('#test2').stop({ finish: false });
+            const release = $('#test2').setStyleLock('opacity', 0.75);
+            release();
+        });
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2'],
+                styles: { opacity: '0.5' },
+            },
+        ]);
+    });
+
     test('adds a fade-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

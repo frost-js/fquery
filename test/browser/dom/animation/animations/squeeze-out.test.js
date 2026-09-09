@@ -19,20 +19,18 @@ test.describe('#squeezeOut', () => {
         });
     });
 
-    test('restores existing inline dimensions, margins and overflow', async ({ page }) => {
+    test('restores existing inline dimensions, overflow and transform', async ({ page }) => {
         await page.evaluate((_) => {
             for (const node of document.querySelectorAll('.animate')) {
                 node.style.setProperty('height', '80px');
-                node.style.setProperty('margin-left', '10px');
-                node.style.setProperty('margin-top', '20px');
                 node.style.setProperty('overflow', 'scroll');
+                node.style.setProperty('transform', 'scale(2)');
                 node.style.setProperty('width', '90px');
             }
 
             $.squeezeOut('.animate', {
                 direction: 'left',
                 duration: 100,
-                useGpu: false,
             });
         });
         await advanceClock(page, 100);
@@ -41,9 +39,8 @@ test.describe('#squeezeOut', () => {
                 selectors: ['#test2', '#test4'],
                 styles: {
                     height: '80px',
-                    marginLeft: '10px',
-                    marginTop: '20px',
                     overflow: 'scroll',
+                    transform: 'scale(2)',
                     width: '90px',
                 },
             },
@@ -246,155 +243,6 @@ test.describe('#squeezeOut', () => {
             {
                 selectors: ['#test1', '#test2', '#test3', '#test4'],
                 styles: { overflow: '', height: '' },
-            },
-        ]);
-    });
-
-    test('adds a squeeze-out animation to each node without gpu', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.squeezeOut('.animate', {
-                duration: 100,
-                useGpu: false,
-                debug: true,
-            });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { overflow: '', height: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { overflow: 'hidden', height: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { overflow: '', height: '' },
-            },
-        ]);
-    });
-
-    test('adds a squeeze-out animation to each node without gpu (top)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.squeezeOut('.animate', {
-                direction: 'top',
-                duration: 100,
-                useGpu: false,
-                debug: true,
-            });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { overflow: '', height: '', marginTop: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { overflow: 'hidden', height: '50px', marginTop: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { overflow: '', height: '', marginTop: '' },
-            },
-        ]);
-    });
-
-    test('adds a squeeze-out animation to each node without gpu (right)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.squeezeOut('.animate', {
-                direction: 'right',
-                duration: 100,
-                useGpu: false,
-                debug: true,
-            });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { overflow: '', width: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { overflow: 'hidden', width: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { overflow: '', width: '' },
-            },
-        ]);
-    });
-
-    test('adds a squeeze-out animation to each node without gpu (bottom)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.squeezeOut('.animate', {
-                direction: 'bottom',
-                duration: 100,
-                useGpu: false,
-                debug: true,
-            });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { overflow: '', height: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { overflow: 'hidden', height: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { overflow: '', height: '' },
-            },
-        ]);
-    });
-
-    test('adds a squeeze-out animation to each node without gpu (left)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.squeezeOut('.animate', {
-                direction: 'left',
-                duration: 100,
-                useGpu: false,
-                debug: true,
-            });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { overflow: '', width: '', marginLeft: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { overflow: 'hidden', width: '50px', marginLeft: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { overflow: '', width: '', marginLeft: '' },
             },
         ]);
     });

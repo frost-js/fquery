@@ -8,6 +8,12 @@ import { escapeCSS, normalizeCssProperty, normalizeCssValue } from './../helpers
 const styleLocks = new WeakMap();
 
 /**
+ * @callback ReleaseStyleLock
+ * @param {{restore?: boolean}} [options] Whether to restore the original declarations (defaults to true).
+ * @returns {void} Nothing.
+ */
+
+/**
  * Checks that a node's property is available for a style lock.
  * @param {Element} node The input element.
  * @param {string} property The normalized CSS property name.
@@ -25,7 +31,7 @@ export function assertStyleUnlocked(node, property) {
  * @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
  * @param {string|number} value The temporary style value.
  * @param {{important?: boolean}} [options] The style options.
- * @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
+ * @returns {ReleaseStyleLock} A function that releases the locks, restoring the original declarations unless restore is false. Repeated calls do nothing.
  * @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
  */
 export function setStyleLock(selector, property, value, { important = false } = {}) {
@@ -76,19 +82,21 @@ export function setStyleLock(selector, property, value, { important = false } = 
 
     let released = false;
 
-    return () => {
+    return ({ restore = true } = {}) => {
         if (released) {
             return;
         }
 
         released = true;
 
-        for (const { style, value, priority, present } of originals) {
-            style.setProperty(property, value, priority);
+        if (restore) {
+            for (const { style, value, priority, present } of originals) {
+                style.setProperty(property, value, priority);
 
-            // setProperty removes empty values, so restore empty custom declarations explicitly.
-            if (present && value === '') {
-                style.cssText += ` ${escapeCSS(property)}:${priority ? '!important' : ''};`;
+                // setProperty removes empty values, so restore empty custom declarations explicitly.
+                if (present && value === '') {
+                    style.cssText += ` ${escapeCSS(property)}:${priority ? '!important' : ''};`;
+                }
             }
         }
 

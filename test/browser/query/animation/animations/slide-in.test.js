@@ -19,6 +19,23 @@ test.describe('QuerySet #slideIn', () => {
         });
     });
 
+    test('preserves margins supplied by a variable-based shorthand', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.cssText = '--spacing: 20px; margin: var(--spacing);';
+            $('#test2').slideIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2'],
+                styles: { margin: 'var(--spacing)', transform: 'translateY(50px)' },
+            },
+        ]);
+        await advanceClock(page, 100);
+
+        await expect(page.locator('#test2')).toHaveAttribute('style', '--spacing: 20px; margin: var(--spacing);');
+    });
+
     test('adds a slide-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')
@@ -222,160 +239,6 @@ test.describe('QuerySet #slideIn', () => {
             {
                 selectors: ['#test1', '#test2', '#test3', '#test4'],
                 styles: { transform: '' },
-            },
-        ]);
-    });
-
-    test('adds a slide-in animation to each node without gpu', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .slideIn({
-                    duration: 100,
-                    useGpu: false,
-                    debug: true,
-                });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { marginTop: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { marginTop: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { marginTop: '' },
-            },
-        ]);
-    });
-
-    test('adds a slide-in animation to each node without gpu (top)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .slideIn({
-                    direction: 'top',
-                    duration: 100,
-                    useGpu: false,
-                    debug: true,
-                });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { marginTop: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { marginTop: '-50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { marginTop: '' },
-            },
-        ]);
-    });
-
-    test('adds a slide-in animation to each node without gpu (right)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .slideIn({
-                    direction: 'right',
-                    duration: 100,
-                    useGpu: false,
-                    debug: true,
-                });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { marginLeft: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { marginLeft: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { marginLeft: '' },
-            },
-        ]);
-    });
-
-    test('adds a slide-in animation to each node without gpu (bottom)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .slideIn({
-                    direction: 'bottom',
-                    duration: 100,
-                    useGpu: false,
-                    debug: true,
-                });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { marginTop: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { marginTop: '50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { marginTop: '' },
-            },
-        ]);
-    });
-
-    test('adds a slide-in animation to each node without gpu (left)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .slideIn({
-                    direction: 'left',
-                    duration: 100,
-                    useGpu: false,
-                    debug: true,
-                });
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { marginLeft: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { marginLeft: '-50px' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { marginLeft: '' },
             },
         ]);
     });

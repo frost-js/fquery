@@ -18,7 +18,6 @@ import { getTime } from './helpers.js';
  * @property {boolean} [infinite=false] Whether to repeat indefinitely.
  * @property {boolean} [debug=false] Whether to expose timing data on the element.
  * @property {AnimationDirection} [direction] The animation direction.
- * @property {boolean} [useGpu=true] Whether to use GPU-accelerated transforms.
  * @property {number} [x=0] The X-axis rotation component.
  * @property {number} [y=1] The Y-axis rotation component.
  * @property {number} [z=0] The Z-axis rotation component.
@@ -37,9 +36,17 @@ import { getTime } from './helpers.js';
 
 /**
  * @callback AnimationCallback
+ * @this {Animation}
  * @param {Element} node The animated element.
  * @param {number} progress The animation progress from 0 to 1.
  * @param {AnimationOptions} options The resolved animation options.
+ * @returns {void} Nothing.
+ */
+
+/**
+ * @callback AnimationCleanupCallback
+ * @this {Animation}
+ * @param {boolean} restore Whether to restore the original state.
  * @returns {void} Nothing.
  */
 
@@ -48,6 +55,7 @@ import { getTime } from './helpers.js';
  */
 export default class Animation {
     #callback;
+    #cleanup;
     #isFinished;
     #isStopped;
     #isStopping;
@@ -62,10 +70,12 @@ export default class Animation {
      * @param {Element} node The input node.
      * @param {AnimationCallback} callback The animation callback.
      * @param {AnimationOptions} [options] The animation options.
+     * @param {AnimationCleanupCallback} [cleanup] Internal cleanup for built-in effects.
      */
-    constructor(node, callback, options) {
+    constructor(node, callback, options, cleanup) {
         this.#node = node;
         this.#callback = callback;
+        this.#cleanup = cleanup;
 
         this.#options = {
             ...getAnimationDefaults(),
@@ -107,7 +117,7 @@ export default class Animation {
      * @returns {Animation} The cloned Animation.
      */
     clone(node) {
-        return new Animation(node, this.#callback, this.#options);
+        return new Animation(node, this.#callback, this.#options, this.#cleanup);
     }
 
     /**
@@ -147,6 +157,7 @@ export default class Animation {
         this.#isStopping = false;
 
         if (!finish) {
+            this.#cleanup?.(false);
             this.#reject(this.#node);
         }
     }
@@ -167,7 +178,7 @@ export default class Animation {
      * @returns {boolean} Whether the animation is finished.
      */
     update(time = null) {
-        if (this.#isStopped) {
+        if (this.#isStopped || this.#isFinished) {
             return true;
         }
 
@@ -216,6 +227,7 @@ export default class Animation {
             }
 
             this.#isFinished = true;
+            this.#cleanup?.(true);
             this.#reject(error);
 
             return true;
@@ -235,6 +247,7 @@ export default class Animation {
         if (!this.#isFinished) {
             this.#isFinished = true;
 
+            this.#cleanup?.(true);
             this.#resolve(this.#node);
         }
 

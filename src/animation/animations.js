@@ -3,10 +3,11 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { evaluate, getDOMProperty } from '@fr0st/core';
+import { setStyleLock } from './../attributes/style-locks.js';
 import { animate } from './animate.js';
 
 /**
- * @typedef {Record<string, {priority: string, value: string}>} InlineStyles
+ * @typedef {Record<string, string>} InlineStyles
  */
 
 /**
@@ -143,39 +144,28 @@ export function rotateOut(selector, options) {
 export function slideIn(selector, options) {
     options = {
         direction: 'bottom',
-        useGpu: true,
         ...options,
     };
 
     return animateEffect(
         selector,
-        options.useGpu ?
-            ['transform'] :
-            ['margin-left', 'margin-top'],
+        ['transform'],
         (node, progress, options) => {
             const dir = evaluate(options.direction);
 
-            let size; let translateStyle; let inverse;
+            let size; let axis; let inverse;
             if (['top', 'bottom'].includes(dir)) {
                 size = getDOMProperty(node, 'clientHeight');
-                translateStyle = options.useGpu ?
-                    'Y' :
-                    'margin-top';
+                axis = 'Y';
                 inverse = dir === 'top';
             } else {
                 size = getDOMProperty(node, 'clientWidth');
-                translateStyle = options.useGpu ?
-                    'X' :
-                    'margin-left';
+                axis = 'X';
                 inverse = dir === 'left';
             }
 
             const translateAmount = ((size - (size * progress)) * (inverse ? -1 : 1)).toFixed(2);
-            if (options.useGpu) {
-                getDOMProperty(node, 'style').setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
-            } else {
-                getDOMProperty(node, 'style').setProperty(translateStyle, `${translateAmount}px`);
-            }
+            getDOMProperty(node, 'style').setProperty('transform', `translate${axis}(${translateAmount}px)`);
         },
         options,
     );
@@ -190,39 +180,28 @@ export function slideIn(selector, options) {
 export function slideOut(selector, options) {
     options = {
         direction: 'bottom',
-        useGpu: true,
         ...options,
     };
 
     return animateEffect(
         selector,
-        options.useGpu ?
-            ['transform'] :
-            ['margin-left', 'margin-top'],
+        ['transform'],
         (node, progress, options) => {
             const dir = evaluate(options.direction);
 
-            let size; let translateStyle; let inverse;
+            let size; let axis; let inverse;
             if (['top', 'bottom'].includes(dir)) {
                 size = getDOMProperty(node, 'clientHeight');
-                translateStyle = options.useGpu ?
-                    'Y' :
-                    'margin-top';
+                axis = 'Y';
                 inverse = dir === 'top';
             } else {
                 size = getDOMProperty(node, 'clientWidth');
-                translateStyle = options.useGpu ?
-                    'X' :
-                    'margin-left';
+                axis = 'X';
                 inverse = dir === 'left';
             }
 
             const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-            if (options.useGpu) {
-                getDOMProperty(node, 'style').setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
-            } else {
-                getDOMProperty(node, 'style').setProperty(translateStyle, `${translateAmount}px`);
-            }
+            getDOMProperty(node, 'style').setProperty('transform', `translate${axis}(${translateAmount}px)`);
         },
         options,
     );
@@ -237,39 +216,33 @@ export function slideOut(selector, options) {
 export function squeezeIn(selector, options) {
     options = {
         direction: 'bottom',
-        useGpu: true,
         ...options,
     };
 
     return animateEffect(
         selector,
-        options.useGpu ?
-            ['height', 'overflow', 'transform', 'width'] :
-            ['height', 'margin-left', 'margin-top', 'overflow', 'width'],
+        ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
         (node, progress, options, initialStyles) => {
             const style = getDOMProperty(node, 'style');
-            style.setProperty('height', initialStyles.height.value);
-            style.setProperty('width', initialStyles.width.value);
-            style.setProperty('overflow', 'hidden');
+            style.setProperty('height', initialStyles.height);
+            style.setProperty('width', initialStyles.width);
+            style.setProperty('overflow-x', 'hidden');
+            style.setProperty('overflow-y', 'hidden');
 
             const dir = evaluate(options.direction);
 
-            let size; let sizeStyle; let translateStyle;
+            let size; let sizeStyle; let axis;
             if (['top', 'bottom'].includes(dir)) {
                 size = getDOMProperty(node, 'clientHeight');
                 sizeStyle = 'height';
                 if (dir === 'top') {
-                    translateStyle = options.useGpu ?
-                        'Y' :
-                        'margin-top';
+                    axis = 'Y';
                 }
             } else {
                 size = getDOMProperty(node, 'clientWidth');
                 sizeStyle = 'width';
                 if (dir === 'left') {
-                    translateStyle = options.useGpu ?
-                        'X' :
-                        'margin-left';
+                    axis = 'X';
                 }
             }
 
@@ -277,13 +250,9 @@ export function squeezeIn(selector, options) {
 
             style.setProperty(sizeStyle, `${amount}px`);
 
-            if (translateStyle) {
+            if (axis) {
                 const translateAmount = (size - amount).toFixed(2);
-                if (options.useGpu) {
-                    style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
-                } else {
-                    style.setProperty(translateStyle, `${translateAmount}px`);
-                }
+                style.setProperty('transform', `translate${axis}(${translateAmount}px)`);
             }
         },
         options,
@@ -299,39 +268,33 @@ export function squeezeIn(selector, options) {
 export function squeezeOut(selector, options) {
     options = {
         direction: 'bottom',
-        useGpu: true,
         ...options,
     };
 
     return animateEffect(
         selector,
-        options.useGpu ?
-            ['height', 'overflow', 'transform', 'width'] :
-            ['height', 'margin-left', 'margin-top', 'overflow', 'width'],
+        ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
         (node, progress, options, initialStyles) => {
             const style = getDOMProperty(node, 'style');
-            style.setProperty('height', initialStyles.height.value);
-            style.setProperty('width', initialStyles.width.value);
-            style.setProperty('overflow', 'hidden');
+            style.setProperty('height', initialStyles.height);
+            style.setProperty('width', initialStyles.width);
+            style.setProperty('overflow-x', 'hidden');
+            style.setProperty('overflow-y', 'hidden');
 
             const dir = evaluate(options.direction);
 
-            let size; let sizeStyle; let translateStyle;
+            let size; let sizeStyle; let axis;
             if (['top', 'bottom'].includes(dir)) {
                 size = getDOMProperty(node, 'clientHeight');
                 sizeStyle = 'height';
                 if (dir === 'top') {
-                    translateStyle = options.useGpu ?
-                        'Y' :
-                        'margin-top';
+                    axis = 'Y';
                 }
             } else {
                 size = getDOMProperty(node, 'clientWidth');
                 sizeStyle = 'width';
                 if (dir === 'left') {
-                    translateStyle = options.useGpu ?
-                        'X' :
-                        'margin-left';
+                    axis = 'X';
                 }
             }
 
@@ -339,13 +302,9 @@ export function squeezeOut(selector, options) {
 
             style.setProperty(sizeStyle, `${amount}px`);
 
-            if (translateStyle) {
+            if (axis) {
                 const translateAmount = (size - amount).toFixed(2);
-                if (options.useGpu) {
-                    style.setProperty('transform', `translate${translateStyle}(${translateAmount}px)`);
-                } else {
-                    style.setProperty(translateStyle, `${translateAmount}px`);
-                }
+                style.setProperty('transform', `translate${axis}(${translateAmount}px)`);
             }
         },
         options,
@@ -361,35 +320,40 @@ export function squeezeOut(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 function animateEffect(selector, properties, callback, options) {
-    const initialStyles = new WeakMap;
+    const states = new WeakMap;
 
-    return animate(selector, (node, progress, options) => {
-        const style = getDOMProperty(node, 'style');
+    // Animation invokes both callbacks with the animation instance as this.
+    return animate(selector, function(node, progress, options) {
+        let state = states.get(this);
 
-        if (!initialStyles.has(node)) {
-            initialStyles.set(
-                node,
-                Object.fromEntries(
-                    properties.map((property) => [
-                        property,
-                        {
-                            priority: style.getPropertyPriority(property),
-                            value: style.getPropertyValue(property),
-                        },
-                    ]),
-                ),
-            );
+        if (!state) {
+            const style = getDOMProperty(node, 'style');
+            state = { styles: {}, releases: [] };
+            states.set(this, state);
+
+            for (const property of properties) {
+                const priority = style.getPropertyPriority(property);
+                const value = style.getPropertyValue(property);
+
+                state.styles[property] = value;
+                state.releases.push(setStyleLock(node, property, value, { important: priority === 'important' }));
+            }
         }
 
-        const styles = initialStyles.get(node);
-
         if (progress < 1) {
-            callback(node, progress, options, styles);
+            callback(node, progress, options, state.styles);
+        }
+    }, options, function(restore) {
+        const state = states.get(this);
+
+        if (!state) {
             return;
         }
 
-        for (const [property, { priority, value }] of Object.entries(styles)) {
-            style.setProperty(property, value, priority);
+        for (const release of state.releases) {
+            release({ restore });
         }
-    }, options);
+
+        states.delete(this);
+    });
 };

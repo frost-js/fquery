@@ -1203,7 +1203,6 @@ function update() {
 * @property {boolean} [infinite=false] Whether to repeat indefinitely.
 * @property {boolean} [debug=false] Whether to expose timing data on the element.
 * @property {AnimationDirection} [direction] The animation direction.
-* @property {boolean} [useGpu=true] Whether to use GPU-accelerated transforms.
 * @property {number} [x=0] The X-axis rotation component.
 * @property {number} [y=1] The Y-axis rotation component.
 * @property {number} [z=0] The Z-axis rotation component.
@@ -1219,9 +1218,16 @@ function update() {
 */
 /**
 * @callback AnimationCallback
+* @this {Animation}
 * @param {Element} node The animated element.
 * @param {number} progress The animation progress from 0 to 1.
 * @param {AnimationOptions} options The resolved animation options.
+* @returns {void} Nothing.
+*/
+/**
+* @callback AnimationCleanupCallback
+* @this {Animation}
+* @param {boolean} restore Whether to restore the original state.
 * @returns {void} Nothing.
 */
 /**
@@ -1229,6 +1235,7 @@ function update() {
 */
 var Animation = class Animation {
 	#callback;
+	#cleanup;
 	#isFinished;
 	#isStopped;
 	#isStopping;
@@ -1242,10 +1249,12 @@ var Animation = class Animation {
 	* @param {Element} node The input node.
 	* @param {AnimationCallback} callback The animation callback.
 	* @param {AnimationOptions} [options] The animation options.
+	* @param {AnimationCleanupCallback} [cleanup] Internal cleanup for built-in effects.
 	*/
-	constructor(node, callback, options) {
+	constructor(node, callback, options, cleanup) {
 		this.#node = node;
 		this.#callback = callback;
+		this.#cleanup = cleanup;
 		this.#options = {
 			...getAnimationDefaults(),
 			...options
@@ -1273,7 +1282,7 @@ var Animation = class Animation {
 	* @returns {Animation} The cloned Animation.
 	*/
 	clone(node) {
-		return new Animation(node, this.#callback, this.#options);
+		return new Animation(node, this.#callback, this.#options, this.#cleanup);
 	}
 	/**
 	* Executes a callback once the animation is settled (resolved or rejected).
@@ -1296,7 +1305,10 @@ var Animation = class Animation {
 		if (finish) this.update();
 		this.#isStopped = true;
 		this.#isStopping = false;
-		if (!finish) this.#reject(this.#node);
+		if (!finish) {
+			this.#cleanup?.(false);
+			this.#reject(this.#node);
+		}
 	}
 	/**
 	* Executes a callback once the animation is resolved (or optionally rejected).
@@ -1313,7 +1325,7 @@ var Animation = class Animation {
 	* @returns {boolean} Whether the animation is finished.
 	*/
 	update(time = null) {
-		if (this.#isStopped) return true;
+		if (this.#isStopped || this.#isFinished) return true;
 		let progress;
 		if (time === null) progress = 1;
 		else if (this.#options.duration === 0) progress = time >= this.#options.start ? 1 : 0;
@@ -1343,6 +1355,7 @@ var Animation = class Animation {
 				delete dataset.animationProgress;
 			}
 			this.#isFinished = true;
+			this.#cleanup?.(true);
 			this.#reject(error);
 			return true;
 		}
@@ -1355,6 +1368,7 @@ var Animation = class Animation {
 		}
 		if (!this.#isFinished) {
 			this.#isFinished = true;
+			this.#cleanup?.(true);
 			this.#resolve(this.#node);
 		}
 		return true;
@@ -1365,6 +1379,7 @@ Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 //#endregion
 //#region src/animation/animate.js
 /** @import { AnimationCallback } from './animation.js'; */
+/** @import { AnimationCleanupCallback } from './animation.js'; */
 /** @import { AnimationOptions } from './animation.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 /** @import { StopAnimationOptions } from './animation.js'; */
@@ -1373,10 +1388,11 @@ Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @param {AnimationCallback} callback The animation callback.
 * @param {AnimationOptions} [options] The animation options.
+* @param {AnimationCleanupCallback} [cleanup] Internal cleanup for built-in effects.
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
-function animate$1(selector, callback, options) {
-	const newAnimations = parseNodes(selector).map((node) => new Animation(node, callback, options));
+function animate$1(selector, callback, options, cleanup) {
+	const newAnimations = parseNodes(selector).map((node) => new Animation(node, callback, options, cleanup));
 	start();
 	return new AnimationSet(newAnimations);
 }
@@ -1395,12 +1411,101 @@ function stop$1(selector, { finish = true } = {}) {
 }
 
 //#endregion
+//#region src/attributes/style-locks.js
+/** @import { ElementInput } from '../helpers.js'; */
+var styleLocks = /* @__PURE__ */ new WeakMap();
+/**
+* @callback ReleaseStyleLock
+* @param {{restore?: boolean}} [options] Whether to restore the original declarations (defaults to true).
+* @returns {void} Nothing.
+*/
+/**
+* Checks that a node's property is available for a style lock.
+* @param {Element} node The input element.
+* @param {string} property The normalized CSS property name.
+* @throws {Error} When the property is already locked.
+*/
+function assertStyleUnlocked(node, property) {
+	if (styleLocks.get(node)?.has(property)) throw new Error(`CSS property "${property}" is already locked.`);
+}
+/**
+* Temporarily sets and locks one inline style property for each node.
+* @param {ElementInput} selector The input node(s), or a query selector string.
+* @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
+* @param {string|number} value The temporary style value.
+* @param {{important?: boolean}} [options] The style options.
+* @returns {ReleaseStyleLock} A function that releases the locks, restoring the original declarations unless restore is false. Repeated calls do nothing.
+* @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
+*/
+function setStyleLock$1(selector, property, value, { important = false } = {}) {
+	property = normalizeCssProperty(property);
+	value = normalizeCssValue(property, value);
+	const testStyle = validateStyleLock(property, value);
+	const originals = unique(parseNodes(selector)).map((node) => {
+		assertStyleUnlocked(node, property);
+		const style = getDOMProperty(node, "style");
+		const present = [...style].includes(property);
+		const originalValue = style.getPropertyValue(property);
+		const priority = style.getPropertyPriority(property);
+		if (present && !property.startsWith("--")) {
+			testStyle.cssText = style.cssText;
+			const index = [...testStyle].indexOf(property);
+			testStyle.setProperty(property, originalValue, priority);
+			if (originalValue === "" || testStyle.item(index) !== property) throw new Error(`Cannot lock CSS property "${property}" because its original value cannot be restored.`);
+		}
+		return {
+			node,
+			style,
+			present,
+			value: originalValue,
+			priority
+		};
+	});
+	for (const { node } of originals) {
+		if (!styleLocks.has(node)) styleLocks.set(node, /* @__PURE__ */ new Set());
+		styleLocks.get(node).add(property);
+	}
+	for (const { style } of originals) style.setProperty(property, value, important ? "important" : "");
+	let released = false;
+	return ({ restore = true } = {}) => {
+		if (released) return;
+		released = true;
+		if (restore) for (const { style, value, priority, present } of originals) {
+			style.setProperty(property, value, priority);
+			if (present && value === "") style.cssText += ` ${escapeCSS(property)}:${priority ? "!important" : ""};`;
+		}
+		for (const { node } of originals) {
+			const locks = styleLocks.get(node);
+			locks.delete(property);
+			if (!locks.size) styleLocks.delete(node);
+		}
+	};
+}
+/**
+* Validates a property and value before acquiring style locks.
+* @param {string} property The normalized CSS property name.
+* @param {string|number} value The normalized CSS value.
+* @returns {CSSStyleDeclaration} The detached style declaration used for validation.
+* @throws {Error} When the property or value is unsupported.
+*/
+function validateStyleLock(property, value) {
+	const node = callDOMMethod(getContext(), "createElementNS", "http://www.w3.org/1999/xhtml", "div");
+	const style = getDOMProperty(node, "style");
+	style.setProperty(property, "initial");
+	if (property === "all" || style.length !== 1 || style.item(0) !== property) throw new Error(`Cannot lock CSS property "${property}". Use a supported longhand or custom property.`);
+	style.cssText = "";
+	style.setProperty(property, value);
+	if (value !== "" && !style.length) throw new Error(`Invalid value for CSS property "${property}".`);
+	return style;
+}
+
+//#endregion
 //#region src/animation/animations.js
 /** @import { AnimationOptions } from './animation.js'; */
 /** @import AnimationSet from './animation-set.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 /**
-* @typedef {Record<string, {priority: string, value: string}>} InlineStyles
+* @typedef {Record<string, string>} InlineStyles
 */
 /**
 * @callback AnimationEffectCallback
@@ -1495,26 +1600,24 @@ function rotateOut$1(selector, options) {
 function slideIn$1(selector, options) {
 	options = {
 		direction: "bottom",
-		useGpu: true,
 		...options
 	};
-	return animateEffect(selector, options.useGpu ? ["transform"] : ["margin-left", "margin-top"], (node, progress, options) => {
+	return animateEffect(selector, ["transform"], (node, progress, options) => {
 		const dir = evaluate(options.direction);
 		let size;
-		let translateStyle;
+		let axis;
 		let inverse;
 		if (["top", "bottom"].includes(dir)) {
 			size = getDOMProperty(node, "clientHeight");
-			translateStyle = options.useGpu ? "Y" : "margin-top";
+			axis = "Y";
 			inverse = dir === "top";
 		} else {
 			size = getDOMProperty(node, "clientWidth");
-			translateStyle = options.useGpu ? "X" : "margin-left";
+			axis = "X";
 			inverse = dir === "left";
 		}
 		const translateAmount = ((size - size * progress) * (inverse ? -1 : 1)).toFixed(2);
-		if (options.useGpu) getDOMProperty(node, "style").setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-		else getDOMProperty(node, "style").setProperty(translateStyle, `${translateAmount}px`);
+		getDOMProperty(node, "style").setProperty("transform", `translate${axis}(${translateAmount}px)`);
 	}, options);
 }
 /**
@@ -1526,26 +1629,24 @@ function slideIn$1(selector, options) {
 function slideOut$1(selector, options) {
 	options = {
 		direction: "bottom",
-		useGpu: true,
 		...options
 	};
-	return animateEffect(selector, options.useGpu ? ["transform"] : ["margin-left", "margin-top"], (node, progress, options) => {
+	return animateEffect(selector, ["transform"], (node, progress, options) => {
 		const dir = evaluate(options.direction);
 		let size;
-		let translateStyle;
+		let axis;
 		let inverse;
 		if (["top", "bottom"].includes(dir)) {
 			size = getDOMProperty(node, "clientHeight");
-			translateStyle = options.useGpu ? "Y" : "margin-top";
+			axis = "Y";
 			inverse = dir === "top";
 		} else {
 			size = getDOMProperty(node, "clientWidth");
-			translateStyle = options.useGpu ? "X" : "margin-left";
+			axis = "X";
 			inverse = dir === "left";
 		}
 		const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-		if (options.useGpu) getDOMProperty(node, "style").setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-		else getDOMProperty(node, "style").setProperty(translateStyle, `${translateAmount}px`);
+		getDOMProperty(node, "style").setProperty("transform", `translate${axis}(${translateAmount}px)`);
 	}, options);
 }
 /**
@@ -1557,44 +1658,38 @@ function slideOut$1(selector, options) {
 function squeezeIn$1(selector, options) {
 	options = {
 		direction: "bottom",
-		useGpu: true,
 		...options
 	};
-	return animateEffect(selector, options.useGpu ? [
+	return animateEffect(selector, [
 		"height",
-		"overflow",
+		"overflow-x",
+		"overflow-y",
 		"transform",
-		"width"
-	] : [
-		"height",
-		"margin-left",
-		"margin-top",
-		"overflow",
 		"width"
 	], (node, progress, options, initialStyles) => {
 		const style = getDOMProperty(node, "style");
-		style.setProperty("height", initialStyles.height.value);
-		style.setProperty("width", initialStyles.width.value);
-		style.setProperty("overflow", "hidden");
+		style.setProperty("height", initialStyles.height);
+		style.setProperty("width", initialStyles.width);
+		style.setProperty("overflow-x", "hidden");
+		style.setProperty("overflow-y", "hidden");
 		const dir = evaluate(options.direction);
 		let size;
 		let sizeStyle;
-		let translateStyle;
+		let axis;
 		if (["top", "bottom"].includes(dir)) {
 			size = getDOMProperty(node, "clientHeight");
 			sizeStyle = "height";
-			if (dir === "top") translateStyle = options.useGpu ? "Y" : "margin-top";
+			if (dir === "top") axis = "Y";
 		} else {
 			size = getDOMProperty(node, "clientWidth");
 			sizeStyle = "width";
-			if (dir === "left") translateStyle = options.useGpu ? "X" : "margin-left";
+			if (dir === "left") axis = "X";
 		}
 		const amount = (size * progress).toFixed(2);
 		style.setProperty(sizeStyle, `${amount}px`);
-		if (translateStyle) {
+		if (axis) {
 			const translateAmount = (size - amount).toFixed(2);
-			if (options.useGpu) style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-			else style.setProperty(translateStyle, `${translateAmount}px`);
+			style.setProperty("transform", `translate${axis}(${translateAmount}px)`);
 		}
 	}, options);
 }
@@ -1607,44 +1702,38 @@ function squeezeIn$1(selector, options) {
 function squeezeOut$1(selector, options) {
 	options = {
 		direction: "bottom",
-		useGpu: true,
 		...options
 	};
-	return animateEffect(selector, options.useGpu ? [
+	return animateEffect(selector, [
 		"height",
-		"overflow",
+		"overflow-x",
+		"overflow-y",
 		"transform",
-		"width"
-	] : [
-		"height",
-		"margin-left",
-		"margin-top",
-		"overflow",
 		"width"
 	], (node, progress, options, initialStyles) => {
 		const style = getDOMProperty(node, "style");
-		style.setProperty("height", initialStyles.height.value);
-		style.setProperty("width", initialStyles.width.value);
-		style.setProperty("overflow", "hidden");
+		style.setProperty("height", initialStyles.height);
+		style.setProperty("width", initialStyles.width);
+		style.setProperty("overflow-x", "hidden");
+		style.setProperty("overflow-y", "hidden");
 		const dir = evaluate(options.direction);
 		let size;
 		let sizeStyle;
-		let translateStyle;
+		let axis;
 		if (["top", "bottom"].includes(dir)) {
 			size = getDOMProperty(node, "clientHeight");
 			sizeStyle = "height";
-			if (dir === "top") translateStyle = options.useGpu ? "Y" : "margin-top";
+			if (dir === "top") axis = "Y";
 		} else {
 			size = getDOMProperty(node, "clientWidth");
 			sizeStyle = "width";
-			if (dir === "left") translateStyle = options.useGpu ? "X" : "margin-left";
+			if (dir === "left") axis = "X";
 		}
 		const amount = (size - size * progress).toFixed(2);
 		style.setProperty(sizeStyle, `${amount}px`);
-		if (translateStyle) {
+		if (axis) {
 			const translateAmount = (size - amount).toFixed(2);
-			if (options.useGpu) style.setProperty("transform", `translate${translateStyle}(${translateAmount}px)`);
-			else style.setProperty(translateStyle, `${translateAmount}px`);
+			style.setProperty("transform", `translate${axis}(${translateAmount}px)`);
 		}
 	}, options);
 }
@@ -1657,20 +1746,30 @@ function squeezeOut$1(selector, options) {
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
 function animateEffect(selector, properties, callback, options) {
-	const initialStyles = /* @__PURE__ */ new WeakMap();
-	return animate$1(selector, (node, progress, options) => {
-		const style = getDOMProperty(node, "style");
-		if (!initialStyles.has(node)) initialStyles.set(node, Object.fromEntries(properties.map((property) => [property, {
-			priority: style.getPropertyPriority(property),
-			value: style.getPropertyValue(property)
-		}])));
-		const styles = initialStyles.get(node);
-		if (progress < 1) {
-			callback(node, progress, options, styles);
-			return;
+	const states = /* @__PURE__ */ new WeakMap();
+	return animate$1(selector, function(node, progress, options) {
+		let state = states.get(this);
+		if (!state) {
+			const style = getDOMProperty(node, "style");
+			state = {
+				styles: {},
+				releases: []
+			};
+			states.set(this, state);
+			for (const property of properties) {
+				const priority = style.getPropertyPriority(property);
+				const value = style.getPropertyValue(property);
+				state.styles[property] = value;
+				state.releases.push(setStyleLock$1(node, property, value, { important: priority === "important" }));
+			}
 		}
-		for (const [property, { priority, value }] of Object.entries(styles)) style.setProperty(property, value, priority);
-	}, options);
+		if (progress < 1) callback(node, progress, options, state.styles);
+	}, options, function(restore) {
+		const state = states.get(this);
+		if (!state) return;
+		for (const release of state.releases) release({ restore });
+		states.delete(this);
+	});
 }
 
 //#endregion
@@ -2954,90 +3053,6 @@ function setData$1(selector, key, value) {
 		const nodeData = data.get(node);
 		Object.assign(nodeData, newData);
 	}
-}
-
-//#endregion
-//#region src/attributes/style-locks.js
-/** @import { ElementInput } from '../helpers.js'; */
-var styleLocks = /* @__PURE__ */ new WeakMap();
-/**
-* Checks that a node's property is available for a style lock.
-* @param {Element} node The input element.
-* @param {string} property The normalized CSS property name.
-* @throws {Error} When the property is already locked.
-*/
-function assertStyleUnlocked(node, property) {
-	if (styleLocks.get(node)?.has(property)) throw new Error(`CSS property "${property}" is already locked.`);
-}
-/**
-* Temporarily sets and locks one inline style property for each node.
-* @param {ElementInput} selector The input node(s), or a query selector string.
-* @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
-* @param {string|number} value The temporary style value.
-* @param {{important?: boolean}} [options] The style options.
-* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
-* @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
-*/
-function setStyleLock$1(selector, property, value, { important = false } = {}) {
-	property = normalizeCssProperty(property);
-	value = normalizeCssValue(property, value);
-	const testStyle = validateStyleLock(property, value);
-	const originals = unique(parseNodes(selector)).map((node) => {
-		assertStyleUnlocked(node, property);
-		const style = getDOMProperty(node, "style");
-		const present = [...style].includes(property);
-		const originalValue = style.getPropertyValue(property);
-		const priority = style.getPropertyPriority(property);
-		if (present && !property.startsWith("--")) {
-			testStyle.cssText = style.cssText;
-			const index = [...testStyle].indexOf(property);
-			testStyle.setProperty(property, originalValue, priority);
-			if (originalValue === "" || testStyle.item(index) !== property) throw new Error(`Cannot lock CSS property "${property}" because its original value cannot be restored.`);
-		}
-		return {
-			node,
-			style,
-			present,
-			value: originalValue,
-			priority
-		};
-	});
-	for (const { node } of originals) {
-		if (!styleLocks.has(node)) styleLocks.set(node, /* @__PURE__ */ new Set());
-		styleLocks.get(node).add(property);
-	}
-	for (const { style } of originals) style.setProperty(property, value, important ? "important" : "");
-	let released = false;
-	return () => {
-		if (released) return;
-		released = true;
-		for (const { style, value, priority, present } of originals) {
-			style.setProperty(property, value, priority);
-			if (present && value === "") style.cssText += ` ${escapeCSS(property)}:${priority ? "!important" : ""};`;
-		}
-		for (const { node } of originals) {
-			const locks = styleLocks.get(node);
-			locks.delete(property);
-			if (!locks.size) styleLocks.delete(node);
-		}
-	};
-}
-/**
-* Validates a property and value before acquiring style locks.
-* @param {string} property The normalized CSS property name.
-* @param {string|number} value The normalized CSS value.
-* @returns {CSSStyleDeclaration} The detached style declaration used for validation.
-* @throws {Error} When the property or value is unsupported.
-*/
-function validateStyleLock(property, value) {
-	const node = callDOMMethod(getContext(), "createElementNS", "http://www.w3.org/1999/xhtml", "div");
-	const style = getDOMProperty(node, "style");
-	style.setProperty(property, "initial");
-	if (property === "all" || style.length !== 1 || style.item(0) !== property) throw new Error(`Cannot lock CSS property "${property}". Use a supported longhand or custom property.`);
-	style.cssText = "";
-	style.setProperty(property, value);
-	if (value !== "" && !style.length) throw new Error(`Invalid value for CSS property "${property}".`);
-	return style;
 }
 
 //#endregion
@@ -4417,6 +4432,7 @@ function width({ boxSize = 1, outer = false } = {}) {
 //#endregion
 //#region src/query/attributes/styles.js
 /** @import QuerySet from '../query-set.js'; */
+/** @import { ReleaseStyleLock } from '../../attributes/style-locks.js'; */
 /** @import { StyleValues } from '../../attributes/styles.js'; */
 /**
 * Adds classes to each node.
@@ -4485,7 +4501,7 @@ function setStyle(style, value, { important = false } = {}) {
 * @param {string} property The longhand or custom property name. Shorthands and aliases are not supported.
 * @param {string|number} value The temporary style value.
 * @param {{important?: boolean}} [options] The style options.
-* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
+* @returns {ReleaseStyleLock} A function that releases the locks, restoring the original declarations unless restore is false. Repeated calls do nothing.
 * @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
 */
 function setStyleLock(property, value, { important = false } = {}) {

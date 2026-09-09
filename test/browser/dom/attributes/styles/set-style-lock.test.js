@@ -75,6 +75,39 @@ test.describe('#setStyleLock', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
     });
 
+    test('releases without restoring the current declaration', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            const release = $.setStyleLock('#test1', 'display', 'none');
+            $.setStyle('#test1', 'display', 'grid', { important: true });
+            release({ restore: false });
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid !important;');
+    });
+
+    test('allows a new lock after releasing without restoring', async ({ page }) => {
+        await page.evaluate((_) => {
+            const release = $.setStyleLock('#test1', 'display', 'grid');
+            release({ restore: false });
+            const nextRelease = $.setStyleLock('#test1', 'display', 'none');
+            nextRelease();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid;');
+    });
+
+    test('does not restore a discarded declaration when released again', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            const release = $.setStyleLock('#test1', 'display', 'grid');
+            release({ restore: false });
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid;');
+    });
+
     test('restores a logical property when declaration order is preserved', async ({ page }) => {
         await page.evaluate((_) => {
             document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px; color: red;';

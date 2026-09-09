@@ -66,6 +66,17 @@ test.describe('QuerySet #setStyleLock', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
     });
 
+    test('releases without restoring the current declaration', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.display = 'flex';
+            const release = $('#test1').setStyleLock('display', 'none');
+            $('#test1').setStyle('display', 'grid', { important: true });
+            release({ restore: false });
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid !important;');
+    });
+
     test('restores a logical property when declaration order is preserved', async ({ page }) => {
         await page.evaluate((_) => {
             document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px; color: red;';
