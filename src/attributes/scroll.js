@@ -24,7 +24,9 @@ export function getScrollX(selector) {
 
     if (isDocument(node)) {
         const scrollingElement = getDOMProperty(node, 'scrollingElement');
-        return getDOMProperty(scrollingElement, 'scrollLeft');
+        return scrollingElement ?
+            getDOMProperty(scrollingElement, 'scrollLeft') :
+            getDOMProperty(node, 'defaultView')?.scrollX ?? 0;
     }
 
     return getDOMProperty(node, 'scrollLeft');
@@ -51,7 +53,9 @@ export function getScrollY(selector) {
 
     if (isDocument(node)) {
         const scrollingElement = getDOMProperty(node, 'scrollingElement');
-        return getDOMProperty(scrollingElement, 'scrollTop');
+        return scrollingElement ?
+            getDOMProperty(scrollingElement, 'scrollTop') :
+            getDOMProperty(node, 'defaultView')?.scrollY ?? 0;
     }
 
     return getDOMProperty(node, 'scrollTop');
@@ -73,8 +77,13 @@ export function setScroll(selector, x, y) {
         if (isWindow(node)) {
             node.scroll(x, y);
         } else if (isDocument(node)) {
-            getDOMProperty(node, 'scrollingElement').scrollLeft = x;
-            getDOMProperty(node, 'scrollingElement').scrollTop = y;
+            const scrollingElement = getDOMProperty(node, 'scrollingElement');
+            if (scrollingElement) {
+                scrollingElement.scrollLeft = x;
+                scrollingElement.scrollTop = y;
+            } else {
+                getDOMProperty(node, 'defaultView')?.scroll(x, y);
+            }
         } else {
             node.scrollLeft = x;
             node.scrollTop = y;
@@ -97,7 +106,13 @@ export function setScrollX(selector, x) {
         if (isWindow(node)) {
             node.scroll(x, node.scrollY);
         } else if (isDocument(node)) {
-            getDOMProperty(node, 'scrollingElement').scrollLeft = x;
+            const scrollingElement = getDOMProperty(node, 'scrollingElement');
+            if (scrollingElement) {
+                scrollingElement.scrollLeft = x;
+            } else {
+                const window = getDOMProperty(node, 'defaultView');
+                window?.scroll(x, window.scrollY);
+            }
         } else {
             node.scrollLeft = x;
         }
@@ -119,7 +134,13 @@ export function setScrollY(selector, y) {
         if (isWindow(node)) {
             node.scroll(node.scrollX, y);
         } else if (isDocument(node)) {
-            getDOMProperty(node, 'scrollingElement').scrollTop = y;
+            const scrollingElement = getDOMProperty(node, 'scrollingElement');
+            if (scrollingElement) {
+                scrollingElement.scrollTop = y;
+            } else {
+                const window = getDOMProperty(node, 'defaultView');
+                window?.scroll(window.scrollX, y);
+            }
         } else {
             node.scrollTop = y;
         }

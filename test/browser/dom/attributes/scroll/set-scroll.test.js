@@ -111,6 +111,35 @@ test.describe('#setScroll', () => {
         })).toEqual([100, 50]);
     });
 
+    test('works with Document nodes without a scrolling element', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            const doc = iframe.contentDocument;
+            doc.open();
+            doc.write('<html style="overflow: auto;"><body style="overflow: auto; width: 1000px; height: 1000px;"></body></html>');
+            doc.close();
+            $.setScroll(doc, 100, 50);
+            return [
+                doc.defaultView.scrollX,
+                doc.defaultView.scrollY,
+            ];
+        })).toEqual([100, 50]);
+    });
+
+    test('skips Document nodes without a scrolling element or window', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const doc = document.implementation.createHTMLDocument('');
+            doc.removeChild(doc.documentElement);
+            const element = document.getElementById('test1');
+            $.setScroll([doc, element], 100, 50);
+            return [
+                element.scrollLeft,
+                element.scrollTop,
+            ];
+        })).toEqual([100, 50]);
+    });
+
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';

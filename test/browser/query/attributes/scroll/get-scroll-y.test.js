@@ -38,6 +38,27 @@ test.describe('QuerySet #getScrollY', () => {
         })).toBe(100);
     });
 
+    test('works with Document nodes without a scrolling element', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            const doc = iframe.contentDocument;
+            doc.open();
+            doc.write('<html style="overflow: auto;"><body style="overflow: auto; width: 1000px; height: 1000px;"></body></html>');
+            doc.close();
+            doc.defaultView.scrollTo(0, 100);
+            return $(doc).getScrollY();
+        })).toBe(100);
+    });
+
+    test('returns zero for Document nodes without a scrolling element or window', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const doc = document.implementation.createHTMLDocument('');
+            doc.removeChild(doc.documentElement);
+            return $(doc).getScrollY();
+        })).toBe(0);
+    });
+
     test('works with a form document root whose control shadows scrollTop', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const doc = document.implementation.createHTMLDocument('');
