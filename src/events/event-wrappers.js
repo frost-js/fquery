@@ -62,7 +62,7 @@ function getDelegateMatchFactory(node, selector) {
 export function delegateFactory(node, selector, callback) {
     const context = isWindow(node) ? node.document : node;
 
-    const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ?
+    const getDelegate = /:scope\b/i.test(selector) ?
         getDelegateContainsFactory(context, selector) :
         getDelegateMatchFactory(context, selector);
 

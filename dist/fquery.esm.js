@@ -2301,7 +2301,7 @@ function getDelegateMatchFactory(node, selector) {
 */
 function delegateFactory(node, selector, callback) {
 	const context = isWindow(node) ? node.document : node;
-	const getDelegate = selector.match(/(?:^\s*:scope|,(?=(?:(?:[^"']*["']){2})*[^"']*$)\s*:scope)/) ? getDelegateContainsFactory(context, selector) : getDelegateMatchFactory(context, selector);
+	const getDelegate = /:scope\b/i.test(selector) ? getDelegateContainsFactory(context, selector) : getDelegateMatchFactory(context, selector);
 	return (event) => {
 		if (node === event.target) return;
 		const delegate = getDelegate(event.target);

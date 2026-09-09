@@ -49,6 +49,48 @@ test.describe('#addEventDelegate', () => {
         })).toBe(8);
     });
 
+    test('matches compound scoped selectors', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            const element3 = document.getElementById('test3');
+            const element4 = document.getElementById('test4');
+            $.addEventDelegate('div', 'click', 'div:scope > a', (_) => {
+                result++;
+            });
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            element3.dispatchEvent(event);
+            element4.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
+    test('matches nested scoped selectors', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            let result = 0;
+            const event = new Event('click', {
+                bubbles: true,
+            });
+            const element1 = document.getElementById('test1');
+            const element2 = document.getElementById('test2');
+            const element3 = document.getElementById('test3');
+            const element4 = document.getElementById('test4');
+            $.addEventDelegate('div', 'click', ':is(:scope > a)', (_) => {
+                result++;
+            });
+            element1.dispatchEvent(event);
+            element2.dispatchEvent(event);
+            element3.dispatchEvent(event);
+            element4.dispatchEvent(event);
+            return result;
+        })).toBe(2);
+    });
+
     test('matches form targets with a control named matches', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<form><input name="matches"></form>';
