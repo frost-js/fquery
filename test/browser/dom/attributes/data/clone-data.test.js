@@ -41,6 +41,21 @@ test.describe('#cloneData', () => {
         ]);
     });
 
+    test('preserves source values when selections overlap', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            $.setData('#test1', 'test', 'Test 1');
+            $.setData('#test2', 'test', 'Test 2');
+            $.cloneData('[data-toggle="data"]', '#test2, #test3');
+            return [
+                $.getData('#test2', 'test'),
+                $.getData('#test3', 'test'),
+            ];
+        })).toEqual([
+            'Test 2',
+            'Test 2',
+        ]);
+    });
+
     test('clones data with a __proto__ key', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.setData('#test1', '__proto__', 'Test 1');

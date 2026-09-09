@@ -3151,10 +3151,8 @@ function cloneData$1(selector, otherSelector) {
 		document: true,
 		window: true
 	});
-	for (const node of nodes) {
-		if (!data.has(node)) continue;
-		setData$1(others, { ...data.get(node) });
-	}
+	const sourceData = nodes.filter((node) => data.has(node)).map((node) => ({ ...data.get(node) }));
+	for (const nodeData of sourceData) setData$1(others, nodeData);
 }
 /**
 * Gets custom data for the first node.

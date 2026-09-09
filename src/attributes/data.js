@@ -24,13 +24,12 @@ export function cloneData(selector, otherSelector) {
         window: true,
     });
 
-    for (const node of nodes) {
-        if (!data.has(node)) {
-            continue;
-        }
+    const sourceData = nodes
+        .filter((node) => data.has(node))
+        .map((node) => ({ ...data.get(node) }));
 
-        const nodeData = data.get(node);
-        setData(others, { ...nodeData });
+    for (const nodeData of sourceData) {
+        setData(others, nodeData);
     }
 };
 
