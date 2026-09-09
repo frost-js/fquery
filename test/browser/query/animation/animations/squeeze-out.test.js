@@ -76,6 +76,86 @@ test.describe('QuerySet #squeezeOut', () => {
         ]);
     });
 
+    test('uses content-box height for padded elements', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { box-sizing: content-box; padding: 10px; }' });
+        await page.evaluate((_) => {
+            $('.animate').squeezeOut({
+                direction: 'top',
+                duration: 500,
+                type: 'linear',
+                debug: true,
+            });
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test4'],
+                progress: 0.1,
+                styles: { height: '90px', transform: 'translateY(10px)' },
+            },
+        ]);
+    });
+
+    test('uses border-box height for padded and bordered elements', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { box-sizing: border-box; padding: 10px; border: 5px solid; }' });
+        await page.evaluate((_) => {
+            $('.animate').squeezeOut({
+                direction: 'top',
+                duration: 500,
+                type: 'linear',
+                debug: true,
+            });
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test4'],
+                progress: 0.1,
+                styles: { height: '90px', transform: 'translateY(10px)' },
+            },
+        ]);
+    });
+
+    test('uses content-box width for padded elements', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { box-sizing: content-box; padding: 10px; }' });
+        await page.evaluate((_) => {
+            $('.animate').squeezeOut({
+                direction: 'left',
+                duration: 500,
+                type: 'linear',
+                debug: true,
+            });
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test4'],
+                progress: 0.1,
+                styles: { width: '90px', transform: 'translateX(10px)' },
+            },
+        ]);
+    });
+
+    test('uses border-box width for padded and bordered elements', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { box-sizing: border-box; padding: 10px; border: 5px solid; }' });
+        await page.evaluate((_) => {
+            $('.animate').squeezeOut({
+                direction: 'left',
+                duration: 500,
+                type: 'linear',
+                debug: true,
+            });
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test4'],
+                progress: 0.1,
+                styles: { width: '90px', transform: 'translateX(10px)' },
+            },
+        ]);
+    });
+
     test('adds a squeeze-out animation to each node (top)', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

@@ -4,6 +4,7 @@
 
 import { evaluate, getDOMProperty } from '@fr0st/core';
 import { setStyleLock } from './../attributes/style-locks.js';
+import { css } from './../attributes/styles.js';
 import { animate } from './animate.js';
 
 /**
@@ -233,13 +234,13 @@ export function squeezeIn(selector, options) {
 
             let size; let sizeStyle; let axis;
             if (['top', 'bottom'].includes(dir)) {
-                size = getDOMProperty(node, 'clientHeight');
+                size = parseFloat(css(node, 'height')) || 0;
                 sizeStyle = 'height';
                 if (dir === 'top') {
                     axis = 'Y';
                 }
             } else {
-                size = getDOMProperty(node, 'clientWidth');
+                size = parseFloat(css(node, 'width')) || 0;
                 sizeStyle = 'width';
                 if (dir === 'left') {
                     axis = 'X';
@@ -285,13 +286,13 @@ export function squeezeOut(selector, options) {
 
             let size; let sizeStyle; let axis;
             if (['top', 'bottom'].includes(dir)) {
-                size = getDOMProperty(node, 'clientHeight');
+                size = parseFloat(css(node, 'height')) || 0;
                 sizeStyle = 'height';
                 if (dir === 'top') {
                     axis = 'Y';
                 }
             } else {
-                size = getDOMProperty(node, 'clientWidth');
+                size = parseFloat(css(node, 'width')) || 0;
                 sizeStyle = 'width';
                 if (dir === 'left') {
                     axis = 'X';
