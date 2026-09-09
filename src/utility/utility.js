@@ -3,7 +3,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isElement, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
 import { parseParams } from './../ajax/helpers.js';
 import { getContext, getWindow } from './../config.js';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
@@ -90,80 +90,63 @@ export function serialize(selector) {
  * @returns {Array<{name: string, value: string}>} The serialized entries.
  */
 export function serializeArray(selector) {
-    return parseNodes(selector, {
+    const nodes = parseNodes(selector, {
         fragment: true,
         shadow: true,
-    }).reduce(
-        (values, node) => {
-            if (isElement(node) && callDOMMethod(node, 'matches', 'form')) {
-                const elements = getDOMProperty(node, 'elements');
+    }).flatMap((node) => {
+        if (isFragment(node) || isShadow(node)) {
+            return merge([], callDOMMethod(node, 'querySelectorAll', 'input, select, textarea'));
+        }
 
-                return values.concat(
-                    serializeArray(
-                        merge([], elements)
-                            .filter((node) => callDOMMethod(node, 'matches', 'input, select, textarea')),
-                    ),
-                );
-            }
+        if (callDOMMethod(node, 'matches', 'form')) {
+            return merge([], getDOMProperty(node, 'elements'));
+        }
 
-            if (
-                isFragment(node) ||
-                isShadow(node)
-            ) {
-                return values.concat(
-                    serializeArray(
-                        callDOMMethod(node, 'querySelectorAll', 'input, select, textarea'),
-                    ),
-                );
-            }
+        return [node];
+    });
 
-            if (
-                isElement(node) &&
-                callDOMMethod(
-                    node,
-                    'matches',
-                    ':not(input, select, textarea), :disabled, datalist *, ' +
-                    'input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), ' +
-                    'input:is([type=radio], [type=checkbox]):not(:checked)',
-                )
-            ) {
-                return values;
-            }
+    const values = [];
 
-            const name = callDOMMethod(node, 'getAttribute', 'name');
-            if (!name) {
-                return values;
-            }
+    for (const node of nodes) {
+        if (callDOMMethod(
+            node,
+            'matches',
+            ':not(input, select, textarea), :disabled, datalist *, ' +
+            'input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), ' +
+            'input:is([type=radio], [type=checkbox]):not(:checked)',
+        )) {
+            continue;
+        }
 
-            if (
-                isElement(node) &&
-                callDOMMethod(node, 'matches', 'select')
-            ) {
-                for (const option of node.selectedOptions) {
-                    if (option.matches(':disabled')) {
-                        continue;
-                    }
+        const name = callDOMMethod(node, 'getAttribute', 'name');
+        if (!name) {
+            continue;
+        }
 
-                    values.push(
-                        {
-                            name,
-                            value: option.value || '',
-                        },
-                    );
+        if (callDOMMethod(node, 'matches', 'select')) {
+            for (const option of node.selectedOptions) {
+                if (option.matches(':disabled')) {
+                    continue;
                 }
-            } else {
+
                 values.push(
                     {
                         name,
-                        value: node.value || '',
+                        value: option.value || '',
                     },
                 );
             }
+        } else {
+            values.push(
+                {
+                    name,
+                    value: node.value || '',
+                },
+            );
+        }
+    }
 
-            return values;
-        },
-        [],
-    );
+    return values;
 }
 
 /**

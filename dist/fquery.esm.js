@@ -5493,19 +5493,20 @@ function serialize$1(selector) {
 * @returns {Array<{name: string, value: string}>} The serialized entries.
 */
 function serializeArray$1(selector) {
-	return parseNodes(selector, {
+	const nodes = parseNodes(selector, {
 		fragment: true,
 		shadow: true
-	}).reduce((values, node) => {
-		if (isElement(node) && callDOMMethod(node, "matches", "form")) {
-			const elements = getDOMProperty(node, "elements");
-			return values.concat(serializeArray$1(merge([], elements).filter((node) => callDOMMethod(node, "matches", "input, select, textarea"))));
-		}
-		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(callDOMMethod(node, "querySelectorAll", "input, select, textarea")));
-		if (isElement(node) && callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) return values;
+	}).flatMap((node) => {
+		if (isFragment(node) || isShadow(node)) return merge([], callDOMMethod(node, "querySelectorAll", "input, select, textarea"));
+		if (callDOMMethod(node, "matches", "form")) return merge([], getDOMProperty(node, "elements"));
+		return [node];
+	});
+	const values = [];
+	for (const node of nodes) {
+		if (callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) continue;
 		const name = callDOMMethod(node, "getAttribute", "name");
-		if (!name) return values;
-		if (isElement(node) && callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
+		if (!name) continue;
+		if (callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
 			if (option.matches(":disabled")) continue;
 			values.push({
 				name,
@@ -5516,8 +5517,8 @@ function serializeArray$1(selector) {
 			name,
 			value: node.value || ""
 		});
-		return values;
-	}, []);
+	}
+	return values;
 }
 /**
 * Sorts nodes by their position in the document.
