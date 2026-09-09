@@ -1,6 +1,6 @@
 import { extend, isObject } from '@fr0st/core';
 import { getAjaxDefaults, getWindow } from './../config.js';
-import { appendQueryString, createSearchParams, getSearchParams, mergeHeaders, parseFormData, parseParams, setSearchParams } from './helpers.js';
+import { appendQueryString, createSearchParams, createUrl, mergeHeaders, parseFormData, parseParams } from './helpers.js';
 
 /**
  * @typedef {boolean|string|Array<*>|Record<string, *>|FormData|null} AjaxData
@@ -143,13 +143,15 @@ export default class AjaxRequest {
 
             if (['GET', 'HEAD'].includes(this.#options.method)) {
                 const dataParams = createSearchParams(this.#options.data);
+                const urlData = createUrl(this.#options.url);
 
-                const searchParams = getSearchParams(this.#options.url);
                 for (const [key, value] of dataParams.entries()) {
-                    searchParams.append(key, value);
+                    urlData.searchParams.append(key, value);
                 }
 
-                this.#options.url = setSearchParams(this.#options.url, searchParams);
+                // Preserve query normalization even when the supplied data is empty.
+                urlData.search = urlData.searchParams.toString();
+                this.#options.url = urlData.toString();
                 this.#options.data = null;
             }
         }

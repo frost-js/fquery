@@ -972,9 +972,9 @@
 	* @returns {string} The new URL.
 	*/
 	function appendQueryString(url, key, value, baseURI) {
-		const searchParams = getSearchParams(url, baseURI);
-		searchParams.append(key, value);
-		return setSearchParams(url, searchParams, baseURI);
+		const urlData = createUrl(url, baseURI);
+		urlData.searchParams.append(key, value);
+		return urlData.toString();
 	}
 	/**
 	* Creates URLSearchParams from input data.
@@ -994,15 +994,6 @@
 	function createUrl(url, baseURI = getDOMProperty(getWindow().document, "baseURI")) {
 		const { URL } = getWindow();
 		return new URL(url, baseURI);
-	}
-	/**
-	* Gets the URLSearchParams from a URL string.
-	* @param {string} url The URL.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {URLSearchParams} The URLSearchParams.
-	*/
-	function getSearchParams(url, baseURI) {
-		return createUrl(url, baseURI).searchParams;
 	}
 	/**
 	* Merges headers case-insensitively, preserving the last value and spelling.
@@ -1058,18 +1049,6 @@
 		if (isArray(data)) return data.flatMap((value) => parseValue(value.name, value.value));
 		if (isObject(data)) return Object.entries(data).flatMap(([key, value]) => parseValue(key, value));
 		return data;
-	}
-	/**
-	* Sets the URLSearchParams for a URL string.
-	* @param {string} url The URL.
-	* @param {URLSearchParams} searchParams The URLSearchParams.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
-	* @returns {string} The new URL string.
-	*/
-	function setSearchParams(url, searchParams, baseURI) {
-		const urlData = createUrl(url, baseURI);
-		urlData.search = searchParams.toString();
-		return urlData.toString();
 	}
 
 //#endregion
@@ -1279,9 +1258,10 @@
 				}
 				if (["GET", "HEAD"].includes(this.#options.method)) {
 					const dataParams = createSearchParams(this.#options.data);
-					const searchParams = getSearchParams(this.#options.url);
-					for (const [key, value] of dataParams.entries()) searchParams.append(key, value);
-					this.#options.url = setSearchParams(this.#options.url, searchParams);
+					const urlData = createUrl(this.#options.url);
+					for (const [key, value] of dataParams.entries()) urlData.searchParams.append(key, value);
+					urlData.search = urlData.searchParams.toString();
+					this.#options.url = urlData.toString();
 					this.#options.data = null;
 				}
 			}

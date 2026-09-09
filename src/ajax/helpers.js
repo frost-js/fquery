@@ -16,11 +16,11 @@ import { getWindow } from './../config.js';
  * @returns {string} The new URL.
  */
 export function appendQueryString(url, key, value, baseURI) {
-    const searchParams = getSearchParams(url, baseURI);
+    const urlData = createUrl(url, baseURI);
 
-    searchParams.append(key, value);
+    urlData.searchParams.append(key, value);
 
-    return setSearchParams(url, searchParams, baseURI);
+    return urlData.toString();
 };
 
 /**
@@ -44,16 +44,6 @@ export function createUrl(url, baseURI = getDOMProperty(getWindow().document, 'b
     const { URL } = getWindow();
 
     return new URL(url, baseURI);
-};
-
-/**
- * Gets the URLSearchParams from a URL string.
- * @param {string} url The URL.
- * @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
- * @returns {URLSearchParams} The URLSearchParams.
- */
-export function getSearchParams(url, baseURI) {
-    return createUrl(url, baseURI).searchParams;
 };
 
 /**
@@ -149,19 +139,4 @@ function parseValues(data) {
     }
 
     return data;
-};
-
-/**
- * Sets the URLSearchParams for a URL string.
- * @param {string} url The URL.
- * @param {URLSearchParams} searchParams The URLSearchParams.
- * @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
- * @returns {string} The new URL string.
- */
-export function setSearchParams(url, searchParams, baseURI) {
-    const urlData = createUrl(url, baseURI);
-
-    urlData.search = searchParams.toString();
-
-    return urlData.toString();
 };
