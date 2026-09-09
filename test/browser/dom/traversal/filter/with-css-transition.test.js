@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="div1" class="test"></div><div id="div2"></div><div id="div3" class="test"></div><div id="div4"></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#withCSSTransition', () => {
     test.beforeEach(async ({ page }) => {

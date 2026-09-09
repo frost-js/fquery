@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="test1"><span>Test</span></div><div id="test2"></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #getHTML', () => {
     test.beforeEach(async ({ page }) => {

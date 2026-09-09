@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="test1" style="display: block; width: 100px; height: 100px;"></div><div id="test2"></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#getStyle', () => {
     test.beforeEach(async ({ page }) => {

@@ -1,15 +1,10 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../setup/browser.js';
 
 const QUEUE_HTML =
     '<div id="test1"></div>' +
     '<div id="test2" class="queue"></div>' +
     '<div id="test3"></div>' +
     '<div id="test4" class="queue"></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #clearQueue', () => {
     test.beforeEach(async ({ page }) => {

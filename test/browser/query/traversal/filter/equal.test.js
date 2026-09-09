@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="parent1"><span data-id="span1"></span><span data-id="span2"></span><span data-id="span3"></span></div><div id="parent2"><span data-id="span2"></span><span data-id="span3"></span><span data-id="span4"></span></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #equal', () => {
     test.beforeEach(async ({ page }) => {

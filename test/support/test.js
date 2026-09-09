@@ -1,31 +1,49 @@
 import process from 'node:process';
 import { test as base, expect } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
+import { setupClock } from '../setup/browser.js';
 
-let test = base;
+const collectCoverage = process.env.FQUERY_COVERAGE === 'true';
 
-if (process.env.FQUERY_COVERAGE === 'true') {
-    test = base.extend({
-        coverage: [
-            async ({ page }, use, testInfo) => {
+const test = base.extend({
+    mockClock: [false, { option: true }],
+    fqueryPage: [
+        async ({ page, mockClock }, use, testInfo) => {
+            if (collectCoverage) {
                 await page.coverage.startJSCoverage({
                     resetOnNavigation: false,
                 });
+            }
 
-                await use();
+            if (mockClock) {
+                await setupClock(page);
+            }
 
+            await page.goto('/', {
+                waitUntil: 'domcontentloaded',
+            });
+
+            await page.evaluate((_) => {
+                $.setAjaxDefaults({
+                    xhr: (_) => new window.MockXMLHttpRequest(),
+                });
+                $.useTimeout();
+
+                document.head.replaceChildren();
+                document.body.replaceChildren();
+                window.id = 'window';
+                document.id = 'document';
+            });
+
+            await use();
+
+            if (collectCoverage) {
                 const coverage = await page.coverage.stopJSCoverage();
-
-                if (coverage.length) {
-                    await addCoverageReport(coverage, testInfo);
-                }
-            },
-            {
-                auto: true,
-                scope: 'test',
-            },
-        ],
-    });
-}
+                await addCoverageReport(coverage, testInfo);
+            }
+        },
+        { auto: true },
+    ],
+});
 
 export { expect, test };

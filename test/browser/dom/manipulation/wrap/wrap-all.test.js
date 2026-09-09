@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const WRAP_HTML =
     '<div id="wrap">' +
@@ -17,10 +16,6 @@ const WRAP_HTML =
     '<div class="inner"></div>' +
     '</div>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#wrapAll', () => {
     test.beforeEach(async ({ page }) => {

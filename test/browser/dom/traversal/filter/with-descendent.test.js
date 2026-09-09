@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="div1"><span id="span1"><a id="a1"></a></span></div><div id="div2"></div><div id="div3"><span id="span2"><a id="a2"></a></span></div><div id="div4"></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#withDescendent', () => {
     test.beforeEach(async ({ page }) => {

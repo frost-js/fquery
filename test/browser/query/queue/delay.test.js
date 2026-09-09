@@ -1,5 +1,5 @@
 import { expect, test } from '#test';
-import { advanceClock, resetPage, setupClock } from '../../../setup/browser.js';
+import { advanceClock } from '../../../setup/browser.js';
 
 const QUEUE_HTML =
     '<div id="test1"></div>' +
@@ -7,14 +7,10 @@ const QUEUE_HTML =
     '<div id="test3"></div>' +
     '<div id="test4" class="queue"></div>';
 
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
+test.use({ mockClock: true });
 
 test.describe('QuerySet #delay', () => {
     test.beforeEach(async ({ page }) => {
-        await setupClock(page);
-
         await page.evaluate((html) => {
             document.body.innerHTML = html;
         }, QUEUE_HTML);

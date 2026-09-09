@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<input type="text" id="test1" value="Test 1"><input type="number" id="test2"><textarea id="test3">Test 2</textarea><select id="test4"><option value="1">1</option><option value="2" selected>2</option></select><select id="test5"><option value="3">3</option><option value="4" selected>4</option></select>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #getValue', () => {
     test.beforeEach(async ({ page }) => {

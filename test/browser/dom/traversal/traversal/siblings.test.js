@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="parent1"><span id="span1"><a></a></span><span id="span2"><a></a></span><span id="span3" class="span"><a></a></span><span id="span4"><a></a></span><span id="span5"><a></a></span></div><div id="parent2"><span id="span6"><a></a></span><span id="span7"><a></a></span><span id="span8" class="span"><a></a></span><span id="span9"><a></a></span><span id="span10"><a></a></span></div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#siblings', () => {
     test.beforeEach(async ({ page }) => {

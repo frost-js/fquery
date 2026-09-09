@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const SIBLING_MOVE_HTML =
     '<div id="parent1">' +
@@ -12,10 +11,6 @@ const SIBLING_MOVE_HTML =
     '<a href="#" class="test3">Test</a>' +
     '<a href="#" class="test4">Test</a>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#before', () => {
     test.beforeEach(async ({ page }) => {

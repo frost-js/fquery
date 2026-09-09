@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = `
 <div id="parent1">
@@ -105,10 +104,6 @@ const documentMarkup = `
     </body>
 </html>
 `;
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#findOne', () => {
     test.beforeEach(async ({ page }) => {

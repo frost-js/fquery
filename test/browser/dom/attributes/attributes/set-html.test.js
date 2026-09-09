@@ -1,12 +1,8 @@
 import { expect, test } from '#test';
-import { advanceClock, resetPage, setupClock } from '../../../../setup/browser.js';
+import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<div id="test1"><div><span id="inner">Test 1</span></div></div><div id="test2"></div>';
 const replacementHtml = '<span>Test 2</span>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#setHTML', () => {
     test.beforeEach(async ({ page }) => {

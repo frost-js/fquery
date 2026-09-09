@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const CLONE_HTML =
     '<div class="parent1">' +
@@ -10,10 +9,6 @@ const CLONE_HTML =
     '<a href="#" class="test3">Test</a>' +
     '<a href="#" class="test4">Test</a>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#clone', () => {
     test.beforeEach(async ({ page }) => {

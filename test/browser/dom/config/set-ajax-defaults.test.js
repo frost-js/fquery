@@ -1,9 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../setup/browser.js';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#setAjaxDefaults', () => {
     test('overrides a default header with different casing', async ({ page }) => {

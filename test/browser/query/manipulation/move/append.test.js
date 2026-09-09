@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const MOVE_HTML =
     '<div id="parent1">' +
@@ -12,10 +11,6 @@ const MOVE_HTML =
     '<a href="#" class="test4">Test</a>' +
     '<span></span>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #append', () => {
     test.beforeEach(async ({ page }) => {

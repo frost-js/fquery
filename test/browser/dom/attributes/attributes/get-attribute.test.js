@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<input type="text" id="test1" required><input type="number" id="test2">';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#getAttribute', () => {
     test.beforeEach(async ({ page }) => {

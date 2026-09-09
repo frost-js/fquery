@@ -1,11 +1,6 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const bodyMarkup = '<input type="text" id="test1" disabled><input type="number" id="test2" disabled>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #removeAttribute', () => {
     test.beforeEach(async ({ page }) => {

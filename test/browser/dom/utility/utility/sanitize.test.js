@@ -1,9 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#sanitize', () => {
     test('returns a sanitized HTML string', async ({ page }) => {

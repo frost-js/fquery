@@ -1,11 +1,8 @@
 import { expect, test } from '#test';
-import { advanceClock, resetPage, setupClock } from '../../../../setup/browser.js';
+import { advanceClock } from '../../../../setup/browser.js';
 import { expectAnimationState } from '../../../../support/assertions/animation.js';
 
-test.beforeEach(async ({ page }) => {
-    await setupClock(page);
-    await resetPage(page);
-});
+test.use({ mockClock: true });
 
 test.describe('QuerySet #dropOut', () => {
     test.beforeEach(async ({ page }) => {
@@ -23,6 +20,7 @@ test.describe('QuerySet #dropOut', () => {
         await page.evaluate((_) => {
             $('.animate')
                 .dropOut({
+                    duration: 200,
                     debug: true,
                 });
         });

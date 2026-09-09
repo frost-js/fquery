@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const UNWRAP_HTML =
     '<div id="parent1">' +
@@ -10,10 +9,6 @@ const UNWRAP_HTML =
     '<a href="#" id="test3">Test</a>' +
     '<a href="#" id="test4">Test</a>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#unwrap', () => {
     test.beforeEach(async ({ page }) => {

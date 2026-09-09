@@ -1,11 +1,8 @@
 import { expect, test } from '#test';
-import { advanceClock, resetPage, setupClock } from '../../../../setup/browser.js';
+import { advanceClock } from '../../../../setup/browser.js';
 import { expectAnimationState } from '../../../../support/assertions/animation.js';
 
-test.beforeEach(async ({ page }) => {
-    await setupClock(page);
-    await resetPage(page);
-});
+test.use({ mockClock: true });
 
 test.describe('#rotateIn', () => {
     test.beforeEach(async ({ page }) => {
@@ -39,6 +36,7 @@ test.describe('#rotateIn', () => {
     test('adds a rotate-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $.rotateIn('.animate', {
+                duration: 200,
                 debug: true,
             });
         });

@@ -1,4 +1,4 @@
-import { expect, test } from '#test';
+import { expect, test } from '@playwright/test';
 import register from '../../../dist/fquery.esm.js';
 import QuerySet from '../../../src/query/query-set.js';
 

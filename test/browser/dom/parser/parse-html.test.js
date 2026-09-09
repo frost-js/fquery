@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../setup/browser.js';
 
 const markup = `
 <div id="div1">
@@ -9,10 +8,6 @@ const markup = `
     <span id="span2"></span>
 </div>
 `;
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#parseHTML', () => {
     test('returns an array of nodes parsed from a HTML string', async ({ page }) => {

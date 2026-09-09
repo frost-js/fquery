@@ -1,5 +1,5 @@
 import { expect, test } from '#test';
-import { advanceClock, resetPage, setupClock } from '../../../../setup/browser.js';
+import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
 const NESTED_HTML =
     '<div id="outer1">' +
@@ -14,10 +14,6 @@ const NESTED_HTML =
     '<a href="#" id="test4">Test</a>' +
     '</div>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('QuerySet #empty', () => {
     test.beforeEach(async ({ page }) => {

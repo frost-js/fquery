@@ -1,5 +1,4 @@
 import { expect, test } from '#test';
-import { resetPage } from '../../../../setup/browser.js';
 
 const DETACH_HTML =
     '<div id="parent1">' +
@@ -10,10 +9,6 @@ const DETACH_HTML =
     '<a href="#" id="test3">Test</a>' +
     '<a href="#" id="test4">Test</a>' +
     '</div>';
-
-test.beforeEach(async ({ page }) => {
-    await resetPage(page);
-});
 
 test.describe('#detach', () => {
     test.beforeEach(async ({ page }) => {
