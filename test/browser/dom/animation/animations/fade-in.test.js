@@ -121,9 +121,96 @@ test.describe('#fadeIn', () => {
             },
             {
                 selectors: ['#clone'],
-                styles: { opacity: '0' },
+                styles: { opacity: '0.25' },
             },
         ]);
+    });
+
+    test('restores the original opacity of each node on cloned animations', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.opacity = '0.25';
+            document.getElementById('test4').style.opacity = '0.75';
+            $.fadeIn('.animate', { duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            const clones = $.clone('.animate', { animations: true });
+            for (const clone of clones) {
+                clone.id += '-clone';
+                document.body.appendChild(clone);
+            }
+        });
+        await advanceClock(page, 100);
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test2-clone'],
+                styles: { opacity: '0.25' },
+            },
+            {
+                selectors: ['#test4', '#test4-clone'],
+                styles: { opacity: '0.75' },
+            },
+        ]);
+    });
+
+    test('restores the original opacity priority on cloned animations', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('opacity', '0.25', 'important');
+            $.fadeIn('#test2', { duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            const [clone] = $.clone('#test2', { animations: true });
+            clone.id = 'clone';
+            document.body.appendChild(clone);
+        });
+        await advanceClock(page, 100);
+
+        expect(await page.evaluate((_) => document.getElementById('clone').style.getPropertyPriority('opacity')))
+            .toBe('important');
+    });
+
+    test('removes temporary opacity from clones when the original declaration was absent', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.fadeIn('#test2', { duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            const [clone] = $.clone('#test2', { animations: true });
+            clone.id = 'clone';
+            document.body.appendChild(clone);
+        });
+        await advanceClock(page, 100);
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#clone'],
+                styles: { opacity: '' },
+            },
+        ]);
+    });
+
+    test('keeps the source opacity locked when a clone is stopped', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.fadeIn('#test2', { duration: 200 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            const [clone] = $.clone('#test2', { animations: true });
+            clone.id = 'clone';
+            document.body.appendChild(clone);
+        });
+        await advanceClock(page, 50);
+
+        expect(await page.evaluate((_) => {
+            $.stop('#clone');
+            try {
+                $.setStyleLock('#test2', 'opacity', 0.25);
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('CSS property "opacity" is already locked.');
     });
 
     test('releases opacity when a zero-duration animation completes', async ({ page }) => {

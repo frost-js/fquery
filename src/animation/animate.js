@@ -1,5 +1,4 @@
 /** @import { AnimationCallback } from './animation.js'; */
-/** @import { AnimationCleanupCallback } from './animation.js'; */
 /** @import { AnimationOptions } from './animation.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 /** @import { StopAnimationOptions } from './animation.js'; */
@@ -15,13 +14,12 @@ import { start } from './helpers.js';
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @param {AnimationCallback} callback The animation callback.
  * @param {AnimationOptions} [options] The animation options.
- * @param {AnimationCleanupCallback} [cleanup] Internal cleanup for built-in effects.
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
-export function animate(selector, callback, options, cleanup) {
+export function animate(selector, callback, options) {
     const nodes = parseNodes(selector);
 
-    const newAnimations = nodes.map((node) => new Animation(node, callback, options, cleanup));
+    const newAnimations = nodes.map((node) => new Animation(node, callback, options));
 
     start();
 

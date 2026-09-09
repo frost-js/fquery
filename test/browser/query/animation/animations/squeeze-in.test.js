@@ -29,6 +29,31 @@ test.describe('QuerySetIn', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', '--overflow: scroll; overflow: var(--overflow);');
     });
 
+    test('uses the original dimensions while a cloned animation continues', async ({ page }) => {
+        await page.evaluate((_) => {
+            $('#test2').squeezeIn({
+                direction: 'top',
+                duration: 200,
+                debug: true,
+            });
+        });
+        await advanceClock(page, 100);
+        await page.evaluate((_) => {
+            const [clone] = $('#test2').clone({ animations: true }).get();
+            clone.id = 'clone';
+            document.body.appendChild(clone);
+        });
+        await advanceClock(page, 50);
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#clone'],
+                progress: 0.875,
+                styles: { height: '87.5px', transform: 'translateY(12.5px)' },
+            },
+        ]);
+    });
+
     test('adds a squeeze-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

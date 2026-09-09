@@ -66,6 +66,34 @@ test.describe('QuerySet #fadeIn', () => {
         ]);
     });
 
+    test('restores the original opacity of each node on cloned animations', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.opacity = '0.25';
+            document.getElementById('test4').style.opacity = '0.75';
+            $('.animate').fadeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+        await page.evaluate((_) => {
+            const clones = $('.animate').clone({ animations: true }).get();
+            for (const clone of clones) {
+                clone.id += '-clone';
+                document.body.appendChild(clone);
+            }
+        });
+        await advanceClock(page, 100);
+
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test2-clone'],
+                styles: { opacity: '0.25' },
+            },
+            {
+                selectors: ['#test4', '#test4-clone'],
+                styles: { opacity: '0.75' },
+            },
+        ]);
+    });
+
     test('adds a fade-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

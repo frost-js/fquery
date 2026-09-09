@@ -1379,7 +1379,6 @@ Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 //#endregion
 //#region src/animation/animate.js
 /** @import { AnimationCallback } from './animation.js'; */
-/** @import { AnimationCleanupCallback } from './animation.js'; */
 /** @import { AnimationOptions } from './animation.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 /** @import { StopAnimationOptions } from './animation.js'; */
@@ -1388,11 +1387,10 @@ Object.setPrototypeOf(Animation.prototype, Promise.prototype);
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @param {AnimationCallback} callback The animation callback.
 * @param {AnimationOptions} [options] The animation options.
-* @param {AnimationCleanupCallback} [cleanup] Internal cleanup for built-in effects.
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
-function animate$1(selector, callback, options, cleanup) {
-	const newAnimations = parseNodes(selector).map((node) => new Animation(node, callback, options, cleanup));
+function animate$1(selector, callback, options) {
+	const newAnimations = parseNodes(selector).map((node) => new Animation(node, callback, options));
 	start();
 	return new AnimationSet(newAnimations);
 }
@@ -1641,7 +1639,6 @@ function toggleClass$1(selector, ...classes) {
 //#endregion
 //#region src/animation/animations.js
 /** @import { AnimationOptions } from './animation.js'; */
-/** @import AnimationSet from './animation-set.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 /**
 * @typedef {Record<string, string>} InlineStyles
@@ -1885,30 +1882,38 @@ function squeezeOut$1(selector, options) {
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
 function animateEffect(selector, properties, callback, options) {
-	const states = /* @__PURE__ */ new WeakMap();
-	return animate$1(selector, function(node, progress, options) {
-		let state = states.get(this);
-		if (!state) {
-			const style = getDOMProperty(node, "style");
-			state = {
-				styles: {},
-				releases: []
-			};
-			states.set(this, state);
-			for (const property of properties) {
-				const priority = style.getPropertyPriority(property);
-				const value = style.getPropertyValue(property);
-				state.styles[property] = value;
-				state.releases.push(setStyleLock$1(node, property, value, { important: priority === "important" }));
+	const animations = parseNodes(selector).map((node) => {
+		const releases = /* @__PURE__ */ new WeakMap();
+		let originals;
+		let initialStyles;
+		return new Animation(node, function(node, progress, options) {
+			if (!releases.has(this)) {
+				const style = getDOMProperty(node, "style");
+				for (const property of properties) assertStyleUnlocked(node, property);
+				const declarations = originals || properties.map((property) => ({
+					property,
+					value: style.getPropertyValue(property),
+					priority: style.getPropertyPriority(property)
+				}));
+				const locks = [];
+				releases.set(this, locks);
+				for (const { property, value, priority } of declarations) {
+					if (originals) style.setProperty(property, value, priority);
+					locks.push(setStyleLock$1(node, property, value, { important: priority === "important" }));
+				}
+				originals ??= declarations;
+				initialStyles ??= Object.fromEntries(declarations.map(({ property, value }) => [property, value]));
 			}
-		}
-		if (progress < 1) callback(node, progress, options, state.styles);
-	}, options, function(restore) {
-		const state = states.get(this);
-		if (!state) return;
-		for (const release of state.releases) release({ restore });
-		states.delete(this);
+			if (progress < 1) callback(node, progress, options, initialStyles);
+		}, options, function(restore) {
+			const locks = releases.get(this);
+			if (!locks) return;
+			for (const release of locks) release({ restore });
+			releases.delete(this);
+		});
 	});
+	start();
+	return new AnimationSet(animations);
 }
 
 //#endregion

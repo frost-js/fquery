@@ -1,11 +1,13 @@
 /** @import { AnimationOptions } from './animation.js'; */
-/** @import AnimationSet from './animation-set.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { evaluate, getDOMProperty } from '@fr0st/core';
-import { setStyleLock } from './../attributes/style-locks.js';
+import { assertStyleUnlocked, setStyleLock } from './../attributes/style-locks.js';
 import { css } from './../attributes/styles.js';
-import { animate } from './animate.js';
+import { parseNodes } from './../filters.js';
+import AnimationSet from './animation-set.js';
+import Animation from './animation.js';
+import { start } from './helpers.js';
 
 /**
  * @typedef {Record<string, string>} InlineStyles
@@ -321,40 +323,65 @@ export function squeezeOut(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 function animateEffect(selector, properties, callback, options) {
-    const states = new WeakMap;
+    const animations = parseNodes(selector).map((node) => {
+        const releases = new WeakMap;
+        let originals;
+        let initialStyles;
 
-    // Animation invokes both callbacks with the animation instance as this.
-    return animate(selector, function(node, progress, options) {
-        let state = states.get(this);
+        // Animation invokes both callbacks with the animation instance as this.
+        return new Animation(node, function(node, progress, options) {
+            if (!releases.has(this)) {
+                const style = getDOMProperty(node, 'style');
 
-        if (!state) {
-            const style = getDOMProperty(node, 'style');
-            state = { styles: {}, releases: [] };
-            states.set(this, state);
+                for (const property of properties) {
+                    assertStyleUnlocked(node, property);
+                }
 
-            for (const property of properties) {
-                const priority = style.getPropertyPriority(property);
-                const value = style.getPropertyValue(property);
+                const declarations = originals || properties.map((property) => ({
+                    property,
+                    value: style.getPropertyValue(property),
+                    priority: style.getPropertyPriority(property),
+                }));
 
-                state.styles[property] = value;
-                state.releases.push(setStyleLock(node, property, value, { important: priority === 'important' }));
+                const locks = [];
+                releases.set(this, locks);
+
+                for (const { property, value, priority } of declarations) {
+                    // Clones must acquire locks against the original declarations.
+                    if (originals) {
+                        style.setProperty(property, value, priority);
+                    }
+
+                    locks.push(setStyleLock(node, property, value, {
+                        important: priority === 'important',
+                    }));
+                }
+
+                originals ??= declarations;
+                initialStyles ??= Object.fromEntries(
+                    declarations.map(({ property, value }) => [property, value]),
+                );
             }
-        }
 
-        if (progress < 1) {
-            callback(node, progress, options, state.styles);
-        }
-    }, options, function(restore) {
-        const state = states.get(this);
+            if (progress < 1) {
+                callback(node, progress, options, initialStyles);
+            }
+        }, options, function(restore) {
+            const locks = releases.get(this);
 
-        if (!state) {
-            return;
-        }
+            if (!locks) {
+                return;
+            }
 
-        for (const release of state.releases) {
-            release({ restore });
-        }
+            for (const release of locks) {
+                release({ restore });
+            }
 
-        states.delete(this);
+            releases.delete(this);
+        });
     });
+
+    start();
+
+    return new AnimationSet(animations);
 };
