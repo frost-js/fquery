@@ -100,11 +100,6 @@ export function getSelection() {
     }
 
     const commonAncestor = range.commonAncestorContainer;
-
-    if (typeof getDOMProperty(commonAncestor, 'querySelectorAll') !== 'function') {
-        return [commonAncestor];
-    }
-
     const nodes = merge([], getDOMProperty(commonAncestor, 'childNodes'));
 
     if (!nodes.length) {

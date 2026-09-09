@@ -5629,7 +5629,6 @@ function getSelection() {
 	const range = selection.getRangeAt(0);
 	if (range.collapsed) return [];
 	const commonAncestor = range.commonAncestorContainer;
-	if (typeof getDOMProperty(commonAncestor, "querySelectorAll") !== "function") return [commonAncestor];
 	const nodes = merge([], getDOMProperty(commonAncestor, "childNodes"));
 	if (!nodes.length) return [commonAncestor];
 	return nodes.filter((node) => range.intersectsNode(node));
