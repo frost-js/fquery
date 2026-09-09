@@ -1,55 +1,30 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
-import { callDOMMethod, getDOMProperty, isWindow, merge } from '@fr0st/core';
-import { closest } from './../traversal/traversal.js';
+import { callDOMMethod, getDOMProperty, isElement, isWindow, merge } from '@fr0st/core';
 
 /**
- * @callback DelegateCallback
- * @param {Element} target The event target to test.
- * @returns {Element|false|undefined} The matching delegate element, or no match.
- */
-
-/**
- * Returns a function for matching a delegate target to a custom selector.
- * @param {Element|ShadowRoot|Document} node The input node.
+ * Returns the closest matching delegate before the container boundary.
+ * @param {Element|ShadowRoot|Document} node The delegation container.
+ * @param {EventTarget|null} target The event target to test.
  * @param {string} selector The delegate query selector.
- * @returns {DelegateCallback} The callback for finding the matching delegate.
+ * @param {boolean} scoped Whether the selector uses the container as its scope.
+ * @returns {Element|undefined} The matching delegate element, or no match.
  */
-function getDelegateContainsFactory(node, selector) {
-    return (target) => {
-        const matches = merge([], callDOMMethod(node, 'querySelectorAll', selector));
+function getDelegate(node, target, selector, scoped) {
+    const matches = scoped ?
+        merge([], callDOMMethod(node, 'querySelectorAll', selector)) :
+        null;
 
-        if (!matches.length) {
-            return false;
-        }
-
-        if (matches.includes(target)) {
+    while (target && target !== node) {
+        if (
+            isElement(target) &&
+            (matches ? matches.includes(target) : callDOMMethod(target, 'matches', selector))
+        ) {
             return target;
         }
 
-        return closest(
-            target,
-            (parent) => matches.includes(parent),
-            (parent) => parent === node,
-        ).shift();
-    };
-};
-
-/**
- * Returns a function for matching a delegate target to a standard selector.
- * @param {Element|ShadowRoot|Document} node The input node.
- * @param {string} selector The delegate query selector.
- * @returns {DelegateCallback} The callback for finding the matching delegate.
- */
-function getDelegateMatchFactory(node, selector) {
-    return (target) =>
-        getDOMProperty(target, 'matches') && callDOMMethod(target, 'matches', selector) ?
-            target :
-            closest(
-                target,
-                (parent) => callDOMMethod(parent, 'matches', selector),
-                (parent) => parent === node,
-            ).shift();
+        target = getDOMProperty(target, 'parentNode');
+    }
 };
 
 /**
@@ -61,17 +36,14 @@ function getDelegateMatchFactory(node, selector) {
  */
 export function delegateFactory(node, selector, callback) {
     const context = isWindow(node) ? node.document : node;
-
-    const getDelegate = /:scope\b/i.test(selector) ?
-        getDelegateContainsFactory(context, selector) :
-        getDelegateMatchFactory(context, selector);
+    const scoped = /:scope\b/i.test(selector);
 
     return (event) => {
         if (node === event.target) {
             return;
         }
 
-        const delegate = getDelegate(event.target);
+        const delegate = getDelegate(context, event.target, selector, scoped);
 
         if (!delegate) {
             return;

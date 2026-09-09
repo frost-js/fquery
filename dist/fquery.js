@@ -2836,290 +2836,22 @@
 	}
 
 //#endregion
-//#region src/traversal/traversal.js
-/** @import { NodeFilterInput } from '../filters.js'; */
-	/** @import { NodeInput } from '../helpers.js'; */
-	/**
-	* Returns the first child of each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function child$1(selector, nodeFilter) {
-		return children$1(selector, nodeFilter, { first: true });
-	}
-	/**
-	* Returns all children of each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {{first?: boolean, elementsOnly?: boolean}} [options] The filtering options.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function children$1(selector, nodeFilter, { first = false, elementsOnly = true } = {}) {
-		nodeFilter = parseFilter(nodeFilter);
-		const nodes = parseNodes(selector, {
-			fragment: true,
-			shadow: true,
-			document: true
-		});
-		const results = [];
-		for (const node of nodes) {
-			const childNodes = elementsOnly ? merge([], getDOMProperty(node, "children")) : merge([], getDOMProperty(node, "childNodes"));
-			for (const child of childNodes) {
-				if (!nodeFilter(child)) continue;
-				results.push(child);
-				if (first) break;
-			}
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns the closest ancestor to each node (optionally matching a filter, and before a limit).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function closest$1(selector, nodeFilter, limitFilter) {
-		return parents$1(selector, nodeFilter, limitFilter, { first: true });
-	}
-	/**
-	* Returns the common ancestor of all nodes.
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @returns {Node|undefined} The common ancestor, or `undefined` if it cannot be resolved.
-	*/
-	function commonAncestor$1(selector) {
-		const nodes = parseNodes(selector, {
-			node: true,
-			fragment: true,
-			shadow: true,
-			document: true,
-			window: true
-		});
-		if (!nodes.length) return;
-		if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
-		let ancestor = getDOMProperty(nodes[0], "parentNode");
-		while (ancestor) {
-			if (nodes.every((node) => node !== ancestor && callDOMMethod(ancestor, "contains", node))) return ancestor;
-			ancestor = getDOMProperty(ancestor, "parentNode");
-		}
-	}
-	/**
-	* Returns all children of each node (including text and comment nodes).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function contents$1(selector) {
-		return children$1(selector, false, { elementsOnly: false });
-	}
-	/**
-	* Returns the DocumentFragment of the first node.
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @returns {DocumentFragment|undefined} The DocumentFragment, or `undefined` if none exists.
-	*/
-	function fragment$1(selector) {
-		const node = parseNode(selector);
-		if (!node) return;
-		const content = getDOMProperty(node, "content");
-		if (isFragment(content)) return content;
-	}
-	/**
-	* Returns the next sibling for each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function next$1(selector, nodeFilter) {
-		nodeFilter = parseFilter(nodeFilter);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) {
-			node = getDOMProperty(node, "nextElementSibling");
-			if (node && nodeFilter(node)) results.push(node);
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns all next siblings for each node (optionally matching a filter, and before a limit).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
-	* @param {{first?: boolean}} [options] The filtering options.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function nextAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
-		nodeFilter = parseFilter(nodeFilter);
-		limitFilter = parseFilter(limitFilter, false);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) while (node = getDOMProperty(node, "nextElementSibling")) {
-			if (limitFilter(node)) break;
-			if (!nodeFilter(node)) continue;
-			results.push(node);
-			if (first) break;
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns the offset parent (relatively positioned) of the first node.
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @returns {Element|null|undefined} The offset parent, or `undefined` if no node matches.
-	*/
-	function offsetParent$1(selector) {
-		const node = parseNode(selector);
-		if (!node) return;
-		return getDOMProperty(node, "offsetParent");
-	}
-	/**
-	* Returns the parent of each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function parent$1(selector, nodeFilter) {
-		nodeFilter = parseFilter(nodeFilter);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) {
-			node = getDOMProperty(node, "parentNode");
-			if (!node) continue;
-			if (!nodeFilter(node)) continue;
-			results.push(node);
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns all parents of each node (optionally matching a filter, and before a limit).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
-	* @param {{first?: boolean}} [options] The filtering options.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function parents$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
-		nodeFilter = parseFilter(nodeFilter);
-		limitFilter = parseFilter(limitFilter, false);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) {
-			const parents = [];
-			while (node = getDOMProperty(node, "parentNode")) {
-				if (isDocument(node)) break;
-				if (limitFilter(node)) break;
-				if (!nodeFilter(node)) continue;
-				parents.unshift(node);
-				if (first) break;
-			}
-			results.push(...parents);
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns the previous sibling for each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function prev$1(selector, nodeFilter) {
-		nodeFilter = parseFilter(nodeFilter);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) {
-			node = getDOMProperty(node, "previousElementSibling");
-			if (node && nodeFilter(node)) results.push(node);
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns all previous siblings for each node (optionally matching a filter, and before a limit).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
-	* @param {{first?: boolean}} [options] The filtering options.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function prevAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
-		nodeFilter = parseFilter(nodeFilter);
-		limitFilter = parseFilter(limitFilter, false);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (let node of nodes) {
-			const siblings = [];
-			while (node = getDOMProperty(node, "previousElementSibling")) {
-				if (limitFilter(node)) break;
-				if (!nodeFilter(node)) continue;
-				siblings.unshift(node);
-				if (first) break;
-			}
-			results.push(...siblings);
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-	/**
-	* Returns the ShadowRoot of the first node.
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @returns {ShadowRoot|null|undefined} The ShadowRoot, or `undefined` if no node matches.
-	*/
-	function shadow$1(selector) {
-		const node = parseNode(selector);
-		if (!node) return;
-		return getDOMProperty(node, "shadowRoot");
-	}
-	/**
-	* Returns all siblings for each node (optionally matching a filter).
-	* @param {NodeInput} selector The input node(s), or a query selector string.
-	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-	* @param {{elementsOnly?: boolean}} [options] The filtering options.
-	* @returns {Node[]} The matching nodes.
-	*/
-	function siblings$1(selector, nodeFilter, { elementsOnly = true } = {}) {
-		nodeFilter = parseFilter(nodeFilter);
-		const nodes = parseNodes(selector, { node: true });
-		const results = [];
-		for (const node of nodes) {
-			const parent = getDOMProperty(node, "parentNode");
-			if (!parent) continue;
-			const siblings = elementsOnly ? getDOMProperty(parent, "children") : getDOMProperty(parent, "childNodes");
-			let sibling;
-			for (sibling of siblings) {
-				if (node === sibling) continue;
-				if (!nodeFilter(sibling)) continue;
-				results.push(sibling);
-			}
-		}
-		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
-	}
-
-//#endregion
 //#region src/events/event-wrappers.js
 /** @import { EventCallback } from './event-handlers.js'; */
 	/**
-	* @callback DelegateCallback
-	* @param {Element} target The event target to test.
-	* @returns {Element|false|undefined} The matching delegate element, or no match.
-	*/
-	/**
-	* Returns a function for matching a delegate target to a custom selector.
-	* @param {Element|ShadowRoot|Document} node The input node.
+	* Returns the closest matching delegate before the container boundary.
+	* @param {Element|ShadowRoot|Document} node The delegation container.
+	* @param {EventTarget|null} target The event target to test.
 	* @param {string} selector The delegate query selector.
-	* @returns {DelegateCallback} The callback for finding the matching delegate.
+	* @param {boolean} scoped Whether the selector uses the container as its scope.
+	* @returns {Element|undefined} The matching delegate element, or no match.
 	*/
-	function getDelegateContainsFactory(node, selector) {
-		return (target) => {
-			const matches = merge([], callDOMMethod(node, "querySelectorAll", selector));
-			if (!matches.length) return false;
-			if (matches.includes(target)) return target;
-			return closest$1(target, (parent) => matches.includes(parent), (parent) => parent === node).shift();
-		};
-	}
-	/**
-	* Returns a function for matching a delegate target to a standard selector.
-	* @param {Element|ShadowRoot|Document} node The input node.
-	* @param {string} selector The delegate query selector.
-	* @returns {DelegateCallback} The callback for finding the matching delegate.
-	*/
-	function getDelegateMatchFactory(node, selector) {
-		return (target) => getDOMProperty(target, "matches") && callDOMMethod(target, "matches", selector) ? target : closest$1(target, (parent) => callDOMMethod(parent, "matches", selector), (parent) => parent === node).shift();
+	function getDelegate(node, target, selector, scoped) {
+		const matches = scoped ? merge([], callDOMMethod(node, "querySelectorAll", selector)) : null;
+		while (target && target !== node) {
+			if (isElement(target) && (matches ? matches.includes(target) : callDOMMethod(target, "matches", selector))) return target;
+			target = getDOMProperty(target, "parentNode");
+		}
 	}
 	/**
 	* Returns a wrapped event callback that executes on a delegate selector.
@@ -3130,10 +2862,10 @@
 	*/
 	function delegateFactory(node, selector, callback) {
 		const context = isWindow(node) ? node.document : node;
-		const getDelegate = /:scope\b/i.test(selector) ? getDelegateContainsFactory(context, selector) : getDelegateMatchFactory(context, selector);
+		const scoped = /:scope\b/i.test(selector);
 		return (event) => {
 			if (node === event.target) return;
-			const delegate = getDelegate(event.target);
+			const delegate = getDelegate(context, event.target, selector, scoped);
 			if (!delegate) return;
 			Object.defineProperty(event, "currentTarget", {
 				configurable: true,
@@ -5774,6 +5506,261 @@
 	function queue(callback, { queueName = "default" } = {}) {
 		queue$1(this, callback, { queueName });
 		return this;
+	}
+
+//#endregion
+//#region src/traversal/traversal.js
+/** @import { NodeFilterInput } from '../filters.js'; */
+	/** @import { NodeInput } from '../helpers.js'; */
+	/**
+	* Returns the first child of each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function child$1(selector, nodeFilter) {
+		return children$1(selector, nodeFilter, { first: true });
+	}
+	/**
+	* Returns all children of each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {{first?: boolean, elementsOnly?: boolean}} [options] The filtering options.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function children$1(selector, nodeFilter, { first = false, elementsOnly = true } = {}) {
+		nodeFilter = parseFilter(nodeFilter);
+		const nodes = parseNodes(selector, {
+			fragment: true,
+			shadow: true,
+			document: true
+		});
+		const results = [];
+		for (const node of nodes) {
+			const childNodes = elementsOnly ? merge([], getDOMProperty(node, "children")) : merge([], getDOMProperty(node, "childNodes"));
+			for (const child of childNodes) {
+				if (!nodeFilter(child)) continue;
+				results.push(child);
+				if (first) break;
+			}
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns the closest ancestor to each node (optionally matching a filter, and before a limit).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function closest$1(selector, nodeFilter, limitFilter) {
+		return parents$1(selector, nodeFilter, limitFilter, { first: true });
+	}
+	/**
+	* Returns the common ancestor of all nodes.
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @returns {Node|undefined} The common ancestor, or `undefined` if it cannot be resolved.
+	*/
+	function commonAncestor$1(selector) {
+		const nodes = parseNodes(selector, {
+			node: true,
+			fragment: true,
+			shadow: true,
+			document: true,
+			window: true
+		});
+		if (!nodes.length) return;
+		if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
+		let ancestor = getDOMProperty(nodes[0], "parentNode");
+		while (ancestor) {
+			if (nodes.every((node) => node !== ancestor && callDOMMethod(ancestor, "contains", node))) return ancestor;
+			ancestor = getDOMProperty(ancestor, "parentNode");
+		}
+	}
+	/**
+	* Returns all children of each node (including text and comment nodes).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function contents$1(selector) {
+		return children$1(selector, false, { elementsOnly: false });
+	}
+	/**
+	* Returns the DocumentFragment of the first node.
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @returns {DocumentFragment|undefined} The DocumentFragment, or `undefined` if none exists.
+	*/
+	function fragment$1(selector) {
+		const node = parseNode(selector);
+		if (!node) return;
+		const content = getDOMProperty(node, "content");
+		if (isFragment(content)) return content;
+	}
+	/**
+	* Returns the next sibling for each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function next$1(selector, nodeFilter) {
+		nodeFilter = parseFilter(nodeFilter);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) {
+			node = getDOMProperty(node, "nextElementSibling");
+			if (node && nodeFilter(node)) results.push(node);
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns all next siblings for each node (optionally matching a filter, and before a limit).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
+	* @param {{first?: boolean}} [options] The filtering options.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function nextAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
+		nodeFilter = parseFilter(nodeFilter);
+		limitFilter = parseFilter(limitFilter, false);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) while (node = getDOMProperty(node, "nextElementSibling")) {
+			if (limitFilter(node)) break;
+			if (!nodeFilter(node)) continue;
+			results.push(node);
+			if (first) break;
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns the offset parent (relatively positioned) of the first node.
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @returns {Element|null|undefined} The offset parent, or `undefined` if no node matches.
+	*/
+	function offsetParent$1(selector) {
+		const node = parseNode(selector);
+		if (!node) return;
+		return getDOMProperty(node, "offsetParent");
+	}
+	/**
+	* Returns the parent of each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function parent$1(selector, nodeFilter) {
+		nodeFilter = parseFilter(nodeFilter);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) {
+			node = getDOMProperty(node, "parentNode");
+			if (!node) continue;
+			if (!nodeFilter(node)) continue;
+			results.push(node);
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns all parents of each node (optionally matching a filter, and before a limit).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
+	* @param {{first?: boolean}} [options] The filtering options.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function parents$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
+		nodeFilter = parseFilter(nodeFilter);
+		limitFilter = parseFilter(limitFilter, false);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) {
+			const parents = [];
+			while (node = getDOMProperty(node, "parentNode")) {
+				if (isDocument(node)) break;
+				if (limitFilter(node)) break;
+				if (!nodeFilter(node)) continue;
+				parents.unshift(node);
+				if (first) break;
+			}
+			results.push(...parents);
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns the previous sibling for each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function prev$1(selector, nodeFilter) {
+		nodeFilter = parseFilter(nodeFilter);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) {
+			node = getDOMProperty(node, "previousElementSibling");
+			if (node && nodeFilter(node)) results.push(node);
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns all previous siblings for each node (optionally matching a filter, and before a limit).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {NodeFilterInput} [limitFilter] The limit node(s), a query selector string or custom filter function.
+	* @param {{first?: boolean}} [options] The filtering options.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function prevAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
+		nodeFilter = parseFilter(nodeFilter);
+		limitFilter = parseFilter(limitFilter, false);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (let node of nodes) {
+			const siblings = [];
+			while (node = getDOMProperty(node, "previousElementSibling")) {
+				if (limitFilter(node)) break;
+				if (!nodeFilter(node)) continue;
+				siblings.unshift(node);
+				if (first) break;
+			}
+			results.push(...siblings);
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
+	}
+	/**
+	* Returns the ShadowRoot of the first node.
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @returns {ShadowRoot|null|undefined} The ShadowRoot, or `undefined` if no node matches.
+	*/
+	function shadow$1(selector) {
+		const node = parseNode(selector);
+		if (!node) return;
+		return getDOMProperty(node, "shadowRoot");
+	}
+	/**
+	* Returns all siblings for each node (optionally matching a filter).
+	* @param {NodeInput} selector The input node(s), or a query selector string.
+	* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+	* @param {{elementsOnly?: boolean}} [options] The filtering options.
+	* @returns {Node[]} The matching nodes.
+	*/
+	function siblings$1(selector, nodeFilter, { elementsOnly = true } = {}) {
+		nodeFilter = parseFilter(nodeFilter);
+		const nodes = parseNodes(selector, { node: true });
+		const results = [];
+		for (const node of nodes) {
+			const parent = getDOMProperty(node, "parentNode");
+			if (!parent) continue;
+			const siblings = elementsOnly ? getDOMProperty(parent, "children") : getDOMProperty(parent, "childNodes");
+			let sibling;
+			for (sibling of siblings) {
+				if (node === sibling) continue;
+				if (!nodeFilter(sibling)) continue;
+				results.push(sibling);
+			}
+		}
+		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
 	}
 
 //#endregion
