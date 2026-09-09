@@ -157,17 +157,7 @@ export function cloneEvents(selector, otherSelector) {
     );
 
     for (const eventData of sourceEvents) {
-        addEvent(
-            otherSelector,
-            eventData.eventName,
-            eventData.callback,
-            {
-                capture: eventData.capture,
-                delegate: eventData.delegate,
-                passive: eventData.passive,
-                selfDestruct: eventData.selfDestruct,
-            },
-        );
+        addEvent(otherSelector, eventData.eventName, eventData.callback, eventData);
     }
 };
 

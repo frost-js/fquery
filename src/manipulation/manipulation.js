@@ -51,17 +51,7 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
 
         for (const realEvents of Object.values(nodeEvents)) {
             for (const eventData of realEvents) {
-                addEvent(
-                    clone,
-                    eventData.eventName,
-                    eventData.callback,
-                    {
-                        capture: eventData.capture,
-                        delegate: eventData.delegate,
-                        passive: eventData.passive,
-                        selfDestruct: eventData.selfDestruct,
-                    },
-                );
+                addEvent(clone, eventData.eventName, eventData.callback, eventData);
             }
         }
     }

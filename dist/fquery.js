@@ -3047,12 +3047,7 @@
 			document: true,
 			window: true
 		}).flatMap((node) => Object.values(events.get(node) || {}).flat());
-		for (const eventData of sourceEvents) addEvent$1(otherSelector, eventData.eventName, eventData.callback, {
-			capture: eventData.capture,
-			delegate: eventData.delegate,
-			passive: eventData.passive,
-			selfDestruct: eventData.selfDestruct
-		});
+		for (const eventData of sourceEvents) addEvent$1(otherSelector, eventData.eventName, eventData.callback, eventData);
 	}
 	/**
 	* Removes events from each node.
@@ -3285,12 +3280,7 @@
 	function deepClone(node, clone, { deep = true, events: events$1 = false, data: data$1 = false, animations: animations$1 = false } = {}) {
 		if (events$1 && events.has(node)) {
 			const nodeEvents = events.get(node);
-			for (const realEvents of Object.values(nodeEvents)) for (const eventData of realEvents) addEvent$1(clone, eventData.eventName, eventData.callback, {
-				capture: eventData.capture,
-				delegate: eventData.delegate,
-				passive: eventData.passive,
-				selfDestruct: eventData.selfDestruct
-			});
+			for (const realEvents of Object.values(nodeEvents)) for (const eventData of realEvents) addEvent$1(clone, eventData.eventName, eventData.callback, eventData);
 		}
 		if (data$1 && data.has(node)) {
 			const nodeData = data.get(node);
