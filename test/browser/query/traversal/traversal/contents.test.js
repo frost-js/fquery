@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="parent1" class="parent">Test 1<div id="child1"></div>Test 2</div><div id="parent2" class="parent">Test 3<div id="child2"></div>Test 4</div>';
-
 test.describe('QuerySet #contents', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="parent1" class="parent">Test 1<div id="child1"></div>Test 2</div><div id="parent2" class="parent">Test 3<div id="child2"></div>Test 4</div>';
+        });
     });
 
     test('returns all children of each node', async ({ page }) => {

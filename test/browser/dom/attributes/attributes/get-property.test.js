@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<input type="text" id="test1"><input type="number" id="test2">';
-
 test.describe('#getProperty', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<input type="text" id="test1"><input type="number" id="test2">';
+        });
         await page.evaluate((_) => {
             document.getElementById('test1').test = 'Test 1';
             document.getElementById('test2').test = 'Test 2';

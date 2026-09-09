@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1" style="display: block; width: 100px; height: 100px;"></div><div id="test2"></div>';
-
 test.describe('QuerySet #getStyle', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1" style="display: block; width: 100px; height: 100px;"></div><div id="test2"></div>';
+        });
     });
 
     test('returns an object with all style values for the first node', async ({ page }) => {

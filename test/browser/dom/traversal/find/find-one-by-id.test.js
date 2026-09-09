@@ -1,49 +1,30 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = `
-<div id="parent1">
-    <div id="child1">
-        <span id="test" data-id="span1"></span>
-        <span data-id="span2"></span>
-    </div>
-    <div id="child2">
-        <span id="test" data-id="span3"></span>
-        <span data-id="span4"></span>
-    </div>
-</div>
-<div id="parent2">
-    <div id="child3">
-        <span id="test" data-id="span5"></span>
-        <span data-id="span6"></span>
-    </div>
-    <div id="child4">
-        <span id="test" data-id="span7"></span>
-        <span data-id="span8"></span>
-    </div>
-</div>
-`;
-
-const fragmentMarkup = `
-<div id="test" data-id="div1"></div>
-<div data-id="div2"></div>
-<div id="test" data-id="div3"></div>
-<div data-id="div4"></div>
-`;
-
-const documentMarkup = `
-<html>
-    <head></head>
-    <body>
-        ${fragmentMarkup}
-    </body>
-</html>
-`;
-
 test.describe('#findOneById', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<div id="child1">' +
+                '<span id="test" data-id="span1"></span>' +
+                '<span data-id="span2"></span>' +
+                '</div>' +
+                '<div id="child2">' +
+                '<span id="test" data-id="span3"></span>' +
+                '<span data-id="span4"></span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div id="child3">' +
+                '<span id="test" data-id="span5"></span>' +
+                '<span data-id="span6"></span>' +
+                '</div>' +
+                '<div id="child4">' +
+                '<span id="test" data-id="span7"></span>' +
+                '<span data-id="span8"></span>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('finds elements by ID', async ({ page }) => {
@@ -95,35 +76,49 @@ test.describe('#findOneById', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
-            const fragment = document.createRange().createContextualFragment(markup);
+        const id = await page.evaluate(() => {
+            const fragment = document.createRange().createContextualFragment('<div id="test" data-id="div1"></div>' +
+                '<div data-id="div2"></div>' +
+                '<div id="test" data-id="div3"></div>' +
+                '<div data-id="div4"></div>');
 
             return $.findOneById('test', fragment)?.dataset.id;
-        }, fragmentMarkup);
+        });
 
         expect(id).toBe('div1');
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
+        const id = await page.evaluate(() => {
             const host = document.createElement('div');
             const shadowRoot = host.attachShadow({ mode: 'open' });
-            const fragment = document.createRange().createContextualFragment(markup);
+            const fragment = document.createRange().createContextualFragment('<div id="test" data-id="div1"></div>' +
+                '<div data-id="div2"></div>' +
+                '<div id="test" data-id="div3"></div>' +
+                '<div data-id="div4"></div>');
 
             shadowRoot.appendChild(fragment);
 
             return $.findOneById('test', shadowRoot)?.dataset.id;
-        }, fragmentMarkup);
+        });
 
         expect(id).toBe('div1');
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
-            const doc = new DOMParser().parseFromString(markup, 'text/html');
+        const id = await page.evaluate(() => {
+            const doc = new DOMParser().parseFromString('<html>' +
+                '<head></head>' +
+                '<body>' +
+                '<div id="test" data-id="div1"></div>' +
+                '<div data-id="div2"></div>' +
+                '<div id="test" data-id="div3"></div>' +
+                '<div data-id="div4"></div>' +
+                '</body>' +
+                '</html>', 'text/html');
 
             return $.findOneById('test', doc)?.dataset.id;
-        }, documentMarkup);
+        });
 
         expect(id).toBe('div1');
     });

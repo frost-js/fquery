@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1" class="test1 test2"></div><div id="test2" class="test1 test2"></div>';
-
 test.describe('#removeClass', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1" class="test1 test2"></div><div id="test2" class="test1 test2"></div>';
+        });
     });
 
     test('removes a class from all nodes', async ({ page }) => {

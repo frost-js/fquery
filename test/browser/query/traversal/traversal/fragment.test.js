@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<template id="template1"></template><template id="template2"></template><div id="div1"></div>';
-
 test.describe('QuerySet #fragment', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<template id="template1"></template><template id="template2"></template><div id="div1"></div>';
+        });
     });
 
     test('returns the document fragment of the first node', async ({ page }) => {

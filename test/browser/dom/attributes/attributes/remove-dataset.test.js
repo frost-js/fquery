@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1" data-text="Test"></div><div id="test2" data-text="Test"></div>';
-
 test.describe('#removeDataset', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1" data-text="Test"></div><div id="test2" data-text="Test"></div>';
+        });
     });
 
     test('removes a dataset value for all nodes', async ({ page }) => {

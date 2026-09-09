@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1"><span>Test</span></div><div id="test2"></div>';
-
 test.describe('QuerySet #getText', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1"><span>Test</span></div><div id="test2"></div>';
+        });
     });
 
     test('returns the text contents of the first node', async ({ page }) => {

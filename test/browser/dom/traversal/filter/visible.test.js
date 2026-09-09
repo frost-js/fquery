@@ -1,13 +1,11 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1"><span id="span1"></span></div><div id="div2" class="test"><span id="span2"></span></div><div id="div3"><span id="span3"></span></div><div id="div4" class="test"><span id="span4"></span></div>';
-
 test.describe('#visible', () => {
     test.beforeEach(async ({ page }) => {
         await page.addStyleTag({ content: '.test { display: none; }' });
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1"><span id="span1"></span></div><div id="div2" class="test"><span id="span2"></span></div><div id="div3"><span id="span3"></span></div><div id="div4" class="test"><span id="span4"></span></div>';
+        });
     });
 
     test('returns visible nodes', async ({ page }) => {

@@ -1,19 +1,17 @@
 import { expect, test } from '#test';
 import { advanceClock } from '../../../setup/browser.js';
 
-const QUEUE_HTML =
-    '<div id="test1"></div>' +
-    '<div id="test2" class="queue"></div>' +
-    '<div id="test3"></div>' +
-    '<div id="test4" class="queue"></div>';
-
 test.use({ mockClock: true });
 
 test.describe('QuerySet #delay', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, QUEUE_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="test1"></div>' +
+                '<div id="test2" class="queue"></div>' +
+                '<div id="test3"></div>' +
+                '<div id="test4" class="queue"></div>';
+        });
     });
 
     test('delays execution of the next queued item', async ({ page }) => {

@@ -1,23 +1,19 @@
 import { expect, test } from '#test';
 
-const markup = `
-<div id="div1">
-    <span id="span1"></span>
-</div>
-<div id="div2">
-    <span id="span2"></span>
-</div>
-`;
-
 test.describe('#parseHTML', () => {
     test('returns an array of nodes parsed from a HTML string', async ({ page }) => {
-        await page.evaluate((html) => {
-            const nodes = $.parseHTML(html);
+        await page.evaluate(() => {
+            const nodes = $.parseHTML('<div id="div1">' +
+                '<span id="span1"></span>' +
+                '</div>' +
+                '<div id="div2">' +
+                '<span id="span2"></span>' +
+                '</div>');
 
             for (const node of nodes) {
                 document.body.appendChild(node);
             }
-        }, markup);
+        });
 
         await expect(page.locator('body > div')).toHaveCount(2);
         await expect(page.locator('#div1 > #span1')).toHaveCount(1);

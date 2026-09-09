@@ -1,22 +1,20 @@
 import { expect, test } from '#test';
 
-const MOVE_HTML =
-    '<div id="parent1">' +
-    '<a href="#" class="test1">Test</a>' +
-    '<a href="#" class="test2">Test</a>' +
-    '<span></span>' +
-    '</div>' +
-    '<div id="parent2">' +
-    '<a href="#" class="test3">Test</a>' +
-    '<a href="#" class="test4">Test</a>' +
-    '<span></span>' +
-    '</div>';
-
 test.describe('#appendTo', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, MOVE_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<span></span>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<span></span>' +
+                '</div>';
+        });
     });
 
     test('appends each node to each other node', async ({ page }) => {

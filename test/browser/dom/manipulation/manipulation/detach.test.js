@@ -1,20 +1,18 @@
 import { expect, test } from '#test';
 
-const DETACH_HTML =
-    '<div id="parent1">' +
-    '<a href="#" id="test1">Test</a>' +
-    '<a href="#" id="test2">Test</a>' +
-    '</div>' +
-    '<div id="parent2">' +
-    '<a href="#" id="test3">Test</a>' +
-    '<a href="#" id="test4">Test</a>' +
-    '</div>';
-
 test.describe('#detach', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, DETACH_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<a href="#" id="test1">Test</a>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<a href="#" id="test3">Test</a>' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>';
+        });
     });
 
     test('detaches all nodes from the DOM', async ({ page }) => {

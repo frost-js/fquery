@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1"></div><div id="test2"></div>';
-
 test.describe('QuerySet #setStyle', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1"></div><div id="test2"></div>';
+        });
     });
 
     test('sets a styles object for all nodes', async ({ page }) => {

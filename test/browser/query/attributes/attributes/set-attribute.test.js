@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<input type="number" id="test1"><input type="number" id="test2">';
-
 test.describe('QuerySet #setAttribute', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<input type="number" id="test1"><input type="number" id="test2">';
+        });
     });
 
     test('sets an attributes object for all nodes', async ({ page }) => {

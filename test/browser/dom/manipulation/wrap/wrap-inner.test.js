@@ -1,27 +1,25 @@
 import { expect, test } from '#test';
 
-const WRAP_HTML =
-    '<div id="wrap">' +
-    '<div id="parent1">' +
-    '<a href="#" id="test1">Test</a>' +
-    '<a href="#" id="test2">Test</a>' +
-    '</div>' +
-    '<div id="parent2">' +
-    '<a href="#" id="test3">Test</a>' +
-    '<a href="#" id="test4">Test</a>' +
-    '</div>' +
-    '</div>' +
-    '<div id="wrapper">' +
-    '<div class="outer">' +
-    '<div class="inner"></div>' +
-    '</div>' +
-    '</div>';
-
 test.describe('#wrapInner', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, WRAP_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="wrap">' +
+                '<div id="parent1">' +
+                '<a href="#" id="test1">Test</a>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<a href="#" id="test3">Test</a>' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('wraps contents of each node', async ({ page }) => {
@@ -457,7 +455,21 @@ test.describe('#wrapInner', () => {
             return document.body.innerHTML;
         });
 
-        expect(html).toBe(WRAP_HTML);
+        expect(html).toBe('<div id="wrap">' +
+            '<div id="parent1">' +
+            '<a href="#" id="test1">Test</a>' +
+            '<a href="#" id="test2">Test</a>' +
+            '</div>' +
+            '<div id="parent2">' +
+            '<a href="#" id="test3">Test</a>' +
+            '<a href="#" id="test4">Test</a>' +
+            '</div>' +
+            '</div>' +
+            '<div id="wrapper">' +
+            '<div class="outer">' +
+            '<div class="inner"></div>' +
+            '</div>' +
+            '</div>');
     });
 
     test('works with array other nodes', async ({ page }) => {

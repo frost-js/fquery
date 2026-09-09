@@ -1,49 +1,30 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = `
-<div id="parent1">
-    <div id="child1">
-        <span id="span1"></span>
-        <span id="span2"></span>
-    </div>
-    <div id="child2">
-        <span id="span3"></span>
-        <span id="span4"></span>
-    </div>
-</div>
-<div id="parent2">
-    <div id="child3">
-        <span id="span5"></span>
-        <span id="span6"></span>
-    </div>
-    <div id="child4">
-        <span id="span7"></span>
-        <span id="span8"></span>
-    </div>
-</div>
-`;
-
-const fragmentMarkup = `
-<div id="div1"></div>
-<div id="div2"></div>
-<span id="span1"></span>
-<span id="span2"></span>
-`;
-
-const documentMarkup = `
-<html>
-    <head></head>
-    <body>
-        ${fragmentMarkup}
-    </body>
-</html>
-`;
-
 test.describe('QuerySet #findOneByTag', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<div id="child1">' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>' +
+                '</div>' +
+                '<div id="child2">' +
+                '<span id="span3"></span>' +
+                '<span id="span4"></span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div id="child3">' +
+                '<span id="span5"></span>' +
+                '<span id="span6"></span>' +
+                '</div>' +
+                '<div id="child4">' +
+                '<span id="span7"></span>' +
+                '<span id="span8"></span>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('finds elements by tag name', async ({ page }) => {
@@ -68,11 +49,14 @@ test.describe('QuerySet #findOneByTag', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((markup) => {
-            const fragment = document.createRange().createContextualFragment(markup);
+        const ids = await page.evaluate(() => {
+            const fragment = document.createRange().createContextualFragment('<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>');
 
             return $(fragment).findOneByTag('span').get().map((node) => node.id);
-        }, fragmentMarkup);
+        });
 
         expect(ids).toEqual([
             'span1',
@@ -80,15 +64,18 @@ test.describe('QuerySet #findOneByTag', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((markup) => {
+        const ids = await page.evaluate(() => {
             const host = document.createElement('div');
             const shadowRoot = host.attachShadow({ mode: 'open' });
-            const fragment = document.createRange().createContextualFragment(markup);
+            const fragment = document.createRange().createContextualFragment('<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>');
 
             shadowRoot.appendChild(fragment);
 
             return $(shadowRoot).findOneByTag('span').get().map((node) => node.id);
-        }, fragmentMarkup);
+        });
 
         expect(ids).toEqual([
             'span1',
@@ -96,11 +83,19 @@ test.describe('QuerySet #findOneByTag', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((markup) => {
-            const doc = new DOMParser().parseFromString(markup, 'text/html');
+        const ids = await page.evaluate(() => {
+            const doc = new DOMParser().parseFromString('<html>' +
+                '<head></head>' +
+                '<body>' +
+                '<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>' +
+                '</body>' +
+                '</html>', 'text/html');
 
             return $(doc).findOneByTag('span').get().map((node) => node.id);
-        }, documentMarkup);
+        });
 
         expect(ids).toEqual([
             'span1',

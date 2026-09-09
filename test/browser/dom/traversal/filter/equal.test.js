@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="parent1"><span data-id="span1"></span><span data-id="span2"></span><span data-id="span3"></span></div><div id="parent2"><span data-id="span2"></span><span data-id="span3"></span><span data-id="span4"></span></div>';
-
 test.describe('#equal', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="parent1"><span data-id="span1"></span><span data-id="span2"></span><span data-id="span3"></span></div><div id="parent2"><span data-id="span2"></span><span data-id="span3"></span><span data-id="span4"></span></div>';
+        });
     });
 
     test('returns nodes equal to other nodes', async ({ page }) => {

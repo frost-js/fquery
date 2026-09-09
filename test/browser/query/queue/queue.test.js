@@ -1,16 +1,14 @@
 import { expect, test } from '#test';
 
-const QUEUE_HTML =
-    '<div id="test1"></div>' +
-    '<div id="test2" class="queue"></div>' +
-    '<div id="test3"></div>' +
-    '<div id="test4" class="queue"></div>';
-
 test.describe('QuerySet #queue', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, QUEUE_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="test1"></div>' +
+                '<div id="test2" class="queue"></div>' +
+                '<div id="test3"></div>' +
+                '<div id="test4" class="queue"></div>';
+        });
     });
 
     test('queues a callback for each node', async ({ page }) => {

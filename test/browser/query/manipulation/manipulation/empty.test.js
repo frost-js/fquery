@@ -1,25 +1,23 @@
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
-const NESTED_HTML =
-    '<div id="outer1">' +
-    '<div id="inner1">' +
-    '<a href="#" id="test1">Test</a>' +
-    '<a href="#" id="test2">Test</a>' +
-    '</div>' +
-    '</div>' +
-    '<div id="outer2">' +
-    '<div id="inner2">' +
-    '<a href="#" id="test3">Test</a>' +
-    '<a href="#" id="test4">Test</a>' +
-    '</div>' +
-    '</div>';
-
 test.describe('QuerySet #empty', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, NESTED_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="outer1">' +
+                '<div id="inner1">' +
+                '<a href="#" id="test1">Test</a>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div id="outer2">' +
+                '<div id="inner2">' +
+                '<a href="#" id="test3">Test</a>' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('removes contents of all nodes from the DOM', async ({ page }) => {

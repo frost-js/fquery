@@ -1,49 +1,30 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = `
-<div id="parent1">
-    <div id="child1">
-        <span id="span1"></span>
-        <span id="span2"></span>
-    </div>
-    <div id="child2">
-        <span id="span3"></span>
-        <span id="span4"></span>
-    </div>
-</div>
-<div id="parent2">
-    <div id="child3">
-        <span id="span5"></span>
-        <span id="span6"></span>
-    </div>
-    <div id="child4">
-        <span id="span7"></span>
-        <span id="span8"></span>
-    </div>
-</div>
-`;
-
-const fragmentMarkup = `
-<div id="div1"></div>
-<div id="div2"></div>
-<span id="span1"></span>
-<span id="span2"></span>
-`;
-
-const documentMarkup = `
-<html>
-    <head></head>
-    <body>
-        ${fragmentMarkup}
-    </body>
-</html>
-`;
-
 test.describe('#findOneByTag', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<div id="child1">' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>' +
+                '</div>' +
+                '<div id="child2">' +
+                '<span id="span3"></span>' +
+                '<span id="span4"></span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div id="child3">' +
+                '<span id="span5"></span>' +
+                '<span id="span6"></span>' +
+                '</div>' +
+                '<div id="child4">' +
+                '<span id="span7"></span>' +
+                '<span id="span8"></span>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('finds elements by tag name', async ({ page }) => {
@@ -95,35 +76,49 @@ test.describe('#findOneByTag', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
-            const fragment = document.createRange().createContextualFragment(markup);
+        const id = await page.evaluate(() => {
+            const fragment = document.createRange().createContextualFragment('<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>');
 
             return $.findOneByTag('span', fragment)?.id;
-        }, fragmentMarkup);
+        });
 
         expect(id).toBe('span1');
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
+        const id = await page.evaluate(() => {
             const host = document.createElement('div');
             const shadowRoot = host.attachShadow({ mode: 'open' });
-            const fragment = document.createRange().createContextualFragment(markup);
+            const fragment = document.createRange().createContextualFragment('<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>');
 
             shadowRoot.appendChild(fragment);
 
             return $.findOneByTag('span', shadowRoot)?.id;
-        }, fragmentMarkup);
+        });
 
         expect(id).toBe('span1');
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const id = await page.evaluate((markup) => {
-            const doc = new DOMParser().parseFromString(markup, 'text/html');
+        const id = await page.evaluate(() => {
+            const doc = new DOMParser().parseFromString('<html>' +
+                '<head></head>' +
+                '<body>' +
+                '<div id="div1"></div>' +
+                '<div id="div2"></div>' +
+                '<span id="span1"></span>' +
+                '<span id="span2"></span>' +
+                '</body>' +
+                '</html>', 'text/html');
 
             return $.findOneByTag('span', doc)?.id;
-        }, documentMarkup);
+        });
 
         expect(id).toBe('span1');
     });

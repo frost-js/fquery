@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1"></div><div id="test2" style="display: none;"></div>';
-
 test.describe('QuerySet #toggle', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1"></div><div id="test2" style="display: none;"></div>';
+        });
     });
 
     test('toggles the visibility of all nodes', async ({ page }) => {

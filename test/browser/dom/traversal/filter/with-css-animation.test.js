@@ -1,15 +1,13 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1" class="test"></div><div id="div2"></div><div id="div3" class="test"></div><div id="div4"></div>';
-
 test.describe('#withCSSAnimation', () => {
     test.beforeEach(async ({ page }) => {
         await page.addStyleTag({
             content: '.test { animation: spin 4s linear infinite; } @keyframes spin { 100% { transform: rotate(360deg); } }',
         });
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1" class="test"></div><div id="div2"></div><div id="div3" class="test"></div><div id="div4"></div>';
+        });
     });
 
     test('returns nodes with CSS animations', async ({ page }) => {

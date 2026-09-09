@@ -1,34 +1,31 @@
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
-const bodyMarkup = '<div id="test1"><div><span id="inner">Test 1</span></div></div><div id="test2"></div>';
-const replacementText = 'Test 2';
-
 test.describe('#setText', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1"><div><span id="inner">Test 1</span></div></div><div id="test2"></div>';
+        });
     });
 
     test('sets the text contents for all nodes', async ({ page }) => {
-        await page.evaluate((text) => {
-            $.setText('div', text);
-        }, replacementText);
+        await page.evaluate(() => {
+            $.setText('div', 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
-        await expect(page.locator('#test2')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
+        await expect(page.locator('#test2')).toHaveText('Test 2');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
     test('sets text contents for nodes with a string content property', async ({ page }) => {
-        await page.evaluate((text) => {
+        await page.evaluate(() => {
             document.getElementById('test1').content = 'Test 1';
 
-            $.setText('#test1', text);
-        }, replacementText);
+            $.setText('#test1', 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
@@ -43,7 +40,7 @@ test.describe('#setText', () => {
     });
 
     test('removes events recursively', async ({ page }) => {
-        const clickCount = await page.evaluate((text) => {
+        const clickCount = await page.evaluate(() => {
             let count = 0;
             const node = document.getElementById('inner');
 
@@ -51,18 +48,18 @@ test.describe('#setText', () => {
                 count++;
             });
 
-            $.setText('div', text);
+            $.setText('div', 'Test 2');
             document.body.appendChild(node);
             $.triggerEvent(node, 'click');
 
             return count;
-        }, replacementText);
+        });
 
         expect(clickCount).toBe(0);
     });
 
     test('preserves events in the host shadow root', async ({ page }) => {
-        const clickCount = await page.evaluate((text) => {
+        const clickCount = await page.evaluate(() => {
             let count = 0;
             const node = document.getElementById('inner');
             const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
@@ -72,18 +69,18 @@ test.describe('#setText', () => {
                 count++;
             });
 
-            $.setText('#test1', text);
+            $.setText('#test1', 'Test 2');
             $.triggerEvent(node, 'click');
 
             return count;
-        }, replacementText);
+        });
 
         expect(clickCount).toBe(2);
         await expect(page.locator('#inner')).toHaveText('Test 1');
     });
 
     test('preserves events inside template contents', async ({ page }) => {
-        const clickCount = await page.evaluate((text) => {
+        const clickCount = await page.evaluate(() => {
             let count = 0;
             const node = document.getElementById('inner');
             const template = document.createElement('template');
@@ -95,51 +92,51 @@ test.describe('#setText', () => {
                 count++;
             });
 
-            $.setText(template, text);
+            $.setText(template, 'Test 2');
             document.body.appendChild(template.content);
             $.triggerEvent(node, 'click');
 
             return count;
-        }, replacementText);
+        });
 
         expect(clickCount).toBe(1);
         await expect(page.locator('#inner')).toHaveText('Test 1');
         await expect(page.locator('template > *')).toHaveCount(0);
-        await expect(page.locator('template')).toHaveText(replacementText);
+        await expect(page.locator('template')).toHaveText('Test 2');
     });
 
     test('removes data recursively', async ({ page }) => {
-        const storedValue = await page.evaluate((text) => {
+        const storedValue = await page.evaluate(() => {
             const node = document.getElementById('inner');
 
             $.setData(node, 'test', 'Test');
-            $.setText('div', text);
+            $.setText('div', 'Test 2');
             document.body.appendChild(node);
 
             return $.getData(node, 'test');
-        }, replacementText);
+        });
 
         expect(storedValue).toBeUndefined();
     });
 
     test('preserves data in the host shadow root', async ({ page }) => {
-        const storedValue = await page.evaluate((text) => {
+        const storedValue = await page.evaluate(() => {
             const node = document.getElementById('inner');
             const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
             shadow.appendChild(node);
 
             $.setData(node, 'test', 'Test');
-            $.setText('#test1', text);
+            $.setText('#test1', 'Test 2');
 
             return $.getData(node, 'test');
-        }, replacementText);
+        });
 
         expect(storedValue).toBe('Test');
         await expect(page.locator('#inner')).toHaveText('Test 1');
     });
 
     test('preserves data inside template contents', async ({ page }) => {
-        const storedValue = await page.evaluate((text) => {
+        const storedValue = await page.evaluate(() => {
             const node = document.getElementById('inner');
             const template = document.createElement('template');
             template.content.appendChild(node);
@@ -147,16 +144,16 @@ test.describe('#setText', () => {
             document.body.appendChild(template);
 
             $.setData(node, 'test', 'Test');
-            $.setText(template, text);
+            $.setText(template, 'Test 2');
             document.body.appendChild(template.content);
 
             return $.getData(node, 'test');
-        }, replacementText);
+        });
 
         expect(storedValue).toBe('Test');
         await expect(page.locator('#inner')).toHaveText('Test 1');
         await expect(page.locator('template > *')).toHaveCount(0);
-        await expect(page.locator('template')).toHaveText(replacementText);
+        await expect(page.locator('template')).toHaveText('Test 2');
     });
 
     test('removes animations recursively', async ({ page }) => {
@@ -167,12 +164,12 @@ test.describe('#setText', () => {
         await expect.poll(async () =>
             await page.evaluate(() => Boolean(document.getElementById('inner')?.dataset.animationProgress))).toBe(true);
 
-        await page.evaluate((text) => {
+        await page.evaluate(() => {
             const node = document.getElementById('inner');
 
-            $.setText('div', text);
+            $.setText('div', 'Test 2');
             document.body.appendChild(node);
-        }, replacementText);
+        });
 
         await expect.poll(async () =>
             await page.evaluate(() => {
@@ -205,77 +202,77 @@ test.describe('#setText', () => {
         await expect.poll(async () =>
             await page.evaluate(() => window.innerQueueStartedAt !== null)).toBe(true);
 
-        await page.evaluate((text) => {
+        await page.evaluate(() => {
             const node = document.getElementById('inner');
 
-            $.setText('div', text);
+            $.setText('div', 'Test 2');
             document.body.appendChild(node);
-        }, replacementText);
+        });
 
         await advanceClock(page, 120);
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
-        await expect(page.locator('#test2')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
+        await expect(page.locator('#test2')).toHaveText('Test 2');
         await expect(page.locator('#inner')).toHaveText('Test 1');
         expect(await page.locator('#inner').getAttribute('data-test')).toBeNull();
     });
 
     test('triggers a remove event recursively', async ({ page }) => {
-        const removeEventCount = await page.evaluate((text) => {
+        const removeEventCount = await page.evaluate(() => {
             let count = 0;
 
             $.addEvent('#inner', 'remove', () => {
                 count++;
             });
 
-            $.setText('div', text);
+            $.setText('div', 'Test 2');
 
             return count;
-        }, replacementText);
+        });
 
         expect(removeEventCount).toBe(1);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((text) => {
-            $.setText(document.getElementById('test1'), text);
-        }, replacementText);
+        await page.evaluate(() => {
+            $.setText(document.getElementById('test1'), 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
         await expect(page.locator('#test2')).toHaveText('');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((text) => {
-            $.setText(document.querySelectorAll('div'), text);
-        }, replacementText);
+        await page.evaluate(() => {
+            $.setText(document.querySelectorAll('div'), 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
-        await expect(page.locator('#test2')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
+        await expect(page.locator('#test2')).toHaveText('Test 2');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((text) => {
-            $.setText(document.body.children, text);
-        }, replacementText);
+        await page.evaluate(() => {
+            $.setText(document.body.children, 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
-        await expect(page.locator('#test2')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
+        await expect(page.locator('#test2')).toHaveText('Test 2');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((text) => {
+        await page.evaluate(() => {
             $.setText([
                 document.getElementById('test1'),
                 document.getElementById('test2'),
-            ], text);
-        }, replacementText);
+            ], 'Test 2');
+        });
 
-        await expect(page.locator('#test1')).toHaveText(replacementText);
-        await expect(page.locator('#test2')).toHaveText(replacementText);
+        await expect(page.locator('#test1')).toHaveText('Test 2');
+        await expect(page.locator('#test2')).toHaveText('Test 2');
         await expect(page.locator('#test1 > *')).toHaveCount(0);
     });
 });

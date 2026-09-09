@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1"></div><div id="div2"></div>';
-
 test.describe('QuerySet #connected', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1"></div><div id="div2"></div>';
+        });
     });
 
     test('returns nodes connected to the DOM', async ({ page }) => {

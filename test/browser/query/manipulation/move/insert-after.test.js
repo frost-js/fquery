@@ -1,22 +1,20 @@
 import { expect, test } from '#test';
 
-const SIBLING_MOVE_HTML =
-    '<div id="parent1">' +
-    '<span></span>' +
-    '<a href="#" class="test1">Test</a>' +
-    '<a href="#" class="test2">Test</a>' +
-    '</div>' +
-    '<div id="parent2">' +
-    '<span></span>' +
-    '<a href="#" class="test3">Test</a>' +
-    '<a href="#" class="test4">Test</a>' +
-    '</div>';
-
 test.describe('QuerySet #insertAfter', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, SIBLING_MOVE_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div id="parent1">' +
+                '<span></span>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<span></span>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '</div>';
+        });
     });
 
     test('inserts each node after each other node', async ({ page }) => {

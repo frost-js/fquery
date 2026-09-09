@@ -1,20 +1,18 @@
 import { expect, test } from '#test';
 
-const CLONE_HTML =
-    '<div class="parent1">' +
-    '<a href="#" class="test1">Test</a>' +
-    '<a href="#" class="test2">Test</a>' +
-    '</div>' +
-    '<div class="parent2">' +
-    '<a href="#" class="test3">Test</a>' +
-    '<a href="#" class="test4">Test</a>' +
-    '</div>';
-
 test.describe('QuerySet #clone', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, CLONE_HTML);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div class="parent1">' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '</div>' +
+                '<div class="parent2">' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '</div>';
+        });
     });
 
     test('clones all nodes', async ({ page }) => {

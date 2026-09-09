@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1" title="Test 1"></div><div id="div2"></div><div id="div3" title="Test 2"></div><div id="div4"></div>';
-
 test.describe('QuerySet #withAttribute', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1" title="Test 1"></div><div id="div2"></div><div id="div3" title="Test 2"></div><div id="div4"></div>';
+        });
     });
 
     test('returns nodes with a specified attribute', async ({ page }) => {

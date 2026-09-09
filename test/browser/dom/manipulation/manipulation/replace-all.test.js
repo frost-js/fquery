@@ -1,25 +1,22 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = `
-<div class="outer1">
-    <div class="inner1">
-        <a href="#">Test</a>
-        <a href="#">Test</a>
-    </div>
-</div>
-<div class="outer2">
-    <div class="inner2">
-        <a href="#">Test</a>
-        <a href="#">Test</a>
-    </div>
-</div>
-`;
-
 test.describe('#replaceAll', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML =
+                '<div class="outer1">' +
+                '<div class="inner1">' +
+                '<a href="#">Test</a>' +
+                '<a href="#">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer2">' +
+                '<div class="inner2">' +
+                '<a href="#">Test</a>' +
+                '<a href="#">Test</a>' +
+                '</div>' +
+                '</div>';
+        });
     });
 
     test('replaces each other node with nodes', async ({ page }) => {

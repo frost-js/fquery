@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1"></div><div id="div2"></div><div id="div3"></div>';
-
 test.describe('#shadow', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div>';
+        });
 
         await page.evaluate((_) => {
             document.getElementById('div1').attachShadow({ mode: 'open' });

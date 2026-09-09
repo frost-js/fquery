@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="div1" class="test"></div><div id="div2" class="test2"></div><div id="div3" class="test"></div><div id="div4"></div>';
-
 test.describe('QuerySet #withClass', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="div1" class="test"></div><div id="div2" class="test2"></div><div id="div3" class="test"></div><div id="div4"></div>';
+        });
     });
 
     test('returns nodes with a specified class', async ({ page }) => {

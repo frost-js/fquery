@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="parent1"><div id="child1" style="position: relative;"><span id="span1"><a id="a1"></a></span></div></div><div id="parent2"><div id="child2" style="position: relative;"><span id="span2"><a id="a2"></a></span></div></div>';
-
 test.describe('QuerySet #offsetParent', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="parent1"><div id="child1" style="position: relative;"><span id="span1"><a id="a1"></a></span></div></div><div id="parent2"><div id="child2" style="position: relative;"><span id="span2"><a id="a2"></a></span></div></div>';
+        });
     });
 
     test('returns the offset parent of the first node', async ({ page }) => {

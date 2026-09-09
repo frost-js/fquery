@@ -1,13 +1,11 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<div id="test1" class="test"></div><div id="test2" class="test"></div>';
-
 test.describe('#css', () => {
     test.beforeEach(async ({ page }) => {
         await page.addStyleTag({ content: '.test { display: block; width: 50vw; }' });
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<div id="test1" class="test"></div><div id="test2" class="test"></div>';
+        });
     });
 
     test('returns an object with all computed styles for the first node', async ({ page }) => {

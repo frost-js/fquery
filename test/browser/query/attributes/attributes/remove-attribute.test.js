@@ -1,12 +1,10 @@
 import { expect, test } from '#test';
 
-const bodyMarkup = '<input type="text" id="test1" disabled><input type="number" id="test2" disabled>';
-
 test.describe('QuerySet #removeAttribute', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((html) => {
-            document.body.innerHTML = html;
-        }, bodyMarkup);
+        await page.evaluate(() => {
+            document.body.innerHTML = '<input type="text" id="test1" disabled><input type="number" id="test2" disabled>';
+        });
     });
 
     test('removes an attribute for all nodes', async ({ page }) => {
