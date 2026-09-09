@@ -3,8 +3,6 @@
 
 import { callDOMMethod, getDOMProperty, isDocument, isElement, isFragment, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
-import { createRange } from './../manipulation/create.js';
-import { sort } from './../utility/utility.js';
 
 /**
  * Returns the first child of each node (optionally matching a filter).
@@ -74,7 +72,13 @@ export function closest(selector, nodeFilter, limitFilter) {
  * @returns {Node|undefined} The common ancestor, or `undefined` if it cannot be resolved.
  */
 export function commonAncestor(selector) {
-    const nodes = sort(selector);
+    const nodes = parseNodes(selector, {
+        node: true,
+        fragment: true,
+        shadow: true,
+        document: true,
+        window: true,
+    });
 
     if (!nodes.length) {
         return;
@@ -85,22 +89,17 @@ export function commonAncestor(selector) {
         return;
     }
 
-    const root = callDOMMethod(nodes[0], 'getRootNode');
+    let ancestor = getDOMProperty(nodes[0], 'parentNode');
 
-    if (nodes.some((node) => callDOMMethod(node, 'getRootNode') !== root)) {
-        return;
+    while (ancestor) {
+        if (nodes.every((node) =>
+            node !== ancestor && callDOMMethod(ancestor, 'contains', node),
+        )) {
+            return ancestor;
+        }
+
+        ancestor = getDOMProperty(ancestor, 'parentNode');
     }
-
-    const range = createRange();
-
-    if (nodes.length === 1) {
-        range.selectNode(nodes.shift());
-    } else {
-        range.setStartBefore(nodes.shift());
-        range.setEndAfter(nodes.pop());
-    }
-
-    return range.commonAncestorContainer;
 };
 
 /**

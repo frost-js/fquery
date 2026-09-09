@@ -1878,241 +1878,6 @@ function setAnimationStyle(style, property, value) {
 }
 
 //#endregion
-//#region src/manipulation/create.js
-/** @import { ElementInput } from '../helpers.js'; */
-/**
-* @typedef {object} CreateOptions
-* @property {string} [html] The HTML contents.
-* @property {string} [text] The text contents.
-* @property {string|string[]} [class] The classes.
-* @property {Record<string, string|number>} [style] The style properties.
-* @property {*} [value] The value.
-* @property {Record<string, *>} [attributes] The attributes.
-* @property {Record<string, *>} [properties] The properties.
-* @property {Record<string, *>} [dataset] The dataset values.
-*/
-/**
-* Attaches a shadow DOM tree to the first node.
-* @param {ElementInput} selector The input node(s), or a query selector string.
-* @param {{open?: boolean}} [options] The shadow DOM options.
-* @returns {ShadowRoot|undefined} The new ShadowRoot, or `undefined` if no element matches.
-*/
-function attachShadow$1(selector, { open = true } = {}) {
-	const node = parseNode(selector);
-	if (!node) return;
-	return callDOMMethod(node, "attachShadow", { mode: open ? "open" : "closed" });
-}
-/**
-* Creates a new DOM element.
-* @param {string} [tagName='div'] The type of HTML element to create.
-* @param {CreateOptions} [options] The element options.
-* @returns {HTMLElement} The new HTMLElement.
-*/
-function create(tagName = "div", options = {}) {
-	const node = callDOMMethod(getContext(), "createElement", tagName);
-	if ("html" in options) node.innerHTML = options.html;
-	else if ("text" in options) node.textContent = options.text;
-	if ("class" in options) {
-		const classes = parseClasses(wrap(options.class));
-		getDOMProperty(node, "classList").add(...classes);
-	}
-	if ("style" in options) for (let [style, value] of Object.entries(options.style)) {
-		style = normalizeCssProperty(style);
-		value = normalizeCssValue(style, value);
-		getDOMProperty(node, "style").setProperty(style, value);
-	}
-	if ("value" in options) node.value = options.value;
-	if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) callDOMMethod(node, "setAttribute", key, value);
-	if ("properties" in options) for (const [key, value] of Object.entries(options.properties)) node[key] = value;
-	if ("dataset" in options) {
-		const dataset = parseData(options.dataset, null, { json: true });
-		for (let [key, value] of Object.entries(dataset)) {
-			key = camelCase(key);
-			getDOMProperty(node, "dataset")[key] = value;
-		}
-	}
-	return node;
-}
-/**
-* Creates a new comment node.
-* @param {string} comment The comment contents.
-* @returns {Node} The new comment node.
-*/
-function createComment(comment) {
-	return callDOMMethod(getContext(), "createComment", comment);
-}
-/**
-* Creates a new document fragment.
-* @returns {DocumentFragment} The new DocumentFragment.
-*/
-function createFragment() {
-	return callDOMMethod(getContext(), "createDocumentFragment");
-}
-/**
-* Creates a new range object.
-* @returns {Range} The new Range.
-*/
-function createRange() {
-	return callDOMMethod(getContext(), "createRange");
-}
-/**
-* Creates a new text node.
-* @param {string} text The text contents.
-* @returns {Node} The new text node.
-*/
-function createText(text) {
-	return callDOMMethod(getContext(), "createTextNode", text);
-}
-
-//#endregion
-//#region src/utility/utility.js
-/** @import { ElementInput } from '../helpers.js'; */
-/** @import { NodeFilterInput } from '../filters.js'; */
-/** @import { NodeInput } from '../helpers.js'; */
-/** @import { QueryInput } from '../helpers.js'; */
-/**
-* Executes a command in the document context.
-* @param {string} command The command to execute.
-* @param {string} [value] The value to give the command.
-* @returns {boolean} Whether the command was executed.
-*/
-function exec(command, value = null) {
-	return callDOMMethod(getContext(), "execCommand", command, false, value);
-}
-/**
-* Gets the index of the first node relative to its parent.
-* @param {NodeInput} selector The input node(s), or a query selector string.
-* @returns {number|undefined} The index, or `undefined` if no node or parent matches.
-*/
-function index$1(selector) {
-	const node = parseNode(selector, { node: true });
-	const parent = node && getDOMProperty(node, "parentNode");
-	if (!parent) return;
-	return merge([], getDOMProperty(parent, "children")).indexOf(node);
-}
-/**
-* Gets the index of the first node matching a filter.
-* @param {NodeInput} selector The input node(s), or a query selector string.
-* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
-* @returns {number} The index.
-*/
-function indexOf$1(selector, nodeFilter) {
-	nodeFilter = parseFilter(nodeFilter);
-	return parseNodes(selector, {
-		node: true,
-		fragment: true,
-		shadow: true
-	}).findIndex(nodeFilter);
-}
-/**
-* Normalizes nodes (remove empty text nodes, and join adjacent text nodes).
-* @param {NodeInput} selector The input node(s), or a query selector string.
-*/
-function normalize$1(selector) {
-	const nodes = parseNodes(selector, {
-		node: true,
-		fragment: true,
-		shadow: true,
-		document: true
-	});
-	for (const node of nodes) callDOMMethod(node, "normalize");
-}
-/**
-* Returns a serialized string containing names and values of all form nodes.
-* @param {NodeInput} selector The input node(s), or a query selector string.
-* @returns {string} The serialized string.
-*/
-function serialize$1(selector) {
-	return parseParams(serializeArray$1(selector).map(({ name, value }) => ({
-		name: name.replace(/\r\n|\r|\n/g, "\r\n"),
-		value: value.replace(/\r\n|\r|\n/g, "\r\n")
-	})));
-}
-/**
-* Returns a serialized array containing names and values of all form nodes.
-* @param {NodeInput} selector The input node(s), or a query selector string.
-* @returns {Array<{name: string, value: string}>} The serialized entries.
-*/
-function serializeArray$1(selector) {
-	return parseNodes(selector, {
-		fragment: true,
-		shadow: true
-	}).reduce((values, node) => {
-		if (isElement(node) && callDOMMethod(node, "matches", "form")) {
-			const elements = getDOMProperty(node, "elements");
-			return values.concat(serializeArray$1(merge([], elements).filter((node) => callDOMMethod(node, "matches", "input, select, textarea"))));
-		}
-		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(callDOMMethod(node, "querySelectorAll", "input, select, textarea")));
-		if (isElement(node) && callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) return values;
-		const name = callDOMMethod(node, "getAttribute", "name");
-		if (!name) return values;
-		if (isElement(node) && callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
-			if (option.matches(":disabled")) continue;
-			values.push({
-				name,
-				value: option.value || ""
-			});
-		}
-		else values.push({
-			name,
-			value: node.value || ""
-		});
-		return values;
-	}, []);
-}
-/**
-* Sorts nodes by their position in the document.
-* @param {QueryInput} selector The input node(s), or a query selector string.
-* @returns {Array<Node|Window>} The sorted nodes.
-*/
-function sort$1(selector) {
-	const { Node } = getWindow();
-	return parseNodes(selector, {
-		node: true,
-		fragment: true,
-		shadow: true,
-		document: true,
-		window: true
-	}).sort((node, other) => {
-		if (isWindow(node)) return 1;
-		if (isWindow(other)) return -1;
-		if (isDocument(node)) return 1;
-		if (isDocument(other)) return -1;
-		if (isFragment(other)) return 1;
-		if (isFragment(node)) return -1;
-		const isNodeShadow = isShadow(node);
-		const isOtherShadow = isShadow(other);
-		if (isNodeShadow) node = node.host;
-		if (isOtherShadow) other = other.host;
-		const nodeConnected = getDOMProperty(node, "isConnected");
-		const otherConnected = getDOMProperty(other, "isConnected");
-		if (!nodeConnected || !otherConnected) {
-			if (nodeConnected !== otherConnected) {
-				if (isNodeShadow && !nodeConnected) return 1;
-				if (isOtherShadow && !otherConnected) return -1;
-				return nodeConnected ? 1 : -1;
-			}
-			if (callDOMMethod(node, "getRootNode") !== callDOMMethod(other, "getRootNode")) return 0;
-		}
-		if (callDOMMethod(node, "isSameNode", other)) return 0;
-		const pos = callDOMMethod(node, "compareDocumentPosition", other);
-		if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) return -1;
-		if (pos & Node.DOCUMENT_POSITION_PRECEDING || pos & Node.DOCUMENT_POSITION_CONTAINS) return 1;
-		return 0;
-	});
-}
-/**
-* Returns the tag name (lowercase) of the first node.
-* @param {ElementInput} selector The input node(s), or a query selector string.
-* @returns {string|undefined} The node's lowercase tag name, or `undefined` if no element matches.
-*/
-function tagName$1(selector) {
-	const node = parseNode(selector);
-	if (!node) return;
-	return getDOMProperty(node, "tagName").toLowerCase();
-}
-
-//#endregion
 //#region src/traversal/traversal.js
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
@@ -2166,18 +1931,20 @@ function closest$1(selector, nodeFilter, limitFilter) {
 * @returns {Node|undefined} The common ancestor, or `undefined` if it cannot be resolved.
 */
 function commonAncestor$1(selector) {
-	const nodes = sort$1(selector);
+	const nodes = parseNodes(selector, {
+		node: true,
+		fragment: true,
+		shadow: true,
+		document: true,
+		window: true
+	});
 	if (!nodes.length) return;
 	if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
-	const root = callDOMMethod(nodes[0], "getRootNode");
-	if (nodes.some((node) => callDOMMethod(node, "getRootNode") !== root)) return;
-	const range = createRange();
-	if (nodes.length === 1) range.selectNode(nodes.shift());
-	else {
-		range.setStartBefore(nodes.shift());
-		range.setEndAfter(nodes.pop());
+	let ancestor = getDOMProperty(nodes[0], "parentNode");
+	while (ancestor) {
+		if (nodes.every((node) => node !== ancestor && callDOMMethod(ancestor, "contains", node))) return ancestor;
+		ancestor = getDOMProperty(ancestor, "parentNode");
 	}
-	return range.commonAncestorContainer;
 }
 /**
 * Returns all children of each node (including text and comment nodes).
@@ -2715,6 +2482,93 @@ function triggerOne$1(selector, event, { data = null, detail = null, bubbles = t
 		eventData.namespaceRegExp = eventNamespacedRegExp(event);
 	}
 	return callDOMMethod(node, "dispatchEvent", eventData);
+}
+
+//#endregion
+//#region src/manipulation/create.js
+/** @import { ElementInput } from '../helpers.js'; */
+/**
+* @typedef {object} CreateOptions
+* @property {string} [html] The HTML contents.
+* @property {string} [text] The text contents.
+* @property {string|string[]} [class] The classes.
+* @property {Record<string, string|number>} [style] The style properties.
+* @property {*} [value] The value.
+* @property {Record<string, *>} [attributes] The attributes.
+* @property {Record<string, *>} [properties] The properties.
+* @property {Record<string, *>} [dataset] The dataset values.
+*/
+/**
+* Attaches a shadow DOM tree to the first node.
+* @param {ElementInput} selector The input node(s), or a query selector string.
+* @param {{open?: boolean}} [options] The shadow DOM options.
+* @returns {ShadowRoot|undefined} The new ShadowRoot, or `undefined` if no element matches.
+*/
+function attachShadow$1(selector, { open = true } = {}) {
+	const node = parseNode(selector);
+	if (!node) return;
+	return callDOMMethod(node, "attachShadow", { mode: open ? "open" : "closed" });
+}
+/**
+* Creates a new DOM element.
+* @param {string} [tagName='div'] The type of HTML element to create.
+* @param {CreateOptions} [options] The element options.
+* @returns {HTMLElement} The new HTMLElement.
+*/
+function create(tagName = "div", options = {}) {
+	const node = callDOMMethod(getContext(), "createElement", tagName);
+	if ("html" in options) node.innerHTML = options.html;
+	else if ("text" in options) node.textContent = options.text;
+	if ("class" in options) {
+		const classes = parseClasses(wrap(options.class));
+		getDOMProperty(node, "classList").add(...classes);
+	}
+	if ("style" in options) for (let [style, value] of Object.entries(options.style)) {
+		style = normalizeCssProperty(style);
+		value = normalizeCssValue(style, value);
+		getDOMProperty(node, "style").setProperty(style, value);
+	}
+	if ("value" in options) node.value = options.value;
+	if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) callDOMMethod(node, "setAttribute", key, value);
+	if ("properties" in options) for (const [key, value] of Object.entries(options.properties)) node[key] = value;
+	if ("dataset" in options) {
+		const dataset = parseData(options.dataset, null, { json: true });
+		for (let [key, value] of Object.entries(dataset)) {
+			key = camelCase(key);
+			getDOMProperty(node, "dataset")[key] = value;
+		}
+	}
+	return node;
+}
+/**
+* Creates a new comment node.
+* @param {string} comment The comment contents.
+* @returns {Node} The new comment node.
+*/
+function createComment(comment) {
+	return callDOMMethod(getContext(), "createComment", comment);
+}
+/**
+* Creates a new document fragment.
+* @returns {DocumentFragment} The new DocumentFragment.
+*/
+function createFragment() {
+	return callDOMMethod(getContext(), "createDocumentFragment");
+}
+/**
+* Creates a new range object.
+* @returns {Range} The new Range.
+*/
+function createRange() {
+	return callDOMMethod(getContext(), "createRange");
+}
+/**
+* Creates a new text node.
+* @param {string} text The text contents.
+* @returns {Node} The new text node.
+*/
+function createText(text) {
+	return callDOMMethod(getContext(), "createTextNode", text);
 }
 
 //#endregion
@@ -5567,6 +5421,154 @@ function shadow() {
 */
 function siblings(nodeFilter, { elementsOnly = true } = {}) {
 	return new QuerySet(siblings$1(this, nodeFilter, { elementsOnly }));
+}
+
+//#endregion
+//#region src/utility/utility.js
+/** @import { ElementInput } from '../helpers.js'; */
+/** @import { NodeFilterInput } from '../filters.js'; */
+/** @import { NodeInput } from '../helpers.js'; */
+/** @import { QueryInput } from '../helpers.js'; */
+/**
+* Executes a command in the document context.
+* @param {string} command The command to execute.
+* @param {string} [value] The value to give the command.
+* @returns {boolean} Whether the command was executed.
+*/
+function exec(command, value = null) {
+	return callDOMMethod(getContext(), "execCommand", command, false, value);
+}
+/**
+* Gets the index of the first node relative to its parent.
+* @param {NodeInput} selector The input node(s), or a query selector string.
+* @returns {number|undefined} The index, or `undefined` if no node or parent matches.
+*/
+function index$1(selector) {
+	const node = parseNode(selector, { node: true });
+	const parent = node && getDOMProperty(node, "parentNode");
+	if (!parent) return;
+	return merge([], getDOMProperty(parent, "children")).indexOf(node);
+}
+/**
+* Gets the index of the first node matching a filter.
+* @param {NodeInput} selector The input node(s), or a query selector string.
+* @param {NodeFilterInput} [nodeFilter] The filter node(s), a query selector string or custom filter function.
+* @returns {number} The index.
+*/
+function indexOf$1(selector, nodeFilter) {
+	nodeFilter = parseFilter(nodeFilter);
+	return parseNodes(selector, {
+		node: true,
+		fragment: true,
+		shadow: true
+	}).findIndex(nodeFilter);
+}
+/**
+* Normalizes nodes (remove empty text nodes, and join adjacent text nodes).
+* @param {NodeInput} selector The input node(s), or a query selector string.
+*/
+function normalize$1(selector) {
+	const nodes = parseNodes(selector, {
+		node: true,
+		fragment: true,
+		shadow: true,
+		document: true
+	});
+	for (const node of nodes) callDOMMethod(node, "normalize");
+}
+/**
+* Returns a serialized string containing names and values of all form nodes.
+* @param {NodeInput} selector The input node(s), or a query selector string.
+* @returns {string} The serialized string.
+*/
+function serialize$1(selector) {
+	return parseParams(serializeArray$1(selector).map(({ name, value }) => ({
+		name: name.replace(/\r\n|\r|\n/g, "\r\n"),
+		value: value.replace(/\r\n|\r|\n/g, "\r\n")
+	})));
+}
+/**
+* Returns a serialized array containing names and values of all form nodes.
+* @param {NodeInput} selector The input node(s), or a query selector string.
+* @returns {Array<{name: string, value: string}>} The serialized entries.
+*/
+function serializeArray$1(selector) {
+	return parseNodes(selector, {
+		fragment: true,
+		shadow: true
+	}).reduce((values, node) => {
+		if (isElement(node) && callDOMMethod(node, "matches", "form")) {
+			const elements = getDOMProperty(node, "elements");
+			return values.concat(serializeArray$1(merge([], elements).filter((node) => callDOMMethod(node, "matches", "input, select, textarea"))));
+		}
+		if (isFragment(node) || isShadow(node)) return values.concat(serializeArray$1(callDOMMethod(node, "querySelectorAll", "input, select, textarea")));
+		if (isElement(node) && callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) return values;
+		const name = callDOMMethod(node, "getAttribute", "name");
+		if (!name) return values;
+		if (isElement(node) && callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
+			if (option.matches(":disabled")) continue;
+			values.push({
+				name,
+				value: option.value || ""
+			});
+		}
+		else values.push({
+			name,
+			value: node.value || ""
+		});
+		return values;
+	}, []);
+}
+/**
+* Sorts nodes by their position in the document.
+* @param {QueryInput} selector The input node(s), or a query selector string.
+* @returns {Array<Node|Window>} The sorted nodes.
+*/
+function sort$1(selector) {
+	const { Node } = getWindow();
+	return parseNodes(selector, {
+		node: true,
+		fragment: true,
+		shadow: true,
+		document: true,
+		window: true
+	}).sort((node, other) => {
+		if (isWindow(node)) return 1;
+		if (isWindow(other)) return -1;
+		if (isDocument(node)) return 1;
+		if (isDocument(other)) return -1;
+		if (isFragment(other)) return 1;
+		if (isFragment(node)) return -1;
+		const isNodeShadow = isShadow(node);
+		const isOtherShadow = isShadow(other);
+		if (isNodeShadow) node = node.host;
+		if (isOtherShadow) other = other.host;
+		const nodeConnected = getDOMProperty(node, "isConnected");
+		const otherConnected = getDOMProperty(other, "isConnected");
+		if (!nodeConnected || !otherConnected) {
+			if (nodeConnected !== otherConnected) {
+				if (isNodeShadow && !nodeConnected) return 1;
+				if (isOtherShadow && !otherConnected) return -1;
+				return nodeConnected ? 1 : -1;
+			}
+			if (callDOMMethod(node, "getRootNode") !== callDOMMethod(other, "getRootNode")) return 0;
+		}
+		if (callDOMMethod(node, "isSameNode", other)) return 0;
+		const pos = callDOMMethod(node, "compareDocumentPosition", other);
+		if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) return -1;
+		if (pos & Node.DOCUMENT_POSITION_PRECEDING || pos & Node.DOCUMENT_POSITION_CONTAINS) return 1;
+		return 0;
+	});
+}
+/**
+* Returns the tag name (lowercase) of the first node.
+* @param {ElementInput} selector The input node(s), or a query selector string.
+* @returns {string|undefined} The node's lowercase tag name, or `undefined` if no element matches.
+*/
+function tagName$1(selector) {
+	const node = parseNode(selector);
+	if (!node) return;
+	return getDOMProperty(node, "tagName").toLowerCase();
 }
 
 //#endregion

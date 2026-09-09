@@ -20,6 +20,16 @@ test.describe('#commonAncestor', () => {
         expect(id).toBe('child');
     });
 
+    test('returns the parent when a node and its descendant are selected', async ({ page }) => {
+        const id = await page.evaluate((_) =>
+            $.commonAncestor([
+                document.getElementById('a1'),
+                document.getElementById('span1'),
+            ]).id);
+
+        expect(id).toBe('child');
+    });
+
     test('returns the common ancestor within a detached tree', async ({ page }) => {
         const id = await page.evaluate((_) => {
             const parent = document.getElementById('parent');

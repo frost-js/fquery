@@ -23,6 +23,19 @@ test.describe('QuerySet #commonAncestor', () => {
         ]);
     });
 
+    test('returns the parent when a node and its descendant are selected', async ({ page }) => {
+        const ids = await page.evaluate((_) => {
+            const node1 = document.getElementById('a1');
+            const node2 = document.getElementById('span1');
+
+            return $([node1, node2]).commonAncestor().get().map((node) => node.id);
+        });
+
+        expect(ids).toEqual([
+            'child',
+        ]);
+    });
+
     test('returns the common ancestor within a detached tree', async ({ page }) => {
         const ids = await page.evaluate((_) => {
             const parent = document.getElementById('parent');
