@@ -72,377 +72,381 @@ test.describe('QuerySet #wrap', () => {
         expect(returnsQuery).toBe(true);
     });
 
-    test('works with HTMLElement other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').wrap(
-                document.querySelector('.outer'),
-            );
+    test.describe('wrapper inputs', () => {
+        test('works with HTMLElement other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').wrap(
+                    document.querySelector('.outer'),
+                );
 
-            return document.body.innerHTML;
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
         });
 
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
+        test('works with NodeList other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').wrap(
+                    document.querySelectorAll('.outer'),
+                );
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
+        });
+
+        test('works with HTMLCollection other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').wrap(
+                    document.getElementById('wrapper').children,
+                );
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
+        });
+
+        test('works with array other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').wrap([
+                    document.querySelector('.outer'),
+                ]);
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
+        });
+
+        test('works with HTML other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').wrap('<div class="div-outer"><span class="span-inner"></span></div>');
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="div-outer">' +
+                '<span class="span-inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '<div class="div-outer">' +
+                '<span class="span-inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="div-outer">' +
+                '<span class="span-inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '<div class="div-outer">' +
+                '<span class="span-inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
+        });
+
+        test('works with QuerySet other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const query = $('.outer');
+
+                $('a').wrap(query);
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test1">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test3">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div class="outer">' +
+                '<div class="inner">' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
+        });
     });
 
-    test('works with NodeList other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').wrap(
-                document.querySelectorAll('.outer'),
-            );
+    test.describe('fragment wrappers', () => {
+        test('works with DocumentFragment other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    '<div><span></span></div>',
+                );
 
-            return document.body.innerHTML;
+                $('a').wrap(fragment);
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test1">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test3">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test4">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
         });
 
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
+        test('works with DocumentFragment other nodes with leading whitespace', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    '\n<div><span></span></div>',
+                );
 
-    test('works with HTMLCollection other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').wrap(
-                document.getElementById('wrapper').children,
-            );
+                $('#parent1 > a').wrap(fragment);
 
-            return document.body.innerHTML;
+                return document.getElementById('parent1').innerHTML;
+            });
+
+            expect(html).toBe('\n' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test1">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '\n' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</span>' +
+                '</div>');
         });
 
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
+        test('works with DocumentFragment other nodes with a leading comment', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    '<!-- Test --><div><span></span></div>',
+                );
 
-    test('works with DocumentFragment other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                '<div><span></span></div>',
-            );
+                $('#parent1 > a').wrap(fragment);
 
-            $('a').wrap(fragment);
+                return document.getElementById('parent1').innerHTML;
+            });
 
-            return document.body.innerHTML;
+            expect(html).toBe('<!-- Test -->' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test1">Test</a>' +
+                '</span>' +
+                '</div>' +
+                '<!-- Test -->' +
+                '<div>' +
+                '<span>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</span>' +
+                '</div>');
         });
 
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test1">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test2">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test3">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test4">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
+        test('ignores DocumentFragment other nodes without an element', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment('Test');
 
-    test('works with DocumentFragment other nodes with leading whitespace', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                '\n<div><span></span></div>',
-            );
+                $('a').wrap(fragment);
 
-            $('#parent1 > a').wrap(fragment);
+                return document.body.innerHTML;
+            });
 
-            return document.getElementById('parent1').innerHTML;
+            expect(html).toBe('<div id="wrap">' +
+                '<div id="parent1">' +
+                '<a href="#" id="test1">Test</a>' +
+                '<a href="#" id="test2">Test</a>' +
+                '</div>' +
+                '<div id="parent2">' +
+                '<a href="#" id="test3">Test</a>' +
+                '<a href="#" id="test4">Test</a>' +
+                '</div>' +
+                '</div>' +
+                '<div id="wrapper">' +
+                '<div class="outer">' +
+                '<div class="inner"></div>' +
+                '</div>' +
+                '</div>');
         });
-
-        expect(html).toBe('\n' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test1">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '\n' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test2">Test</a>' +
-            '</span>' +
-            '</div>');
-    });
-
-    test('works with DocumentFragment other nodes with a leading comment', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                '<!-- Test --><div><span></span></div>',
-            );
-
-            $('#parent1 > a').wrap(fragment);
-
-            return document.getElementById('parent1').innerHTML;
-        });
-
-        expect(html).toBe('<!-- Test -->' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test1">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '<!-- Test -->' +
-            '<div>' +
-            '<span>' +
-            '<a href="#" id="test2">Test</a>' +
-            '</span>' +
-            '</div>');
-    });
-
-    test('ignores DocumentFragment other nodes without an element', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment('Test');
-
-            $('a').wrap(fragment);
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<a href="#" id="test1">Test</a>' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<a href="#" id="test3">Test</a>' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
-
-    test('works with array other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').wrap([
-                document.querySelector('.outer'),
-            ]);
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
-
-    test('works with HTML other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').wrap('<div class="div-outer"><span class="span-inner"></span></div>');
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="div-outer">' +
-            '<span class="span-inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '<div class="div-outer">' +
-            '<span class="span-inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="div-outer">' +
-            '<span class="span-inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '<div class="div-outer">' +
-            '<span class="span-inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
-    });
-
-    test('works with QuerySet other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const query = $('.outer');
-
-            $('a').wrap(query);
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe('<div id="wrap">' +
-            '<div id="parent1">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test1">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test2">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent2">' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test3">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '<div class="outer">' +
-            '<div class="inner">' +
-            '<a href="#" id="test4">Test</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="wrapper">' +
-            '<div class="outer">' +
-            '<div class="inner"></div>' +
-            '</div>' +
-            '</div>');
     });
 });

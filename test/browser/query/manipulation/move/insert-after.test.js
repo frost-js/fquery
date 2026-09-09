@@ -38,99 +38,6 @@ test.describe('QuerySet #insertAfter', () => {
         );
     });
 
-    test('preserves events for nodes', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-
-            $.addEvent('a', 'click', () => {
-                count++;
-            });
-
-            $('a').insertAfter('div');
-            $.triggerEvent('a', 'click');
-
-            return count;
-        });
-
-        expect(clickCount).toBe(8);
-    });
-
-    test('preserves data for nodes', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            $.setData('a', 'test', 'Test');
-            $('a').insertAfter('div');
-
-            return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
-        });
-
-        expect(values).toEqual([
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-        ]);
-    });
-
-    test('preserves animations for nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.animate(
-                'a',
-                () => {},
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-
-            $('a').insertAfter('div');
-        });
-
-        await expect.poll(async () => await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('body > a')];
-
-            return nodes.length === 8 &&
-                nodes.every((node) => Boolean(node.dataset.animationProgress));
-        })).toBe(true);
-
-        await expect.poll(async () => await page.evaluate(() =>
-            [...document.querySelectorAll('body > a')].every((node) =>
-                !node.dataset.animationProgress &&
-                !node.dataset.animationStart &&
-                !node.dataset.animationTime),
-        )).toBe(true);
-    });
-
-    test('does not clone for the last nodes', async ({ page }) => {
-        const isSameNode = await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('a')];
-
-            $('a').insertAfter('div');
-
-            return nodes.every((node, index) =>
-                node.isSameNode(document.querySelectorAll('body > a').item(index + 4)));
-        });
-
-        expect(isSameNode).toBe(true);
-    });
-
-    test('inserts the original node when the final target is detached', async ({ page }) => {
-        const isSameNode = await page.evaluate(() => {
-            const node = document.getElementById('parent1');
-            const detached = document.createElement('div');
-            const other = document.querySelector('.test1');
-
-            $(other).insertAfter([node, detached]);
-
-            return other.isSameNode(node.nextSibling);
-        });
-
-        expect(isSameNode).toBe(true);
-    });
-
     test('returns the QuerySet', async ({ page }) => {
         const returnsSameQuery = await page.evaluate(() => {
             const query = $('a');
@@ -141,132 +48,233 @@ test.describe('QuerySet #insertAfter', () => {
         expect(returnsSameQuery).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
+    test.describe('placement', () => {
+        test('does not clone for the last nodes', async ({ page }) => {
+            const isSameNode = await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('a')];
 
-            $(fragment).insertAfter('div');
+                $('a').insertAfter('div');
 
-            return document.body.innerHTML;
+                return nodes.every((node, index) =>
+                    node.isSameNode(document.querySelectorAll('body > a').item(index + 4)));
+            });
+
+            expect(isSameNode).toBe(true);
         });
 
-        expect(html).toBe(
-            '<div id="parent1">' +
-            '<span></span>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '</div>' +
-            '<div><span></span></div>' +
-            '<div id="parent2">' +
-            '<span></span>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '</div>' +
-            '<div><span></span></div>',
-        );
+        test('inserts the original node when the final target is detached', async ({ page }) => {
+            const isSameNode = await page.evaluate(() => {
+                const node = document.getElementById('parent1');
+                const detached = document.createElement('div');
+                const other = document.querySelector('.test1');
+
+                $(other).insertAfter([node, detached]);
+
+                return other.isSameNode(node.nextSibling);
+            });
+
+            expect(isSameNode).toBe(true);
+        });
     });
 
-    test('works with HTMLElement other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').insertAfter(document.getElementById('parent1'));
+    test.describe('preserved state', () => {
+        test('preserves events for nodes', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
 
-            return document.body.innerHTML;
+                $.addEvent('a', 'click', () => {
+                    count++;
+                });
+
+                $('a').insertAfter('div');
+                $.triggerEvent('a', 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(8);
         });
 
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>',
-        );
-    });
+        test('preserves data for nodes', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                $.setData('a', 'test', 'Test');
+                $('a').insertAfter('div');
 
-    test('works with NodeList other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').insertAfter(document.querySelectorAll('div'));
+                return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
+            });
 
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>',
-        );
-    });
-
-    test('works with HTMLCollection other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').insertAfter(document.body.children);
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>',
-        );
-    });
-
-    test('works with array other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').insertAfter([
-                document.getElementById('parent1'),
-                document.getElementById('parent2'),
+            expect(values).toEqual([
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
             ]);
-
-            return document.body.innerHTML;
         });
 
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>',
-        );
+        test('preserves animations for nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.animate(
+                    'a',
+                    () => {},
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+
+                $('a').insertAfter('div');
+            });
+
+            await expect.poll(async () => await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('body > a')];
+
+                return nodes.length === 8 &&
+                    nodes.every((node) => Boolean(node.dataset.animationProgress));
+            })).toBe(true);
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('body > a')].every((node) =>
+                    !node.dataset.animationProgress &&
+                    !node.dataset.animationStart &&
+                    !node.dataset.animationTime),
+            )).toBe(true);
+        });
     });
 
-    test('works with QuerySet other nodes', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').insertAfter($('div'));
+    test.describe('target inputs', () => {
+        test('works with HTMLElement other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').insertAfter(document.getElementById('parent1'));
 
-            return document.body.innerHTML;
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<div id="parent2"><span></span></div>',
+            );
         });
 
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>',
-        );
+        test('works with NodeList other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').insertAfter(document.querySelectorAll('div'));
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<div id="parent2"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>',
+            );
+        });
+
+        test('works with HTMLCollection other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').insertAfter(document.body.children);
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<div id="parent2"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>',
+            );
+        });
+
+        test('works with array other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').insertAfter([
+                    document.getElementById('parent1'),
+                    document.getElementById('parent2'),
+                ]);
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<div id="parent2"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>',
+            );
+        });
+
+        test('works with QuerySet other nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                $('a').insertAfter($('div'));
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '<div id="parent2"><span></span></div>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>',
+            );
+        });
+    });
+
+    test.describe('content inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const html = await page.evaluate(() => {
+                const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
+
+                $(fragment).insertAfter('div');
+
+                return document.body.innerHTML;
+            });
+
+            expect(html).toBe(
+                '<div id="parent1">' +
+                '<span></span>' +
+                '<a href="#" class="test1">Test</a>' +
+                '<a href="#" class="test2">Test</a>' +
+                '</div>' +
+                '<div><span></span></div>' +
+                '<div id="parent2">' +
+                '<span></span>' +
+                '<a href="#" class="test3">Test</a>' +
+                '<a href="#" class="test4">Test</a>' +
+                '</div>' +
+                '<div><span></span></div>',
+            );
+        });
     });
 });

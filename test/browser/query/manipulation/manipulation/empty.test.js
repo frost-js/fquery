@@ -31,234 +31,6 @@ test.describe('QuerySet #empty', () => {
         await expect(page.locator('a')).toHaveCount(0);
     });
 
-    test('empties nodes with a string content property', async ({ page }) => {
-        await page.evaluate(() => {
-            document.getElementById('outer1').content = 'Test 1';
-
-            $('#outer1').empty();
-        });
-
-        await expect(page.locator('#outer1')).toHaveCount(1);
-        await expect(page.locator('#outer1 > *')).toHaveCount(0);
-    });
-
-    test('removes events recursively', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const nodes = [...document.querySelectorAll('a')];
-
-            $.addEvent('a', 'click', () => {
-                count++;
-            });
-
-            $('div').empty();
-
-            for (const node of nodes) {
-                node.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            }
-
-            return count;
-        });
-
-        expect(clickCount).toBe(0);
-    });
-
-    test('preserves events in the host shadow root', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const node = document.getElementById('test1');
-            const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
-            shadow.appendChild(node);
-
-            $.addEvent([shadow, node], 'click', () => {
-                count++;
-            });
-
-            $('#outer1').empty();
-            $.triggerEvent(node, 'click');
-
-            return count;
-        });
-
-        expect(clickCount).toBe(2);
-        await expect(page.locator('#test1')).toHaveText('Test');
-        await expect(page.locator('#inner1')).toHaveCount(0);
-    });
-
-    test('preserves events inside template contents', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const node = document.getElementById('test1');
-            const template = document.createElement('template');
-            template.content.appendChild(node);
-            template.appendChild(document.getElementById('outer1'));
-            document.body.appendChild(template);
-
-            $.addEvent(node, 'click', () => {
-                count++;
-            });
-
-            $(template).empty();
-            document.body.appendChild(template.content);
-            $.triggerEvent(node, 'click');
-
-            return count;
-        });
-
-        expect(clickCount).toBe(1);
-        await expect(page.locator('#test1')).toHaveText('Test');
-        await expect(page.locator('template > *')).toHaveCount(0);
-    });
-
-    test('removes data recursively', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('a')];
-
-            $.setData('a', 'test', 'Test');
-            $('div').empty();
-
-            return nodes.map((node) => $.getData(node, 'test'));
-        });
-
-        expect(values).toEqual([
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-        ]);
-    });
-
-    test('preserves data in the host shadow root', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            const node = document.getElementById('test1');
-            const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
-            shadow.appendChild(node);
-
-            $.setData([shadow, node], 'test', 'Test');
-            $('#outer1').empty();
-
-            return [shadow, node].map((node) => $.getData(node, 'test'));
-        });
-
-        expect(values).toEqual(['Test', 'Test']);
-        await expect(page.locator('#test1')).toHaveText('Test');
-        await expect(page.locator('#inner1')).toHaveCount(0);
-    });
-
-    test('preserves data inside template contents', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            const node = document.getElementById('test1');
-            const template = document.createElement('template');
-            template.content.appendChild(node);
-            template.appendChild(document.getElementById('outer1'));
-            document.body.appendChild(template);
-
-            $.setData([template.content, node], 'test', 'Test');
-            $(template).empty();
-            document.body.appendChild(template.content);
-
-            return [template.content, node].map((node) => $.getData(node, 'test'));
-        });
-
-        expect(values).toEqual(['Test', 'Test']);
-        await expect(page.locator('#test1')).toHaveText('Test');
-        await expect(page.locator('template > *')).toHaveCount(0);
-    });
-
-    test('removes animations recursively', async ({ page }) => {
-        await page.evaluate(() => {
-            $.animate(
-                'a',
-                () => {},
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-
-        await expect.poll(async () => await page.evaluate(() =>
-            [...document.querySelectorAll('a')].length === 4 &&
-            [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
-        )).toBe(true);
-
-        await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('a')];
-
-            $('div').empty();
-
-            for (const node of nodes) {
-                document.body.appendChild(node);
-            }
-        });
-
-        await expect.poll(async () => await page.evaluate(() =>
-            [...document.querySelectorAll('body > a')].every((node) =>
-                !node.dataset.animationProgress &&
-                !node.dataset.animationStart &&
-                !node.dataset.animationTime),
-        )).toBe(true);
-    });
-
-    test('removes queue recursively', async ({ page }) => {
-        await setupClock(page);
-
-        await page.evaluate(() => {
-            document.documentElement.removeAttribute('data-queue-checkpoint');
-
-            setTimeout(() => {
-                document.documentElement.setAttribute('data-queue-checkpoint', 'done');
-            }, 110);
-
-            $.queue('a', (node) => {
-                node.dataset.queueState = 'running';
-
-                return new Promise((resolve) => {
-                    setTimeout(resolve, 100);
-                });
-            });
-            $.queue('a', (node) => {
-                node.dataset.test = 'Test';
-            });
-        });
-
-        await advanceClock(page, 10);
-        await expect.poll(async () => await page.locator('#test1').getAttribute('data-queue-state')).toBe('running');
-
-        await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('a')];
-
-            $('div').empty();
-
-            for (const node of nodes) {
-                document.body.appendChild(node);
-            }
-        });
-
-        await advanceClock(page, 120);
-        await expect(page.locator('html')).toHaveAttribute('data-queue-checkpoint', 'done');
-        expect(await page.locator('#test1').getAttribute('data-test')).toBeNull();
-        expect(await page.locator('#test2').getAttribute('data-test')).toBeNull();
-        expect(await page.locator('#test3').getAttribute('data-test')).toBeNull();
-        expect(await page.locator('#test4').getAttribute('data-test')).toBeNull();
-    });
-
-    test('triggers a remove event recursively', async ({ page }) => {
-        const removeCount = await page.evaluate(() => {
-            let count = 0;
-
-            $.addEvent('a', 'remove', () => {
-                count++;
-            });
-
-            $('div').empty();
-
-            return count;
-        });
-
-        expect(removeCount).toBe(4);
-    });
-
     test('returns the QuerySet', async ({ page }) => {
         const returnsSameQuery = await page.evaluate(() => {
             const query = $('a');
@@ -269,47 +41,283 @@ test.describe('QuerySet #empty', () => {
         expect(returnsSameQuery).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
+    test.describe('cleanup', () => {
+        test('removes events recursively', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const nodes = [...document.querySelectorAll('a')];
 
-            $(fragment).empty();
+                $.addEvent('a', 'click', () => {
+                    count++;
+                });
 
-            return {
-                childNodes: fragment.childNodes.length,
-                firstChildChildren: fragment.firstChild?.childNodes.length ?? null,
-            };
+                $('div').empty();
+
+                for (const node of nodes) {
+                    node.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                }
+
+                return count;
+            });
+
+            expect(clickCount).toBe(0);
         });
 
-        expect(result).toEqual({
-            childNodes: 0,
-            firstChildChildren: null,
+        test('removes data recursively', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('a')];
+
+                $.setData('a', 'test', 'Test');
+                $('div').empty();
+
+                return nodes.map((node) => $.getData(node, 'test'));
+            });
+
+            expect(values).toEqual([
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+            ]);
+        });
+
+        test('removes animations recursively', async ({ page }) => {
+            await page.evaluate(() => {
+                $.animate(
+                    'a',
+                    () => {},
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+            });
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('a')].length === 4 &&
+                [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
+            )).toBe(true);
+
+            await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('a')];
+
+                $('div').empty();
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+            });
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('body > a')].every((node) =>
+                    !node.dataset.animationProgress &&
+                    !node.dataset.animationStart &&
+                    !node.dataset.animationTime),
+            )).toBe(true);
+        });
+
+        test('removes queue recursively', async ({ page }) => {
+            await setupClock(page);
+
+            await page.evaluate(() => {
+                document.documentElement.removeAttribute('data-queue-checkpoint');
+
+                setTimeout(() => {
+                    document.documentElement.setAttribute('data-queue-checkpoint', 'done');
+                }, 110);
+
+                $.queue('a', (node) => {
+                    node.dataset.queueState = 'running';
+
+                    return new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                });
+                $.queue('a', (node) => {
+                    node.dataset.test = 'Test';
+                });
+            });
+
+            await advanceClock(page, 10);
+            await expect.poll(async () => await page.locator('#test1').getAttribute('data-queue-state')).toBe('running');
+
+            await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('a')];
+
+                $('div').empty();
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+            });
+
+            await advanceClock(page, 120);
+            await expect(page.locator('html')).toHaveAttribute('data-queue-checkpoint', 'done');
+            expect(await page.locator('#test1').getAttribute('data-test')).toBeNull();
+            expect(await page.locator('#test2').getAttribute('data-test')).toBeNull();
+            expect(await page.locator('#test3').getAttribute('data-test')).toBeNull();
+            expect(await page.locator('#test4').getAttribute('data-test')).toBeNull();
         });
     });
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const shadowHtml = await page.evaluate(() => {
-            const host = document.createElement('div');
-            const shadow = host.attachShadow({ mode: 'open' });
+    test.describe('shadow and template contents', () => {
+        test('preserves events in the host shadow root', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const node = document.getElementById('test1');
+                const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
+                shadow.appendChild(node);
 
-            shadow.appendChild(document.createRange().createContextualFragment('<div><span></span></div>'));
-            $(shadow).empty();
+                $.addEvent([shadow, node], 'click', () => {
+                    count++;
+                });
 
-            return shadow.innerHTML;
+                $('#outer1').empty();
+                $.triggerEvent(node, 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(2);
+            await expect(page.locator('#test1')).toHaveText('Test');
+            await expect(page.locator('#inner1')).toHaveCount(0);
         });
 
-        expect(shadowHtml).toBe('');
+        test('preserves events inside template contents', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const node = document.getElementById('test1');
+                const template = document.createElement('template');
+                template.content.appendChild(node);
+                template.appendChild(document.getElementById('outer1'));
+                document.body.appendChild(template);
+
+                $.addEvent(node, 'click', () => {
+                    count++;
+                });
+
+                $(template).empty();
+                document.body.appendChild(template.content);
+                $.triggerEvent(node, 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(1);
+            await expect(page.locator('#test1')).toHaveText('Test');
+            await expect(page.locator('template > *')).toHaveCount(0);
+        });
+
+        test('preserves data in the host shadow root', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                const node = document.getElementById('test1');
+                const shadow = document.getElementById('outer1').attachShadow({ mode: 'open' });
+                shadow.appendChild(node);
+
+                $.setData([shadow, node], 'test', 'Test');
+                $('#outer1').empty();
+
+                return [shadow, node].map((node) => $.getData(node, 'test'));
+            });
+
+            expect(values).toEqual(['Test', 'Test']);
+            await expect(page.locator('#test1')).toHaveText('Test');
+            await expect(page.locator('#inner1')).toHaveCount(0);
+        });
+
+        test('preserves data inside template contents', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                const node = document.getElementById('test1');
+                const template = document.createElement('template');
+                template.content.appendChild(node);
+                template.appendChild(document.getElementById('outer1'));
+                document.body.appendChild(template);
+
+                $.setData([template.content, node], 'test', 'Test');
+                $(template).empty();
+                document.body.appendChild(template.content);
+
+                return [template.content, node].map((node) => $.getData(node, 'test'));
+            });
+
+            expect(values).toEqual(['Test', 'Test']);
+            await expect(page.locator('#test1')).toHaveText('Test');
+            await expect(page.locator('template > *')).toHaveCount(0);
+        });
     });
 
-    test('works with Document nodes', async ({ page }) => {
-        const childNodeCount = await page.evaluate(() => {
-            const doc = new DOMParser().parseFromString('<html></html>', 'text/html');
+    test.describe('removal events', () => {
+        test('triggers a remove event recursively', async ({ page }) => {
+            const removeCount = await page.evaluate(() => {
+                let count = 0;
 
-            $(doc).empty();
+                $.addEvent('a', 'remove', () => {
+                    count++;
+                });
 
-            return doc.childNodes.length;
+                $('div').empty();
+
+                return count;
+            });
+
+            expect(removeCount).toBe(4);
+        });
+    });
+
+    test.describe('node inputs', () => {
+        test('empties nodes with a string content property', async ({ page }) => {
+            await page.evaluate(() => {
+                document.getElementById('outer1').content = 'Test 1';
+
+                $('#outer1').empty();
+            });
+
+            await expect(page.locator('#outer1')).toHaveCount(1);
+            await expect(page.locator('#outer1 > *')).toHaveCount(0);
         });
 
-        expect(childNodeCount).toBe(0);
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
+
+                $(fragment).empty();
+
+                return {
+                    childNodes: fragment.childNodes.length,
+                    firstChildChildren: fragment.firstChild?.childNodes.length ?? null,
+                };
+            });
+
+            expect(result).toEqual({
+                childNodes: 0,
+                firstChildChildren: null,
+            });
+        });
+
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const shadowHtml = await page.evaluate(() => {
+                const host = document.createElement('div');
+                const shadow = host.attachShadow({ mode: 'open' });
+
+                shadow.appendChild(document.createRange().createContextualFragment('<div><span></span></div>'));
+                $(shadow).empty();
+
+                return shadow.innerHTML;
+            });
+
+            expect(shadowHtml).toBe('');
+        });
+
+        test('works with Document nodes', async ({ page }) => {
+            const childNodeCount = await page.evaluate(() => {
+                const doc = new DOMParser().parseFromString('<html></html>', 'text/html');
+
+                $(doc).empty();
+
+                return doc.childNodes.length;
+            });
+
+            expect(childNodeCount).toBe(0);
+        });
     });
 });

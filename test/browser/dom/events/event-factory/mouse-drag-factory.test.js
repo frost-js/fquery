@@ -1,52 +1,6 @@
 import { expect, test } from '#test';
 
 test.describe('#mouseDragFactory', () => {
-    test('creates a mouse drag event', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory((_) => {
-                    result++;
-                }),
-            );
-            document.body.dispatchEvent(downEvent);
-            return result;
-        })).toBe(1);
-    });
-
-    test('creates a mouse drag event with move event', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const moveEvent = new Event('mousemove', {
-                bubbles: true,
-            });
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    null,
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(2);
-    });
-
     test('uses the configured window', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const iframe = document.createElement('iframe');
@@ -80,479 +34,535 @@ test.describe('#mouseDragFactory', () => {
         })).toBe(1);
     });
 
-    test('creates a mouse drag event with up event', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const moveEvent = new Event('mousemove', {
-                bubbles: true,
-            });
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    null,
-                    null,
-                    (_) => {
+    test.describe('mouse callbacks', () => {
+        test('creates a mouse drag event', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory((_) => {
                         result++;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(1);
+                    }),
+                );
+                document.body.dispatchEvent(downEvent);
+                return result;
+            })).toBe(1);
+        });
+
+        test('creates a mouse drag event with move event', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const moveEvent = new Event('mousemove', {
+                    bubbles: true,
+                });
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        null,
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(2);
+        });
+
+        test('creates a mouse drag event with up event', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const moveEvent = new Event('mousemove', {
+                    bubbles: true,
+                });
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        null,
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(1);
+        });
     });
 
-    test('does not run callbacks if down callback returns false', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const moveEvent = new Event('mousemove', {
-                bubbles: true,
-            });
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    (_) => false,
-                    (_) => {
-                        result++;
-                    },
-                    (_) => {
-                        result++;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(0);
+    test.describe('callback return values', () => {
+        test('does not run callbacks if down callback returns false', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const moveEvent = new Event('mousemove', {
+                    bubbles: true,
+                });
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        (_) => false,
+                        (_) => {
+                            result++;
+                        },
+                        (_) => {
+                            result++;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(0);
+        });
+
+        test('does not remove callbacks if up callback returns false', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const moveEvent = new Event('mousemove', {
+                    bubbles: true,
+                });
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        (_) => { },
+                        (_) => {
+                            result++;
+                        },
+                        (_) => {
+                            return result > 1;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(3);
+        });
     });
 
-    test('removes move event on mouseup', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const moveEvent = new Event('mousemove', {
-                bubbles: true,
-            });
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    null,
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(upEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(moveEvent);
-            return result;
-        })).toBe(0);
+    test.describe('mouse cleanup', () => {
+        test('removes move event on mouseup', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const moveEvent = new Event('mousemove', {
+                    bubbles: true,
+                });
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        null,
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(upEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(moveEvent);
+                return result;
+            })).toBe(0);
+        });
+
+        test('removes up event on mouseup', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const downEvent = new Event('mousedown');
+                const upEvent = new Event('mouseup', {
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'mousedown',
+                    $.mouseDragFactory(
+                        null,
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(upEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(1);
+        });
     });
 
-    test('does not remove callbacks if up callback returns false', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const moveEvent = new Event('mousemove', {
-                bubbles: true,
-            });
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    (_) => { },
-                    (_) => {
-                        result++;
-                    },
-                    (_) => {
-                        return result > 1;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(3);
-    });
+    test.describe('touch dragging', () => {
+        test('works with touch events', async ({ page }) => {
+            const hasTouch = await page.evaluate((_) => {
+                if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                    return false;
+                }
 
-    test('removes up event on mouseup', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const downEvent = new Event('mousedown');
-            const upEvent = new Event('mouseup', {
-                bubbles: true,
+                try {
+                    const touch = new Touch({
+                        identifier: 1,
+                        target: document.body,
+                    });
+
+                    new TouchEvent('touchstart', {
+                        touches: [touch],
+                    });
+
+                    return true;
+                } catch {
+                    return false;
+                }
             });
-            $.addEvent(
-                document.body,
-                'mousedown',
-                $.mouseDragFactory(
-                    null,
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(upEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(1);
-    });
 
-    test('works with touch events', async ({ page }) => {
-        const hasTouch = await page.evaluate((_) => {
-            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
-                return false;
-            }
+            test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            try {
+            expect(await page.evaluate((_) => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
                 });
 
-                new TouchEvent('touchstart', {
+                let result = 0;
+                const downEvent = new TouchEvent('touchstart', {
                     touches: [touch],
                 });
-
-                return true;
-            } catch {
-                return false;
-            }
+                const moveEvent = new TouchEvent('touchmove', {
+                    touches: [touch],
+                    bubbles: true,
+                });
+                const upEvent = new TouchEvent('touchend', {
+                    touches: [],
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'touchstart',
+                    $.mouseDragFactory(
+                        (_) => {
+                            result++;
+                        },
+                        (_) => {
+                            result++;
+                        },
+                        (_) => {
+                            result++;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                return result;
+            })).toBe(3);
         });
 
-        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+        test('removes callbacks when multiple touches end together', async ({ page }) => {
+            const hasTouch = await page.evaluate((_) => {
+                if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                    return false;
+                }
 
-        expect(await page.evaluate((_) => {
-            const touch = new Touch({
-                identifier: 1,
-                target: document.body,
+                try {
+                    const touch = new Touch({
+                        identifier: 1,
+                        target: document.body,
+                    });
+
+                    new TouchEvent('touchstart', {
+                        touches: [touch],
+                    });
+
+                    return true;
+                } catch {
+                    return false;
+                }
             });
 
-            let result = 0;
-            const downEvent = new TouchEvent('touchstart', {
-                touches: [touch],
-            });
-            const moveEvent = new TouchEvent('touchmove', {
-                touches: [touch],
-                bubbles: true,
-            });
-            const upEvent = new TouchEvent('touchend', {
-                touches: [],
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'touchstart',
-                $.mouseDragFactory(
-                    (_) => {
-                        result++;
-                    },
-                    (_) => {
-                        result++;
-                    },
-                    (_) => {
-                        result++;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            return result;
-        })).toBe(3);
+            test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+            expect(await page.evaluate((_) => {
+                const touch1 = new Touch({
+                    identifier: 1,
+                    target: document.body,
+                });
+                const touch2 = new Touch({
+                    identifier: 2,
+                    target: document.body,
+                });
+
+                let result = 0;
+                const downEvent = new TouchEvent('touchstart', {
+                    touches: [touch1, touch2],
+                });
+                const moveEvent = new TouchEvent('touchmove', {
+                    touches: [touch1, touch2],
+                    bubbles: true,
+                });
+                const upEvent = new TouchEvent('touchend', {
+                    touches: [],
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'touchstart',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        null,
+                        { debounce: false, touches: 2 },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(upEvent);
+                document.body.dispatchEvent(moveEvent);
+                return result;
+            })).toBe(0);
+        });
     });
 
-    test('removes callbacks when multiple touches end together', async ({ page }) => {
-        const hasTouch = await page.evaluate((_) => {
-            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
-                return false;
-            }
+    test.describe('touch cancellation', () => {
+        test('removes callbacks on touchcancel', async ({ page }) => {
+            const hasTouch = await page.evaluate((_) => {
+                if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                    return false;
+                }
 
-            try {
+                try {
+                    const touch = new Touch({
+                        identifier: 1,
+                        target: document.body,
+                    });
+
+                    new TouchEvent('touchstart', {
+                        touches: [touch],
+                    });
+
+                    return true;
+                } catch {
+                    return false;
+                }
+            });
+
+            test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+            expect(await page.evaluate((_) => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
                 });
 
-                new TouchEvent('touchstart', {
+                let result = 0;
+                const downEvent = new TouchEvent('touchstart', {
                     touches: [touch],
                 });
-
-                return true;
-            } catch {
-                return false;
-            }
+                const moveEvent = new TouchEvent('touchmove', {
+                    touches: [touch],
+                    bubbles: true,
+                });
+                const cancelEvent = new TouchEvent('touchcancel', {
+                    touches: [],
+                    bubbles: true,
+                });
+                const upEvent = new TouchEvent('touchend', {
+                    touches: [],
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'touchstart',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        (_) => {
+                            result++;
+                        },
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(cancelEvent);
+                document.body.dispatchEvent(moveEvent);
+                document.body.dispatchEvent(upEvent);
+                document.body.dispatchEvent(cancelEvent);
+                return result;
+            })).toBe(1);
         });
 
-        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+        test('removes callbacks when multiple touches are cancelled', async ({ page }) => {
+            const hasTouch = await page.evaluate((_) => {
+                if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                    return false;
+                }
 
-        expect(await page.evaluate((_) => {
-            const touch1 = new Touch({
-                identifier: 1,
-                target: document.body,
-            });
-            const touch2 = new Touch({
-                identifier: 2,
-                target: document.body,
+                try {
+                    const touch = new Touch({
+                        identifier: 1,
+                        target: document.body,
+                    });
+
+                    new TouchEvent('touchstart', {
+                        touches: [touch],
+                    });
+
+                    return true;
+                } catch {
+                    return false;
+                }
             });
 
-            let result = 0;
-            const downEvent = new TouchEvent('touchstart', {
-                touches: [touch1, touch2],
-            });
-            const moveEvent = new TouchEvent('touchmove', {
-                touches: [touch1, touch2],
-                bubbles: true,
-            });
-            const upEvent = new TouchEvent('touchend', {
-                touches: [],
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'touchstart',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    null,
-                    { debounce: false, touches: 2 },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(upEvent);
-            document.body.dispatchEvent(moveEvent);
-            return result;
-        })).toBe(0);
-    });
+            test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-    test('removes callbacks on touchcancel', async ({ page }) => {
-        const hasTouch = await page.evaluate((_) => {
-            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
-                return false;
-            }
+            expect(await page.evaluate((_) => {
+                const touch1 = new Touch({
+                    identifier: 1,
+                    target: document.body,
+                });
+                const touch2 = new Touch({
+                    identifier: 2,
+                    target: document.body,
+                });
 
-            try {
+                let result = 0;
+                const downEvent = new TouchEvent('touchstart', {
+                    touches: [touch1, touch2],
+                });
+                const moveEvent = new TouchEvent('touchmove', {
+                    touches: [touch1, touch2],
+                    bubbles: true,
+                });
+                const cancelEvent = new TouchEvent('touchcancel', {
+                    touches: [],
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'touchstart',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        null,
+                        { debounce: false, touches: 2 },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(cancelEvent);
+                document.body.dispatchEvent(moveEvent);
+                return result;
+            })).toBe(0);
+        });
+
+        test('removes callbacks on touchcancel if up callback returns false', async ({ page }) => {
+            const hasTouch = await page.evaluate((_) => {
+                if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
+                    return false;
+                }
+
+                try {
+                    const touch = new Touch({
+                        identifier: 1,
+                        target: document.body,
+                    });
+
+                    new TouchEvent('touchstart', {
+                        touches: [touch],
+                    });
+
+                    return true;
+                } catch {
+                    return false;
+                }
+            });
+
+            test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
+
+            expect(await page.evaluate((_) => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
                 });
 
-                new TouchEvent('touchstart', {
+                let result = 0;
+                const downEvent = new TouchEvent('touchstart', {
                     touches: [touch],
                 });
-
-                return true;
-            } catch {
-                return false;
-            }
-        });
-
-        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
-
-        expect(await page.evaluate((_) => {
-            const touch = new Touch({
-                identifier: 1,
-                target: document.body,
-            });
-
-            let result = 0;
-            const downEvent = new TouchEvent('touchstart', {
-                touches: [touch],
-            });
-            const moveEvent = new TouchEvent('touchmove', {
-                touches: [touch],
-                bubbles: true,
-            });
-            const cancelEvent = new TouchEvent('touchcancel', {
-                touches: [],
-                bubbles: true,
-            });
-            const upEvent = new TouchEvent('touchend', {
-                touches: [],
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'touchstart',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    (_) => {
-                        result++;
-                    },
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(cancelEvent);
-            document.body.dispatchEvent(moveEvent);
-            document.body.dispatchEvent(upEvent);
-            document.body.dispatchEvent(cancelEvent);
-            return result;
-        })).toBe(1);
-    });
-
-    test('removes callbacks when multiple touches are cancelled', async ({ page }) => {
-        const hasTouch = await page.evaluate((_) => {
-            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
-                return false;
-            }
-
-            try {
-                const touch = new Touch({
-                    identifier: 1,
-                    target: document.body,
-                });
-
-                new TouchEvent('touchstart', {
+                const moveEvent = new TouchEvent('touchmove', {
                     touches: [touch],
+                    bubbles: true,
                 });
-
-                return true;
-            } catch {
-                return false;
-            }
+                const cancelEvent = new TouchEvent('touchcancel', {
+                    touches: [],
+                    bubbles: true,
+                });
+                $.addEvent(
+                    document.body,
+                    'touchstart',
+                    $.mouseDragFactory(
+                        null,
+                        (_) => {
+                            result++;
+                        },
+                        (_) => false,
+                        { debounce: false },
+                    ),
+                );
+                document.body.dispatchEvent(downEvent);
+                document.body.dispatchEvent(cancelEvent);
+                document.body.dispatchEvent(moveEvent);
+                return result;
+            })).toBe(0);
         });
-
-        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
-
-        expect(await page.evaluate((_) => {
-            const touch1 = new Touch({
-                identifier: 1,
-                target: document.body,
-            });
-            const touch2 = new Touch({
-                identifier: 2,
-                target: document.body,
-            });
-
-            let result = 0;
-            const downEvent = new TouchEvent('touchstart', {
-                touches: [touch1, touch2],
-            });
-            const moveEvent = new TouchEvent('touchmove', {
-                touches: [touch1, touch2],
-                bubbles: true,
-            });
-            const cancelEvent = new TouchEvent('touchcancel', {
-                touches: [],
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'touchstart',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    null,
-                    { debounce: false, touches: 2 },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(cancelEvent);
-            document.body.dispatchEvent(moveEvent);
-            return result;
-        })).toBe(0);
-    });
-
-    test('removes callbacks on touchcancel if up callback returns false', async ({ page }) => {
-        const hasTouch = await page.evaluate((_) => {
-            if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
-                return false;
-            }
-
-            try {
-                const touch = new Touch({
-                    identifier: 1,
-                    target: document.body,
-                });
-
-                new TouchEvent('touchstart', {
-                    touches: [touch],
-                });
-
-                return true;
-            } catch {
-                return false;
-            }
-        });
-
-        test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
-
-        expect(await page.evaluate((_) => {
-            const touch = new Touch({
-                identifier: 1,
-                target: document.body,
-            });
-
-            let result = 0;
-            const downEvent = new TouchEvent('touchstart', {
-                touches: [touch],
-            });
-            const moveEvent = new TouchEvent('touchmove', {
-                touches: [touch],
-                bubbles: true,
-            });
-            const cancelEvent = new TouchEvent('touchcancel', {
-                touches: [],
-                bubbles: true,
-            });
-            $.addEvent(
-                document.body,
-                'touchstart',
-                $.mouseDragFactory(
-                    null,
-                    (_) => {
-                        result++;
-                    },
-                    (_) => false,
-                    { debounce: false },
-                ),
-            );
-            document.body.dispatchEvent(downEvent);
-            document.body.dispatchEvent(cancelEvent);
-            document.body.dispatchEvent(moveEvent);
-            return result;
-        })).toBe(0);
     });
 });

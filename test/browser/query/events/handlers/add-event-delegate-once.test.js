@@ -19,215 +19,6 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
         });
     });
 
-    test('adds a self-destructing delegated event to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div').addEventDelegateOnce('click', 'a', (_) => {
-                result++;
-            });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test3');
-            const callback = (_) => {
-                result++;
-            };
-            $('div').addEventDelegate('click', 'a', callback);
-            $('div').addEventDelegateOnce('click', 'a', callback);
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            return result;
-        })).toBe(6);
-    });
-
-    test('adds self-destructing delegated events to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event1 = new Event('click', {
-                bubbles: true,
-            });
-            const event2 = new Event('hover', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click hover', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event2);
-            element1.dispatchEvent(event2);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event2);
-            element2.dispatchEvent(event2);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event2);
-            element3.dispatchEvent(event2);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event2);
-            element4.dispatchEvent(event2);
-            return result;
-        })).toBe(4);
-    });
-
-    test('adds a namespaced self-destructing delegated event to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click.test', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('adds namespaced self-destructing delegated events to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event1 = new Event('click', {
-                bubbles: true,
-            });
-            const event2 = new Event('hover', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click.test hover.test', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event2);
-            element1.dispatchEvent(event2);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event2);
-            element2.dispatchEvent(event2);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event2);
-            element3.dispatchEvent(event2);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event2);
-            element4.dispatchEvent(event2);
-            return result;
-        })).toBe(4);
-    });
-
-    test('adds a deep namespaced self-destructing delegated event to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click.test.deep', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(2);
-    });
-
-    test('adds deep namespaced self-destructing delegated events to each node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event1 = new Event('click', {
-                bubbles: true,
-            });
-            const event2 = new Event('hover', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click.test.deep hover.test.deep', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event1);
-            element1.dispatchEvent(event2);
-            element1.dispatchEvent(event2);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event1);
-            element2.dispatchEvent(event2);
-            element2.dispatchEvent(event2);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event1);
-            element3.dispatchEvent(event2);
-            element3.dispatchEvent(event2);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event1);
-            element4.dispatchEvent(event2);
-            element4.dispatchEvent(event2);
-            return result;
-        })).toBe(4);
-    });
-
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('div');
@@ -235,97 +26,314 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
         })).toBe(true);
     });
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            const a = document.createElement('a');
-            shadow.appendChild(a);
-            $(shadow)
-                    .addEventDelegateOnce('click', 'a', (_) => {
-                        result++;
-                    });
-            a.dispatchEvent(event);
-            a.dispatchEvent(event);
-            return result;
-        })).toBe(1);
+    test.describe('registration', () => {
+        test('adds a self-destructing delegated event to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div').addEventDelegateOnce('click', 'a', (_) => {
+                    result++;
+                });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(2);
+        });
+
+        test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test3');
+                const callback = (_) => {
+                    result++;
+                };
+                $('div').addEventDelegate('click', 'a', callback);
+                $('div').addEventDelegateOnce('click', 'a', callback);
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            })).toBe(6);
+        });
+
+        test('adds self-destructing delegated events to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click hover', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                element4.dispatchEvent(event2);
+                return result;
+            })).toBe(4);
+        });
     });
 
-    test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click', {
-                bubbles: true,
-            });
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $(document)
-                    .addEventDelegateOnce('click', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(1);
+    test.describe('namespaces', () => {
+        test('adds a namespaced self-destructing delegated event to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click.test', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(2);
+        });
+
+        test('adds namespaced self-destructing delegated events to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click.test hover.test', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                element4.dispatchEvent(event2);
+                return result;
+            })).toBe(4);
+        });
+
+        test('adds a deep namespaced self-destructing delegated event to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click.test.deep', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(2);
+        });
+
+        test('adds deep namespaced self-destructing delegated events to each node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click.test.deep hover.test.deep', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                element4.dispatchEvent(event2);
+                return result;
+            })).toBe(4);
+        });
     });
 
-    test('does not capture events', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click', 'a', (_) => {
-                        result++;
-                    });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(0);
+    test.describe('capture', () => {
+        test('does not capture events', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(0);
+        });
+
+        test('works with capture', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $('div')
+                        .addEventDelegateOnce('click', 'a', (_) => {
+                            result++;
+                        }, { capture: true });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(2);
+        });
     });
 
-    test('works with capture', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result = 0;
-            const event = new Event('click');
-            const element1 = document.getElementById('test1');
-            const element2 = document.getElementById('test2');
-            const element3 = document.getElementById('test3');
-            const element4 = document.getElementById('test4');
-            $('div')
-                    .addEventDelegateOnce('click', 'a', (_) => {
-                        result++;
-                    }, { capture: true });
-            element1.dispatchEvent(event);
-            element1.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element2.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element3.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            element4.dispatchEvent(event);
-            return result;
-        })).toBe(2);
+    test.describe('node inputs', () => {
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                const a = document.createElement('a');
+                shadow.appendChild(a);
+                $(shadow)
+                        .addEventDelegateOnce('click', 'a', (_) => {
+                            result++;
+                        });
+                a.dispatchEvent(event);
+                a.dispatchEvent(event);
+                return result;
+            })).toBe(1);
+        });
+
+        test('works with Document nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $(document)
+                        .addEventDelegateOnce('click', 'a', (_) => {
+                            result++;
+                        });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            })).toBe(1);
+        });
     });
 });

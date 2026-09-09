@@ -31,307 +31,317 @@ test.describe('#clone', () => {
         await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(2);
     });
 
-    test('clones forms with a control named cloneNode', async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<form><input name="cloneNode"></form>';
+    test.describe('shallow cloning', () => {
+        test('shallow clones all nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const clones = $.clone('div', { deep: false });
 
-            const clone = $.clone('form')[0];
-            document.body.appendChild(clone);
-        });
-
-        await expect(page.locator('body > form')).toHaveCount(2);
-        await expect(page.locator('body > form').nth(1).locator('input')).toHaveAttribute('name', 'cloneNode');
-    });
-
-    test('shallow clones all nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $.clone('div', { deep: false });
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(0).locator('a')).toHaveCount(2);
-        await expect(page.locator('body > div').nth(1).locator('a')).toHaveCount(2);
-        await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(0);
-        await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
-    });
-
-    test('does not clone template content data with shallow option', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            const template = document.createElement('template');
-            template.innerHTML = '<a>Test</a>';
-
-            $.setData(template.content, 'test', 'Test');
-
-            const [clone] = $.clone(template, { deep: false, data: true });
-
-            return $.getData(clone.content, 'test');
-        });
-
-        expect(value).toBeUndefined();
-    });
-
-    test('clones all nodes with events', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-
-            $.addEvent('a', 'click', () => {
-                count++;
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
             });
 
-            const clones = $.clone('a', { events: true });
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-
-            $.triggerEvent('a', 'click');
-
-            return count;
+            await expect(page.locator('body > div')).toHaveCount(4);
+            await expect(page.locator('body > div').nth(0).locator('a')).toHaveCount(2);
+            await expect(page.locator('body > div').nth(1).locator('a')).toHaveCount(2);
+            await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(0);
+            await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
         });
 
-        expect(clickCount).toBe(8);
-    });
+        test('does not clone template content data with shallow option', async ({ page }) => {
+            const value = await page.evaluate(() => {
+                const template = document.createElement('template');
+                template.innerHTML = '<a>Test</a>';
 
-    test('clones events inside template contents', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const template = document.createElement('template');
-            template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
-            const nested = template.content.querySelector('template');
+                $.setData(template.content, 'test', 'Test');
 
-            $.addEvent([
-                template.content.querySelector('a'),
-                nested.content.querySelector('a'),
-            ], 'click', () => {
-                count++;
+                const [clone] = $.clone(template, { deep: false, data: true });
+
+                return $.getData(clone.content, 'test');
             });
 
-            const [clone] = $.clone(template, { events: true });
-            const nestedClone = clone.content.querySelector('template');
+            expect(value).toBeUndefined();
+        });
+    });
 
-            $.triggerEvent(clone.content.querySelector('a'), 'click');
-            $.triggerEvent(nestedClone.content.querySelector('a'), 'click');
+    test.describe('event cloning', () => {
+        test('clones all nodes with events', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
 
-            return count;
+                $.addEvent('a', 'click', () => {
+                    count++;
+                });
+
+                const clones = $.clone('a', { events: true });
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+
+                $.triggerEvent('a', 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(8);
         });
 
-        expect(clickCount).toBe(2);
-    });
+        test('clones events inside template contents', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const template = document.createElement('template');
+                template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
+                const nested = template.content.querySelector('template');
 
-    test('preserves passive events on descendant nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $.addEvent('.test1', 'test', (_) => false, { passive: true });
+                $.addEvent([
+                    template.content.querySelector('a'),
+                    nested.content.querySelector('a'),
+                ], 'click', () => {
+                    count++;
+                });
 
-            const [clone] = $.clone('.parent1', { events: true });
-            const event = new Event('test', { cancelable: true });
+                const [clone] = $.clone(template, { events: true });
+                const nestedClone = clone.content.querySelector('template');
 
-            clone.querySelector('.test1').dispatchEvent(event);
+                $.triggerEvent(clone.content.querySelector('a'), 'click');
+                $.triggerEvent(nestedClone.content.querySelector('a'), 'click');
 
-            return event.defaultPrevented;
-        })).toBe(false);
-    });
+                return count;
+            });
 
-    test('clones all nodes with data', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            $.setData('a', 'test', 'Test');
-
-            const clones = $.clone('a', { data: true });
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-
-            return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
+            expect(clickCount).toBe(2);
         });
 
-        expect(values).toEqual([
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-        ]);
-    });
+        test('preserves passive events on descendant nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                $.addEvent('.test1', 'test', (_) => false, { passive: true });
 
-    test('clones descendant data when a form control shadows childNodes', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            document.body.innerHTML =
-                '<form><input name="childNodes"><span id="test">Test</span></form>';
-            $.setData(document.getElementById('test'), 'test', 'Test');
+                const [clone] = $.clone('.parent1', { events: true });
+                const event = new Event('test', { cancelable: true });
 
-            const clone = $.clone('form', { data: true })[0];
+                clone.querySelector('.test1').dispatchEvent(event);
 
-            return $.getData(clone.querySelector('span'), 'test');
+                return event.defaultPrevented;
+            })).toBe(false);
         });
-
-        expect(value).toBe('Test');
     });
 
-    test('clones data with a __proto__ key', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            $.setData('.test1', '__proto__', 'Test');
-            const [clone] = $.clone('.test1', { data: true });
-            return $.getData(clone, '__proto__');
-        });
+    test.describe('data cloning', () => {
+        test('clones all nodes with data', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                $.setData('a', 'test', 'Test');
 
-        expect(value).toBe('Test');
-    });
+                const clones = $.clone('a', { data: true });
 
-    test('does not return an inherited constructor from cloned data', async ({ page }) => {
-        const value = await page.evaluate(() => {
-            $.setData('.test1', 'test', 'Test');
-            const [clone] = $.clone('.test1', { data: true });
-            return $.getData(clone, 'constructor') === undefined;
-        });
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
 
-        expect(value).toBe(true);
-    });
+                return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
+            });
 
-    test('clones data inside template contents', async ({ page }) => {
-        const values = await page.evaluate(() => {
-            const template = document.createElement('template');
-            template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
-            const nested = template.content.querySelector('template');
-
-            $.setData([
-                template.content,
-                template.content.querySelector('a'),
-                nested.content,
-                nested.content.querySelector('a'),
-            ], 'test', 'Test');
-
-            const [clone] = $.clone(template, { data: true });
-            const nestedClone = clone.content.querySelector('template');
-
-            return [
-                clone.content,
-                clone.content.querySelector('a'),
-                nestedClone.content,
-                nestedClone.content.querySelector('a'),
-            ].map((node) => $.getData(node, 'test'));
-        });
-
-        expect(values).toEqual([
-            'Test',
-            'Test',
-            'Test',
-            'Test',
-        ]);
-    });
-
-    test('clones all nodes with animations', async ({ page }) => {
-        await page.evaluate(() => {
-            $.animate(
-                'a',
-                () => {},
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-
-            const clones = $.clone('a', { animations: true });
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect.poll(async () => await page.evaluate(() => {
-            const nodes = [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')];
-
-            return nodes.length === 8 &&
-                nodes.every((node) => Boolean(node.dataset.animationProgress));
-        })).toBe(true);
-
-        await expect.poll(async () => await page.evaluate(() =>
-            [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')].every((node) =>
-                !node.dataset.animationProgress &&
-                !node.dataset.animationStart &&
-                !node.dataset.animationTime),
-        )).toBe(true);
-    });
-
-    test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $.clone(document.querySelector('.parent1'));
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(3);
-        await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
-        await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(2);
-    });
-
-    test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $.clone(document.querySelectorAll('div'));
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
-        await expect(page.locator('body > div').nth(3)).toHaveClass('parent2');
-    });
-
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $.clone(document.body.children, { deep: false });
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(0);
-        await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
-    });
-
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
-            const clones = $.clone(fragment);
-
-            document.body.appendChild(fragment);
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(2).locator('span')).toHaveCount(1);
-        await expect(page.locator('body > div').nth(3).locator('span')).toHaveCount(1);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $.clone([
-                document.querySelector('.parent1'),
-                document.querySelector('.parent2'),
+            expect(values).toEqual([
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+                'Test',
             ]);
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
         });
 
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
-        await expect(page.locator('body > div').nth(3)).toHaveClass('parent2');
+        test('clones descendant data when a form control shadows childNodes', async ({ page }) => {
+            const value = await page.evaluate(() => {
+                document.body.innerHTML =
+                    '<form><input name="childNodes"><span id="test">Test</span></form>';
+                $.setData(document.getElementById('test'), 'test', 'Test');
+
+                const clone = $.clone('form', { data: true })[0];
+
+                return $.getData(clone.querySelector('span'), 'test');
+            });
+
+            expect(value).toBe('Test');
+        });
+
+        test('clones data with a __proto__ key', async ({ page }) => {
+            const value = await page.evaluate(() => {
+                $.setData('.test1', '__proto__', 'Test');
+                const [clone] = $.clone('.test1', { data: true });
+                return $.getData(clone, '__proto__');
+            });
+
+            expect(value).toBe('Test');
+        });
+
+        test('does not return an inherited constructor from cloned data', async ({ page }) => {
+            const value = await page.evaluate(() => {
+                $.setData('.test1', 'test', 'Test');
+                const [clone] = $.clone('.test1', { data: true });
+                return $.getData(clone, 'constructor') === undefined;
+            });
+
+            expect(value).toBe(true);
+        });
+
+        test('clones data inside template contents', async ({ page }) => {
+            const values = await page.evaluate(() => {
+                const template = document.createElement('template');
+                template.innerHTML = '<a>Test</a><template><a>Test</a></template>';
+                const nested = template.content.querySelector('template');
+
+                $.setData([
+                    template.content,
+                    template.content.querySelector('a'),
+                    nested.content,
+                    nested.content.querySelector('a'),
+                ], 'test', 'Test');
+
+                const [clone] = $.clone(template, { data: true });
+                const nestedClone = clone.content.querySelector('template');
+
+                return [
+                    clone.content,
+                    clone.content.querySelector('a'),
+                    nestedClone.content,
+                    nestedClone.content.querySelector('a'),
+                ].map((node) => $.getData(node, 'test'));
+            });
+
+            expect(values).toEqual([
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+            ]);
+        });
+    });
+
+    test.describe('animation cloning', () => {
+        test('clones all nodes with animations', async ({ page }) => {
+            await page.evaluate(() => {
+                $.animate(
+                    'a',
+                    () => {},
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+
+                const clones = $.clone('a', { animations: true });
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect.poll(async () => await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')];
+
+                return nodes.length === 8 &&
+                    nodes.every((node) => Boolean(node.dataset.animationProgress));
+            })).toBe(true);
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')].every((node) =>
+                    !node.dataset.animationProgress &&
+                    !node.dataset.animationStart &&
+                    !node.dataset.animationTime),
+            )).toBe(true);
+        });
+    });
+
+    test.describe('node inputs', () => {
+        test('clones forms with a control named cloneNode', async ({ page }) => {
+            await page.evaluate(() => {
+                document.body.innerHTML = '<form><input name="cloneNode"></form>';
+
+                const clone = $.clone('form')[0];
+                document.body.appendChild(clone);
+            });
+
+            await expect(page.locator('body > form')).toHaveCount(2);
+            await expect(page.locator('body > form').nth(1).locator('input')).toHaveAttribute('name', 'cloneNode');
+        });
+
+        test('works with HTMLElement nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const clones = $.clone(document.querySelector('.parent1'));
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect(page.locator('body > div')).toHaveCount(3);
+            await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
+            await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(2);
+        });
+
+        test('works with NodeList nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const clones = $.clone(document.querySelectorAll('div'));
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect(page.locator('body > div')).toHaveCount(4);
+            await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
+            await expect(page.locator('body > div').nth(3)).toHaveClass('parent2');
+        });
+
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const clones = $.clone(document.body.children, { deep: false });
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect(page.locator('body > div')).toHaveCount(4);
+            await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(0);
+            await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
+        });
+
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const fragment = document.createRange().createContextualFragment('<div><span></span></div>');
+                const clones = $.clone(fragment);
+
+                document.body.appendChild(fragment);
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect(page.locator('body > div')).toHaveCount(4);
+            await expect(page.locator('body > div').nth(2).locator('span')).toHaveCount(1);
+            await expect(page.locator('body > div').nth(3).locator('span')).toHaveCount(1);
+        });
+
+        test('works with array nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                const clones = $.clone([
+                    document.querySelector('.parent1'),
+                    document.querySelector('.parent2'),
+                ]);
+
+                for (const clone of clones) {
+                    document.body.appendChild(clone);
+                }
+            });
+
+            await expect(page.locator('body > div')).toHaveCount(4);
+            await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
+            await expect(page.locator('body > div').nth(3)).toHaveClass('parent2');
+        });
     });
 });
