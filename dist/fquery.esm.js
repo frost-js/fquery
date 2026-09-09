@@ -5667,8 +5667,7 @@ function wrapSelection$1(selector) {
 	selection.removeAllRanges();
 	const deepest = getWrapTarget(nodes[0]);
 	const fragment = range.extractContents();
-	const childNodes = merge([], fragment.childNodes);
-	for (const child of childNodes) callDOMMethod(deepest, "insertBefore", child, null);
+	callDOMMethod(deepest, "appendChild", fragment);
 	for (const node of nodes.reverse()) range.insertNode(node);
 }
 
