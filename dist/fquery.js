@@ -3034,7 +3034,10 @@
 	* @returns {string} The serialized string.
 	*/
 	function serialize$1(selector) {
-		return parseParams(serializeArray$1(selector));
+		return parseParams(serializeArray$1(selector).map(({ name, value }) => ({
+			name: name.replace(/\r\n|\r|\n/g, "\r\n"),
+			value: value.replace(/\r\n|\r|\n/g, "\r\n")
+		})));
 	}
 	/**
 	* Returns a serialized array containing names and values of all form nodes.

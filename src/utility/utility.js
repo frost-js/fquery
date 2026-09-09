@@ -77,7 +77,10 @@ export function normalize(selector) {
  */
 export function serialize(selector) {
     return parseParams(
-        serializeArray(selector),
+        serializeArray(selector).map(({ name, value }) => ({
+            name: name.replace(/\r\n|\r|\n/g, '\r\n'),
+            value: value.replace(/\r\n|\r|\n/g, '\r\n'),
+        })),
     );
 };
 

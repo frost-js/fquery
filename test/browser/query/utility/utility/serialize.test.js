@@ -49,6 +49,38 @@ test.describe('QuerySet #serialize', () => {
                     .serialize())).toBe('test1=Test%201&test2=2&test3=Test%203&test4=42&test5%5B%5D=51&test5%5B%5D=52&test6=Test%206&test8=Test%208b&test9%5B%5D=Test%209a&test9%5B%5D=Test%209b');
     });
 
+    test('normalizes textarea line endings', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test3').value = 'A\nB';
+            return $('#test3').serialize();
+        })).toBe('test3=A%0D%0AB');
+    });
+
+    test('normalizes lone carriage returns in control values', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const input = document.getElementById('test1');
+            input.type = 'hidden';
+            input.value = 'A\rB';
+            return $(input).serialize();
+        })).toBe('test1=A%0D%0AB');
+    });
+
+    test('preserves CRLF pairs in control values', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            const input = document.getElementById('test1');
+            input.type = 'hidden';
+            input.value = 'A\r\nB';
+            return $(input).serialize();
+        })).toBe('test1=A%0D%0AB');
+    });
+
+    test('normalizes line endings in control names', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').name = 'A\nB\rC\r\nD';
+            return $('#test1').serialize();
+        })).toBe('A%0D%0AB%0D%0AC%0D%0AD=Test%201');
+    });
+
     test('excludes button inputs', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML =
