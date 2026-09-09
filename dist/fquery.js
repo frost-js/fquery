@@ -1270,12 +1270,13 @@
 			if (this.#options.responseType) this.xhr.responseType = this.#options.responseType;
 			if (this.#options.mimeType) this.xhr.overrideMimeType(this.#options.mimeType);
 			if (this.#options.timeout) this.xhr.timeout = this.#options.timeout;
+			const rejectRequest = (event) => this.#reject({
+				status: this.xhr.status,
+				xhr: this.xhr,
+				event
+			});
 			this.xhr.onload = (e) => {
-				if (this.xhr.status >= 400) this.#reject({
-					status: this.xhr.status,
-					xhr: this.xhr,
-					event: e
-				});
+				if (this.xhr.status >= 400) rejectRequest(e);
 				else this.#resolve({
 					response: this.xhr.response,
 					xhr: this.xhr,
@@ -1283,16 +1284,8 @@
 				});
 			};
 			this.xhr.onabort = () => this.cancel();
-			this.xhr.onerror = (e) => this.#reject({
-				status: this.xhr.status,
-				xhr: this.xhr,
-				event: e
-			});
-			this.xhr.ontimeout = (e) => this.#reject({
-				status: this.xhr.status,
-				xhr: this.xhr,
-				event: e
-			});
+			this.xhr.onerror = rejectRequest;
+			this.xhr.ontimeout = rejectRequest;
 			if (this.#options.onProgress) this.xhr.onprogress = (e) => this.#options.onProgress(e.loaded / e.total, this.xhr, e);
 			if (this.#options.onUploadProgress) this.xhr.upload.onprogress = (e) => this.#options.onUploadProgress(e.loaded / e.total, this.xhr, e);
 			if (this.#options.beforeSend) this.#options.beforeSend(this.xhr);

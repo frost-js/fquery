@@ -174,13 +174,15 @@ export default class AjaxRequest {
             this.xhr.timeout = this.#options.timeout;
         }
 
+        const rejectRequest = (event) => this.#reject({
+            status: this.xhr.status,
+            xhr: this.xhr,
+            event,
+        });
+
         this.xhr.onload = (e) => {
             if (this.xhr.status >= 400) {
-                this.#reject({
-                    status: this.xhr.status,
-                    xhr: this.xhr,
-                    event: e,
-                });
+                rejectRequest(e);
             } else {
                 this.#resolve({
                     response: this.xhr.response,
@@ -192,19 +194,8 @@ export default class AjaxRequest {
 
         this.xhr.onabort = () => this.cancel();
 
-        this.xhr.onerror = (e) =>
-            this.#reject({
-                status: this.xhr.status,
-                xhr: this.xhr,
-                event: e,
-            });
-
-        this.xhr.ontimeout = (e) =>
-            this.#reject({
-                status: this.xhr.status,
-                xhr: this.xhr,
-                event: e,
-            });
+        this.xhr.onerror = rejectRequest;
+        this.xhr.ontimeout = rejectRequest;
 
         if (this.#options.onProgress) {
             this.xhr.onprogress = (e) =>
