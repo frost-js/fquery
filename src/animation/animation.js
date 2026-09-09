@@ -192,7 +192,7 @@ export default class Animation {
             progress = (time - this.#options.start) / this.#options.duration;
 
             if (this.#options.infinite) {
-                progress %= 1;
+                progress = Math.max(0, progress) % 1;
             } else {
                 progress = clamp(progress);
             }

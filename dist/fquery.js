@@ -2289,7 +2289,7 @@
 			else if (this.#options.duration === 0) progress = time >= this.#options.start ? 1 : 0;
 			else {
 				progress = (time - this.#options.start) / this.#options.duration;
-				if (this.#options.infinite) progress %= 1;
+				if (this.#options.infinite) progress = Math.max(0, progress) % 1;
 				else progress = clamp(progress);
 				if (this.#options.type === "ease-in") progress = progress ** 2;
 				else if (this.#options.type === "ease-out") progress = Math.sqrt(progress);

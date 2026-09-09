@@ -286,6 +286,31 @@ test.describe('#animate', () => {
         ]);
     });
 
+    test('waits for the start time of infinite ease-out animations', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.animate(
+                '.animate',
+                (_) => { },
+                {
+                    duration: 100,
+                    start: performance.now() + 100,
+                    type: 'ease-out',
+                    infinite: true,
+                    debug: true,
+                },
+            );
+        });
+        await advanceClock(page, 50);
+        await expectAnimationState(page, [
+            {
+                selectors: ['#test2', '#test4'],
+                progress: 0,
+            },
+        ]);
+        await advanceClock(page, 200);
+        expect(await page.evaluate((_) => $.hasAnimation('.animate'))).toBe(true);
+    });
+
     test('can be stopped', async ({ page }) => {
         const animationHandle = await page.evaluateHandle((_) => {
             const animation = $.animate(
