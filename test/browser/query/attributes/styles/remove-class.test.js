@@ -1,58 +1,11 @@
+import { removeClassTests, setup } from '#cases/attributes/styles/remove-class.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #removeClass', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1" class="test1 test2"></div><div id="test2" class="test1 test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('removes a class from all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div').removeClass('test1');
-        });
-
-        await expect(page.locator('#test1')).toHaveClass('test2');
-        await expect(page.locator('#test2')).toHaveClass('test2');
-    });
-
-    test('parses classes from string', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div').removeClass('test1 test2');
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('class', '');
-        await expect(page.locator('#test2')).toHaveAttribute('class', '');
-    });
-
-    test('parses classes from array', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div').removeClass([
-                'test1',
-                'test2',
-            ]);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('class', '');
-        await expect(page.locator('#test2')).toHaveAttribute('class', '');
-    });
-
-    test('parses classes from multiple arguments', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div').removeClass('test1', ['test2']);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('class', '');
-        await expect(page.locator('#test2')).toHaveAttribute('class', '');
-    });
-
-    test('works with empty strings', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div').removeClass('');
-        });
-
-        await expect(page.locator('#test1')).toHaveClass('test1 test2');
-        await expect(page.locator('#test2')).toHaveClass('test1 test2');
+    removeClassTests(([nodes, ...args]) => {
+        $(nodes).removeClass(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {

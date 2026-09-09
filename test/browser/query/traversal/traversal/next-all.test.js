@@ -1,42 +1,10 @@
+import { nextAllTests, setup } from '#cases/traversal/traversal/next-all.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #nextAll', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent1"><span id="span1"><a></a></span><span id="span2" class="span"><a></a></span><span id="span3"><a></a></span><span id="span4"><a></a></span></div><div id="parent2"><span id="span5"><a></a></span><span id="span6" class="span"><a></a></span><span id="span7"><a></a></span><span id="span8"><a></a></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns all next siblings of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-            'span4',
-            'span7',
-            'span8',
-        ]);
-    });
-
-    test('returns all next siblings of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll('#span4, #span8').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span4',
-            'span8',
-        ]);
-    });
-
-    test('returns all next siblings of each node before a limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(null, '#span4, #span7').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-        ]);
-    });
+    nextAllTests(([nodes, ...args]) => $(nodes).nextAll(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

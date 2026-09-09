@@ -1,37 +1,10 @@
+import { hasDataTests, setup } from '#cases/utility/tests/has-data.js';
 import { expect, test } from '#test';
 
 test.describe('#hasData', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" class="test"></div>' +
-                '<div id="div4"></div>';
-            $.setData('#div1', 'test1', 'Test 1');
-            $.setData('#div3', 'test2', 'Test 2');
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node has data', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasData('div'))).toBe(true);
-    });
-
-    test('returns false if no nodes have data', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasData('div:not(.test)'))).toBe(false);
-    });
-
-    test('returns true if any node has data for a key', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasData('#div1', 'test1'))).toBe(true);
-    });
-
-    test('returns false if no nodes have data for a key', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasData('#div1', 'test2'))).toBe(false);
-    });
+    hasDataTests((args) => $.hasData(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

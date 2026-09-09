@@ -1,30 +1,10 @@
+import { nextTests, setup } from '#cases/traversal/traversal/next.js';
 import { expect, test } from '#test';
 
 test.describe('#next', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent"><span id="span1"><a></a></span><span id="span2" class="span"><a></a></span><span id="span3"><a></a></span><span id="span4"><a></a></span></div><div id="parent2"><span id="span5"><a></a></span><span id="span6" class="span"><a></a></span><span id="span7"><a></a></span><span id="span8"><a></a></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the next sibling of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.next('.span').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-            'span7',
-        ]);
-    });
-
-    test('returns the next sibling of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.next('.span', '#span7').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span7',
-        ]);
-    });
+    nextTests((args) => $.next(...args).map((node) => node.id));
 
     test('returns an empty array for empty nodes', async ({ page }) => {
         const ids = await page.evaluate((_) => $.next('#invalid'));

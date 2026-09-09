@@ -1,7 +1,9 @@
-import { getValueTests } from '#cases/attributes/attributes/get-value.js';
+import { getValueTests, setup } from '#cases/attributes/attributes/get-value.js';
 import { expect, test } from '#test';
 
 test.describe('#getValue', () => {
+    test.beforeEach(setup);
+
     getValueTests((nodes) => $.getValue(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {

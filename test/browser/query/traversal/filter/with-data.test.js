@@ -1,34 +1,10 @@
+import { setup, withDataTests } from '#cases/traversal/filter/with-data.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #withData', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div><div id="div4"></div>';
-        });
-        await page.evaluate((_) => {
-            $.setData('#div1', 'test1', 'Test 1');
-            $.setData('#div3', 'test2', 'Test 2');
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns nodes with data', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withData().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('returns nodes with data for a key', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withData('test1').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
+    withDataTests(([nodes, ...args]) => $(nodes).withData(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

@@ -1,31 +1,10 @@
+import { hasChildrenTests, setup } from '#cases/utility/tests/has-children.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #hasChildren', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" class="test">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node has children', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .hasChildren())).toBe(true);
-    });
-
-    test('returns false if no nodes have children', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div:not(.test)')
-                    .hasChildren())).toBe(false);
-    });
+    hasChildrenTests((nodes) => $(nodes).hasChildren());
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {

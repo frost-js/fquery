@@ -1,33 +1,10 @@
+import { prevAllTests, setup } from '#cases/traversal/traversal/prev-all.js';
 import { expect, test } from '#test';
 
 test.describe('#prevAll', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent1"><span id="span1"><a></a></span><span id="span2"><a></a></span><span id="span3" class="span"><a></a></span><span id="span4"><a></a></span></div><div id="parent2"><span id="span5"><a></a></span><span id="span6"><a></a></span><span id="span7" class="span"><a></a></span><span id="span8"><a></a></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns all previous siblings of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.prevAll('.span').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span2',
-            'span5',
-            'span6',
-        ]);
-    });
-
-    test('returns all previous siblings of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.prevAll('.span', '#span1, #span5').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span5',
-        ]);
-    });
+    prevAllTests((args) => $.prevAll(...args).map((node) => node.id));
 
     test('returns all previous siblings of each node before a limit', async ({ page }) => {
         const ids = await page.evaluate((_) =>

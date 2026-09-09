@@ -1,36 +1,10 @@
+import { setup, withCSSTransitionTests } from '#cases/traversal/filter/with-css-transition.js';
 import { expect, test } from '#test';
 
 test.describe('#withCSSTransition', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { transition: opacity 1s; }' });
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1" class="test"></div><div id="div2"></div><div id="div3" class="test"></div><div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns nodes with CSS transitions', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withCSSTransition('div').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    for (const [duration, expected] of [
-        ['1s', ['div1', 'div3']],
-        ['0s', []],
-    ]) {
-        test(`filters nodes with CSS transition durations of 0s, ${duration}`, async ({ page }) => {
-            await page.addStyleTag({ content: '.test { transition: opacity 0s, transform ' + duration + '; }' });
-
-            const ids = await page.evaluate((_) =>
-                $.withCSSTransition('div').map((node) => node.id));
-
-            expect(ids).toEqual(expected);
-        });
-    }
+    withCSSTransitionTests((nodes) => $.withCSSTransition(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>

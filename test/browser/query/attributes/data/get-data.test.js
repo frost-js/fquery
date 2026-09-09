@@ -1,34 +1,10 @@
+import { getDataTests, setup } from '#cases/attributes/data/get-data.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #getData', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1"></div>' +
-                '<div id="test2"></div>';
-            $.setData('#test1', 'test', 'Test 1');
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns an object with all data for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .getData())).toEqual({
-            test: 'Test 1',
-        });
-    });
-
-    test('returns data for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .getData('test'))).toBe('Test 1');
-    });
-
-    test('returns undefined for an undefined key', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .getData('invalid'))).toBe(undefined);
-    });
+    getDataTests(([nodes, ...args]) => $(nodes).getData(...args));
 
     for (const key of ['constructor', 'toString', '__proto__']) {
         test(`does not return an inherited ${key} property`, async ({ page }) => {
@@ -36,12 +12,6 @@ test.describe('QuerySet #getData', () => {
                 $('div').getData(key) === undefined, key)).toBe(true);
         });
     }
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('#invalid')
-                    .getData('test'))).toBe(undefined);
-    });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {

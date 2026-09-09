@@ -1,27 +1,10 @@
+import { isTests, setup } from '#cases/utility/tests/is.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #is', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" class="test"></div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node matches a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .is('.test'))).toBe(true);
-    });
-
-    test('returns false if no nodes match a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div:not(.test)')
-                    .is('.test'))).toBe(false);
-    });
+    isTests(([nodes, ...args]) => $(nodes).is(...args));
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {

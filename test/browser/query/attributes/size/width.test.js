@@ -1,31 +1,10 @@
+import { setup, widthTests } from '#cases/attributes/size/width.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #width', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; height: 1000px; width: 1200px; margin: 50px; padding: 25px; border: 1px solid grey; overflow-x: scroll">' +
-                '<div style="display: block; height: 1px; width: 2500px;"></div>' +
-                '</div>' +
-                '<div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the width of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .width())).toBe(1250);
-    });
-
-    test('measures forms with a control named clientWidth', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form style="width: 100px; padding: 0; border: 0;">' +
-                '<input type="hidden" name="clientWidth">' +
-                '</form>';
-            return $('form').width();
-        })).toBe(100);
-    });
+    widthTests((nodes) => $(nodes).width());
 
     test('returns the content box width of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
@@ -93,12 +72,6 @@ test.describe('QuerySet #width', () => {
         expect(await page.evaluate((_) =>
             $('div')
                     .width({ boxSize: $.SCROLL_BOX }))).toBe(2550);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('#invalid')
-                    .width())).toBe(undefined);
     });
 
     test('works with Document nodes', async ({ page }) => {

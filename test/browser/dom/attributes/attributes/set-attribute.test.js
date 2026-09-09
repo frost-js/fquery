@@ -1,33 +1,11 @@
+import { setAttributeTests, setup } from '#cases/attributes/attributes/set-attribute.js';
 import { expect, test } from '#test';
 
 test.describe('#setAttribute', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<input type="number" id="test1"><input type="number" id="test2">';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('sets an attributes object for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setAttribute('input', {
-                min: '1',
-                max: '10',
-            });
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('min', '1');
-        await expect(page.locator('#test1')).toHaveAttribute('max', '10');
-        await expect(page.locator('#test2')).toHaveAttribute('min', '1');
-        await expect(page.locator('#test2')).toHaveAttribute('max', '10');
-    });
-
-    test('sets an attribute for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setAttribute('input', 'placeholder', '123');
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('placeholder', '123');
-        await expect(page.locator('#test2')).toHaveAttribute('placeholder', '123');
+    setAttributeTests((args) => {
+        $.setAttribute(...args);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

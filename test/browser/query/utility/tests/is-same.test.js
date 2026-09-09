@@ -1,27 +1,10 @@
+import { isSameTests, setup } from '#cases/utility/tests/is-same.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #isSame', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3"></div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node is identical to any other node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .isSame('#div2, #div4'))).toBe(true);
-    });
-
-    test('returns false if no nodes are identical to any other node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .isSame('span'))).toBe(false);
-    });
+    isSameTests(([nodes, ...args]) => $(nodes).isSame(...args));
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {

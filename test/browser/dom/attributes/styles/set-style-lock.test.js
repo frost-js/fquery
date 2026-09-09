@@ -1,44 +1,11 @@
+import { setStyleLockTests, setup } from '#cases/attributes/styles/set-style-lock.js';
 import { expect, test } from '#test';
 
 test.describe('#setStyleLock', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1"></div><div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('sets a style value for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setStyleLock('div', 'display', 'none');
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none;');
-    });
-
-    test('sets a style value with important', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setStyleLock('div', 'display', 'none', { important: true });
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none !important;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none !important;');
-    });
-
-    test('normalizes camelCase property names', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setStyleLock('#test1', 'marginTop', '10px');
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'margin-top: 10px;');
-    });
-
-    test('converts number values to pixels', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setStyleLock('#test1', 'width', 100);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px;');
+    setStyleLockTests((args) => {
+        $.setStyleLock(...args);
     });
 
     test('preserves custom property name casing', async ({ page }) => {

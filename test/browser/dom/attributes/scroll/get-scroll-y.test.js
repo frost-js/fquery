@@ -1,26 +1,10 @@
+import { getScrollYTests, setup } from '#cases/attributes/scroll/get-scroll-y.js';
 import { expect, test } from '#test';
 
 test.describe('#getScrollY', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; height: 100px; overflow-y: scroll;">' +
-                '<div style="display: block; width: 1px; height: 1000px;"></div>' +
-                '</div>' +
-                '<div id="test2"></div>';
-            document.getElementById('test1').scrollTop = 100;
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the scroll Y position of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollY('div'))).toBe(100);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollY('#invalid'))).toBe(undefined);
-    });
+    getScrollYTests((nodes) => $.getScrollY(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

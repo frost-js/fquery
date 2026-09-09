@@ -1,24 +1,10 @@
+import { percentXTests, setup } from '#cases/attributes/position/percent-x.js';
 import { expect, test } from '#test';
 
 test.describe('#percentX', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; width: 100px; height: 100px; margin: 1050px; padding: 50px;"></div>' +
-                '<div id="test2"></div>';
-            window.scrollTo(1000, 1000);
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the percent of a position along the X-axis for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.percentX('div', 700))).toBe(50);
-    });
-
-    test('returns the percent of a position along the X-axis for the first node with offset', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.percentX('div', 1158, { offset: true }))).toBe(50);
-    });
+    percentXTests((args) => $.percentX(...args));
 
     test('clamps the returned value between 0 and 100', async ({ page }) => {
         expect(await page.evaluate((_) => [
@@ -28,11 +14,6 @@ test.describe('#percentX', () => {
             0,
             100,
         ]);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.percentX('#invalid', 700))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

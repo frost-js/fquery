@@ -1,60 +1,10 @@
+import { isVisibleTests, setup } from '#cases/utility/tests/is-visible.js';
 import { expect, test } from '#test';
 
 test.describe('#isVisible', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { display: none; }' });
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div2" class="test">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div3">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div4" class="test">' +
-                '<span></span>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node is visible', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isVisible('div'))).toBe(true);
-    });
-
-    test('returns false if no nodes are visible', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isVisible('.test'))).toBe(false);
-    });
-
-    test('returns true if any node is a descendent of a visible node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isVisible('span'))).toBe(true);
-    });
-
-    test('returns true for visible fixed nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isVisible('div:not(.test)'))).toBe(true);
-    });
-
-    test('returns false for fixed nodes with display none', async ({ page }) => {
-        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isVisible('.test'))).toBe(false);
-    });
-
-    test('returns false for fixed descendents of hidden nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isVisible('.test span'))).toBe(false);
-    });
+    isVisibleTests((nodes) => $.isVisible(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

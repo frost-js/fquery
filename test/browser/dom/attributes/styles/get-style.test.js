@@ -1,11 +1,10 @@
+import { getStyleTests, setup } from '#cases/attributes/styles/get-style.js';
 import { expect, test } from '#test';
 
 test.describe('#getStyle', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1" style="display: block; width: 100px; height: 100px;"></div><div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
+
+    getStyleTests((args) => $.getStyle(...args));
 
     test('returns an object with all style values for the first node', async ({ page }) => {
         const style = await page.evaluate((_) => $.getStyle('div'));
@@ -15,29 +14,6 @@ test.describe('#getStyle', () => {
             width: '100px',
             height: '100px',
         });
-    });
-
-    test('returns a style value for the first node', async ({ page }) => {
-        await expect.poll(async () =>
-            page.evaluate((_) => $.getStyle('div', 'display'))).toBe('block');
-    });
-
-    test('returns a custom property', async ({ page }) => {
-        await page.evaluate((_) => {
-            document.getElementById('test1').style.setProperty('--brandColor', 'red');
-        });
-
-        await expect.poll(async () =>
-            page.evaluate((_) => $.getStyle('#test1', '--brandColor'))).toBe('red');
-    });
-
-    test('returns an empty string for an undefined style', async ({ page }) => {
-        await expect.poll(async () =>
-            page.evaluate((_) => $.getStyle('div', 'visibility'))).toBe('');
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => $.getStyle('#invalid', 'display'))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

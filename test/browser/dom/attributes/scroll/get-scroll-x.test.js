@@ -1,26 +1,10 @@
+import { getScrollXTests, setup } from '#cases/attributes/scroll/get-scroll-x.js';
 import { expect, test } from '#test';
 
 test.describe('#getScrollX', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; width: 100px; overflow-x: scroll;">' +
-                '<div style="display: block; width: 1000px; height: 1px;"></div>' +
-                '</div>' +
-                '<div id="test2"></div>';
-            document.getElementById('test1').scrollLeft = 100;
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the scroll X position of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX('div'))).toBe(100);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX('#invalid'))).toBe(undefined);
-    });
+    getScrollXTests((nodes) => $.getScrollX(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

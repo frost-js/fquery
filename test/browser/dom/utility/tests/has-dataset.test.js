@@ -1,27 +1,10 @@
+import { hasDatasetTests, setup } from '#cases/utility/tests/has-dataset.js';
 import { expect, test } from '#test';
 
 test.describe('#hasDataset', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" data-text="Test"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" data-text="Test"></div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node has a specified attribute', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDataset('div', 'text'))).toBe(true);
-    });
-
-    test('returns true for an empty dataset value', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.getElementById('div2').setAttribute('data-empty', '');
-            return $.hasDataset('div', 'empty');
-        })).toBe(true);
-    });
+    hasDatasetTests((args) => $.hasDataset(...args));
 
     for (const [attribute, key] of [
         ['data-constructor', 'constructor'],
@@ -32,18 +15,6 @@ test.describe('#hasDataset', () => {
                 document.getElementById('div2').setAttribute(attribute, 'Test');
                 return $.hasDataset('div', key);
             }, [attribute, key])).toBe(true);
-        });
-    }
-
-    test('returns false if no nodes have a specified attribute', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDataset('div:not([data-text])', 'text'))).toBe(false);
-    });
-
-    for (const key of ['constructor', 'toString']) {
-        test(`returns false for an inherited ${key} property`, async ({ page }) => {
-            expect(await page.evaluate((key) =>
-                $.hasDataset('div', key), key)).toBe(false);
         });
     }
 

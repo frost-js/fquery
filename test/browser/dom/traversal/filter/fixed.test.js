@@ -1,32 +1,10 @@
+import { fixedTests, setup } from '#cases/traversal/filter/fixed.js';
 import { expect, test } from '#test';
 
 test.describe('#fixed', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { position: fixed; }' });
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"><span id="span1"></span></div><div id="div2" class="test"><span id="span2"></span></div><div id="div3"><span id="span3"></span></div><div id="div4" class="test"><span id="span4"></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns fixed nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.fixed('div').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('returns descendents of fixed nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.fixed('span').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-            'span4',
-        ]);
-    });
+    fixedTests((nodes) => $.fixed(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>

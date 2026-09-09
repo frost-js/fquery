@@ -1,12 +1,10 @@
+import { cssTests, setup } from '#cases/attributes/styles/css.js';
 import { expect, test } from '#test';
 
 test.describe('#css', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { display: block; width: 50vw; }' });
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1" class="test"></div><div id="test2" class="test"></div>';
-        });
-    });
+    test.beforeEach(setup);
+
+    cssTests((args) => $.css(...args));
 
     test('returns an object with all computed styles for the first node', async ({ page }) => {
         const css = await page.evaluate((_) => {
@@ -21,20 +19,6 @@ test.describe('#css', () => {
             display: 'block',
             width: '400px',
         });
-    });
-
-    test('returns a computed style for the first node', async ({ page }) => {
-        await expect.poll(async () => page.evaluate((_) => $.css('.test', 'width'))).toBe('400px');
-    });
-
-    test('returns a computed custom property', async ({ page }) => {
-        await page.addStyleTag({ content: '.test { --brandColor: red; }' });
-
-        await expect.poll(async () => page.evaluate((_) => $.css('.test', '--brandColor'))).toBe('red');
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => $.css('#invalid', 'width'))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

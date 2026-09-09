@@ -1,20 +1,10 @@
+import { heightTests, setup } from '#cases/attributes/size/height.js';
 import { expect, test } from '#test';
 
 test.describe('#height', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; height: 1000px; width: 1200px; margin: 50px; padding: 25px; border: 1px solid grey; overflow-y: scroll;">' +
-                '<div style="display: block; width: 1px; height: 2500px;"></div>' +
-                '</div>' +
-                '<div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the height of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('div'))).toBe(1050);
-    });
+    heightTests((nodes) => $.height(nodes));
 
     test('returns the content box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
@@ -78,11 +68,6 @@ test.describe('#height', () => {
     test('returns the scroll box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.height('div', { boxSize: $.SCROLL_BOX }))).toBe(2550);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('#invalid'))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

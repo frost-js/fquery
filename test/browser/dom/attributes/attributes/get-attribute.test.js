@@ -1,39 +1,10 @@
+import { getAttributeTests, setup } from '#cases/attributes/attributes/get-attribute.js';
 import { expect, test } from '#test';
 
 test.describe('#getAttribute', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<input type="text" id="test1" required><input type="number" id="test2">';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns an object with all attributes for the first node', async ({ page }) => {
-        const attributes = await page.evaluate((_) => $.getAttribute('input'));
-
-        expect(attributes).toEqual({
-            type: 'text',
-            id: 'test1',
-            required: '',
-        });
-    });
-
-    test('returns an attribute value for the first node', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getAttribute('input', 'type'));
-
-        expect(value).toBe('text');
-    });
-
-    test('returns null for an undefined property', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getAttribute('input', 'disabled'));
-
-        expect(value).toBe(null);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getAttribute('#invalid', 'type'));
-
-        expect(value).toBe(undefined);
-    });
+    getAttributeTests((args) => $.getAttribute(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const value = await page.evaluate((_) =>

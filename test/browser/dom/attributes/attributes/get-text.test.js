@@ -1,32 +1,10 @@
+import { getTextTests, setup } from '#cases/attributes/attributes/get-text.js';
 import { expect, test } from '#test';
 
 test.describe('#getText', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1"><span>Test</span></div><div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the text contents of the first node', async ({ page }) => {
-        const text = await page.evaluate((_) => $.getText('div'));
-
-        expect(text).toBe('Test');
-    });
-
-    test('reads form contents when a control shadows textContent', async ({ page }) => {
-        const text = await page.evaluate((_) => {
-            document.body.innerHTML = '<form><input name="textContent"><span>Test</span></form>';
-            return $.getText('form');
-        });
-
-        expect(text).toBe('Test');
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        const text = await page.evaluate((_) => $.getText('#invalid'));
-
-        expect(text).toBe(undefined);
-    });
+    getTextTests((nodes) => $.getText(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const text = await page.evaluate((_) =>

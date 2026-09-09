@@ -1,30 +1,10 @@
+import { prevTests, setup } from '#cases/traversal/traversal/prev.js';
 import { expect, test } from '#test';
 
 test.describe('#prev', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent"><span id="span1"><a></a></span><span id="span2"><a></a></span><span id="span3" class="span"><a></a></span><span id="span4"><a></a></span></div><div id="parent2"><span id="span5"><a></a></span><span id="span6"><a></a></span><span id="span7" class="span"><a></a></span><span id="span8"><a></a></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the previous sibling of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.prev('.span').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-            'span6',
-        ]);
-    });
-
-    test('returns the previous sibling of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.prev('.span', '#span6').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span6',
-        ]);
-    });
+    prevTests((args) => $.prev(...args).map((node) => node.id));
 
     test('returns an empty array for empty nodes', async ({ page }) => {
         const ids = await page.evaluate((_) => $.prev('#invalid'));

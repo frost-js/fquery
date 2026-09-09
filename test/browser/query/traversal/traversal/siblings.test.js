@@ -1,37 +1,10 @@
+import { setup, siblingsTests } from '#cases/traversal/traversal/siblings.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #siblings', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent1"><span id="span1"><a></a></span><span id="span2"><a></a></span><span id="span3" class="span"><a></a></span><span id="span4"><a></a></span><span id="span5"><a></a></span></div><div id="parent2"><span id="span6"><a></a></span><span id="span7"><a></a></span><span id="span8" class="span"><a></a></span><span id="span9"><a></a></span><span id="span10"><a></a></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns all siblings of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span2',
-            'span4',
-            'span5',
-            'span6',
-            'span7',
-            'span9',
-            'span10',
-        ]);
-    });
-
-    test('returns all siblings of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings('#span1, #span10').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span10',
-        ]);
-    });
+    siblingsTests(([nodes, ...args]) => $(nodes).siblings(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

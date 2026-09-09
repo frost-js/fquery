@@ -1,21 +1,10 @@
+import { getPropertyTests, setup } from '#cases/attributes/attributes/get-property.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #getProperty', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<input type="text" id="test1"><input type="number" id="test2">';
-        });
-        await page.evaluate((_) => {
-            document.getElementById('test1').test = 'Test 1';
-            document.getElementById('test2').test = 'Test 2';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns a property value for the first node', async ({ page }) => {
-        const value = await page.evaluate((_) => $('input').getProperty('test'));
-
-        expect(value).toBe('Test 1');
-    });
+    getPropertyTests(([nodes, ...args]) => $(nodes).getProperty(...args));
 
     test('preserves named form property access', async ({ page }) => {
         const value = await page.evaluate((_) => {
@@ -24,17 +13,5 @@ test.describe('QuerySet #getProperty', () => {
         });
 
         expect(value).toBe('Test');
-    });
-
-    test('returns undefined for an undefined property', async ({ page }) => {
-        const value = await page.evaluate((_) => $('input').getProperty('invalid'));
-
-        expect(value).toBe(undefined);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        const value = await page.evaluate((_) => $('#invalid').getProperty('test'));
-
-        expect(value).toBe(undefined);
     });
 });

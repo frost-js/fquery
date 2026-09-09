@@ -1,25 +1,10 @@
+import { isTests, setup } from '#cases/utility/tests/is.js';
 import { expect, test } from '#test';
 
 test.describe('#is', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" class="test"></div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node matches a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.is('div', '.test'))).toBe(true);
-    });
-
-    test('returns false if no nodes match a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.is('div:not(.test)', '.test'))).toBe(false);
-    });
+    isTests((args) => $.is(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

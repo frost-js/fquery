@@ -1,15 +1,10 @@
+import { setup, triggerOneTests } from '#cases/events/event-handlers/trigger-one.js';
 import { expect, test } from '#test';
 
 test.describe('#triggerOne', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1">' +
-                '<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
+
+    triggerOneTests((args) => $.triggerOne(...args));
 
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
@@ -155,16 +150,6 @@ test.describe('#triggerOne', () => {
             });
             return result;
         })).toBe(0);
-    });
-
-    test('returns undefined for an empty array', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.triggerOne([], 'click'))).toBe(undefined);
-    });
-
-    test('returns undefined for an unmatched selector', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.triggerOne('#invalid', 'click'))).toBe(undefined);
     });
 
     test('returns false if the event is cancelled', async ({ page }) => {

@@ -1,30 +1,10 @@
+import { setup, widthTests } from '#cases/attributes/size/width.js';
 import { expect, test } from '#test';
 
 test.describe('#width', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; height: 1000px; width: 1200px; margin: 50px; padding: 25px; border: 1px solid grey; overflow-x: scroll">' +
-                '<div style="display: block; height: 1px; width: 2500px;"></div>' +
-                '</div>' +
-                '<div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the width of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.width('div'))).toBe(1250);
-    });
-
-    test('measures forms with a control named clientWidth', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<form style="width: 100px; padding: 0; border: 0;">' +
-                '<input type="hidden" name="clientWidth">' +
-                '</form>';
-            return $.width('form');
-        })).toBe(100);
-    });
+    widthTests((nodes) => $.width(nodes));
 
     test('returns the content box width of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
@@ -88,11 +68,6 @@ test.describe('#width', () => {
     test('returns the scroll box width of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.width('div', { boxSize: $.SCROLL_BOX }))).toBe(2550);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.width('#invalid'))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

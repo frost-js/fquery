@@ -1,31 +1,10 @@
+import { childTests, setup } from '#cases/traversal/traversal/child.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #child', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent1" class="parent"><div id="child1"><span></span></div><div id="child2"><span></span></div><span id="child3"><span></span></span><span id="child4"><span></span></span></div><div id="parent2" class="parent"><div id="child5"><span></span></div><div id="child6"><span></span></div><span id="child7"><span></span></span><span id="child8"><span></span></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the first child of each node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.parent').child().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-            'child5',
-        ]);
-    });
-
-    test('returns the first child of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.parent').child('span').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child3',
-            'child7',
-        ]);
-    });
+    childTests(([nodes, ...args]) => $(nodes).child(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

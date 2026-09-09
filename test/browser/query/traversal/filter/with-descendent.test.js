@@ -1,31 +1,10 @@
+import { setup, withDescendentTests } from '#cases/traversal/filter/with-descendent.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #withDescendent', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"><span id="span1"><a id="a1"></a></span></div><div id="div2"></div><div id="div3"><span id="span2"><a id="a2"></a></span></div><div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns nodes with a descendent matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent('a').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('returns nodes with a descendent without a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
+    withDescendentTests(([nodes, ...args]) => $(nodes).withDescendent(...args).get().map((node) => node.id));
 
     test('returns an empty QuerySet for empty elements without a filter', async ({ page }) => {
         const ids = await page.evaluate((_) =>

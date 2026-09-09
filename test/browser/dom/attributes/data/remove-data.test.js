@@ -1,38 +1,11 @@
+import { removeDataTests, setup } from '#cases/attributes/data/remove-data.js';
 import { expect, test } from '#test';
 
 test.describe('#removeData', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1"></div>' +
-                '<div id="test2"></div>';
-            $.setData('div', {
-                testA: 'Test 1',
-                testB: 'Test 2',
-            });
-        });
-    });
+    test.beforeEach(setup);
 
-    test('removes all data for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.removeData('div');
-        });
-
-        expect(await page.evaluate((_) => $.getData('#test1'))).toBeUndefined();
-        expect(await page.evaluate((_) => $.getData('#test2'))).toBeUndefined();
-    });
-
-    test('removes data for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.removeData('div', 'testA');
-        });
-
-        expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
-            testB: 'Test 2',
-        });
-        expect(await page.evaluate((_) => $.getData('#test2'))).toEqual({
-            testB: 'Test 2',
-        });
+    removeDataTests((args) => {
+        $.removeData(...args);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

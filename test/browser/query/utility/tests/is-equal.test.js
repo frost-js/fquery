@@ -1,38 +1,10 @@
+import { isEqualTests, setup } from '#cases/utility/tests/is-equal.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #isEqual', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="parent1">' +
-                '<span data-id="span1"></span>' +
-                '<span data-id="span2"></span>' +
-                '<span data-id="span3"></span>' +
-                '</div>' +
-                '<div id="parent2">' +
-                '<span data-id="span2"></span>' +
-                '<span data-id="span3"></span>' +
-                '<span data-id="span4"></span>' +
-                '</div>' +
-                '<div id="parent3">' +
-                '<a data-id="a1"></a>' +
-                '<a data-id="a2"></a>' +
-                '<a data-id="a3"></a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node is equal to any other node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('#parent1 span')
-                    .isEqual('#parent2 span'))).toBe(true);
-    });
-
-    test('returns false if no nodes are equal to any other node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('#parent1 span')
-                    .isEqual('#parent3 a'))).toBe(false);
-    });
+    isEqualTests(([nodes, ...args]) => $(nodes).isEqual(...args));
 
     test('compares forms with a control named isEqualNode', async ({ page }) => {
         expect(await page.evaluate((_) => {
@@ -40,12 +12,6 @@ test.describe('QuerySet #isEqual', () => {
                 '<form><input name="isEqualNode"></form><form><input name="isEqualNode"></form>';
             return $('form').first().isEqual($('form').last());
         })).toBe(true);
-    });
-
-    test('works with shallow option', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('#parent1 span')
-                    .isEqual('#parent2 span', { shallow: true }))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {

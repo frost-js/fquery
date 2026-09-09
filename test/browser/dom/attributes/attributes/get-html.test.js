@@ -1,32 +1,10 @@
+import { getHTMLTests, setup } from '#cases/attributes/attributes/get-html.js';
 import { expect, test } from '#test';
 
 test.describe('#getHTML', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1"><span>Test</span></div><div id="test2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the HTML contents of the first node', async ({ page }) => {
-        const html = await page.evaluate((_) => $.getHTML('div'));
-
-        expect(html).toBe('<span>Test</span>');
-    });
-
-    test('reads form contents when a control shadows innerHTML', async ({ page }) => {
-        const html = await page.evaluate((_) => {
-            document.body.innerHTML = '<form><input name="innerHTML"><span>Test</span></form>';
-            return $.getHTML('form');
-        });
-
-        expect(html).toBe('<input name="innerHTML"><span>Test</span>');
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        const html = await page.evaluate((_) => $.getHTML('#invalid'));
-
-        expect(html).toBe(undefined);
-    });
+    getHTMLTests((nodes) => $.getHTML(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const html = await page.evaluate((_) =>

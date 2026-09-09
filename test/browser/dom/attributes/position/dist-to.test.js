@@ -1,29 +1,10 @@
+import { distToTests, setup } from '#cases/attributes/position/dist-to.js';
 import { expect, test } from '#test';
 
 test.describe('#distTo', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1" style="display: block; width: 100px; height: 100px; margin: 1050px; padding: 50px;"></div>' +
-                '<div id="test2"></div>';
-            window.scrollTo(1000, 1000);
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the distance to the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.distTo('div', 580, 128))).toBe(122);
-    });
-
-    test('returns the distance to the first node with offset', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.distTo('div', 1180, 1270, { offset: true }))).toBe(122);
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.distTo('#invalid', 580, 128))).toBe(undefined);
-    });
+    distToTests((args) => $.distTo(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

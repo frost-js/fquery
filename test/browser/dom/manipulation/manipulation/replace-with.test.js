@@ -1,31 +1,11 @@
+import { replaceWithTests, setup } from '#cases/manipulation/manipulation/replace-with.js';
 import { expect, test } from '#test';
 
 test.describe('#replaceWith', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div class="outer1">' +
-                '<div class="inner1">' +
-                '<a href="#">Test</a>' +
-                '<a href="#">Test</a>' +
-                '</div>' +
-                '</div>' +
-                '<div class="outer2">' +
-                '<div class="inner2">' +
-                '<a href="#">Test</a>' +
-                '<a href="#">Test</a>' +
-                '</div>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('replaces each node with other nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.replaceWith('div', 'a');
-        });
-
-        await expect(page.locator('body > a')).toHaveCount(8);
-        await expect(page.locator('body > div')).toHaveCount(0);
+    replaceWithTests((args) => {
+        $.replaceWith(...args);
     });
 
     test('inserts the original replacement when the final target is detached', async ({ page }) => {
@@ -384,14 +364,5 @@ test.describe('#replaceWith', () => {
         await expect(page.locator('a')).toHaveCount(0);
         await expect(page.locator('.inner1 > div > span')).toHaveCount(2);
         await expect(page.locator('.inner2 > div > span')).toHaveCount(2);
-    });
-
-    test('works with HTML other nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.replaceWith('a', '<div><span class="test">Test</span></div>');
-        });
-
-        await expect(page.locator('a')).toHaveCount(0);
-        await expect(page.locator('span.test')).toHaveCount(4);
     });
 });

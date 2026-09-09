@@ -1,56 +1,10 @@
+import { hiddenTests, setup } from '#cases/traversal/filter/hidden.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #hidden', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { display: none; }' });
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"><span id="span1"></span></div><div id="div2" class="test"><span id="span2"></span></div><div id="div3"><span id="span3"></span></div><div id="div4" class="test"><span id="span4"></span></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns hidden nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').hidden().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('returns descendents of hidden nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('span').hidden().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-            'span4',
-        ]);
-    });
-
-    test('returns hidden fixed nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
-
-        const ids = await page.evaluate((_) =>
-            $('div').hidden().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('returns fixed descendents of hidden nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
-
-        const ids = await page.evaluate((_) =>
-            $('span').hidden().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-            'span4',
-        ]);
-    });
+    hiddenTests((nodes) => $(nodes).hidden().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

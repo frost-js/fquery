@@ -1,37 +1,11 @@
+import { setup, toggleTests } from '#cases/attributes/styles/toggle.js';
 import { expect, test } from '#test';
 
 test.describe('#toggle', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test1"></div><div id="test2" style="display: none;"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('toggles the visibility of all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.toggle('div');
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '');
-    });
-
-    test('shows all nodes when forced', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.toggle('div', true);
-        });
-
-        await expect(page.locator('#test1')).toHaveCSS('display', 'block');
-        await expect(page.locator('#test2')).toHaveCSS('display', 'block');
-    });
-
-    test('hides all nodes when forced', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.toggle('div', false);
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'display: none;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'display: none;');
+    toggleTests((args) => {
+        $.toggle(...args);
     });
 
     test('shows elements hidden by a stylesheet', async ({ page }) => {

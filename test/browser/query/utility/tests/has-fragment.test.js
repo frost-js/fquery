@@ -1,36 +1,8 @@
-import { expect, test } from '#test';
+import { hasFragmentTests, setup } from '#cases/utility/tests/has-fragment.js';
+import { test } from '#test';
 
 test.describe('QuerySet #hasFragment', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<template id="template1">' +
-                'Test 1' +
-                '</template>' +
-                '<template id="template2">' +
-                'Test 2' +
-                '</template>' +
-                '<div id="div1"></div>' +
-                '<div id="div2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node has a document fragment', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('template')
-                    .hasFragment())).toBe(true);
-    });
-
-    test('returns false if no nodes have a document fragment', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div')
-                    .hasFragment())).toBe(false);
-    });
-
-    test('returns false for meta nodes with content', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.head.innerHTML = '<meta name="description" content="Test">';
-            return $('meta').hasFragment();
-        })).toBe(false);
-    });
+    hasFragmentTests((nodes) => $(nodes).hasFragment());
 });

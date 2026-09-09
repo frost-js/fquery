@@ -1,31 +1,10 @@
+import { getDataTests, setup } from '#cases/attributes/data/get-data.js';
 import { expect, test } from '#test';
 
 test.describe('#getData', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1"></div>' +
-                '<div id="test2"></div>';
-            $.setData('#test1', 'test', 'Test 1');
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns an object with all data for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getData('div'))).toEqual({
-            test: 'Test 1',
-        });
-    });
-
-    test('returns data for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getData('div', 'test'))).toBe('Test 1');
-    });
-
-    test('returns undefined for an undefined key', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getData('div', 'invalid'))).toBe(undefined);
-    });
+    getDataTests((args) => $.getData(...args));
 
     for (const key of ['constructor', 'toString', '__proto__']) {
         test(`does not return an inherited ${key} property`, async ({ page }) => {
@@ -33,11 +12,6 @@ test.describe('#getData', () => {
                 $.getData('div', key) === undefined, key)).toBe(true);
         });
     }
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getData('#invalid', 'test'))).toBe(undefined);
-    });
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

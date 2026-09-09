@@ -1,43 +1,10 @@
+import { hasDescendentTests, setup } from '#cases/utility/tests/has-descendent.js';
 import { expect, test } from '#test';
 
 test.describe('#hasDescendent', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test">' +
-                '<span id="span1">' +
-                '<a id="a1"></a>' +
-                '</span>' +
-                '</div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3" class="test">' +
-                '<span id="span2">' +
-                '<a id="a2"></a>' +
-                '</span>' +
-                '</div>' +
-                '<div id="div4"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node has a descendent matching a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDescendent('div', 'a'))).toBe(true);
-    });
-
-    test('returns true if any node has a descendent without a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDescendent('div'))).toBe(true);
-    });
-
-    test('returns false if no nodes have a descendent matching a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDescendent('div:not(.test)', 'a'))).toBe(false);
-    });
-
-    test('returns false if no nodes have a descendent without a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.hasDescendent('div:not(.test)'))).toBe(false);
-    });
+    hasDescendentTests((args) => $.hasDescendent(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

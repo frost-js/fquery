@@ -1,25 +1,10 @@
+import { indexOfTests, setup } from '#cases/utility/utility/index-of.js';
 import { expect, test } from '#test';
 
 test.describe('#indexOf', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1"></div>' +
-                '<div id="div2" class="test"></div>' +
-                '<div id="div3"></div>' +
-                '<div id="div4" class="test"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns the index of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.indexOf('div'))).toBe(0);
-    });
-
-    test('returns the index of the first node matching a filter', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.indexOf('div', '.test'))).toBe(1);
-    });
+    indexOfTests((args) => $.indexOf(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>

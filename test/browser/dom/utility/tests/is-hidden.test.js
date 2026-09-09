@@ -1,60 +1,10 @@
+import { isHiddenTests, setup } from '#cases/utility/tests/is-hidden.js';
 import { expect, test } from '#test';
 
 test.describe('#isHidden', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.addStyleTag({ content: '.test { display: none; }' });
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1" class="test">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div2">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div3" class="test">' +
-                '<span></span>' +
-                '</div>' +
-                '<div id="div4">' +
-                '<span></span>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns true if any node is hidden', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isHidden('div'))).toBe(true);
-    });
-
-    test('returns false if no nodes are hidden', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isHidden('div:not(.test)'))).toBe(false);
-    });
-
-    test('returns true if any node is a descendent of a hidden node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.isHidden('span'))).toBe(true);
-    });
-
-    test('returns false for visible fixed nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isHidden('div:not(.test)'))).toBe(false);
-    });
-
-    test('returns true for fixed nodes with display none', async ({ page }) => {
-        await page.addStyleTag({ content: 'div { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isHidden('.test'))).toBe(true);
-    });
-
-    test('returns true for fixed descendents of hidden nodes', async ({ page }) => {
-        await page.addStyleTag({ content: 'span { position: fixed; width: 10px; height: 10px; }' });
-
-        expect(await page.evaluate((_) =>
-            $.isHidden('.test span'))).toBe(true);
-    });
+    isHiddenTests((nodes) => $.isHidden(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
