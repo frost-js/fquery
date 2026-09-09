@@ -188,6 +188,8 @@ export default class AjaxRequest {
             }
         };
 
+        this.xhr.onabort = () => this.cancel();
+
         this.xhr.onerror = (e) =>
             this.#reject({
                 status: this.xhr.status,
@@ -232,9 +234,9 @@ export default class AjaxRequest {
             return;
         }
 
-        this.xhr.abort();
-
         this.#isCancelled = true;
+
+        this.xhr.abort();
 
         if (this.#options.rejectOnCancel) {
             this.#reject({

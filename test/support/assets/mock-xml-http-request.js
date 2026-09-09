@@ -20,9 +20,19 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
      * Abort the request if it has already been sent.
      */
     abort() {
+        if (!this._completeTimer) {
+            return;
+        }
+
         clearTimeout(this._uploadTimer);
         clearTimeout(this._progressTimer);
         clearTimeout(this._completeTimer);
+        this._completeTimer = null;
+
+        if (this.onabort) {
+            const abortEvent = new Event('abort');
+            this.onabort(abortEvent);
+        }
     }
 
     /**

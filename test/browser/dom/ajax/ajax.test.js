@@ -1332,6 +1332,94 @@ test.describe('#ajax', () => {
         });
     });
 
+    test('can be cancelled with a custom reason', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            try {
+                const ajax = $.ajax();
+                ajax.cancel('Custom reason');
+                await ajax;
+                return false;
+            } catch (error) {
+                error.xhr = error.xhr.data;
+                return error;
+            }
+        })).toEqual({
+            reason: 'Custom reason',
+            status: 200,
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('can be cancelled without rejecting', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            let rejected = false;
+            const ajax = $.ajax({
+                rejectOnCancel: false,
+            });
+            ajax.catch((_) => {
+                rejected = true;
+            });
+            ajax.cancel();
+            await Promise.resolve();
+            return rejected;
+        })).toBe(false);
+    });
+
+    test('can be aborted from afterSend callback', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            try {
+                await $.ajax({
+                    afterSend: (xhr) => {
+                        xhr.abort();
+                    },
+                });
+                return false;
+            } catch (error) {
+                error.xhr = error.xhr.data;
+                return error;
+            }
+        })).toEqual({
+            reason: 'Request was cancelled',
+            status: 200,
+            xhr: {
+                async: true,
+                body: null,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                method: 'GET',
+                url: 'http://localhost:3001/',
+            },
+        });
+    });
+
+    test('can be aborted from afterSend callback without rejecting', async ({ page }) => {
+        expect(await page.evaluate(async (_) => {
+            let rejected = false;
+            const ajax = $.ajax({
+                rejectOnCancel: false,
+                afterSend: (xhr) => {
+                    xhr.abort();
+                },
+            });
+            ajax.catch((_) => {
+                rejected = true;
+            });
+            await Promise.resolve();
+            return rejected;
+        })).toBe(false);
+    });
+
     test('throws on XHR error', async ({ page }) => {
         expect(await page.evaluate(async (_) => {
             try {

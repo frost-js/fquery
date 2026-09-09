@@ -1302,6 +1302,7 @@
 					event: e
 				});
 			};
+			this.xhr.onabort = () => this.cancel();
 			this.xhr.onerror = (e) => this.#reject({
 				status: this.xhr.status,
 				xhr: this.xhr,
@@ -1324,8 +1325,8 @@
 		*/
 		cancel(reason = "Request was cancelled") {
 			if (this.#isResolved || this.#isRejected || this.#isCancelled) return;
-			this.xhr.abort();
 			this.#isCancelled = true;
+			this.xhr.abort();
 			if (this.#options.rejectOnCancel) this.#reject({
 				status: this.xhr.status,
 				xhr: this.xhr,
