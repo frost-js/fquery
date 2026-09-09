@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isElement, isFragment, merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, isDocument, isFragment, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
 
 /**
@@ -147,16 +147,10 @@ export function next(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        while (node = getDOMProperty(node, 'nextSibling')) {
-            if (!isElement(node)) {
-                continue;
-            }
+        node = getDOMProperty(node, 'nextElementSibling');
 
-            if (nodeFilter(node)) {
-                results.push(node);
-            }
-
-            break;
+        if (node && nodeFilter(node)) {
+            results.push(node);
         }
     }
 
@@ -185,11 +179,7 @@ export function nextAll(selector, nodeFilter, limitFilter, { first = false } = {
     const results = [];
 
     for (let node of nodes) {
-        while (node = getDOMProperty(node, 'nextSibling')) {
-            if (!isElement(node)) {
-                continue;
-            }
-
+        while (node = getDOMProperty(node, 'nextElementSibling')) {
             if (limitFilter(node)) {
                 break;
             }
@@ -327,16 +317,10 @@ export function prev(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        while (node = getDOMProperty(node, 'previousSibling')) {
-            if (!isElement(node)) {
-                continue;
-            }
+        node = getDOMProperty(node, 'previousElementSibling');
 
-            if (nodeFilter(node)) {
-                results.push(node);
-            }
-
-            break;
+        if (node && nodeFilter(node)) {
+            results.push(node);
         }
     }
 
@@ -366,11 +350,7 @@ export function prevAll(selector, nodeFilter, limitFilter, { first = false } = {
 
     for (let node of nodes) {
         const siblings = [];
-        while (node = getDOMProperty(node, 'previousSibling')) {
-            if (!isElement(node)) {
-                continue;
-            }
-
+        while (node = getDOMProperty(node, 'previousElementSibling')) {
             if (limitFilter(node)) {
                 break;
             }

@@ -1975,10 +1975,9 @@ function next$1(selector, nodeFilter) {
 	nodeFilter = parseFilter(nodeFilter);
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
-	for (let node of nodes) while (node = getDOMProperty(node, "nextSibling")) {
-		if (!isElement(node)) continue;
-		if (nodeFilter(node)) results.push(node);
-		break;
+	for (let node of nodes) {
+		node = getDOMProperty(node, "nextElementSibling");
+		if (node && nodeFilter(node)) results.push(node);
 	}
 	return nodes.length > 1 && results.length > 1 ? unique(results) : results;
 }
@@ -1995,8 +1994,7 @@ function nextAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
 	limitFilter = parseFilter(limitFilter, false);
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
-	for (let node of nodes) while (node = getDOMProperty(node, "nextSibling")) {
-		if (!isElement(node)) continue;
+	for (let node of nodes) while (node = getDOMProperty(node, "nextElementSibling")) {
 		if (limitFilter(node)) break;
 		if (!nodeFilter(node)) continue;
 		results.push(node);
@@ -2068,10 +2066,9 @@ function prev$1(selector, nodeFilter) {
 	nodeFilter = parseFilter(nodeFilter);
 	const nodes = parseNodes(selector, { node: true });
 	const results = [];
-	for (let node of nodes) while (node = getDOMProperty(node, "previousSibling")) {
-		if (!isElement(node)) continue;
-		if (nodeFilter(node)) results.push(node);
-		break;
+	for (let node of nodes) {
+		node = getDOMProperty(node, "previousElementSibling");
+		if (node && nodeFilter(node)) results.push(node);
 	}
 	return nodes.length > 1 && results.length > 1 ? unique(results) : results;
 }
@@ -2090,8 +2087,7 @@ function prevAll$1(selector, nodeFilter, limitFilter, { first = false } = {}) {
 	const results = [];
 	for (let node of nodes) {
 		const siblings = [];
-		while (node = getDOMProperty(node, "previousSibling")) {
-			if (!isElement(node)) continue;
+		while (node = getDOMProperty(node, "previousElementSibling")) {
 			if (limitFilter(node)) break;
 			if (!nodeFilter(node)) continue;
 			siblings.unshift(node);
