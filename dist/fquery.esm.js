@@ -1001,16 +1001,8 @@ function parseNodes(nodes, options = {}) {
 * @param {NodeParseOptions} [options] The parsing options.
 * @returns {NodeFilterCallback} The node filter function.
 */
-function parseNodesFilter(options) {
-	if (!options) return isElement;
-	const callbacks = [];
-	if (options.node) callbacks.push(isNode);
-	else callbacks.push(isElement);
-	if (options.document) callbacks.push(isDocument);
-	if (options.window) callbacks.push(isWindow);
-	if (options.fragment) callbacks.push(isFragment);
-	if (options.shadow) callbacks.push(isShadow);
-	return (node) => callbacks.some((callback) => callback(node));
+function parseNodesFilter({ node = false, document = false, window = false, fragment = false, shadow = false } = {}) {
+	return (value) => (node ? isNode(value) : isElement(value)) || document && isDocument(value) || window && isWindow(value) || fragment && isFragment(value) || shadow && isShadow(value);
 }
 
 //#endregion
