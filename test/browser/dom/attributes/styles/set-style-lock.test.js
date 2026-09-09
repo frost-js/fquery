@@ -285,6 +285,48 @@ test.describe('#setStyleLock', () => {
         })).toBe('Invalid value for CSS property "display".');
     });
 
+    test('rejects longhands supplied by a variable-based shorthand', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = '--spacing: 20px; padding: var(--spacing);';
+            try {
+                $.setStyleLock('#test1', 'padding-left', '5px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "padding-left" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '--spacing: 20px; padding: var(--spacing);');
+    });
+
+    test('does not change any nodes when a later original value cannot be restored', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.paddingLeft = '10px';
+            document.getElementById('test2').style.cssText = '--spacing: 20px; padding: var(--spacing);';
+            try {
+                $.setStyleLock('div', 'padding-left', '5px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "padding-left" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'padding-left: 10px;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', '--spacing: 20px; padding: var(--spacing);');
+    });
+
+    test('does not leave nodes locked when an original value cannot be restored', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test2').style.cssText = '--spacing: 20px; padding: var(--spacing);';
+            try {
+                $.setStyleLock('div', 'padding-left', '5px');
+            } catch {
+                document.getElementById('test2').style.padding = '20px';
+                const release = $.setStyleLock('div', 'padding-left', '5px');
+                release();
+                return true;
+            }
+        })).toBe(true);
+    });
+
     test('works with forms whose style property is shadowed', async ({ page }) => {
         await page.evaluate((_) => {
             document.body.innerHTML = '<form id="form" style="display: flex;"><input name="style"></form>';

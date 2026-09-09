@@ -84,7 +84,7 @@ export function setStyle(style, value, { important = false } = {}) {
  * @param {string|number} value The temporary style value.
  * @param {{important?: boolean}} [options] The style options.
  * @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
- * @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+ * @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
  */
 export function setStyleLock(property, value, { important = false } = {}) {
     return _setStyleLock(this, property, value, { important });

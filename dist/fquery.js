@@ -3933,7 +3933,7 @@
 	* @param {string|number} value The temporary style value.
 	* @param {{important?: boolean}} [options] The style options.
 	* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
-	* @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+	* @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
 	*/
 	function setStyleLock$1(selector, property, value, { important = false } = {}) {
 		property = normalizeCssProperty(property);
@@ -3942,11 +3942,14 @@
 		const originals = unique(parseNodes(selector)).map((node) => {
 			assertStyleUnlocked(node, property);
 			const style = getDOMProperty(node, "style");
+			const present = [...style].includes(property);
+			const originalValue = style.getPropertyValue(property);
+			if (present && originalValue === "" && !property.startsWith("--")) throw new Error(`Cannot lock CSS property "${property}" because its original value cannot be restored.`);
 			return {
 				node,
 				style,
-				present: [...style].includes(property),
-				value: style.getPropertyValue(property),
+				present,
+				value: originalValue,
 				priority: style.getPropertyPriority(property)
 			};
 		});
@@ -5432,7 +5435,7 @@
 	* @param {string|number} value The temporary style value.
 	* @param {{important?: boolean}} [options] The style options.
 	* @returns {() => void} A function that releases the locks and restores the original declarations. Repeated calls do nothing.
-	* @throws {Error} When the property or value is unsupported, or any matching node already has a lock for the property.
+	* @throws {Error} When the property or value is unsupported, an original value cannot be restored, or any matching node already has a lock for the property.
 	*/
 	function setStyleLock(property, value, { important = false } = {}) {
 		return setStyleLock$1(this, property, value, { important });

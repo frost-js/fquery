@@ -149,6 +149,19 @@ test.describe('QuerySet #setStyleLock', () => {
         })).toBe('Invalid value for CSS property "display".');
     });
 
+    test('rejects longhands supplied by a variable-based shorthand', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = '--spacing: 20px; padding: var(--spacing);';
+            try {
+                $('#test1').setStyleLock('padding-left', '5px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "padding-left" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '--spacing: 20px; padding: var(--spacing);');
+    });
+
     test('releases duplicate nodes only once', async ({ page }) => {
         await page.evaluate((_) => {
             const node = document.getElementById('test1');
