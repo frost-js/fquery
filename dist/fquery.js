@@ -6641,15 +6641,7 @@
 		if (typeof getDOMProperty(commonAncestor, "querySelectorAll") !== "function") return [commonAncestor];
 		const nodes = merge([], getDOMProperty(commonAncestor, "childNodes"));
 		if (!nodes.length) return [commonAncestor];
-		const selectedNodes = nodes.filter((node) => range.intersectsNode(node));
-		const results = [];
-		let lastNode;
-		for (const node of selectedNodes) {
-			if (lastNode && callDOMMethod(lastNode, "contains", node)) continue;
-			lastNode = node;
-			results.push(node);
-		}
-		return results.length > 1 ? unique(results) : results;
+		return nodes.filter((node) => range.intersectsNode(node));
 	}
 	/**
 	* Creates a selection on the first node.

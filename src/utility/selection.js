@@ -1,6 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, merge, unique } from '@fr0st/core';
+import { callDOMMethod, getDOMProperty, merge } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { createRange } from './../manipulation/create.js';
@@ -110,24 +110,7 @@ export function getSelection() {
         return [commonAncestor];
     }
 
-    const selectedNodes = nodes.filter((node) =>
-        range.intersectsNode(node),
-    );
-    const results = [];
-
-    let lastNode;
-    for (const node of selectedNodes) {
-        if (lastNode && callDOMMethod(lastNode, 'contains', node)) {
-            continue;
-        }
-
-        lastNode = node;
-        results.push(node);
-    }
-
-    return results.length > 1 ?
-        unique(results) :
-        results;
+    return nodes.filter((node) => range.intersectsNode(node));
 };
 
 /**
