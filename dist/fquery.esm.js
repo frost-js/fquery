@@ -2116,7 +2116,7 @@ function removeEvent$1(selector, eventNames, callback, { capture = null, delegat
 		for (const eventName of eventNames) {
 			const realEventName = parseEvent(eventName);
 			if (!(realEventName in eventLookup)) eventLookup[realEventName] = [];
-			eventLookup[realEventName].push(eventName);
+			eventLookup[realEventName].push(eventNamespacedRegExp(eventName));
 		}
 	}
 	for (const node of nodes) {
@@ -2125,11 +2125,7 @@ function removeEvent$1(selector, eventNames, callback, { capture = null, delegat
 		for (const [realEventName, realEvents] of Object.entries(nodeEvents)) {
 			if (eventLookup && !(realEventName in eventLookup)) continue;
 			const otherEvents = realEvents.filter((eventData) => {
-				if (eventLookup && !eventLookup[realEventName].some((eventName) => {
-					if (eventName === realEventName) return true;
-					const regExp = eventNamespacedRegExp(eventName);
-					return eventData.eventName.match(regExp);
-				})) return true;
+				if (eventLookup && !eventLookup[realEventName].some((regExp) => regExp.test(eventData.eventName))) return true;
 				if (callback && callback !== eventData.callback && callback !== eventData.realCallback) return true;
 				if (delegate && delegate !== eventData.delegate) return true;
 				if (capture !== null && capture !== eventData.capture) return true;

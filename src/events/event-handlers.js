@@ -198,7 +198,7 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
                 eventLookup[realEventName] = [];
             }
 
-            eventLookup[realEventName].push(eventName);
+            eventLookup[realEventName].push(eventNamespacedRegExp(eventName));
         }
     }
 
@@ -215,15 +215,9 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
             }
 
             const otherEvents = realEvents.filter((eventData) => {
-                if (eventLookup && !eventLookup[realEventName].some((eventName) => {
-                    if (eventName === realEventName) {
-                        return true;
-                    }
-
-                    const regExp = eventNamespacedRegExp(eventName);
-
-                    return eventData.eventName.match(regExp);
-                })) {
+                if (eventLookup && !eventLookup[realEventName].some((regExp) =>
+                    regExp.test(eventData.eventName),
+                )) {
                     return true;
                 }
 
