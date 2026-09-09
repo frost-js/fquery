@@ -280,8 +280,10 @@ export function position(selector, { offset = false } = {}) {
         let offsetParent = node;
 
         while (offsetParent = getDOMProperty(offsetParent, 'offsetParent')) {
-            result.x += getDOMProperty(offsetParent, 'offsetLeft');
-            result.y += getDOMProperty(offsetParent, 'offsetTop');
+            result.x += getDOMProperty(offsetParent, 'offsetLeft') +
+                getDOMProperty(offsetParent, 'clientLeft');
+            result.y += getDOMProperty(offsetParent, 'offsetTop') +
+                getDOMProperty(offsetParent, 'clientTop');
         }
     }
 

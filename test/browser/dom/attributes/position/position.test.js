@@ -32,6 +32,18 @@ test.describe('#position', () => {
         });
     });
 
+    test('returns the position with offset including parent borders', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('parent').style.cssText += 'border: 10px solid; border-left-width: 20px;';
+        });
+
+        expect(await page.evaluate((_) =>
+            $.position('[data-toggle="child"]', { offset: true }))).toEqual({
+            x: 1128,
+            y: 1085,
+        });
+    });
+
     test('returns undefined for empty nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.position('#invalid'))).toBe(undefined);
