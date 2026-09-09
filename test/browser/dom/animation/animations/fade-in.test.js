@@ -37,6 +37,28 @@ test.describe('#fadeIn', () => {
             .toBe('important');
     });
 
+    test('preserves important opacity during the animation', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('opacity', '1', 'important');
+            $.fadeIn('#test2', { duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('opacity', '0.5');
+    });
+
+    test('does not promote normal opacity to important', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('opacity', '1');
+            $.fadeIn('#test2', { duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('opacity', '0.25');
+    });
+
     test('locks opacity while the animation is active', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.fadeIn('#test2');

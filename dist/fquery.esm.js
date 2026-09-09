@@ -1682,7 +1682,7 @@ function dropOut$1(selector, options) {
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
 function fadeIn$1(selector, options) {
-	return animateEffect(selector, ["opacity"], (node, progress) => getDOMProperty(node, "style").setProperty("opacity", progress.toFixed(2)), options);
+	return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDOMProperty(node, "style"), "opacity", progress.toFixed(2)), options);
 }
 /**
 * Fades the opacity of each node out.
@@ -1691,7 +1691,7 @@ function fadeIn$1(selector, options) {
 * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 */
 function fadeOut$1(selector, options) {
-	return animateEffect(selector, ["opacity"], (node, progress) => getDOMProperty(node, "style").setProperty("opacity", (1 - progress).toFixed(2)), options);
+	return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDOMProperty(node, "style"), "opacity", (1 - progress).toFixed(2)), options);
 }
 /**
 * Rotates each node in on an X, Y or Z.
@@ -1702,7 +1702,7 @@ function fadeOut$1(selector, options) {
 function rotateIn$1(selector, options) {
 	return animateEffect(selector, ["transform"], (node, progress, options) => {
 		const amount = ((90 - progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-		getDOMProperty(node, "style").setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+		setAnimationStyle(getDOMProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 	}, {
 		x: 0,
 		y: 1,
@@ -1719,7 +1719,7 @@ function rotateIn$1(selector, options) {
 function rotateOut$1(selector, options) {
 	return animateEffect(selector, ["transform"], (node, progress, options) => {
 		const amount = (progress * 90 * (options.inverse ? -1 : 1)).toFixed(2);
-		getDOMProperty(node, "style").setProperty("transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+		setAnimationStyle(getDOMProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 	}, {
 		x: 0,
 		y: 1,
@@ -1753,7 +1753,7 @@ function slideIn$1(selector, options) {
 			inverse = dir === "left";
 		}
 		const translateAmount = ((size - size * progress) * (inverse ? -1 : 1)).toFixed(2);
-		getDOMProperty(node, "style").setProperty("transform", `translate${axis}(${translateAmount}px)`);
+		setAnimationStyle(getDOMProperty(node, "style"), "transform", `translate${axis}(${translateAmount}px)`);
 	}, options);
 }
 /**
@@ -1782,7 +1782,7 @@ function slideOut$1(selector, options) {
 			inverse = dir === "left";
 		}
 		const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-		getDOMProperty(node, "style").setProperty("transform", `translate${axis}(${translateAmount}px)`);
+		setAnimationStyle(getDOMProperty(node, "style"), "transform", `translate${axis}(${translateAmount}px)`);
 	}, options);
 }
 /**
@@ -1804,10 +1804,10 @@ function squeezeIn$1(selector, options) {
 		"width"
 	], (node, progress, options, initialStyles) => {
 		const style = getDOMProperty(node, "style");
-		style.setProperty("height", initialStyles.height);
-		style.setProperty("width", initialStyles.width);
-		style.setProperty("overflow-x", "hidden");
-		style.setProperty("overflow-y", "hidden");
+		setAnimationStyle(style, "height", initialStyles.height);
+		setAnimationStyle(style, "width", initialStyles.width);
+		setAnimationStyle(style, "overflow-x", "hidden");
+		setAnimationStyle(style, "overflow-y", "hidden");
 		const dir = evaluate(options.direction);
 		let size;
 		let sizeStyle;
@@ -1822,10 +1822,10 @@ function squeezeIn$1(selector, options) {
 			if (dir === "left") axis = "X";
 		}
 		const amount = (size * progress).toFixed(2);
-		style.setProperty(sizeStyle, `${amount}px`);
+		setAnimationStyle(style, sizeStyle, `${amount}px`);
 		if (axis) {
 			const translateAmount = (size - amount).toFixed(2);
-			style.setProperty("transform", `translate${axis}(${translateAmount}px)`);
+			setAnimationStyle(style, "transform", `translate${axis}(${translateAmount}px)`);
 		}
 	}, options);
 }
@@ -1848,10 +1848,10 @@ function squeezeOut$1(selector, options) {
 		"width"
 	], (node, progress, options, initialStyles) => {
 		const style = getDOMProperty(node, "style");
-		style.setProperty("height", initialStyles.height);
-		style.setProperty("width", initialStyles.width);
-		style.setProperty("overflow-x", "hidden");
-		style.setProperty("overflow-y", "hidden");
+		setAnimationStyle(style, "height", initialStyles.height);
+		setAnimationStyle(style, "width", initialStyles.width);
+		setAnimationStyle(style, "overflow-x", "hidden");
+		setAnimationStyle(style, "overflow-y", "hidden");
 		const dir = evaluate(options.direction);
 		let size;
 		let sizeStyle;
@@ -1866,10 +1866,10 @@ function squeezeOut$1(selector, options) {
 			if (dir === "left") axis = "X";
 		}
 		const amount = (size - size * progress).toFixed(2);
-		style.setProperty(sizeStyle, `${amount}px`);
+		setAnimationStyle(style, sizeStyle, `${amount}px`);
 		if (axis) {
 			const translateAmount = (size - amount).toFixed(2);
-			style.setProperty("transform", `translate${axis}(${translateAmount}px)`);
+			setAnimationStyle(style, "transform", `translate${axis}(${translateAmount}px)`);
 		}
 	}, options);
 }
@@ -1914,6 +1914,15 @@ function animateEffect(selector, properties, callback, options) {
 	});
 	start();
 	return new AnimationSet(animations);
+}
+/**
+* Sets an animated style value while preserving its current inline priority.
+* @param {CSSStyleDeclaration} style The inline style declaration.
+* @param {string} property The CSS property name.
+* @param {string} value The animated value.
+*/
+function setAnimationStyle(style, property, value) {
+	style.setProperty(property, value, style.getPropertyPriority(property));
 }
 
 //#endregion

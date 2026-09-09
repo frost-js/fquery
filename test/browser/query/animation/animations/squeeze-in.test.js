@@ -54,6 +54,28 @@ test.describe('QuerySetIn', () => {
         ]);
     });
 
+    test('preserves important height while resizing', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { height: 200px !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('height', '100px', 'important');
+            $('#test2').squeezeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('height', '50px');
+    });
+
+    test('preserves important overflow while clipping', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { overflow-x: scroll !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('overflow-x', 'auto', 'important');
+            $('#test2').squeezeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('overflow-x', 'hidden');
+    });
+
     test('adds a squeeze-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

@@ -18,6 +18,28 @@ test.describe('QuerySet #fadeIn', () => {
         });
     });
 
+    test('preserves important opacity during the animation', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('opacity', '1', 'important');
+            $('#test2').fadeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('opacity', '0.5');
+    });
+
+    test('does not promote normal opacity to important', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('opacity', '1');
+            $('#test2').fadeIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('opacity', '0.25');
+    });
+
     test('holds an opacity lock while the animation is active', async ({ page }) => {
         await page.evaluate((_) => {
             $('#test2').fadeIn({ duration: 100 });

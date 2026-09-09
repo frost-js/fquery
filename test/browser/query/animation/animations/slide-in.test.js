@@ -36,6 +36,17 @@ test.describe('QuerySet #slideIn', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', '--spacing: 20px; margin: var(--spacing);');
     });
 
+    test('preserves important transforms during the animation', async ({ page }) => {
+        await page.addStyleTag({ content: '.animate { transform: translateY(200px) !important; }' });
+        await page.evaluate((_) => {
+            document.getElementById('test2').style.setProperty('transform', 'none', 'important');
+            $('#test2').slideIn({ duration: 100 });
+        });
+        await advanceClock(page, 50);
+
+        await expect(page.locator('#test2')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 50)');
+    });
+
     test('adds a slide-in animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $('.animate')

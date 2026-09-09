@@ -65,7 +65,8 @@ export function fadeIn(selector, options) {
         selector,
         ['opacity'],
         (node, progress) =>
-            getDOMProperty(node, 'style').setProperty(
+            setAnimationStyle(
+                getDOMProperty(node, 'style'),
                 'opacity',
                 progress.toFixed(2),
             ),
@@ -84,7 +85,8 @@ export function fadeOut(selector, options) {
         selector,
         ['opacity'],
         (node, progress) =>
-            getDOMProperty(node, 'style').setProperty(
+            setAnimationStyle(
+                getDOMProperty(node, 'style'),
                 'opacity',
                 (1 - progress).toFixed(2),
             ),
@@ -104,7 +106,7 @@ export function rotateIn(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((90 - (progress * 90)) * (options.inverse ? -1 : 1)).toFixed(2);
-            getDOMProperty(node, 'style').setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -127,7 +129,7 @@ export function rotateOut(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-            getDOMProperty(node, 'style').setProperty('transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -168,7 +170,7 @@ export function slideIn(selector, options) {
             }
 
             const translateAmount = ((size - (size * progress)) * (inverse ? -1 : 1)).toFixed(2);
-            getDOMProperty(node, 'style').setProperty('transform', `translate${axis}(${translateAmount}px)`);
+            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
         },
         options,
     );
@@ -204,7 +206,7 @@ export function slideOut(selector, options) {
             }
 
             const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-            getDOMProperty(node, 'style').setProperty('transform', `translate${axis}(${translateAmount}px)`);
+            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
         },
         options,
     );
@@ -227,10 +229,10 @@ export function squeezeIn(selector, options) {
         ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
         (node, progress, options, initialStyles) => {
             const style = getDOMProperty(node, 'style');
-            style.setProperty('height', initialStyles.height);
-            style.setProperty('width', initialStyles.width);
-            style.setProperty('overflow-x', 'hidden');
-            style.setProperty('overflow-y', 'hidden');
+            setAnimationStyle(style, 'height', initialStyles.height);
+            setAnimationStyle(style, 'width', initialStyles.width);
+            setAnimationStyle(style, 'overflow-x', 'hidden');
+            setAnimationStyle(style, 'overflow-y', 'hidden');
 
             const dir = evaluate(options.direction);
 
@@ -251,11 +253,11 @@ export function squeezeIn(selector, options) {
 
             const amount = (size * progress).toFixed(2);
 
-            style.setProperty(sizeStyle, `${amount}px`);
+            setAnimationStyle(style, sizeStyle, `${amount}px`);
 
             if (axis) {
                 const translateAmount = (size - amount).toFixed(2);
-                style.setProperty('transform', `translate${axis}(${translateAmount}px)`);
+                setAnimationStyle(style, 'transform', `translate${axis}(${translateAmount}px)`);
             }
         },
         options,
@@ -279,10 +281,10 @@ export function squeezeOut(selector, options) {
         ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
         (node, progress, options, initialStyles) => {
             const style = getDOMProperty(node, 'style');
-            style.setProperty('height', initialStyles.height);
-            style.setProperty('width', initialStyles.width);
-            style.setProperty('overflow-x', 'hidden');
-            style.setProperty('overflow-y', 'hidden');
+            setAnimationStyle(style, 'height', initialStyles.height);
+            setAnimationStyle(style, 'width', initialStyles.width);
+            setAnimationStyle(style, 'overflow-x', 'hidden');
+            setAnimationStyle(style, 'overflow-y', 'hidden');
 
             const dir = evaluate(options.direction);
 
@@ -303,11 +305,11 @@ export function squeezeOut(selector, options) {
 
             const amount = (size - (size * progress)).toFixed(2);
 
-            style.setProperty(sizeStyle, `${amount}px`);
+            setAnimationStyle(style, sizeStyle, `${amount}px`);
 
             if (axis) {
                 const translateAmount = (size - amount).toFixed(2);
-                style.setProperty('transform', `translate${axis}(${translateAmount}px)`);
+                setAnimationStyle(style, 'transform', `translate${axis}(${translateAmount}px)`);
             }
         },
         options,
@@ -384,4 +386,14 @@ function animateEffect(selector, properties, callback, options) {
     start();
 
     return new AnimationSet(animations);
+};
+
+/**
+ * Sets an animated style value while preserving its current inline priority.
+ * @param {CSSStyleDeclaration} style The inline style declaration.
+ * @param {string} property The CSS property name.
+ * @param {string} value The animated value.
+ */
+function setAnimationStyle(style, property, value) {
+    style.setProperty(property, value, style.getPropertyPriority(property));
 };
