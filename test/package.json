@@ -2,6 +2,7 @@
     "private": true,
     "type": "module",
     "imports": {
+        "#cases/*": "./cases/*",
         "#test": "./support/test.js"
     }
 }

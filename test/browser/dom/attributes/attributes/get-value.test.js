@@ -1,35 +1,8 @@
+import { getValueTests } from '#cases/attributes/attributes/get-value.js';
 import { expect, test } from '#test';
 
 test.describe('#getValue', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<input type="text" id="test1" value="Test 1"><input type="number" id="test2"><textarea id="test3">Test 2</textarea><select id="test4"><option value="1">1</option><option value="2" selected>2</option></select><select id="test5"><option value="3">3</option><option value="4" selected>4</option></select>';
-        });
-    });
-
-    test('returns the input value of the first node', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getValue('input'));
-
-        expect(value).toBe('Test 1');
-    });
-
-    test('returns undefined for empty nodes', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getValue('#invalid'));
-
-        expect(value).toBe(undefined);
-    });
-
-    test('works with textarea input nodes', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getValue('textarea'));
-
-        expect(value).toBe('Test 2');
-    });
-
-    test('works with select input nodes', async ({ page }) => {
-        const value = await page.evaluate((_) => $.getValue('select'));
-
-        expect(value).toBe('2');
-    });
+    getValueTests((nodes) => $.getValue(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const value = await page.evaluate((_) =>

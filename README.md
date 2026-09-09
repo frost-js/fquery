@@ -544,6 +544,8 @@ After building, `npm run test:coverage` runs Chromium tests and writes coverage 
 
 `npm run test:headed` and `npm run test:ui` also use the existing bundles and open headed browsers or the Playwright UI.
 
+Shared behavior cases live in `test/cases/`, mirroring the feature paths under `test/browser/dom/` and `test/browser/query/`. Import them through `#cases/*` and register them inside each API's suite. Keep API-specific checks, such as accepted node inputs, QuerySet chainability, return types, and animation queues, in the corresponding browser suite. Use `test/support/` for browser fixtures, assertions, and support utilities.
+
 ## License
 
 fQuery is released under the [MIT License](./LICENSE).
