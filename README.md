@@ -262,7 +262,7 @@ Custom data is stored separately from DOM attributes and `dataset`.
 
 Style locks accept supported longhand properties and CSS custom properties. Shorthands, aliases, invalid values, and attempts to lock an already locked property throw before any matched element is changed. Property names and numeric values use the same normalization as `setStyle()`.
 
-Locks also throw before changing any matched element when an existing longhand value cannot be restored, such as `padding-left` supplied by an inline `padding: var(--spacing)` shorthand. Empty custom properties remain supported.
+Locks also throw before changing any matched element when an existing longhand value cannot be restored, such as `padding-left` supplied by an inline `padding: var(--spacing)` shorthand. Locks that would reorder an existing declaration also throw, such as locking `width` declared before `inline-size`. Empty custom properties remain supported.
 
 ```js
 const release = $('.panel').setStyleLock('display', 'none');

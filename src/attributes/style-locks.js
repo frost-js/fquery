@@ -32,7 +32,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
     property = normalizeCssProperty(property);
     value = normalizeCssValue(property, value);
 
-    validateStyleLock(property, value);
+    const testStyle = validateStyleLock(property, value);
 
     const originals = unique(parseNodes(selector)).map((node) => {
         assertStyleUnlocked(node, property);
@@ -40,9 +40,17 @@ export function setStyleLock(selector, property, value, { important = false } = 
         const style = getDOMProperty(node, 'style');
         const present = [...style].includes(property);
         const originalValue = style.getPropertyValue(property);
+        const priority = style.getPropertyPriority(property);
 
-        if (present && originalValue === '' && !property.startsWith('--')) {
-            throw new Error(`Cannot lock CSS property "${property}" because its original value cannot be restored.`);
+        if (present && !property.startsWith('--')) {
+            // Re-setting a declaration can move it past related logical or physical properties.
+            testStyle.cssText = style.cssText;
+            const index = [...testStyle].indexOf(property);
+            testStyle.setProperty(property, originalValue, priority);
+
+            if (originalValue === '' || testStyle.item(index) !== property) {
+                throw new Error(`Cannot lock CSS property "${property}" because its original value cannot be restored.`);
+            }
         }
 
         return {
@@ -50,7 +58,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
             style,
             present,
             value: originalValue,
-            priority: style.getPropertyPriority(property),
+            priority,
         };
     });
 
@@ -100,6 +108,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
  * Validates a property and value before acquiring style locks.
  * @param {string} property The normalized CSS property name.
  * @param {string|number} value The normalized CSS value.
+ * @returns {CSSStyleDeclaration} The detached style declaration used for validation.
  * @throws {Error} When the property or value is unsupported.
  */
 function validateStyleLock(property, value) {
@@ -122,4 +131,6 @@ function validateStyleLock(property, value) {
     if (value !== '' && !style.length) {
         throw new Error(`Invalid value for CSS property "${property}".`);
     }
+
+    return style;
 };

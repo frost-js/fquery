@@ -75,6 +75,16 @@ test.describe('#setStyleLock', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
     });
 
+    test('restores a logical property when declaration order is preserved', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px; color: red;';
+            const release = $.setStyleLock('#test1', 'inline-size', '300px');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px; color: red;');
+    });
+
     test('removes a declaration that was originally absent', async ({ page }) => {
         await page.evaluate((_) => {
             const release = $.setStyleLock('div', 'display', 'none');
@@ -321,6 +331,61 @@ test.describe('#setStyleLock', () => {
             } catch {
                 document.getElementById('test2').style.padding = '20px';
                 const release = $.setStyleLock('div', 'padding-left', '5px');
+                release();
+                return true;
+            }
+        })).toBe(true);
+    });
+
+    test('rejects a physical property that would move past a logical property', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px;';
+            try {
+                $.setStyleLock('#test1', 'width', '300px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "width" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px;');
+    });
+
+    test('rejects a logical property that would move past a physical property', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'inline-size: 200px; width: 100px;';
+            try {
+                $.setStyleLock('#test1', 'inline-size', '300px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "inline-size" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'inline-size: 200px; width: 100px;');
+    });
+
+    test('does not change any nodes when a later declaration would be reordered', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.width = '50px';
+            document.getElementById('test2').style.cssText = 'width: 100px; inline-size: 200px;';
+            try {
+                $.setStyleLock('div', 'width', '300px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "width" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 50px;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', 'width: 100px; inline-size: 200px;');
+    });
+
+    test('does not leave nodes locked when a declaration would be reordered', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test2').style.cssText = 'width: 100px; inline-size: 200px;';
+            try {
+                $.setStyleLock('div', 'width', '300px');
+            } catch {
+                document.getElementById('test2').style.removeProperty('inline-size');
+                const release = $.setStyleLock('div', 'width', '300px');
                 release();
                 return true;
             }

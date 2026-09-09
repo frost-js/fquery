@@ -66,6 +66,16 @@ test.describe('QuerySet #setStyleLock', () => {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
     });
 
+    test('restores a logical property when declaration order is preserved', async ({ page }) => {
+        await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px; color: red;';
+            const release = $('#test1').setStyleLock('inline-size', '300px');
+            release();
+        });
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px; color: red;');
+    });
+
     test('removes a declaration that was originally absent', async ({ page }) => {
         await page.evaluate((_) => {
             const release = $('div').setStyleLock('display', 'none');
@@ -160,6 +170,19 @@ test.describe('QuerySet #setStyleLock', () => {
         })).toBe('Cannot lock CSS property "padding-left" because its original value cannot be restored.');
 
         await expect(page.locator('#test1')).toHaveAttribute('style', '--spacing: 20px; padding: var(--spacing);');
+    });
+
+    test('rejects a physical property that would move past a logical property', async ({ page }) => {
+        expect(await page.evaluate((_) => {
+            document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px;';
+            try {
+                $('#test1').setStyleLock('width', '300px');
+            } catch (error) {
+                return error.message;
+            }
+        })).toBe('Cannot lock CSS property "width" because its original value cannot be restored.');
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px;');
     });
 
     test('releases duplicate nodes only once', async ({ page }) => {
