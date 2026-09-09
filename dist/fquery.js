@@ -3241,13 +3241,6 @@
 		eventNames = parseEvents(eventNames);
 		for (const eventName of eventNames) {
 			const realEventName = parseEvent(eventName);
-			const eventData = {
-				callback,
-				delegate,
-				selfDestruct,
-				capture,
-				passive
-			};
 			for (const node of nodes) {
 				if (!events.has(node)) events.set(node, Object.create(null));
 				const nodeEvents = events.get(node);
@@ -3259,11 +3252,17 @@
 				realCallback = preventFactory(realCallback);
 				if (delegate) realCallback = delegateFactory(node, delegate, realCallback);
 				realCallback = namespaceFactory(eventName, realCallback);
-				eventData.realCallback = realCallback;
-				eventData.eventName = eventName;
-				eventData.realEventName = realEventName;
 				if (!nodeEvents[realEventName]) nodeEvents[realEventName] = [];
-				nodeEvents[realEventName].push({ ...eventData });
+				nodeEvents[realEventName].push({
+					callback,
+					delegate,
+					selfDestruct,
+					capture,
+					passive,
+					realCallback,
+					eventName,
+					realEventName
+				});
 				callDOMMethod(node, "addEventListener", realEventName, realCallback, {
 					capture,
 					passive
