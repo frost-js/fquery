@@ -1316,6 +1316,7 @@ var Animation = class Animation {
 		if (this.#isStopped) return true;
 		let progress;
 		if (time === null) progress = 1;
+		else if (this.#options.duration === 0) progress = time >= this.#options.start ? 1 : 0;
 		else {
 			progress = (time - this.#options.start) / this.#options.duration;
 			if (this.#options.infinite) progress %= 1;

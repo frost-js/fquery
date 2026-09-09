@@ -97,6 +97,60 @@ test.describe('#animate', () => {
         ]);
     });
 
+    test('completes zero-duration animations with full progress', async ({ page }) => {
+        await page.evaluate(async (_) => {
+            await $.animate(
+                '.animate',
+                (node, progress) => {
+                    node.dataset.test = progress;
+                },
+                {
+                    duration: 0,
+                },
+            );
+        });
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
+    });
+
+    test('waits for the start time of zero-duration animations', async ({ page }) => {
+        await page.evaluate((_) => {
+            $.animate(
+                '.animate',
+                (node, progress) => {
+                    node.dataset.test = progress;
+                },
+                {
+                    duration: 0,
+                    start: performance.now() + 100,
+                },
+            );
+        });
+        await advanceClock(page, 50);
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '0');
+        await expect(page.locator('#test4')).toHaveAttribute('data-test', '0');
+        await advanceClock(page, 100);
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
+    });
+
+    test('completes zero-duration animations with infinite enabled', async ({ page }) => {
+        await page.evaluate(async (_) => {
+            await $.animate(
+                '.animate',
+                (node, progress) => {
+                    node.dataset.test = progress;
+                },
+                {
+                    duration: 0,
+                    infinite: true,
+                },
+            );
+        });
+        await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+        await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
+    });
+
     test('adds an animation to each node (linear)', async ({ page }) => {
         await page.evaluate((_) => {
             $.animate(
