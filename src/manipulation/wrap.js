@@ -3,6 +3,7 @@
 
 import { callDOMMethod, getDOMProperty, isFragment, merge } from '@fr0st/core';
 import { parseFilter, parseNodes } from './../filters.js';
+import { getWrapTarget } from './../helpers.js';
 import { clone, remove } from './manipulation.js';
 
 /**
@@ -85,7 +86,7 @@ export function wrap(selector, otherSelector) {
             animations: true,
         });
 
-        const firstClone = clones.slice().shift();
+        const firstClone = clones[0];
 
         const firstCloneNode = isFragment(firstClone) ?
             getDOMProperty(firstClone, 'firstElementChild') :
@@ -95,7 +96,7 @@ export function wrap(selector, otherSelector) {
             continue;
         }
 
-        const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
+        const deepest = getWrapTarget(firstCloneNode);
 
         for (const clone of clones) {
             callDOMMethod(parent, 'insertBefore', clone, node);
@@ -150,7 +151,7 @@ export function wrapAll(selector, otherSelector) {
         return;
     }
 
-    const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
+    const deepest = getWrapTarget(firstCloneNode);
 
     for (const clone of clones) {
         callDOMMethod(parent, 'insertBefore', clone, firstNode);
@@ -188,7 +189,7 @@ export function wrapInner(selector, otherSelector) {
             animations: true,
         });
 
-        const firstClone = clones.slice().shift();
+        const firstClone = clones[0];
 
         const firstCloneNode = isFragment(firstClone) ?
             getDOMProperty(firstClone, 'firstElementChild') :
@@ -198,7 +199,7 @@ export function wrapInner(selector, otherSelector) {
             continue;
         }
 
-        const deepest = merge([], callDOMMethod(firstCloneNode, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || firstCloneNode;
+        const deepest = getWrapTarget(firstCloneNode);
 
         for (const clone of clones) {
             callDOMMethod(node, 'insertBefore', clone, null);

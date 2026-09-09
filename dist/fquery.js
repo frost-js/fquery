@@ -1577,6 +1577,16 @@
 		return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, "i");
 	}
 	/**
+	* Returns the first leaf element in a wrapper, or the wrapper if it has no element children.
+	* @param {Element|DocumentFragment} node The wrapper node.
+	* @returns {Element|DocumentFragment} The destination for wrapped nodes.
+	*/
+	function getWrapTarget(node) {
+		let child;
+		while (child = getDOMProperty(node, "firstElementChild")) node = child;
+		return node;
+	}
+	/**
 	* Normalizes a CSS property name.
 	* @param {string} style The CSS property name.
 	* @returns {string} The normalized CSS property name.
@@ -4896,10 +4906,10 @@
 				data: true,
 				animations: true
 			});
-			const firstClone = clones.slice().shift();
+			const firstClone = clones[0];
 			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
 			if (!firstCloneNode) continue;
-			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+			const deepest = getWrapTarget(firstCloneNode);
 			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
 			callDOMMethod(deepest, "insertBefore", node, null);
 		}
@@ -4927,7 +4937,7 @@
 		const firstClone = clones[0];
 		const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
 		if (!firstCloneNode) return;
-		const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+		const deepest = getWrapTarget(firstCloneNode);
 		for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, firstNode);
 		for (const node of nodes) callDOMMethod(deepest, "insertBefore", node, null);
 	}
@@ -4953,10 +4963,10 @@
 				data: true,
 				animations: true
 			});
-			const firstClone = clones.slice().shift();
+			const firstClone = clones[0];
 			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
 			if (!firstCloneNode) continue;
-			const deepest = merge([], callDOMMethod(firstCloneNode, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || firstCloneNode;
+			const deepest = getWrapTarget(firstCloneNode);
 			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
 			for (const child of children) callDOMMethod(deepest, "insertBefore", child, null);
 		}
@@ -6692,8 +6702,7 @@
 		if (!nodes.length || !selection.rangeCount) return;
 		const range = selection.getRangeAt(0);
 		selection.removeAllRanges();
-		const node = nodes.slice().shift();
-		const deepest = merge([], callDOMMethod(node, "querySelectorAll", "*")).find((node) => !getDOMProperty(node, "childElementCount")) || node;
+		const deepest = getWrapTarget(nodes[0]);
 		const fragment = range.extractContents();
 		const childNodes = merge([], fragment.childNodes);
 		for (const child of childNodes) callDOMMethod(deepest, "insertBefore", child, null);

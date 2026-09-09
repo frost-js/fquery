@@ -3,6 +3,7 @@
 import { callDOMMethod, getDOMProperty, merge } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
+import { getWrapTarget } from './../helpers.js';
 import { createRange } from './../manipulation/create.js';
 import { sort } from './utility.js';
 
@@ -200,8 +201,7 @@ export function wrapSelection(selector) {
 
     selection.removeAllRanges();
 
-    const node = nodes.slice().shift();
-    const deepest = merge([], callDOMMethod(node, 'querySelectorAll', '*')).find((node) => !getDOMProperty(node, 'childElementCount')) || node;
+    const deepest = getWrapTarget(nodes[0]);
 
     const fragment = range.extractContents();
 

@@ -1,4 +1,4 @@
-import { escapeRegExp, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
+import { escapeRegExp, getDOMProperty, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
 import { getWindow } from './config.js';
 import QuerySet from './query/query-set-core.js';
 
@@ -74,6 +74,20 @@ export function escapeCSS(value) {
  */
 export function eventNamespacedRegExp(event) {
     return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, 'i');
+};
+
+/**
+ * Returns the first leaf element in a wrapper, or the wrapper if it has no element children.
+ * @param {Element|DocumentFragment} node The wrapper node.
+ * @returns {Element|DocumentFragment} The destination for wrapped nodes.
+ */
+export function getWrapTarget(node) {
+    let child;
+    while (child = getDOMProperty(node, 'firstElementChild')) {
+        node = child;
+    }
+
+    return node;
 };
 
 /**
