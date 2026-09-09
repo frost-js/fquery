@@ -147,33 +147,7 @@ export function rotateOut(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 export function slideIn(selector, options) {
-    options = {
-        direction: 'bottom',
-        ...options,
-    };
-
-    return animateEffect(
-        selector,
-        ['transform'],
-        (node, progress, options) => {
-            const dir = evaluate(options.direction);
-
-            let size; let axis; let inverse;
-            if (['top', 'bottom'].includes(dir)) {
-                size = getDOMProperty(node, 'clientHeight');
-                axis = 'Y';
-                inverse = dir === 'top';
-            } else {
-                size = getDOMProperty(node, 'clientWidth');
-                axis = 'X';
-                inverse = dir === 'left';
-            }
-
-            const translateAmount = ((size - (size * progress)) * (inverse ? -1 : 1)).toFixed(2);
-            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
-        },
-        options,
-    );
+    return animateSlide(selector, options, false);
 };
 
 /**
@@ -183,33 +157,7 @@ export function slideIn(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 export function slideOut(selector, options) {
-    options = {
-        direction: 'bottom',
-        ...options,
-    };
-
-    return animateEffect(
-        selector,
-        ['transform'],
-        (node, progress, options) => {
-            const dir = evaluate(options.direction);
-
-            let size; let axis; let inverse;
-            if (['top', 'bottom'].includes(dir)) {
-                size = getDOMProperty(node, 'clientHeight');
-                axis = 'Y';
-                inverse = dir === 'top';
-            } else {
-                size = getDOMProperty(node, 'clientWidth');
-                axis = 'X';
-                inverse = dir === 'left';
-            }
-
-            const translateAmount = (size * progress * (inverse ? -1 : 1)).toFixed(2);
-            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
-        },
-        options,
-    );
+    return animateSlide(selector, options, true);
 };
 
 /**
@@ -219,49 +167,7 @@ export function slideOut(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 export function squeezeIn(selector, options) {
-    options = {
-        direction: 'bottom',
-        ...options,
-    };
-
-    return animateEffect(
-        selector,
-        ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
-        (node, progress, options, initialStyles) => {
-            const style = getDOMProperty(node, 'style');
-            setAnimationStyle(style, 'height', initialStyles.height);
-            setAnimationStyle(style, 'width', initialStyles.width);
-            setAnimationStyle(style, 'overflow-x', 'hidden');
-            setAnimationStyle(style, 'overflow-y', 'hidden');
-
-            const dir = evaluate(options.direction);
-
-            let size; let sizeStyle; let axis;
-            if (['top', 'bottom'].includes(dir)) {
-                size = parseFloat(css(node, 'height')) || 0;
-                sizeStyle = 'height';
-                if (dir === 'top') {
-                    axis = 'Y';
-                }
-            } else {
-                size = parseFloat(css(node, 'width')) || 0;
-                sizeStyle = 'width';
-                if (dir === 'left') {
-                    axis = 'X';
-                }
-            }
-
-            const amount = (size * progress).toFixed(2);
-
-            setAnimationStyle(style, sizeStyle, `${amount}px`);
-
-            if (axis) {
-                const translateAmount = (size - amount).toFixed(2);
-                setAnimationStyle(style, 'transform', `translate${axis}(${translateAmount}px)`);
-            }
-        },
-        options,
-    );
+    return animateSqueeze(selector, options, false);
 };
 
 /**
@@ -271,49 +177,7 @@ export function squeezeIn(selector, options) {
  * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
  */
 export function squeezeOut(selector, options) {
-    options = {
-        direction: 'bottom',
-        ...options,
-    };
-
-    return animateEffect(
-        selector,
-        ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
-        (node, progress, options, initialStyles) => {
-            const style = getDOMProperty(node, 'style');
-            setAnimationStyle(style, 'height', initialStyles.height);
-            setAnimationStyle(style, 'width', initialStyles.width);
-            setAnimationStyle(style, 'overflow-x', 'hidden');
-            setAnimationStyle(style, 'overflow-y', 'hidden');
-
-            const dir = evaluate(options.direction);
-
-            let size; let sizeStyle; let axis;
-            if (['top', 'bottom'].includes(dir)) {
-                size = parseFloat(css(node, 'height')) || 0;
-                sizeStyle = 'height';
-                if (dir === 'top') {
-                    axis = 'Y';
-                }
-            } else {
-                size = parseFloat(css(node, 'width')) || 0;
-                sizeStyle = 'width';
-                if (dir === 'left') {
-                    axis = 'X';
-                }
-            }
-
-            const amount = (size - (size * progress)).toFixed(2);
-
-            setAnimationStyle(style, sizeStyle, `${amount}px`);
-
-            if (axis) {
-                const translateAmount = (size - amount).toFixed(2);
-                setAnimationStyle(style, 'transform', `translate${axis}(${translateAmount}px)`);
-            }
-        },
-        options,
-    );
+    return animateSqueeze(selector, options, true);
 };
 
 /**
@@ -386,6 +250,97 @@ function animateEffect(selector, properties, callback, options) {
     start();
 
     return new AnimationSet(animations);
+};
+
+/**
+ * Slides each node in or out from a direction.
+ * @param {ElementInput} selector The input node(s), or a query selector string.
+ * @param {AnimationOptions|undefined} options The animation options.
+ * @param {boolean} out Whether to animate out.
+ * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
+ */
+function animateSlide(selector, options, out) {
+    options = {
+        direction: 'bottom',
+        ...options,
+    };
+
+    return animateEffect(
+        selector,
+        ['transform'],
+        (node, progress, options) => {
+            const dir = evaluate(options.direction);
+
+            let size; let axis; let inverse;
+            if (['top', 'bottom'].includes(dir)) {
+                size = getDOMProperty(node, 'clientHeight');
+                axis = 'Y';
+                inverse = dir === 'top';
+            } else {
+                size = getDOMProperty(node, 'clientWidth');
+                axis = 'X';
+                inverse = dir === 'left';
+            }
+
+            const amount = out ? size * progress : size - (size * progress);
+            const translateAmount = (amount * (inverse ? -1 : 1)).toFixed(2);
+            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
+        },
+        options,
+    );
+};
+
+/**
+ * Squeezes each node in or out from a direction.
+ * @param {ElementInput} selector The input node(s), or a query selector string.
+ * @param {AnimationOptions|undefined} options The animation options.
+ * @param {boolean} out Whether to animate out.
+ * @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
+ */
+function animateSqueeze(selector, options, out) {
+    options = {
+        direction: 'bottom',
+        ...options,
+    };
+
+    return animateEffect(
+        selector,
+        ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
+        (node, progress, options, initialStyles) => {
+            const style = getDOMProperty(node, 'style');
+            setAnimationStyle(style, 'height', initialStyles.height);
+            setAnimationStyle(style, 'width', initialStyles.width);
+            setAnimationStyle(style, 'overflow-x', 'hidden');
+            setAnimationStyle(style, 'overflow-y', 'hidden');
+
+            const dir = evaluate(options.direction);
+
+            let size; let sizeStyle; let axis;
+            if (['top', 'bottom'].includes(dir)) {
+                size = parseFloat(css(node, 'height')) || 0;
+                sizeStyle = 'height';
+                if (dir === 'top') {
+                    axis = 'Y';
+                }
+            } else {
+                size = parseFloat(css(node, 'width')) || 0;
+                sizeStyle = 'width';
+                if (dir === 'left') {
+                    axis = 'X';
+                }
+            }
+
+            const amount = (out ? size - (size * progress) : size * progress).toFixed(2);
+
+            setAnimationStyle(style, sizeStyle, `${amount}px`);
+
+            if (axis) {
+                const translateAmount = (size - amount).toFixed(2);
+                setAnimationStyle(style, 'transform', `translate${axis}(${translateAmount}px)`);
+            }
+        },
+        options,
+    );
 };
 
 /**
