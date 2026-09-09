@@ -254,7 +254,7 @@ export function replaceWith(selector, otherSelector) {
         getDOMProperty(node, 'parentNode') &&
         !others.includes(node) &&
         !nodes.some((other) =>
-            !callDOMMethod(other, 'isSameNode', node) &&
+            other !== node &&
             callDOMMethod(other, 'contains', node),
         );
 

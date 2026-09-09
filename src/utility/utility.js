@@ -222,7 +222,7 @@ export function sort(selector) {
             }
         }
 
-        if (callDOMMethod(node, 'isSameNode', other)) {
+        if (node === other) {
             return 0;
         }
 

@@ -291,9 +291,7 @@ export function isSame(selector, otherSelector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).some((node) =>
-        others.some((other) => callDOMMethod(node, 'isSameNode', other)),
-    );
+    }).some((node) => others.includes(node));
 };
 
 /**

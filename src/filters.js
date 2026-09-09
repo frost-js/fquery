@@ -44,7 +44,7 @@ export function parseFilter(filter, defaultValue = true) {
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
-        return (node) => callDOMMethod(node, 'isSameNode', filter);
+        return (node) => node === filter;
     }
 
     filter = parseNodes(filter, {

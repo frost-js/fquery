@@ -1896,7 +1896,7 @@
 		if (!filter) return (_) => defaultValue;
 		if (isFunction(filter)) return filter;
 		if (isString(filter)) return (node) => isElement(node) && callDOMMethod(node, "matches", filter);
-		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => callDOMMethod(node, "isSameNode", filter);
+		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node === filter;
 		filter = parseNodes(filter, {
 			node: true,
 			fragment: true,
@@ -3086,7 +3086,7 @@
 			const siblings = elementsOnly ? getDOMProperty(parent, "children") : getDOMProperty(parent, "childNodes");
 			let sibling;
 			for (sibling of siblings) {
-				if (callDOMMethod(node, "isSameNode", sibling)) continue;
+				if (node === sibling) continue;
 				if (!nodeFilter(sibling)) continue;
 				results.push(sibling);
 			}
@@ -3113,7 +3113,7 @@
 			const matches = merge([], callDOMMethod(node, "querySelectorAll", selector));
 			if (!matches.length) return false;
 			if (matches.includes(target)) return target;
-			return closest$1(target, (parent) => matches.includes(parent), (parent) => callDOMMethod(parent, "isSameNode", node)).shift();
+			return closest$1(target, (parent) => matches.includes(parent), (parent) => parent === node).shift();
 		};
 	}
 	/**
@@ -3123,7 +3123,7 @@
 	* @returns {DelegateCallback} The callback for finding the matching delegate.
 	*/
 	function getDelegateMatchFactory(node, selector) {
-		return (target) => getDOMProperty(target, "matches") && callDOMMethod(target, "matches", selector) ? target : closest$1(target, (parent) => callDOMMethod(parent, "matches", selector), (parent) => callDOMMethod(parent, "isSameNode", node)).shift();
+		return (target) => getDOMProperty(target, "matches") && callDOMMethod(target, "matches", selector) ? target : closest$1(target, (parent) => callDOMMethod(parent, "matches", selector), (parent) => parent === node).shift();
 	}
 	/**
 	* Returns a wrapped event callback that executes on a delegate selector.
@@ -3693,7 +3693,7 @@
 			fragment: true,
 			html: true
 		});
-		const isReplacementTarget = (node) => getDOMProperty(node, "parentNode") && !others.includes(node) && !nodes.some((other) => !callDOMMethod(other, "isSameNode", node) && callDOMMethod(other, "contains", node));
+		const isReplacementTarget = (node) => getDOMProperty(node, "parentNode") && !others.includes(node) && !nodes.some((other) => other !== node && callDOMMethod(other, "contains", node));
 		if (!nodes.some(isReplacementTarget)) return;
 		const fragment = createFragment();
 		for (const other of others) fragment.insertBefore(other, null);
@@ -5912,7 +5912,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => others.some((other) => callDOMMethod(node, "isSameNode", other)));
+		}).filter((node) => others.includes(node));
 	}
 	/**
 	* Returns all visible nodes.
@@ -6511,7 +6511,7 @@
 				}
 				if (callDOMMethod(node, "getRootNode") !== callDOMMethod(other, "getRootNode")) return 0;
 			}
-			if (callDOMMethod(node, "isSameNode", other)) return 0;
+			if (node === other) return 0;
 			const pos = callDOMMethod(node, "compareDocumentPosition", other);
 			if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) return -1;
 			if (pos & Node.DOCUMENT_POSITION_PRECEDING || pos & Node.DOCUMENT_POSITION_CONTAINS) return 1;
@@ -6911,7 +6911,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).some((node) => others.some((other) => callDOMMethod(node, "isSameNode", other)));
+		}).some((node) => others.includes(node));
 	}
 	/**
 	* Checks whether any of the nodes is visible.

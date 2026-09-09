@@ -30,7 +30,7 @@ function getDelegateContainsFactory(node, selector) {
         return closest(
             target,
             (parent) => matches.includes(parent),
-            (parent) => callDOMMethod(parent, 'isSameNode', node),
+            (parent) => parent === node,
         ).shift();
     };
 };
@@ -48,7 +48,7 @@ function getDelegateMatchFactory(node, selector) {
             closest(
                 target,
                 (parent) => callDOMMethod(parent, 'matches', selector),
-                (parent) => callDOMMethod(parent, 'isSameNode', node),
+                (parent) => parent === node,
             ).shift();
 };
 

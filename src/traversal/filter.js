@@ -168,11 +168,7 @@ export function same(selector, otherSelector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).filter((node) =>
-        others.some((other) =>
-            callDOMMethod(node, 'isSameNode', other),
-        ),
-    );
+    }).filter((node) => others.includes(node));
 };
 
 /**

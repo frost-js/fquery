@@ -439,7 +439,7 @@ export function siblings(selector, nodeFilter, { elementsOnly = true } = {}) {
 
         let sibling;
         for (sibling of siblings) {
-            if (callDOMMethod(node, 'isSameNode', sibling)) {
+            if (node === sibling) {
                 continue;
             }
 
