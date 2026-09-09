@@ -548,6 +548,8 @@ Shared behavior cases live in `test/cases/`, mirroring the feature paths under `
 
 Keep API-specific checks, such as accepted node inputs, QuerySet chainability, return types, and animation queues, in the corresponding browser suite. Use `test/support/` for browser fixtures, assertions, and support utilities.
 
+Group longer suites with shallow `test.describe()` blocks named for behavior. Keep shared setup on the outer suite and lifecycle scenarios as explicit tests.
+
 ## License
 
 fQuery is released under the [MIT License](./LICENSE).

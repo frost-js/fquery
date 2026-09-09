@@ -15,23 +15,6 @@ test.describe('#fadeOut', () => {
         });
     });
 
-    test('restores existing inline opacity', async ({ page }) => {
-        await page.evaluate((_) => {
-            for (const node of document.querySelectorAll('.animate')) {
-                node.style.setProperty('opacity', '0.25');
-            }
-
-            $.fadeOut('.animate', { duration: 100 });
-        });
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                styles: { opacity: '0.25' },
-            },
-        ]);
-    });
-
     test('adds a fade-out animation to each node', async ({ page }) => {
         await page.evaluate((_) => {
             $.fadeOut('.animate', {
@@ -60,449 +43,474 @@ test.describe('#fadeOut', () => {
         ]);
     });
 
-    test('adds a fade-out animation to each node with duration', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut('.animate', {
-                duration: 100,
-                debug: true,
+    test.describe('timing and easing', () => {
+        test('adds a fade-out animation to each node with duration', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut('.animate', {
+                    duration: 100,
+                    debug: true,
+                });
             });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('adds a fade-out animation to each node (linear)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut('.animate', {
-                duration: 100,
-                type: 'linear',
-                debug: true,
+        test('adds a fade-out animation to each node (linear)', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut('.animate', {
+                    duration: 100,
+                    type: 'linear',
+                    debug: true,
+                });
             });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('adds a fade-out animation to each node (ease-in)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut('.animate', {
-                duration: 100,
-                type: 'ease-in',
-                debug: true,
+        test('adds a fade-out animation to each node (ease-in)', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut('.animate', {
+                    duration: 100,
+                    type: 'ease-in',
+                    debug: true,
+                });
             });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.25,
+                    styles: { opacity: '0.75' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.25,
-                styles: { opacity: '0.75' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('adds a fade-out animation to each node (ease-out)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut('.animate', {
-                duration: 100,
-                type: 'ease-out',
-                debug: true,
+        test('adds a fade-out animation to each node (ease-out)', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut('.animate', {
+                    duration: 100,
+                    type: 'ease-out',
+                    debug: true,
+                });
             });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.7071067812,
+                    styles: { opacity: '0.29' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.7071067812,
-                styles: { opacity: '0.29' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('adds a fade-out animation to each node (infinite)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut('.animate', {
-                duration: 100,
-                type: 'linear',
-                infinite: true,
-                debug: true,
+        test('adds a fade-out animation to each node (infinite)', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut('.animate', {
+                    duration: 100,
+                    type: 'linear',
+                    infinite: true,
+                    debug: true,
+                });
             });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0,
+                    styles: { opacity: '1' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0,
-                styles: { opacity: '1' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-        ]);
     });
 
-    test('can be stopped', async ({ page }) => {
-        const animationHandle = await page.evaluateHandle((_) => ({
-            animation: $.fadeOut('.animate', {
-                duration: 100,
-                debug: true,
-            }),
-        }));
-        await advanceClock(page, 50);
-        await animationHandle.evaluate(({ animation }) => {
-            animation.stop();
-        });
-        await animationHandle.dispose();
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
+    test.describe('style locks and restoration', () => {
+        test('restores existing inline opacity', async ({ page }) => {
+            await page.evaluate((_) => {
+                for (const node of document.querySelectorAll('.animate')) {
+                    node.style.setProperty('opacity', '0.25');
+                }
 
-    test('can be stopped (without finishing)', async ({ page }) => {
-        const animationHandle = await page.evaluateHandle((_) => {
-            const animation = $.fadeOut('.animate', {
-                duration: 100,
-                debug: true,
+                $.fadeOut('.animate', { duration: 100 });
             });
-
-            animation.catch((_) => { });
-
-            return { animation };
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    styles: { opacity: '0.25' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await animationHandle.evaluate(({ animation }) => {
-            animation.stop({ finish: false });
-        });
-        await animationHandle.dispose();
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
     });
 
-    test('resolves when the animation is stopped', async ({ page }) => {
-        await page.evaluate(async (_) => {
-            const animation = $.fadeOut('.animate', {
-                duration: 100,
-                debug: true,
+    test.describe('completion and stopping', () => {
+        test('can be stopped', async ({ page }) => {
+            const animationHandle = await page.evaluateHandle((_) => ({
+                animation: $.fadeOut('.animate', {
+                    duration: 100,
+                    debug: true,
+                }),
+            }));
+            await advanceClock(page, 50);
+            await animationHandle.evaluate(({ animation }) => {
+                animation.stop();
             });
-            animation.stop();
-            await animation;
+            await animationHandle.dispose();
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            try {
+        test('can be stopped (without finishing)', async ({ page }) => {
+            const animationHandle = await page.evaluateHandle((_) => {
                 const animation = $.fadeOut('.animate', {
                     duration: 100,
                     debug: true,
                 });
+
+                animation.catch((_) => { });
+
+                return { animation };
+            });
+            await advanceClock(page, 50);
+            await animationHandle.evaluate(({ animation }) => {
                 animation.stop({ finish: false });
-                await animation;
-                return false;
-            } catch {
-                return true;
-            }
-        })).toBe(true);
-    });
-
-    test('does not stop all animations', async ({ page }) => {
-        const animationHandle = await page.evaluateHandle((_) => {
-            const animation = $.fadeOut('.animate', {
-                duration: 100,
             });
-            $.animate(
-                '.animate',
-                (_) => { },
+            await animationHandle.dispose();
+            await expectAnimationState(page, [
                 {
-                    duration: 100,
-                    debug: true,
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
                 },
-            );
-
-            return { animation };
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await animationHandle.evaluate(({ animation }) => {
-            animation.stop();
-        });
-        await animationHandle.dispose();
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '' },
-            },
-        ]);
-    });
 
-    test('resolves when the animation is completed', async ({ page }) => {
-        const animationHandle = await page.evaluateHandle((_) => ({
-            animation: $.fadeOut('.animate', {
-                duration: 100,
-                debug: true,
-            }),
-        }));
-        await advanceClock(page, 100);
-        await animationHandle.evaluate(async ({ animation }) => {
-            await animation;
-        });
-        await animationHandle.dispose();
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
-
-    test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
-            try {
+        test('resolves when the animation is stopped', async ({ page }) => {
+            await page.evaluate(async (_) => {
                 const animation = $.fadeOut('.animate', {
-                    duration: 1000,
+                    duration: 100,
                     debug: true,
                 });
-                $.stop('.animate', { finish: false });
+                animation.stop();
                 await animation;
-                return false;
-            } catch {
-                return true;
-            }
-        })).toBe(true);
-    });
-
-    test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut(
-                document.getElementById('test2'),
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
-
-    test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut(
-                document.querySelectorAll('.animate'),
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
-
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut(
-                document.body.children,
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.fadeOut([
-                document.getElementById('test2'),
-                document.getElementById('test4'),
-            ], {
-                duration: 100,
-                debug: true,
             });
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
         });
-        await advanceClock(page, 50);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-                styles: { opacity: '' },
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-                styles: { opacity: '0.5' },
-            },
-        ]);
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-                styles: { opacity: '' },
-            },
-        ]);
+
+        test('throws when the animation is stopped (without finishing)', async ({ page }) => {
+            expect(await page.evaluate(async (_) => {
+                try {
+                    const animation = $.fadeOut('.animate', {
+                        duration: 100,
+                        debug: true,
+                    });
+                    animation.stop({ finish: false });
+                    await animation;
+                    return false;
+                } catch {
+                    return true;
+                }
+            })).toBe(true);
+        });
+
+        test('does not stop all animations', async ({ page }) => {
+            const animationHandle = await page.evaluateHandle((_) => {
+                const animation = $.fadeOut('.animate', {
+                    duration: 100,
+                });
+                $.animate(
+                    '.animate',
+                    (_) => { },
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+
+                return { animation };
+            });
+            await advanceClock(page, 50);
+            await animationHandle.evaluate(({ animation }) => {
+                animation.stop();
+            });
+            await animationHandle.dispose();
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
+
+        test('resolves when the animation is completed', async ({ page }) => {
+            const animationHandle = await page.evaluateHandle((_) => ({
+                animation: $.fadeOut('.animate', {
+                    duration: 100,
+                    debug: true,
+                }),
+            }));
+            await advanceClock(page, 100);
+            await animationHandle.evaluate(async ({ animation }) => {
+                await animation;
+            });
+            await animationHandle.dispose();
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
+
+        test('throws when all animations are stopped (without finishing)', async ({ page }) => {
+            expect(await page.evaluate(async (_) => {
+                try {
+                    const animation = $.fadeOut('.animate', {
+                        duration: 1000,
+                        debug: true,
+                    });
+                    $.stop('.animate', { finish: false });
+                    await animation;
+                    return false;
+                } catch {
+                    return true;
+                }
+            })).toBe(true);
+        });
+    });
+
+    test.describe('node inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut(
+                    document.getElementById('test2'),
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+            });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+                {
+                    selectors: ['#test2'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
+
+        test('works with NodeList nodes', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut(
+                    document.querySelectorAll('.animate'),
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+            });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
+
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut(
+                    document.body.children,
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+            });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
+
+        test('works with array nodes', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.fadeOut([
+                    document.getElementById('test2'),
+                    document.getElementById('test4'),
+                ], {
+                    duration: 100,
+                    debug: true,
+                });
+            });
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test3'],
+                    styles: { opacity: '' },
+                },
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0.5,
+                    styles: { opacity: '0.5' },
+                },
+            ]);
+            await advanceClock(page, 100);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test1', '#test2', '#test3', '#test4'],
+                    styles: { opacity: '' },
+                },
+            ]);
+        });
     });
 });
