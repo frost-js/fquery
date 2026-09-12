@@ -1,76 +1,11 @@
+import { cloneEventsTests, setup } from '#cases/events/event-handlers/clone-events.js';
 import { expect, test } from '#test';
 
 test.describe('#cloneEvents', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="eventParent">' +
-                '<div id="test1" data-toggle="event"></div>' +
-                '<div id="test2" data-toggle="event"></div>' +
-                '</div>' +
-                '<div id="noEventParent">' +
-                '<div id="test3" data-toggle="noEvent"></div>' +
-                '<div id="test4" data-toggle="noEvent"></div>' +
-                '</div>';
-            $.addEvent('#test1', 'click', (e) => {
-                e.currentTarget.dataset.test1 = 'Test 1';
-            });
-            $.addEvent('#test2', 'click', (e) => {
-                e.currentTarget.dataset.test2 = 'Test 2';
-            });
-        });
-    });
+    test.beforeEach(setup);
 
-    test('clones all events from all elements to all other elements', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const event = new Event('click');
-            $.cloneEvents('[data-toggle="event"]', '[data-toggle="noEvent"]');
-            document.getElementById('test1').dispatchEvent(event);
-            document.getElementById('test2').dispatchEvent(event);
-            document.getElementById('test3').dispatchEvent(event);
-            document.getElementById('test4').dispatchEvent(event);
-            return document.body.innerHTML;
-        })).toBe('<div id="eventParent">' +
-            '<div id="test1" data-toggle="event" data-test1="Test 1"></div>' +
-            '<div id="test2" data-toggle="event" data-test2="Test 2"></div>' +
-            '</div>' +
-            '<div id="noEventParent">' +
-            '<div id="test3" data-toggle="noEvent" data-test1="Test 1" data-test2="Test 2"></div>' +
-            '<div id="test4" data-toggle="noEvent" data-test1="Test 1" data-test2="Test 2"></div>' +
-            '</div>');
-    });
-
-    test.describe('overlapping selections', () => {
-        test('clones events to the source node once', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element = document.getElementById('test1');
-                $.removeEvent(element);
-                $.addEvent(element, 'click', (_) => {
-                    result++;
-                });
-                $.cloneEvents(element, element);
-                element.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
-        test('clones only original events when source and destination nodes overlap', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                $.removeEvent('#test1, #test2');
-                $.addEvent('#test1, #test2', 'click', (_) => {
-                    result++;
-                });
-                $.cloneEvents('#test1, #test2', '#test2, #test3');
-                document.getElementById('test1').dispatchEvent(event);
-                document.getElementById('test2').dispatchEvent(event);
-                document.getElementById('test3').dispatchEvent(event);
-                return result;
-            })).toBe(6);
-        });
+    cloneEventsTests((args) => {
+        $.cloneEvents(...args);
     });
 
     test.describe('empty registries', () => {
@@ -79,26 +14,6 @@ test.describe('#cloneEvents', () => {
                 $.cloneEvents('#test3', '#test4');
                 return true;
             })).toBe(true);
-        });
-    });
-
-    test.describe('capture', () => {
-        test('clones capture events', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                $.removeEvent('#test1');
-                $.removeEvent('#test2');
-                $.addEvent('#eventParent', 'click', (_) => {
-                    result++;
-                }, { capture: true });
-                $.cloneEvents('#eventParent', '#noEventParent');
-                document.getElementById('test1').dispatchEvent(event);
-                document.getElementById('test2').dispatchEvent(event);
-                document.getElementById('test3').dispatchEvent(event);
-                document.getElementById('test4').dispatchEvent(event);
-                return result;
-            })).toBe(4);
         });
     });
 
