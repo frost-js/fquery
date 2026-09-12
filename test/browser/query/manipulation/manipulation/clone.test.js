@@ -1,35 +1,10 @@
+import { cloneTests, setup } from '#cases/manipulation/manipulation/clone.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #clone', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div class="parent1">' +
-                '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>' +
-                '</div>' +
-                '<div class="parent2">' +
-                '<a href="#" class="test3">Test</a>' +
-                '<a href="#" class="test4">Test</a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('clones all nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            const clones = $('div').clone().get();
-
-            for (const clone of clones) {
-                document.body.appendChild(clone);
-            }
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(4);
-        await expect(page.locator('body > div').nth(2)).toHaveClass('parent1');
-        await expect(page.locator('body > div').nth(3)).toHaveClass('parent2');
-        await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(2);
-        await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(2);
-    });
+    cloneTests(([nodes, ...args]) => $(nodes).clone(...args).get());
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate(() => {
@@ -42,21 +17,7 @@ test.describe('QuerySet #clone', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test.describe('shallow cloning', () => {
-        test('shallow clones all nodes', async ({ page }) => {
-            await page.evaluate(() => {
-                const clones = $('div').clone({ deep: false }).get();
-
-                for (const clone of clones) {
-                    document.body.appendChild(clone);
-                }
-            });
-
-            await expect(page.locator('body > div')).toHaveCount(4);
-            await expect(page.locator('body > div').nth(2).locator('a')).toHaveCount(0);
-            await expect(page.locator('body > div').nth(3).locator('a')).toHaveCount(0);
-        });
-
+    test.describe('shallow template contents', () => {
         test('does not clone template content data with shallow option', async ({ page }) => {
             const value = await page.evaluate(() => {
                 const template = document.createElement('template');

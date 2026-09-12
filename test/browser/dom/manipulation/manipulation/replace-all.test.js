@@ -1,65 +1,11 @@
+import { replaceAllTests, setup } from '#cases/manipulation/manipulation/replace-all.js';
 import { expect, test } from '#test';
 
 test.describe('#replaceAll', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div class="outer1">' +
-                '<div class="inner1">' +
-                '<a href="#">Test</a>' +
-                '<a href="#">Test</a>' +
-                '</div>' +
-                '</div>' +
-                '<div class="outer2">' +
-                '<div class="inner2">' +
-                '<a href="#">Test</a>' +
-                '<a href="#">Test</a>' +
-                '</div>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('replaces each other node with nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.replaceAll('a', 'div');
-        });
-
-        await expect(page.locator('body > a')).toHaveCount(8);
-        await expect(page.locator('body > div')).toHaveCount(0);
-    });
-
-    test.describe('replacement placement', () => {
-        test('does not clone for the last nodes', async ({ page }) => {
-            const isSameNode = await page.evaluate(() => {
-                const nodes = [...document.querySelectorAll('a')];
-
-                $.replaceAll('a', 'div');
-
-                return nodes.every((node, index) =>
-                    node.isSameNode(document.querySelectorAll('body > a').item(index + 4)));
-            });
-
-            expect(isSameNode).toBe(true);
-        });
-    });
-
-    test.describe('unchanged replacements', () => {
-        test('does not move a node when targets include itself and its descendant', async ({ page }) => {
-            const isSamePosition = await page.evaluate(() => {
-                const node = document.querySelector('.outer1');
-                const child = node.querySelector('.inner1');
-                const { parentNode, previousSibling, nextSibling } = node;
-
-                $.replaceAll(node, [node, child]);
-
-                return node.parentNode === parentNode &&
-                    node.previousSibling === previousSibling &&
-                    node.nextSibling === nextSibling &&
-                    child.parentNode === node;
-            });
-
-            expect(isSamePosition).toBe(true);
-        });
+    replaceAllTests((args) => {
+        $.replaceAll(...args);
     });
 
     test.describe('cleanup', () => {

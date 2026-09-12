@@ -1,34 +1,12 @@
+import { emptyTests, setup } from '#cases/manipulation/manipulation/empty.js';
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
 test.describe('QuerySet #empty', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div id="outer1">' +
-                '<div id="inner1">' +
-                '<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '</div>' +
-                '</div>' +
-                '<div id="outer2">' +
-                '<div id="inner2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('removes contents of all nodes from the DOM', async ({ page }) => {
-        await page.evaluate(() => {
-            $('div').empty();
-        });
-
-        await expect(page.locator('body > div')).toHaveCount(2);
-        await expect(page.locator('#outer1 > *')).toHaveCount(0);
-        await expect(page.locator('#outer2 > *')).toHaveCount(0);
-        await expect(page.locator('a')).toHaveCount(0);
+    emptyTests(([nodes, ...args]) => {
+        $(nodes).empty(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {

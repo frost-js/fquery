@@ -1,35 +1,12 @@
+import { removeTests, setup } from '#cases/manipulation/manipulation/remove.js';
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
 test.describe('#remove', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div id="outer1">' +
-                '<div id="inner1">' +
-                '<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '</div>' +
-                '</div>' +
-                '<div id="outer2">' +
-                '<div id="inner2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('removes all nodes from the DOM', async ({ page }) => {
-        await page.evaluate(() => {
-            $.remove('a');
-        });
-
-        await expect(page.locator('a')).toHaveCount(0);
-        await expect(page.locator('#inner1')).toHaveCount(1);
-        await expect(page.locator('#inner2')).toHaveCount(1);
-        await expect(page.locator('#inner1').locator(':scope > *')).toHaveCount(0);
-        await expect(page.locator('#inner2').locator(':scope > *')).toHaveCount(0);
+    removeTests((args) => {
+        $.remove(...args);
     });
 
     test.describe('cleanup', () => {
