@@ -60,7 +60,7 @@ test.describe('QuerySet #delay', () => {
         const isSameQuerySet = await page.evaluate(() => {
             const query = $('.queue');
 
-            return query === query.delay(() => {});
+            return query === query.delay(100);
         });
 
         expect(isSameQuerySet).toBe(true);
