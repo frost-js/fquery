@@ -1,34 +1,11 @@
+import { findOneTests } from '#cases/traversal/find/find-one.js';
 import { expect, test } from '#test';
 import { setupQuery } from '../../../../setup/query.js';
 
 test.describe('#findOne', () => {
     test.beforeEach(setupQuery);
 
-    test.describe('selectors', () => {
-        test('finds elements by query selector', async ({ page }) => {
-            const id = await page.evaluate(() => $.findOne('#parent1 > #child1 > span, #parent1 > #child2 > span')?.id);
-
-            expect(id).toBe('span1');
-        });
-
-        test('finds elements by ID', async ({ page }) => {
-            const id = await page.evaluate(() => $.findOne('#parent1')?.id);
-
-            expect(id).toBe('parent1');
-        });
-
-        test('finds elements by class name', async ({ page }) => {
-            const id = await page.evaluate(() => $.findOne('.span1')?.id);
-
-            expect(id).toBe('span1');
-        });
-
-        test('finds elements by tag name', async ({ page }) => {
-            const id = await page.evaluate(() => $.findOne('span')?.id);
-
-            expect(id).toBe('span1');
-        });
-    });
+    findOneTests((args) => [$.findOne(...args).id]);
 
     test.describe('empty results', () => {
         test('returns null for non-matching selector', async ({ page }) => {

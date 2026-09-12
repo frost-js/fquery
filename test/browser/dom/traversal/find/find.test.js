@@ -1,63 +1,11 @@
+import { findTests } from '#cases/traversal/find/find.js';
 import { expect, test } from '#test';
 import { setupQuery } from '../../../../setup/query.js';
 
 test.describe('#find', () => {
     test.beforeEach(setupQuery);
 
-    test.describe('selectors', () => {
-        test('finds elements by query selector', async ({ page }) => {
-            const ids = await page.evaluate(() =>
-                $.find('#parent1 > #child1 > span, #parent1 > #child2 > span').map((node) => node.id),
-            );
-
-            expect(ids).toEqual([
-                'span1',
-                'span2',
-                'span3',
-                'span4',
-            ]);
-        });
-
-        test('finds elements by ID', async ({ page }) => {
-            const ids = await page.evaluate(() => $.find('#parent1').map((node) => node.id));
-
-            expect(ids).toEqual([
-                'parent1',
-            ]);
-        });
-
-        test('finds elements by class name', async ({ page }) => {
-            const ids = await page.evaluate(() => $.find('.span1').map((node) => node.id));
-
-            expect(ids).toEqual([
-                'span1',
-                'span2',
-                'span3',
-                'span4',
-                'span5',
-                'span6',
-            ]);
-        });
-
-        test('finds elements by tag name', async ({ page }) => {
-            const ids = await page.evaluate(() => $.find('span').map((node) => node.id));
-
-            expect(ids).toEqual([
-                'span1',
-                'span2',
-                'span3',
-                'span4',
-                'span5',
-                'span6',
-                'span7',
-                'span8',
-                'span9',
-                'span10',
-                'span11',
-                'span12',
-            ]);
-        });
-    });
+    findTests((args) => $.find(...args).map((node) => node.id));
 
     test.describe('empty results', () => {
         test('returns an empty array for non-matching selector', async ({ page }) => {

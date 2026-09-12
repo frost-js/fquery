@@ -1,8 +1,11 @@
+import { findOneTests } from '#cases/traversal/find/find-one.js';
 import { expect, test } from '#test';
 import { setupQuery } from '../../../../setup/query.js';
 
 test.describe('QuerySet #findOne', () => {
     test.beforeEach(setupQuery);
+
+    findOneTests((args) => $(document.body).findOne(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate(() => {
@@ -13,51 +16,6 @@ test.describe('QuerySet #findOne', () => {
         });
 
         expect(isNewQuerySet).toBe(true);
-    });
-
-    test.describe('selectors', () => {
-        test('finds elements by query selector', async ({ page }) => {
-            const ids = await page.evaluate(() =>
-                $(document.body)
-                    .findOne('#parent1 > #child1 > span, #parent1 > #child2 > span')
-                    .get()
-                    .map((node) => node.id),
-            );
-
-            expect(ids).toEqual([
-                'span1',
-            ]);
-        });
-
-        test('finds elements by ID', async ({ page }) => {
-            const ids = await page.evaluate(() =>
-                $(document.body).findOne('#parent1').get().map((node) => node.id),
-            );
-
-            expect(ids).toEqual([
-                'parent1',
-            ]);
-        });
-
-        test('finds elements by class name', async ({ page }) => {
-            const ids = await page.evaluate(() =>
-                $(document.body).findOne('.span1').get().map((node) => node.id),
-            );
-
-            expect(ids).toEqual([
-                'span1',
-            ]);
-        });
-
-        test('finds elements by tag name', async ({ page }) => {
-            const ids = await page.evaluate(() =>
-                $(document.body).findOne('span').get().map((node) => node.id),
-            );
-
-            expect(ids).toEqual([
-                'span1',
-            ]);
-        });
     });
 
     test.describe('contexts', () => {
