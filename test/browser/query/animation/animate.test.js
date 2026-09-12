@@ -1,3 +1,4 @@
+import { animateTests, setup } from '#cases/animation/animate.js';
 import { expect, test } from '#test';
 import { advanceClock } from '../../../setup/browser.js';
 import { expectAnimationState } from '../../../support/assertions/animation.js';
@@ -5,43 +6,10 @@ import { expectAnimationState } from '../../../support/assertions/animation.js';
 test.use({ mockClock: true });
 
 test.describe('QuerySet #animate', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1"></div>' +
-                '<div id="test2" class="animate"></div>' +
-                '<div id="test3"></div>' +
-                '<div id="test4" class="animate"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('adds an animation to each node', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('.animate')
-                .animate(
-                    (_) => { },
-                    {
-                        duration: 200,
-                        debug: true,
-                    },
-                );
-        });
-        await advanceClock(page, 100);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-            },
-        ]);
-        await advanceClock(page, 150);
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-            },
-        ]);
+    animateTests(([nodes, options]) => {
+        $(nodes).animate(() => {}, options);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -56,36 +24,7 @@ test.describe('QuerySet #animate', () => {
         })).toBe(true);
     });
 
-    test.describe('timing and easing', () => {
-        test('adds an animation to each node with duration', async ({ page }) => {
-            await page.evaluate((_) => {
-                $('.animate')
-                    .animate(
-                        (_) => { },
-                        {
-                            duration: 100,
-                            debug: true,
-                        },
-                    );
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.5,
-                },
-            ]);
-            await advanceClock(page, 100);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test2', '#test3', '#test4'],
-                },
-            ]);
-        });
-
+    test.describe('start times and zero duration', () => {
         test('completes zero-duration animations with full progress', async ({ page }) => {
             await page.evaluate((_) => {
                 $('.animate').animate(
@@ -120,141 +59,6 @@ test.describe('QuerySet #animate', () => {
             await advanceClock(page, 100);
             await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
             await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
-        });
-
-        test('adds an animation to each node (linear)', async ({ page }) => {
-            await page.evaluate((_) => {
-                $('.animate')
-                    .animate(
-                        (_) => { },
-                        {
-                            duration: 100,
-                            type: 'linear',
-                            debug: true,
-                        },
-                    );
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.5,
-                },
-            ]);
-            await advanceClock(page, 100);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test2', '#test3', '#test4'],
-                },
-            ]);
-        });
-
-        test('adds an animation to each node (ease-in)', async ({ page }) => {
-            await page.evaluate((_) => {
-                $('.animate')
-                    .animate(
-                        (_) => { },
-                        {
-                            duration: 100,
-                            type: 'ease-in',
-                            debug: true,
-                        },
-                    );
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.25,
-                },
-            ]);
-            await advanceClock(page, 100);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test2', '#test3', '#test4'],
-                },
-            ]);
-        });
-
-        test('adds an animation to each node (ease-out)', async ({ page }) => {
-            await page.evaluate((_) => {
-                $('.animate')
-                    .animate(
-                        (_) => { },
-                        {
-                            duration: 100,
-                            type: 'ease-out',
-                            debug: true,
-                        },
-                    );
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.7071067812,
-                },
-            ]);
-            await advanceClock(page, 100);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test2', '#test3', '#test4'],
-                },
-            ]);
-        });
-
-        test('adds an animation to each node (infinite)', async ({ page }) => {
-            await page.evaluate((_) => {
-                $('.animate')
-                    .animate(
-                        (_) => { },
-                        {
-                            duration: 100,
-                            type: 'linear',
-                            infinite: true,
-                            debug: true,
-                        },
-                    );
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.5,
-                },
-            ]);
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0,
-                },
-            ]);
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test1', '#test3'],
-                },
-                {
-                    selectors: ['#test2', '#test4'],
-                    progress: 0.5,
-                },
-            ]);
         });
 
         test('waits for the start time of infinite ease-out animations', async ({ page }) => {
