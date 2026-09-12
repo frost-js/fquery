@@ -1,7 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
 
 /**
- * Sets up the shared DOM fixture for query, queryOne, and QuerySet add tests.
+ * Sets up the shared DOM fixture for query, traversal, and QuerySet add tests.
  * @param {object} fixtures The test fixtures.
  * @param {Page} fixtures.page The Playwright page.
  * @returns {Promise<void>} The promise.

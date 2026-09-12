@@ -4,9 +4,7 @@ import { expect, test } from '#test';
 test.describe('QuerySet #triggerOne', () => {
     test.beforeEach(setup);
 
-    test.describe('empty selections', () => {
-        triggerOneTests(([nodes, ...args]) => $(nodes).triggerOne(...args));
-    });
+    triggerOneTests(([nodes, ...args]) => $(nodes).triggerOne(...args));
 
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
@@ -17,85 +15,6 @@ test.describe('QuerySet #triggerOne', () => {
             $('a').triggerOne('click');
             return result;
         })).toBe(1);
-    });
-
-    test.describe('namespaces', () => {
-        test('triggers a namespaced event for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click');
-                return result;
-            })).toBe(1);
-        });
-
-        test('triggers a deep namespaced event for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test.deep', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click');
-                return result;
-            })).toBe(1);
-        });
-
-        test('triggers a namespaced event with namespacing for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click.test');
-                return result;
-            })).toBe(1);
-        });
-
-        test('triggers a deep namespaced event with namespacing for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test.deep', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click.test');
-                return result;
-            })).toBe(1);
-        });
-
-        test('triggers a deep namespaced event with deep namespacing for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test.deep', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click.test.deep');
-                return result;
-            })).toBe(1);
-        });
-
-        test('does not trigger an event without namespacing for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click.test');
-                return result;
-            })).toBe(0);
-        });
-
-        test('does not trigger a namespaced event with deep namespacing for the first node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click.test', (_) => {
-                    result++;
-                });
-                $('a').triggerOne('click.test.deep');
-                return result;
-            })).toBe(0);
-        });
     });
 
     test.describe('event properties', () => {
