@@ -5,7 +5,7 @@ import { animate, stop } from './animation/animate.js';
 import AnimationSet from './animation/animation-set.js';
 import Animation from './animation/animation.js';
 import { dropIn, dropOut, fadeIn, fadeOut, rotateIn, rotateOut, slideIn, slideOut, squeezeIn, squeezeOut } from './animation/animations.js';
-import { getAttribute, getDataset, getHTML, getProperty, getText, getValue, removeAttribute, removeDataset, removeProperty, setAttribute, setDataset, setHTML, setProperty, setText, setValue } from './attributes/attributes.js';
+import { getAttribute, getDataset, getHtml, getProperty, getText, getValue, removeAttribute, removeDataset, removeProperty, setAttribute, setDataset, setHtml, setProperty, setText, setValue } from './attributes/attributes.js';
 import { cloneData, getData, removeData, setData } from './attributes/data.js';
 import { center, constrain, distTo, distToNode, nearestTo, nearestToNode, percentX, percentY, position, rect } from './attributes/position.js';
 import { getScrollX, getScrollY, setScroll, setScrollX, setScrollY } from './attributes/scroll.js';
@@ -34,7 +34,7 @@ import { find, findByClass, findById, findByTag, findOne, findOneByClass, findOn
 import { child, children, closest, commonAncestor, contents, fragment, next, nextAll, offsetParent, parent, parents, prev, prevAll, shadow, siblings } from './traversal/traversal.js';
 import { sanitize } from './utility/sanitize.js';
 import { afterSelection, beforeSelection, extractSelection, getSelection, select, selectAll, wrapSelection } from './utility/selection.js';
-import { hasAnimation, hasAttribute, hasChildren, hasClass, hasCSSAnimation, hasCSSTransition, hasData, hasDataset, hasDescendent, hasFragment, hasProperty, hasShadow, is, isConnected, isEqual, isFixed, isHidden, isSame, isVisible } from './utility/tests.js';
+import { hasAnimation, hasAttribute, hasChildren, hasClass, hasCssAnimation, hasCssTransition, hasData, hasDataset, hasDescendent, hasFragment, hasProperty, hasShadow, is, isConnected, isEqual, isFixed, isHidden, isSame, isVisible } from './utility/tests.js';
 import { exec, index, indexOf, normalize, serialize, serializeArray, sort, tagName } from './utility/utility.js';
 import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from './vars.js';
 
@@ -115,7 +115,7 @@ Object.assign(query, {
     getCookie,
     getData,
     getDataset,
-    getHTML,
+    getHtml,
     getProperty,
     getScrollX,
     getScrollY,
@@ -126,8 +126,8 @@ Object.assign(query, {
     getWindow,
     hasAnimation,
     hasAttribute,
-    hasCSSAnimation,
-    hasCSSTransition,
+    hasCssAnimation,
+    hasCssTransition,
     hasChildren,
     hasClass,
     hasData,
@@ -212,7 +212,7 @@ Object.assign(query, {
     setCookie,
     setData,
     setDataset,
-    setHTML,
+    setHtml,
     setProperty,
     setScroll,
     setScrollX,

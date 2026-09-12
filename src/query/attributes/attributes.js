@@ -1,7 +1,7 @@
 /** @import { AttributeValues } from '../../attributes/attributes.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { getAttribute as _getAttribute, getDataset as _getDataset, getHTML as _getHTML, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHTML as _setHTML, setProperty as _setProperty, setText as _setText, setValue as _setValue } from './../../attributes/attributes.js';
+import { getAttribute as _getAttribute, getDataset as _getDataset, getHtml as _getHtml, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHtml as _setHtml, setProperty as _setProperty, setText as _setText, setValue as _setValue } from './../../attributes/attributes.js';
 
 /**
  * Gets attribute value(s) for the first node.
@@ -25,8 +25,8 @@ export function getDataset(key) {
  * Gets the HTML contents of the first node.
  * @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
  */
-export function getHTML() {
-    return _getHTML(this);
+export function getHtml() {
+    return _getHtml(this);
 };
 
 /**
@@ -116,8 +116,8 @@ export function setDataset(key, value) {
  * @param {string} html The HTML contents.
  * @returns {QuerySet} The QuerySet object.
  */
-export function setHTML(html) {
-    _setHTML(this, html);
+export function setHtml(html) {
+    _setHtml(this, html);
 
     return this;
 };

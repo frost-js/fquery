@@ -3460,7 +3460,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
 	*/
-	function getHTML$1(selector) {
+	function getHtml$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
 		return getDOMProperty(node, "innerHTML");
@@ -3554,7 +3554,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @param {string} html The HTML contents.
 	*/
-	function setHTML$1(selector, html) {
+	function setHtml$1(selector, html) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
 			const content = getDOMProperty(node, "content");
@@ -4604,8 +4604,8 @@
 	* Gets the HTML contents of the first node.
 	* @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
 	*/
-	function getHTML() {
-		return getHTML$1(this);
+	function getHtml() {
+		return getHtml$1(this);
 	}
 	/**
 	* Gets a property value for the first node.
@@ -4681,8 +4681,8 @@
 	* @param {string} html The HTML contents.
 	* @returns {QuerySet} The QuerySet object.
 	*/
-	function setHTML(html) {
-		setHTML$1(this, html);
+	function setHtml(html) {
+		setHtml$1(this, html);
 		return this;
 	}
 	/**
@@ -6702,7 +6702,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @returns {boolean} Whether any of the nodes has a CSS animation.
 	*/
-	function hasCSSAnimation$1(selector) {
+	function hasCssAnimation$1(selector) {
 		return parseNodes(selector).some((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
@@ -6710,7 +6710,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @returns {boolean} Whether any of the nodes has a CSS transition.
 	*/
-	function hasCSSTransition$1(selector) {
+	function hasCssTransition$1(selector) {
 		return parseNodes(selector).some((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
@@ -6929,15 +6929,15 @@
 	* Checks whether any of the nodes has a CSS animation.
 	* @returns {boolean} Whether any of the nodes has a CSS animation.
 	*/
-	function hasCSSAnimation() {
-		return hasCSSAnimation$1(this);
+	function hasCssAnimation() {
+		return hasCssAnimation$1(this);
 	}
 	/**
 	* Checks whether any of the nodes has a CSS transition.
 	* @returns {boolean} Whether any of the nodes has a CSS transition.
 	*/
-	function hasCSSTransition() {
-		return hasCSSTransition$1(this);
+	function hasCssTransition() {
+		return hasCssTransition$1(this);
 	}
 	/**
 	* Checks whether any of the nodes has custom data.
@@ -7198,7 +7198,7 @@
 		getAttribute,
 		getData,
 		getDataset,
-		getHTML,
+		getHtml,
 		getProperty,
 		getScrollX,
 		getScrollY,
@@ -7209,8 +7209,8 @@
 		hasAttribute,
 		hasChildren,
 		hasClass,
-		hasCSSAnimation,
-		hasCSSTransition,
+		hasCssAnimation,
+		hasCssTransition,
 		hasData,
 		hasDataset,
 		hasDescendent,
@@ -7272,7 +7272,7 @@
 		setAttribute,
 		setData,
 		setDataset,
-		setHTML,
+		setHtml,
 		setProperty,
 		setScroll,
 		setScrollX,
@@ -7609,7 +7609,7 @@
 		getCookie,
 		getData: getData$1,
 		getDataset: getDataset$1,
-		getHTML: getHTML$1,
+		getHtml: getHtml$1,
 		getProperty: getProperty$1,
 		getScrollX: getScrollX$1,
 		getScrollY: getScrollY$1,
@@ -7620,8 +7620,8 @@
 		getWindow,
 		hasAnimation: hasAnimation$1,
 		hasAttribute: hasAttribute$1,
-		hasCSSAnimation: hasCSSAnimation$1,
-		hasCSSTransition: hasCSSTransition$1,
+		hasCssAnimation: hasCssAnimation$1,
+		hasCssTransition: hasCssTransition$1,
 		hasChildren: hasChildren$1,
 		hasClass: hasClass$1,
 		hasData: hasData$1,
@@ -7706,7 +7706,7 @@
 		setCookie,
 		setData: setData$1,
 		setDataset: setDataset$1,
-		setHTML: setHTML$1,
+		setHtml: setHtml$1,
 		setProperty: setProperty$1,
 		setScroll: setScroll$1,
 		setScrollX: setScrollX$1,

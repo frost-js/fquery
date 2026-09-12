@@ -21,12 +21,12 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared hasCSSAnimation behavior tests.
- * @param {((nodes: string) => boolean)} hasCSSAnimation The browser callback for hasCSSAnimation.
+ * Registers shared hasCssAnimation behavior tests.
+ * @param {((nodes: string) => boolean)} hasCssAnimation The browser callback for hasCssAnimation.
  */
-export function hasCSSAnimationTests(hasCSSAnimation) {
+export function hasCssAnimationTests(hasCssAnimation) {
     test('returns true if any node has a CSS animation', async ({ page }) => {
-        expect(await page.evaluate(hasCSSAnimation, 'div')).toBe(true);
+        expect(await page.evaluate(hasCssAnimation, 'div')).toBe(true);
     });
 
     for (const [duration, expected] of [
@@ -36,11 +36,11 @@ export function hasCSSAnimationTests(hasCSSAnimation) {
         test(`returns ${expected} for CSS animation durations of 0s, ${duration}`, async ({ page }) => {
             await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin ' + duration + ' linear infinite; }' });
 
-            expect(await page.evaluate(hasCSSAnimation, 'div')).toBe(expected);
+            expect(await page.evaluate(hasCssAnimation, 'div')).toBe(expected);
         });
     }
 
     test('returns false if no nodes have a CSS animation', async ({ page }) => {
-        expect(await page.evaluate(hasCSSAnimation, 'div:not(.test)')).toBe(false);
+        expect(await page.evaluate(hasCssAnimation, 'div:not(.test)')).toBe(false);
     });
 }

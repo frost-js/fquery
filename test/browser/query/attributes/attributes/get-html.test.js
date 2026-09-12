@@ -1,8 +1,8 @@
-import { getHTMLTests, setup } from '#cases/attributes/attributes/get-html.js';
+import { getHtmlTests, setup } from '#cases/attributes/attributes/get-html.js';
 import { test } from '#test';
 
-test.describe('QuerySet #getHTML', () => {
+test.describe('QuerySet #getHtml', () => {
     test.beforeEach(setup);
 
-    getHTMLTests((nodes) => $(nodes).getHTML());
+    getHtmlTests((nodes) => $(nodes).getHtml());
 });

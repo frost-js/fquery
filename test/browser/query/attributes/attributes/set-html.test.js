@@ -1,7 +1,7 @@
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
-test.describe('QuerySet #setHTML', () => {
+test.describe('QuerySet #setHtml', () => {
     test.beforeEach(async ({ page }) => {
         await page.evaluate(() => {
             document.body.innerHTML = '<div id="test1"><div><span id="inner">Test 1</span></div></div><div id="test2"></div>';
@@ -12,7 +12,7 @@ test.describe('QuerySet #setHTML', () => {
         const isSameQuerySet = await page.evaluate(() => {
             const query = $('div');
 
-            return query === query.setHTML('<span>Test 2</span>');
+            return query === query.setHtml('<span>Test 2</span>');
         });
 
         expect(isSameQuerySet).toBe(true);
@@ -21,7 +21,7 @@ test.describe('QuerySet #setHTML', () => {
     test.describe('content replacement', () => {
         test('sets the HTML contents for all nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -34,7 +34,7 @@ test.describe('QuerySet #setHTML', () => {
             await page.evaluate(() => {
                 document.getElementById('test1').content = 'Test 1';
 
-                $('#test1').setHTML('<span>Test 2</span>');
+                $('#test1').setHtml('<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -52,7 +52,7 @@ test.describe('QuerySet #setHTML', () => {
                     count++;
                 });
 
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
                 $.triggerEvent(node, 'click');
 
@@ -67,7 +67,7 @@ test.describe('QuerySet #setHTML', () => {
                 const node = document.getElementById('inner');
 
                 $.setData(node, 'test', 'Test');
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
 
                 return $.getData(node, 'test');
@@ -87,7 +87,7 @@ test.describe('QuerySet #setHTML', () => {
             await page.evaluate(() => {
                 const node = document.getElementById('inner');
 
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
             });
 
@@ -125,7 +125,7 @@ test.describe('QuerySet #setHTML', () => {
             await page.evaluate(() => {
                 const node = document.getElementById('inner');
 
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
             });
 
@@ -145,7 +145,7 @@ test.describe('QuerySet #setHTML', () => {
                     count++;
                 });
 
-                $('div').setHTML('<span>Test 2</span>');
+                $('div').setHtml('<span>Test 2</span>');
 
                 return count;
             });
@@ -167,7 +167,7 @@ test.describe('QuerySet #setHTML', () => {
                     count++;
                 });
 
-                $(template).setHTML('<span>Test 2</span>');
+                $(template).setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
                 $.triggerEvent(node, 'click');
 
@@ -188,7 +188,7 @@ test.describe('QuerySet #setHTML', () => {
                     count++;
                 });
 
-                $('#test1').setHTML('<span>Test 2</span>');
+                $('#test1').setHtml('<span>Test 2</span>');
                 $.triggerEvent(node, 'click');
 
                 return count;
@@ -206,7 +206,7 @@ test.describe('QuerySet #setHTML', () => {
                 document.body.appendChild(template);
 
                 $.setData(node, 'test', 'Test');
-                $(template).setHTML('<span>Test 2</span>');
+                $(template).setHtml('<span>Test 2</span>');
                 document.body.appendChild(node);
 
                 return $.getData(node, 'test');
@@ -222,7 +222,7 @@ test.describe('QuerySet #setHTML', () => {
                 shadow.appendChild(node);
 
                 $.setData(node, 'test', 'Test');
-                $('#test1').setHTML('<span>Test 2</span>');
+                $('#test1').setHtml('<span>Test 2</span>');
 
                 return $.getData(node, 'test');
             });
@@ -238,7 +238,7 @@ test.describe('QuerySet #setHTML', () => {
                 document.body.appendChild(template);
 
                 $.setData(template.content, 'test', 'Test');
-                $(template).setHTML('<span>Test 2</span>');
+                $(template).setHtml('<span>Test 2</span>');
                 document.getElementById('test2').appendChild(template.content);
 
                 return $.getData(template.content, 'test');

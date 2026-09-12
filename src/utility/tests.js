@@ -65,7 +65,7 @@ export function hasClass(selector, ...classes) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @returns {boolean} Whether any of the nodes has a CSS animation.
  */
-export function hasCSSAnimation(selector) {
+export function hasCssAnimation(selector) {
     return parseNodes(selector)
         .some((node) =>
             css(node, 'animation-duration')
@@ -79,7 +79,7 @@ export function hasCSSAnimation(selector) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @returns {boolean} Whether any of the nodes has a CSS transition.
  */
-export function hasCSSTransition(selector) {
+export function hasCssTransition(selector) {
     return parseNodes(selector)
         .some((node) =>
             css(node, 'transition-duration')

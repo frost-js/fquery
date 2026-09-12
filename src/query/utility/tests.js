@@ -2,7 +2,7 @@
 /** @import { NodeInput } from '../../helpers.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCSSAnimation as _hasCSSAnimation, hasCSSTransition as _hasCSSTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from './../../utility/tests.js';
+import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCssAnimation as _hasCssAnimation, hasCssTransition as _hasCssTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from './../../utility/tests.js';
 
 /**
  * Checks whether any of the nodes has an animation.
@@ -42,16 +42,16 @@ export function hasClass(...classes) {
  * Checks whether any of the nodes has a CSS animation.
  * @returns {boolean} Whether any of the nodes has a CSS animation.
  */
-export function hasCSSAnimation() {
-    return _hasCSSAnimation(this);
+export function hasCssAnimation() {
+    return _hasCssAnimation(this);
 };
 
 /**
  * Checks whether any of the nodes has a CSS transition.
  * @returns {boolean} Whether any of the nodes has a CSS transition.
  */
-export function hasCSSTransition() {
-    return _hasCSSTransition(this);
+export function hasCssTransition() {
+    return _hasCssTransition(this);
 };
 
 /**

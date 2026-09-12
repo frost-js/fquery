@@ -20,12 +20,12 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared hasCSSTransition behavior tests.
- * @param {((nodes: string) => boolean)} hasCSSTransition The browser callback for hasCSSTransition.
+ * Registers shared hasCssTransition behavior tests.
+ * @param {((nodes: string) => boolean)} hasCssTransition The browser callback for hasCssTransition.
  */
-export function hasCSSTransitionTests(hasCSSTransition) {
+export function hasCssTransitionTests(hasCssTransition) {
     test('returns true if any node has a CSS transition', async ({ page }) => {
-        expect(await page.evaluate(hasCSSTransition, 'div')).toBe(true);
+        expect(await page.evaluate(hasCssTransition, 'div')).toBe(true);
     });
 
     for (const [duration, expected] of [
@@ -35,11 +35,11 @@ export function hasCSSTransitionTests(hasCSSTransition) {
         test(`returns ${expected} for CSS transition durations of 0s, ${duration}`, async ({ page }) => {
             await page.addStyleTag({ content: '.test { transition: opacity 0s, transform ' + duration + '; }' });
 
-            expect(await page.evaluate(hasCSSTransition, 'div')).toBe(expected);
+            expect(await page.evaluate(hasCssTransition, 'div')).toBe(expected);
         });
     }
 
     test('returns false if no nodes have a CSS transition', async ({ page }) => {
-        expect(await page.evaluate(hasCSSTransition, 'div:not(.test)')).toBe(false);
+        expect(await page.evaluate(hasCssTransition, 'div:not(.test)')).toBe(false);
     });
 }

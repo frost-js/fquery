@@ -15,12 +15,12 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared getHTML behavior tests.
- * @param {((nodes: string) => (string|undefined))} getHTML The browser callback for getHTML.
+ * Registers shared getHtml behavior tests.
+ * @param {((nodes: string) => (string|undefined))} getHtml The browser callback for getHtml.
  */
-export function getHTMLTests(getHTML) {
+export function getHtmlTests(getHtml) {
     test('returns the HTML contents of the first node', async ({ page }) => {
-        const html = await page.evaluate(getHTML, 'div');
+        const html = await page.evaluate(getHtml, 'div');
 
         expect(html).toBe('<span>Test</span>');
     });
@@ -30,13 +30,13 @@ export function getHTMLTests(getHTML) {
             document.body.innerHTML = '<form><input name="innerHTML"><span>Test</span></form>';
         });
 
-        const html = await page.evaluate(getHTML, 'form');
+        const html = await page.evaluate(getHtml, 'form');
 
         expect(html).toBe('<input name="innerHTML"><span>Test</span>');
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {
-        const html = await page.evaluate(getHTML, '#invalid');
+        const html = await page.evaluate(getHtml, '#invalid');
 
         expect(html).toBe(undefined);
     });

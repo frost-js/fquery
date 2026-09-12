@@ -66,7 +66,7 @@ export function getDataset(selector, key) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
  */
-export function getHTML(selector) {
+export function getHtml(selector) {
     const node = parseNode(selector);
 
     if (!node) {
@@ -199,7 +199,7 @@ export function setDataset(selector, key, value) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @param {string} html The HTML contents.
  */
-export function setHTML(selector, html) {
+export function setHtml(selector, html) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {

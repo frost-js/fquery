@@ -2502,7 +2502,7 @@ function getDataset$1(selector, key) {
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
 */
-function getHTML$1(selector) {
+function getHtml$1(selector) {
 	const node = parseNode(selector);
 	if (!node) return;
 	return getDOMProperty(node, "innerHTML");
@@ -2596,7 +2596,7 @@ function setDataset$1(selector, key, value) {
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @param {string} html The HTML contents.
 */
-function setHTML$1(selector, html) {
+function setHtml$1(selector, html) {
 	const nodes = parseNodes(selector);
 	for (const node of nodes) {
 		const content = getDOMProperty(node, "content");
@@ -3646,8 +3646,8 @@ function getDataset(key) {
 * Gets the HTML contents of the first node.
 * @returns {string|undefined} The HTML contents, or `undefined` if no element matches.
 */
-function getHTML() {
-	return getHTML$1(this);
+function getHtml() {
+	return getHtml$1(this);
 }
 /**
 * Gets a property value for the first node.
@@ -3723,8 +3723,8 @@ function setDataset(key, value) {
 * @param {string} html The HTML contents.
 * @returns {QuerySet} The QuerySet object.
 */
-function setHTML(html) {
-	setHTML$1(this, html);
+function setHtml(html) {
+	setHtml$1(this, html);
 	return this;
 }
 /**
@@ -5744,7 +5744,7 @@ function hasClass$1(selector, ...classes) {
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @returns {boolean} Whether any of the nodes has a CSS animation.
 */
-function hasCSSAnimation$1(selector) {
+function hasCssAnimation$1(selector) {
 	return parseNodes(selector).some((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
 }
 /**
@@ -5752,7 +5752,7 @@ function hasCSSAnimation$1(selector) {
 * @param {ElementInput} selector The input node(s), or a query selector string.
 * @returns {boolean} Whether any of the nodes has a CSS transition.
 */
-function hasCSSTransition$1(selector) {
+function hasCssTransition$1(selector) {
 	return parseNodes(selector).some((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
 }
 /**
@@ -5971,15 +5971,15 @@ function hasClass(...classes) {
 * Checks whether any of the nodes has a CSS animation.
 * @returns {boolean} Whether any of the nodes has a CSS animation.
 */
-function hasCSSAnimation() {
-	return hasCSSAnimation$1(this);
+function hasCssAnimation() {
+	return hasCssAnimation$1(this);
 }
 /**
 * Checks whether any of the nodes has a CSS transition.
 * @returns {boolean} Whether any of the nodes has a CSS transition.
 */
-function hasCSSTransition() {
-	return hasCSSTransition$1(this);
+function hasCssTransition() {
+	return hasCssTransition$1(this);
 }
 /**
 * Checks whether any of the nodes has custom data.
@@ -6240,7 +6240,7 @@ var methods = {
 	getAttribute,
 	getData,
 	getDataset,
-	getHTML,
+	getHtml,
 	getProperty,
 	getScrollX,
 	getScrollY,
@@ -6251,8 +6251,8 @@ var methods = {
 	hasAttribute,
 	hasChildren,
 	hasClass,
-	hasCSSAnimation,
-	hasCSSTransition,
+	hasCssAnimation,
+	hasCssTransition,
 	hasData,
 	hasDataset,
 	hasDescendent,
@@ -6314,7 +6314,7 @@ var methods = {
 	setAttribute,
 	setData,
 	setDataset,
-	setHTML,
+	setHtml,
 	setProperty,
 	setScroll,
 	setScrollX,
@@ -6651,7 +6651,7 @@ Object.assign(query, {
 	getCookie,
 	getData: getData$1,
 	getDataset: getDataset$1,
-	getHTML: getHTML$1,
+	getHtml: getHtml$1,
 	getProperty: getProperty$1,
 	getScrollX: getScrollX$1,
 	getScrollY: getScrollY$1,
@@ -6662,8 +6662,8 @@ Object.assign(query, {
 	getWindow,
 	hasAnimation: hasAnimation$1,
 	hasAttribute: hasAttribute$1,
-	hasCSSAnimation: hasCSSAnimation$1,
-	hasCSSTransition: hasCSSTransition$1,
+	hasCssAnimation: hasCssAnimation$1,
+	hasCssTransition: hasCssTransition$1,
 	hasChildren: hasChildren$1,
 	hasClass: hasClass$1,
 	hasData: hasData$1,
@@ -6748,7 +6748,7 @@ Object.assign(query, {
 	setCookie,
 	setData: setData$1,
 	setDataset: setDataset$1,
-	setHTML: setHTML$1,
+	setHtml: setHtml$1,
 	setProperty: setProperty$1,
 	setScroll: setScroll$1,
 	setScrollX: setScrollX$1,

@@ -223,8 +223,8 @@ Filtering methods return matching nodes; their `is...` and `has...` counterparts
 - `withAttribute(attribute)` / `hasAttribute(attribute)`: attribute presence.
 - `withChildren()` / `hasChildren()`: child-element presence.
 - `withClass(...classes)` / `hasClass(...classes)`: class presence.
-- `withCSSAnimation()` / `hasCSSAnimation()`: at least one nonzero computed animation duration.
-- `withCSSTransition()` / `hasCSSTransition()`: at least one nonzero computed transition duration.
+- `withCSSAnimation()` / `hasCssAnimation()`: at least one nonzero computed animation duration.
+- `withCSSTransition()` / `hasCssTransition()`: at least one nonzero computed transition duration.
 - `withData(key?)` / `hasData(key?)`: fQuery custom data.
 - `hasDataset(key)`: dataset presence.
 - `withDescendent(nodeFilter?)` / `hasDescendent(nodeFilter?)`: matching descendants, excluding the node itself. Omitting the filter checks for any descendant element.
@@ -240,7 +240,7 @@ Getter methods read the first matching node. Setter and removal methods apply to
 - `getAttribute(attribute?)` / `setAttribute(attribute, value)` / `removeAttribute(attribute)`: attributes.
 - `getProperty(property)` / `setProperty(property, value)` / `removeProperty(property)`: JavaScript properties.
 - `getDataset(key?)` / `setDataset(key, value)` / `removeDataset(key)`: parsed and serialized `dataset` values.
-- `getHTML()` / `setHTML(html)`: HTML content.
+- `getHtml()` / `setHtml(html)`: HTML content.
 - `getText()` / `setText(text)`: text content.
 - `getValue()` / `setValue(value)`: form-control values.
 
@@ -315,7 +315,7 @@ Methods accepting `otherSelector` also accept nodes, collections, QuerySets, arr
 - `empty()`: remove all child nodes and their associated state.
 - `attachShadow({ open? })`: attach a shadow root to the first node.
 
-Cloning is deep by default; copying events, data, and animations is opt-in. Deep cloning includes requested state inside `template.content`. `setHTML()` replaces a template's content, while `empty()` and `setText()` affect its own child nodes. Cleanup preserves state on surviving shadow trees and template content fragments.
+Cloning is deep by default; copying events, data, and animations is opt-in. Deep cloning includes requested state inside `template.content`. `setHtml()` replaces a template's content, while `empty()` and `setText()` affect its own child nodes. Cleanup preserves state on surviving shadow trees and template content fragments.
 
 Create nodes without a target:
 

@@ -1,7 +1,7 @@
 import { expect, test } from '#test';
 import { advanceClock, setupClock } from '../../../../setup/browser.js';
 
-test.describe('#setHTML', () => {
+test.describe('#setHtml', () => {
     test.beforeEach(async ({ page }) => {
         await page.evaluate(() => {
             document.body.innerHTML = '<div id="test1"><div><span id="inner">Test 1</span></div></div><div id="test2"></div>';
@@ -11,7 +11,7 @@ test.describe('#setHTML', () => {
     test.describe('content replacement', () => {
         test('sets the HTML contents for all nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -24,7 +24,7 @@ test.describe('#setHTML', () => {
             await page.evaluate(() => {
                 document.getElementById('test1').content = 'Test 1';
 
-                $.setHTML('#test1', '<span>Test 2</span>');
+                $.setHtml('#test1', '<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -42,7 +42,7 @@ test.describe('#setHTML', () => {
                     count++;
                 });
 
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
                 document.body.appendChild(node);
                 $.triggerEvent(node, 'click');
 
@@ -57,7 +57,7 @@ test.describe('#setHTML', () => {
                 const node = document.getElementById('inner');
 
                 $.setData(node, 'test', 'Test');
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
                 document.body.appendChild(node);
 
                 return $.getData(node, 'test');
@@ -77,7 +77,7 @@ test.describe('#setHTML', () => {
             await page.evaluate(() => {
                 const node = document.getElementById('inner');
 
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
                 document.body.appendChild(node);
             });
 
@@ -115,7 +115,7 @@ test.describe('#setHTML', () => {
             await page.evaluate(() => {
                 const node = document.getElementById('inner');
 
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
                 document.body.appendChild(node);
             });
 
@@ -135,7 +135,7 @@ test.describe('#setHTML', () => {
                     count++;
                 });
 
-                $.setHTML('div', '<span>Test 2</span>');
+                $.setHtml('div', '<span>Test 2</span>');
 
                 return count;
             });
@@ -157,7 +157,7 @@ test.describe('#setHTML', () => {
                     count++;
                 });
 
-                $.setHTML(template, '<span>Test 2</span>');
+                $.setHtml(template, '<span>Test 2</span>');
                 document.body.appendChild(node);
                 $.triggerEvent(node, 'click');
 
@@ -178,7 +178,7 @@ test.describe('#setHTML', () => {
                     count++;
                 });
 
-                $.setHTML('#test1', '<span>Test 2</span>');
+                $.setHtml('#test1', '<span>Test 2</span>');
                 $.triggerEvent(node, 'click');
 
                 return count;
@@ -196,7 +196,7 @@ test.describe('#setHTML', () => {
                 document.body.appendChild(template);
 
                 $.setData(node, 'test', 'Test');
-                $.setHTML(template, '<span>Test 2</span>');
+                $.setHtml(template, '<span>Test 2</span>');
                 document.body.appendChild(node);
 
                 return $.getData(node, 'test');
@@ -212,7 +212,7 @@ test.describe('#setHTML', () => {
                 shadow.appendChild(node);
 
                 $.setData(node, 'test', 'Test');
-                $.setHTML('#test1', '<span>Test 2</span>');
+                $.setHtml('#test1', '<span>Test 2</span>');
 
                 return $.getData(node, 'test');
             });
@@ -228,7 +228,7 @@ test.describe('#setHTML', () => {
                 document.body.appendChild(template);
 
                 $.setData(template.content, 'test', 'Test');
-                $.setHTML(template, '<span>Test 2</span>');
+                $.setHtml(template, '<span>Test 2</span>');
                 document.getElementById('test2').appendChild(template.content);
 
                 return $.getData(template.content, 'test');
@@ -243,7 +243,7 @@ test.describe('#setHTML', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $.setHTML(document.getElementById('test1'), '<span>Test 2</span>');
+                $.setHtml(document.getElementById('test1'), '<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -252,7 +252,7 @@ test.describe('#setHTML', () => {
 
         test('works with NodeList nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $.setHTML(document.querySelectorAll('div'), '<span>Test 2</span>');
+                $.setHtml(document.querySelectorAll('div'), '<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -261,7 +261,7 @@ test.describe('#setHTML', () => {
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $.setHTML(document.body.children, '<span>Test 2</span>');
+                $.setHtml(document.body.children, '<span>Test 2</span>');
             });
 
             await expect(page.locator('#test1 > span')).toHaveText('Test 2');
@@ -270,7 +270,7 @@ test.describe('#setHTML', () => {
 
         test('works with array nodes', async ({ page }) => {
             await page.evaluate(() => {
-                $.setHTML([
+                $.setHtml([
                     document.getElementById('test1'),
                     document.getElementById('test2'),
                 ], '<span>Test 2</span>');
