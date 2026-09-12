@@ -1,9 +1,23 @@
+import { notTests, setup } from '#cases/traversal/filter/not.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #not', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1" data-filter="test"></div><div id="div2"></div><div id="div3" data-filter="test"></div><div id="div4"></div>';
+    test.beforeEach(setup);
+
+    test.describe('filter inputs', () => {
+        notTests(([nodes, filter]) => $(nodes).not(filter).get().map((node) => node.id));
+
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('[data-filter="test"]');
+
+                return $('div').not(query).get().map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'div2',
+                'div4',
+            ]);
         });
     });
 
@@ -28,120 +42,32 @@ test.describe('QuerySet #not', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const fragment = document.createDocumentFragment();
-            fragment.id = 'fragment';
+    test.describe('node inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const fragment = document.createDocumentFragment();
+                fragment.id = 'fragment';
 
-            return $(fragment).not('[data-filter="test"]').get().map((node) => node.id);
+                return $(fragment).not('[data-filter="test"]').get().map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'fragment',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'fragment',
-        ]);
-    });
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                shadow.id = 'shadow';
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            shadow.id = 'shadow';
+                return $(shadow).not('[data-filter="test"]').get().map((node) => node.id);
+            });
 
-            return $(shadow).not('[data-filter="test"]').get().map((node) => node.id);
+            expect(ids).toEqual([
+                'shadow',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'shadow',
-        ]);
-    });
-
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').not((node) => node.dataset.filter === 'test').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').not(document.getElementById('div1')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div3',
-            'div4',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').not(document.querySelectorAll('[data-filter="test"]')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').not(document.body.children).get().map((node) => node.id));
-
-        expect(ids).toEqual([]);
-    });
-
-    test('works with DocumentFragment filter', async ({ page }) => {
-        const nodes = await page.evaluate((_) => {
-            const fragment = document.createDocumentFragment();
-            fragment.id = 'fragment';
-
-            return $([fragment]).not(fragment).get();
-        });
-
-        expect(nodes).toEqual([]);
-    });
-
-    test('works with ShadowRoot filter', async ({ page }) => {
-        const nodes = await page.evaluate((_) => {
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            shadow.id = 'shadow';
-
-            return $([shadow]).not(shadow).get();
-        });
-
-        expect(nodes).toEqual([]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div')
-                .not([
-                    document.getElementById('div1'),
-                    document.getElementById('div3'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('[data-filter="test"]');
-
-            return $('div').not(query).get().map((node) => node.id);
-        });
-
-        expect(ids).toEqual([
-            'div2',
-            'div4',
-        ]);
     });
 });
