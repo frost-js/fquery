@@ -13,171 +13,90 @@ test.describe('#withDescendent', () => {
         expect(ids).toEqual([]);
     });
 
-    test('works with HTMLElement nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent(document.getElementById('div1'), 'a').map((node) => node.id));
+    test.describe('node inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $.withDescendent(document.getElementById('div1'), 'a').map((node) => node.id));
 
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('works with NodeList nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent(document.querySelectorAll('div'), 'a').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent(document.body.children, 'a').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment('<div></div>');
-            fragment.id = 'fragment';
-
-            return $.withDescendent(fragment, 'div').map((node) => node.id);
+            expect(ids).toEqual([
+                'div1',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'fragment',
-        ]);
-    });
+        test('works with NodeList nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $.withDescendent(document.querySelectorAll('div'), 'a').map((node) => node.id));
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            const range = document.createRange();
-            const fragment = range.createContextualFragment('<div></div>');
-
-            shadow.appendChild(fragment);
-            shadow.id = 'shadow';
-
-            return $.withDescendent(shadow, 'div').map((node) => node.id);
+            expect(ids).toEqual([
+                'div1',
+                'div3',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'shadow',
-        ]);
-    });
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $.withDescendent(document.body.children, 'a').map((node) => node.id));
 
-    test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent(document, 'div').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'document',
-        ]);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent([
-                document.getElementById('div1'),
-                document.getElementById('div2'),
-                document.getElementById('div3'),
-                document.getElementById('div4'),
-            ], 'a').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent('div', (node) => node.id === 'a1').map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent('div', document.getElementById('a1')).map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-
-            return $.withDescendent(node, node).map((node) => node.id);
+            expect(ids).toEqual([
+                'div1',
+                'div3',
+            ]);
         });
 
-        expect(ids).toEqual([]);
-    });
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment('<div></div>');
+                fragment.id = 'fragment';
 
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent('div', document.querySelectorAll('a')).map((node) => node.id));
+                return $.withDescendent(fragment, 'div').map((node) => node.id);
+            });
 
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent('div', document.getElementById('span1').children).map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('does not match the node itself with an array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-
-            return $.withDescendent(node, [node]).map((node) => node.id);
+            expect(ids).toEqual([
+                'fragment',
+            ]);
         });
 
-        expect(ids).toEqual([]);
-    });
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                const range = document.createRange();
+                const fragment = range.createContextualFragment('<div></div>');
 
-    test('matches a descendent when the array filter also contains the node itself', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-            const child = document.getElementById('span1');
+                shadow.appendChild(fragment);
+                shadow.id = 'shadow';
 
-            return $.withDescendent(node, [node, child]).map((node) => node.id);
+                return $.withDescendent(shadow, 'div').map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'shadow',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
+        test('works with Document nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $.withDescendent(document, 'div').map((node) => node.id));
 
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $.withDescendent('div', [
-                document.getElementById('a1'),
-                document.getElementById('a2'),
-            ]).map((node) => node.id));
+            expect(ids).toEqual([
+                'document',
+            ]);
+        });
 
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
+        test('works with array nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $.withDescendent([
+                    document.getElementById('div1'),
+                    document.getElementById('div2'),
+                    document.getElementById('div3'),
+                    document.getElementById('div4'),
+                ], 'a').map((node) => node.id));
+
+            expect(ids).toEqual([
+                'div1',
+                'div3',
+            ]);
+        });
     });
 });

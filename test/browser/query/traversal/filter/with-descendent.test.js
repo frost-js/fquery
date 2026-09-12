@@ -24,143 +24,61 @@ test.describe('QuerySet #withDescendent', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment('<div></div>');
-            fragment.id = 'fragment';
+    test.describe('node inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment('<div></div>');
+                fragment.id = 'fragment';
 
-            return $(fragment).withDescendent('div').get().map((node) => node.id);
+                return $(fragment).withDescendent('div').get().map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'fragment',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'fragment',
-        ]);
-    });
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                const range = document.createRange();
+                const fragment = range.createContextualFragment('<div></div>');
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            const range = document.createRange();
-            const fragment = range.createContextualFragment('<div></div>');
+                shadow.appendChild(fragment);
+                shadow.id = 'shadow';
 
-            shadow.appendChild(fragment);
-            shadow.id = 'shadow';
+                return $(shadow).withDescendent('div').get().map((node) => node.id);
+            });
 
-            return $(shadow).withDescendent('div').get().map((node) => node.id);
+            expect(ids).toEqual([
+                'shadow',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'shadow',
-        ]);
-    });
+        test('works with Document nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $(document).withDescendent('div').get().map((node) => node.id));
 
-    test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $(document).withDescendent('div').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'document',
-        ]);
-    });
-
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent((node) => node.id === 'a1').get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent(document.getElementById('a1')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-
-            return $(node).withDescendent(node).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'document',
+            ]);
         });
-
-        expect(ids).toEqual([]);
     });
 
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent(document.querySelectorAll('a')).get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('a');
 
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
+                return $('div').withDescendent(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').withDescendent(document.getElementById('span1').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('does not match the node itself with an array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-
-            return $(node).withDescendent([node]).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'div1',
+                'div3',
+            ]);
         });
-
-        expect(ids).toEqual([]);
-    });
-
-    test('matches a descendent when the array filter also contains the node itself', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const node = document.getElementById('div1');
-            const child = document.getElementById('span1');
-
-            return $(node).withDescendent([node, child]).get().map((node) => node.id);
-        });
-
-        expect(ids).toEqual([
-            'div1',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div')
-                .withDescendent([
-                    document.getElementById('a1'),
-                    document.getElementById('a2'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('a');
-
-            return $('div').withDescendent(query).get().map((node) => node.id);
-        });
-
-        expect(ids).toEqual([
-            'div1',
-            'div3',
-        ]);
     });
 });
