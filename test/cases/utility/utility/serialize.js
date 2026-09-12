@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeInput } from '../../../../src/helpers.js'; */
 
 import { expect, test } from '#test';
 
@@ -47,7 +48,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared serialize behavior tests.
- * @param {((nodes: string) => string)} serialize The browser callback for serialize.
+ * @param {((nodes: NodeInput) => string)} serialize The browser callback for serialize.
  */
 export function serializeTests(serialize) {
     test('returns a serialized string of all form elements', async ({ page }) => {
@@ -55,6 +56,22 @@ export function serializeTests(serialize) {
     });
 
     test.describe('line endings', () => {
+        for (const [name, value] of [
+            ['normalizes lone carriage returns in control values', 'A\rB'],
+            ['preserves CRLF pairs in control values', 'A\r\nB'],
+        ]) {
+            test(name, async ({ page }) => {
+                const input = await page.evaluateHandle((value) => {
+                    const input = document.getElementById('test1');
+                    input.type = 'hidden';
+                    input.value = value;
+                    return input;
+                }, value);
+
+                expect(await page.evaluate(serialize, input)).toBe('test1=A%0D%0AB');
+            });
+        }
+
         test('normalizes textarea line endings', async ({ page }) => {
             await page.evaluate((_) => {
                 document.getElementById('test3').value = 'A\nB';
@@ -374,6 +391,17 @@ export function serializeTests(serialize) {
     });
 
     test.describe('named form controls', () => {
+        test('serializes form nodes with an associated control whose id is nodeType', async ({ page }) => {
+            const form = await page.evaluateHandle(() => {
+                document.body.innerHTML =
+                    '<form id="form"><input name="test1" type="text" value="Test 1"></form>' +
+                    '<input name="test2" type="text" id="nodeType" value="Test 2" form="form">';
+                return document.getElementById('form');
+            });
+
+            expect(await page.evaluate(serialize, form)).toBe('test1=Test%201&test2=Test%202');
+        });
+
         for (const key of ['elements', 'matches']) {
             test(`serializes forms with a control named ${key}`, async ({ page }) => {
                 await page.evaluate((key) => {
