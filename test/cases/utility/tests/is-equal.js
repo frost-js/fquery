@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeInput } from '../../../../src/helpers.js'; */
 
 import { expect, test } from '#test';
 
@@ -31,7 +32,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared isEqual behavior tests.
- * @param {((args: [string, string, { shallow: boolean }?]) => boolean)} isEqual The browser callback for isEqual.
+ * @param {((args: [NodeInput, NodeInput, { shallow: boolean }?]) => boolean)} isEqual The browser callback for isEqual.
  */
 export function isEqualTests(isEqual) {
     test('returns true if any node is equal to any other node', async ({ page }) => {
@@ -44,5 +45,34 @@ export function isEqualTests(isEqual) {
 
     test('works with shallow option', async ({ page }) => {
         expect(await page.evaluate(isEqual, ['#parent1 span', '#parent2 span', { shallow: true }])).toBe(true);
+    });
+
+    test.describe('comparison inputs', () => {
+        for (const [name, createArgs] of [
+            ['HTMLElement', () => ['#parent1 span', document.querySelector('#parent2 > [data-id="span2"]')]],
+            ['NodeList', () => ['#parent1 span', document.querySelectorAll('#parent2 > span')]],
+            ['HTMLCollection', () => ['#parent1 span', document.getElementById('parent2').children]],
+            ['DocumentFragment', () => {
+                const fragment1 = document.createDocumentFragment();
+                const fragment2 = document.createDocumentFragment();
+
+                return [[fragment1], fragment2];
+            }],
+            ['ShadowRoot', () => {
+                const div1 = document.createElement('div');
+                const div2 = document.createElement('div');
+                const shadow1 = div1.attachShadow({ mode: 'open' });
+                const shadow2 = div2.attachShadow({ mode: 'closed' });
+
+                return [[shadow1], shadow2];
+            }],
+            ['array', () => ['#parent1 span', [document.querySelector('#parent2 > [data-id="span2"]'), document.querySelector('#parent2 > [data-id="span3"]')]]],
+        ]) {
+            test(`works with ${name} other nodes`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+
+                expect(await page.evaluate(isEqual, args)).toBe(true);
+            });
+        }
     });
 }
