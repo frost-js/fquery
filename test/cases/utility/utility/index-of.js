@@ -1,4 +1,6 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
+/** @import { NodeInput } from '../../../../src/helpers.js'; */
 
 import { expect, test } from '#test';
 
@@ -20,7 +22,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared indexOf behavior tests.
- * @param {((args: [string, string?]) => number)} indexOf The browser callback for indexOf.
+ * @param {((args: [NodeInput, NodeFilterInput?]) => number)} indexOf The browser callback for indexOf.
  */
 export function indexOfTests(indexOf) {
     test('returns the index of the first node', async ({ page }) => {
@@ -29,5 +31,32 @@ export function indexOfTests(indexOf) {
 
     test('returns the index of the first node matching a filter', async ({ page }) => {
         expect(await page.evaluate(indexOf, ['div', '.test'])).toBe(1);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['div', (node) => node.id === 'div2'], 1],
+            ['HTMLElement', () => ['div', document.getElementById('div2')], 1],
+            ['NodeList', () => ['div', document.querySelectorAll('.test')], 1],
+            ['HTMLCollection', () => ['div', document.body.children], 0],
+            ['DocumentFragment', () => {
+                const fragment = document.createDocumentFragment();
+
+                return [[document.getElementById('div2'), document.getElementById('div4'), fragment], fragment];
+            }, 2],
+            ['ShadowRoot', () => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+
+                return [[document.getElementById('div2'), document.getElementById('div4'), shadow], shadow];
+            }, 2],
+            ['array', () => ['div', [document.getElementById('div2'), document.getElementById('div4')]], 1],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+
+                expect(await page.evaluate(indexOf, args)).toBe(expected);
+            });
+        }
     });
 }
