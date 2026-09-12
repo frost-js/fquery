@@ -154,61 +154,26 @@ export function serializeTests(serialize) {
     });
 
     test.describe('datalists', () => {
-        test('excludes inputs inside datalists', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<datalist>' +
-                    '<input name="test1" type="text" value="Test 1">' +
-                    '</datalist>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
+        for (const [control, html] of [
+            ['inputs', '<input name="test1" type="text" value="Test 1">'],
+            ['nested inputs', '<span><input name="test1" type="text" value="Test 1"></span>'],
+            ['selects', '<select name="test1"><option value="Test 1" selected>Test 1</option></select>'],
+            ['textareas', '<textarea name="test1">Test 1</textarea>'],
+        ]) {
+            test(`excludes ${control} inside datalists`, async ({ page }) => {
+                await page.evaluate((html) => {
+                    document.body.innerHTML =
+                        '<form id="form">' +
+                        '<datalist>' +
+                        html +
+                        '</datalist>' +
+                        '<input name="test2" type="text" value="Test 2">' +
+                        '</form>';
+                }, html);
+
+                expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
             });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
-
-        test('excludes inputs nested inside datalists', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<datalist>' +
-                    '<span><input name="test1" type="text" value="Test 1"></span>' +
-                    '</datalist>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
-
-        test('excludes selects inside datalists', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<datalist>' +
-                    '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
-                    '</datalist>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
-
-        test('excludes textareas inside datalists', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<datalist>' +
-                    '<textarea name="test1">Test 1</textarea>' +
-                    '</datalist>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
+        }
 
         test('includes inputs associated with datalists', async ({ page }) => {
             await page.evaluate((_) => {
@@ -224,47 +189,25 @@ export function serializeTests(serialize) {
     });
 
     test.describe('disabled fieldsets', () => {
-        test('excludes inputs in disabled fieldsets', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<fieldset disabled>' +
-                    '<input name="test1" type="text" value="Test 1">' +
-                    '</fieldset>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
+        for (const [control, html] of [
+            ['inputs', '<input name="test1" type="text" value="Test 1">'],
+            ['selects', '<select name="test1"><option value="Test 1" selected>Test 1</option></select>'],
+            ['textareas', '<textarea name="test1">Test 1</textarea>'],
+        ]) {
+            test(`excludes ${control} in disabled fieldsets`, async ({ page }) => {
+                await page.evaluate((html) => {
+                    document.body.innerHTML =
+                        '<form id="form">' +
+                        '<fieldset disabled>' +
+                        html +
+                        '</fieldset>' +
+                        '<input name="test2" type="text" value="Test 2">' +
+                        '</form>';
+                }, html);
+
+                expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
             });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
-
-        test('excludes selects in disabled fieldsets', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<fieldset disabled>' +
-                    '<select name="test1"><option value="Test 1" selected>Test 1</option></select>' +
-                    '</fieldset>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
-
-        test('excludes textareas in disabled fieldsets', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<fieldset disabled>' +
-                    '<textarea name="test1">Test 1</textarea>' +
-                    '</fieldset>' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test2=Test%202');
-        });
+        }
 
         test('includes enabled controls in the first legend of a disabled fieldset', async ({ page }) => {
             await page.evaluate((_) => {
@@ -431,57 +374,33 @@ export function serializeTests(serialize) {
     });
 
     test.describe('named form controls', () => {
-        test('serializes forms with a control named elements', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<input name="elements" type="text" value="Test 1">' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>' +
-                    '<input name="test3" type="text" value="Test 3" form="form">';
+        for (const key of ['elements', 'matches']) {
+            test(`serializes forms with a control named ${key}`, async ({ page }) => {
+                await page.evaluate((key) => {
+                    document.body.innerHTML =
+                        '<form id="form">' +
+                        '<input name="' + key + '" type="text" value="Test 1">' +
+                        '<input name="test2" type="text" value="Test 2">' +
+                        '</form>' +
+                        '<input name="test3" type="text" value="Test 3" form="form">';
+                }, key);
+
+                expect(await page.evaluate(serialize, '#form')).toBe(key + '=Test%201&test2=Test%202&test3=Test%203');
             });
 
-            expect(await page.evaluate(serialize, '#form')).toBe('elements=Test%201&test2=Test%202&test3=Test%203');
-        });
+            test(`serializes forms with a control whose id is ${key}`, async ({ page }) => {
+                await page.evaluate((key) => {
+                    document.body.innerHTML =
+                        '<form id="form">' +
+                        '<input name="test1" type="text" id="' + key + '" value="Test 1">' +
+                        '<input name="test2" type="text" value="Test 2">' +
+                        '</form>' +
+                        '<input name="test3" type="text" value="Test 3" form="form">';
+                }, key);
 
-        test('serializes forms with a control whose id is elements', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<input name="test1" type="text" id="elements" value="Test 1">' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>' +
-                    '<input name="test3" type="text" value="Test 3" form="form">';
+                expect(await page.evaluate(serialize, '#form')).toBe('test1=Test%201&test2=Test%202&test3=Test%203');
             });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test1=Test%201&test2=Test%202&test3=Test%203');
-        });
-
-        test('serializes forms with a control named matches', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<input name="matches" type="text" value="Test 1">' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>' +
-                    '<input name="test3" type="text" value="Test 3" form="form">';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('matches=Test%201&test2=Test%202&test3=Test%203');
-        });
-
-        test('serializes forms with a control whose id is matches', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form id="form">' +
-                    '<input name="test1" type="text" id="matches" value="Test 1">' +
-                    '<input name="test2" type="text" value="Test 2">' +
-                    '</form>' +
-                    '<input name="test3" type="text" value="Test 3" form="form">';
-            });
-
-            expect(await page.evaluate(serialize, '#form')).toBe('test1=Test%201&test2=Test%202&test3=Test%203');
-        });
+        }
 
         test('serializes forms with a control named nodeType', async ({ page }) => {
             await page.evaluate((_) => {
