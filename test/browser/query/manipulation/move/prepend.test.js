@@ -1,44 +1,11 @@
+import { prependTests, setup } from '#cases/manipulation/move/prepend.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #prepend', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div id="parent1">' +
-                '<span></span>' +
-                '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>' +
-                '</div>' +
-                '<div id="parent2">' +
-                '<span></span>' +
-                '<a href="#" class="test3">Test</a>' +
-                '<a href="#" class="test4">Test</a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('prepends each other node to each node', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            $('div').prepend('a');
-
-            return {
-                parent1: document.getElementById('parent1').innerHTML,
-                parent2: document.getElementById('parent2').innerHTML,
-            };
-        });
-
-        expect(result).toEqual({
-            parent1: '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>' +
-                '<a href="#" class="test3">Test</a>' +
-                '<a href="#" class="test4">Test</a>' +
-                '<span></span>',
-            parent2: '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>' +
-                '<a href="#" class="test3">Test</a>' +
-                '<a href="#" class="test4">Test</a>' +
-                '<span></span>',
-        });
+    prependTests(([nodes, ...args]) => {
+        $(nodes).prepend(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -49,104 +16,6 @@ test.describe('QuerySet #prepend', () => {
         });
 
         expect(returnsSameQuery).toBe(true);
-    });
-
-    test.describe('placement', () => {
-        test('preserves order when prepending existing children', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                const node = document.getElementById('parent1');
-
-                $(node).prepend(node.children);
-
-                return node.innerHTML;
-            });
-
-            expect(html).toBe(
-                '<span></span>' +
-                '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>',
-            );
-        });
-
-        test('does not clone for the last other nodes', async ({ page }) => {
-            const isSameNode = await page.evaluate(() => {
-                const nodes = [...document.querySelectorAll('a')];
-
-                $('div').prepend('a');
-
-                return nodes.every((node, index) => node.isSameNode(document.querySelectorAll('a').item(index + 4)));
-            });
-
-            expect(isSameNode).toBe(true);
-        });
-    });
-
-    test.describe('preserved state', () => {
-        test('preserves events for other nodes', async ({ page }) => {
-            const clickCount = await page.evaluate(() => {
-                let count = 0;
-
-                $.addEvent('a', 'click', () => {
-                    count++;
-                });
-
-                $('div').prepend('a');
-                $.triggerEvent('a', 'click');
-
-                return count;
-            });
-
-            expect(clickCount).toBe(8);
-        });
-
-        test('preserves data for other nodes', async ({ page }) => {
-            const values = await page.evaluate(() => {
-                $.setData('a', 'test', 'Test');
-                $('div').prepend('a');
-
-                return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
-            });
-
-            expect(values).toEqual([
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-            ]);
-        });
-
-        test('preserves animations for other nodes', async ({ page }) => {
-            await page.evaluate(() => {
-                $.animate(
-                    'a',
-                    () => {},
-                    {
-                        duration: 100,
-                        debug: true,
-                    },
-                );
-
-                $('div').prepend('a');
-            });
-
-            await expect.poll(async () => await page.evaluate(() => {
-                const nodes = [...document.querySelectorAll('#parent1 > a, #parent2 > a')];
-
-                return nodes.length === 8 &&
-                    nodes.every((node) => Boolean(node.dataset.animationProgress));
-            })).toBe(true);
-
-            await expect.poll(async () => await page.evaluate(() =>
-                [...document.querySelectorAll('#parent1 > a, #parent2 > a')].every((node) =>
-                    !node.dataset.animationProgress &&
-                    !node.dataset.animationStart &&
-                    !node.dataset.animationTime),
-            )).toBe(true);
-        });
     });
 
     test.describe('target inputs', () => {

@@ -1,41 +1,11 @@
+import { afterTests, setup } from '#cases/manipulation/move/after.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #after', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div id="parent1">' +
-                '<span></span>' +
-                '<a href="#" class="test1">Test</a>' +
-                '<a href="#" class="test2">Test</a>' +
-                '</div>' +
-                '<div id="parent2">' +
-                '<span></span>' +
-                '<a href="#" class="test3">Test</a>' +
-                '<a href="#" class="test4">Test</a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('inserts each other node after each node', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('div').after('a');
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe(
-            '<div id="parent1"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>' +
-            '<div id="parent2"><span></span></div>' +
-            '<a href="#" class="test1">Test</a>' +
-            '<a href="#" class="test2">Test</a>' +
-            '<a href="#" class="test3">Test</a>' +
-            '<a href="#" class="test4">Test</a>',
-        );
+    afterTests(([nodes, ...args]) => {
+        $(nodes).after(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -46,103 +16,6 @@ test.describe('QuerySet #after', () => {
         });
 
         expect(returnsSameQuery).toBe(true);
-    });
-
-    test.describe('placement', () => {
-        test('does not clone for the last other nodes', async ({ page }) => {
-            const isSameNode = await page.evaluate(() => {
-                const nodes = [...document.querySelectorAll('a')];
-
-                $('div').after('a');
-
-                return nodes.every((node, index) =>
-                    node.isSameNode(document.querySelectorAll('body > a').item(index + 4)));
-            });
-
-            expect(isSameNode).toBe(true);
-        });
-
-        test('inserts the original node when the final target is detached', async ({ page }) => {
-            const isSameNode = await page.evaluate(() => {
-                const node = document.getElementById('parent1');
-                const detached = document.createElement('div');
-                const other = document.querySelector('.test1');
-
-                $([node, detached]).after(other);
-
-                return other.isSameNode(node.nextSibling);
-            });
-
-            expect(isSameNode).toBe(true);
-        });
-    });
-
-    test.describe('preserved state', () => {
-        test('preserves events for other nodes', async ({ page }) => {
-            const clickCount = await page.evaluate(() => {
-                let count = 0;
-
-                $.addEvent('a', 'click', () => {
-                    count++;
-                });
-
-                $('div').after('a');
-                $.triggerEvent('a', 'click');
-
-                return count;
-            });
-
-            expect(clickCount).toBe(8);
-        });
-
-        test('preserves data for other nodes', async ({ page }) => {
-            const values = await page.evaluate(() => {
-                $.setData('a', 'test', 'Test');
-                $('div').after('a');
-
-                return [...document.querySelectorAll('a')].map((node) => $.getData(node, 'test'));
-            });
-
-            expect(values).toEqual([
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-                'Test',
-            ]);
-        });
-
-        test('preserves animations for other nodes', async ({ page }) => {
-            await page.evaluate(() => {
-                $.animate(
-                    'a',
-                    () => {},
-                    {
-                        duration: 100,
-                        debug: true,
-                    },
-                );
-
-                $('div').after('a');
-            });
-
-            await expect.poll(async () => await page.evaluate(() => {
-                const nodes = [...document.querySelectorAll('body > a')];
-
-                return nodes.length === 8 &&
-                    nodes.every((node) => Boolean(node.dataset.animationProgress));
-            })).toBe(true);
-
-            await expect.poll(async () => await page.evaluate(() =>
-                [...document.querySelectorAll('body > a')].every((node) =>
-                    !node.dataset.animationProgress &&
-                    !node.dataset.animationStart &&
-                    !node.dataset.animationTime),
-            )).toBe(true);
-        });
     });
 
     test.describe('content inputs', () => {
