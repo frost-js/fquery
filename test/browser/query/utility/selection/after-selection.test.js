@@ -1,68 +1,11 @@
+import { afterSelectionTests, setup } from '#cases/utility/selection/after-selection.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #afterSelection', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="select">' +
-                '<div id="div1">' +
-                '<span id="span1">Test 1</span>' +
-                '</div>' +
-                '<div id="div2">' +
-                '<span id="span2">Test 2</span>' +
-                '</div>' +
-                '</div>' +
-                '<div id="parent">' +
-                '<a href="#" id="a1">Test</a>' +
-                '<a href="#" id="a2">Test</a>' +
-                '</div>';
+    test.beforeEach(setup);
 
-            const range = document.createRange();
-            const span1 = document.getElementById('span1');
-            const span2 = document.getElementById('span2');
-            range.setStartBefore(span1);
-            range.setEnd(span2.firstChild, 3);
-
-            const selection = document.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-        });
-    });
-
-    test('inserts each node after the selected nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $('a').afterSelection();
-            return document.body.innerHTML;
-        })).toBe('<div id="select">' +
-            '<div id="div1">' +
-            '<span id="span1">Test 1</span>' +
-            '</div>' +
-            '<div id="div2">' +
-            '<span id="span2">Tes' +
-            '<a href="#" id="a1">Test</a>' +
-            '<a href="#" id="a2">Test</a>' +
-            't 2</span>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent"></div>');
-    });
-
-    test('preserves the selection with an empty array', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $([]).afterSelection();
-            const selection = document.getSelection();
-            const range = selection.getRangeAt(0);
-            return range.toString();
-        })).toBe('Test 1Tes');
-    });
-
-    test('preserves the selection with an unmatched selector', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $('.missing').afterSelection();
-            const selection = document.getSelection();
-            const range = selection.getRangeAt(0);
-            return range.toString();
-        })).toBe('Test 1Tes');
+    afterSelectionTests(([nodes]) => {
+        $(nodes).afterSelection();
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -72,27 +15,29 @@ test.describe('QuerySet #afterSelection', () => {
         })).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                '<div><span></span></div>',
-            );
-            $(fragment).afterSelection();
-            return document.body.innerHTML;
-        })).toBe('<div id="select">' +
-            '<div id="div1">' +
-            '<span id="span1">Test 1</span>' +
-            '</div>' +
-            '<div id="div2">' +
-            '<span id="span2">Tes' +
-            '<div><span></span></div>' +
-            't 2</span>' +
-            '</div>' +
-            '</div>' +
-            '<div id="parent">' +
-            '<a href="#" id="a1">Test</a>' +
-            '<a href="#" id="a2">Test</a>' +
-            '</div>');
+    test.describe('inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    '<div><span></span></div>',
+                );
+                $(fragment).afterSelection();
+                return document.body.innerHTML;
+            })).toBe('<div id="select">' +
+                '<div id="div1">' +
+                '<span id="span1">Test 1</span>' +
+                '</div>' +
+                '<div id="div2">' +
+                '<span id="span2">Tes' +
+                '<div><span></span></div>' +
+                't 2</span>' +
+                '</div>' +
+                '</div>' +
+                '<div id="parent">' +
+                '<a href="#" id="a1">Test</a>' +
+                '<a href="#" id="a2">Test</a>' +
+                '</div>');
+        });
     });
 });
