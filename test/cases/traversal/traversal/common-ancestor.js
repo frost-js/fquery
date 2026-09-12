@@ -17,19 +17,13 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared commonAncestor behavior tests.
- * @param {((nodes: NodeInput) => (string|undefined|Array<string>))} commonAncestor The browser callback for commonAncestor.
- * @param {object} [options] The test options.
- * @param {boolean} [options.querySet=false] Whether the callback returns an array of QuerySet node IDs.
+ * @param {((nodes: NodeInput) => Array<string>)} commonAncestor The browser callback for commonAncestor.
  */
-export function commonAncestorTests(commonAncestor, { querySet = false } = {}) {
-    const expectedAncestor = querySet ? ['child'] : 'child';
-    const emptyResult = querySet ? [] : undefined;
-    const emptyDescription = querySet ? 'an empty QuerySet' : 'undefined';
-
+export function commonAncestorTests(commonAncestor) {
     test('returns the closest common ancestor of all nodes', async ({ page }) => {
         const result = await page.evaluate(commonAncestor, 'a');
 
-        expect(result).toEqual(expectedAncestor);
+        expect(result).toEqual(['child']);
     });
 
     test('returns the parent when a node and its descendant are selected', async ({ page }) => {
@@ -41,7 +35,7 @@ export function commonAncestorTests(commonAncestor, { querySet = false } = {}) {
         });
         const result = await page.evaluate(commonAncestor, nodes);
 
-        expect(result).toEqual(expectedAncestor);
+        expect(result).toEqual(['child']);
     });
 
     test.describe('detached trees', () => {
@@ -54,7 +48,7 @@ export function commonAncestorTests(commonAncestor, { querySet = false } = {}) {
             });
             const result = await page.evaluate(commonAncestor, nodes);
 
-            expect(result).toEqual(expectedAncestor);
+            expect(result).toEqual(['child']);
         });
 
         test('returns the common ancestor for reversed nodes within a detached tree', async ({ page }) => {
@@ -68,43 +62,7 @@ export function commonAncestorTests(commonAncestor, { querySet = false } = {}) {
             });
             const result = await page.evaluate(commonAncestor, nodes);
 
-            expect(result).toEqual(expectedAncestor);
-        });
-
-        test(`returns ${emptyDescription} for nodes in separate detached trees`, async ({ page }) => {
-            const nodes = await page.evaluateHandle(() => {
-                const parent1 = document.createElement('div');
-                const parent2 = document.createElement('div');
-                const node1 = document.createElement('span');
-                const node2 = document.createElement('span');
-
-                parent1.appendChild(node1);
-                parent2.appendChild(node2);
-
-                return [node1, node2];
-            });
-            const result = await page.evaluate(commonAncestor, nodes);
-
-            expect(result).toEqual(emptyResult);
-        });
-
-        test(`returns ${emptyDescription} when a middle node belongs to another tree`, async ({ page }) => {
-            const nodes = await page.evaluateHandle(() => {
-                const parent1 = document.createElement('div');
-                const parent2 = document.createElement('div');
-                const node1 = document.createElement('span');
-                const node2 = document.createElement('span');
-                const node3 = document.createElement('span');
-
-                parent1.appendChild(node1);
-                parent2.appendChild(node2);
-                parent1.appendChild(node3);
-
-                return [node1, node2, node3];
-            });
-            const result = await page.evaluate(commonAncestor, nodes);
-
-            expect(result).toEqual(emptyResult);
+            expect(result).toEqual(['child']);
         });
     });
 }

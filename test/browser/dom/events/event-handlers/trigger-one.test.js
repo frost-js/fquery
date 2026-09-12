@@ -8,22 +8,22 @@ test.describe('#triggerOne', () => {
 
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            let result = 0;
-            $.addEvent('a', 'click', (_) => {
-                result++;
+            const targets = [];
+            $.addEvent('a', 'click', (e) => {
+                targets.push(e.target.id);
             });
             $.triggerOne('a', 'click');
-            return result;
-        })).toBe(1);
+            return targets;
+        })).toEqual(['test1']);
     });
 
     test.describe('event properties', () => {
         test('triggers an event for the first node with custom data', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
+                const targets = [];
                 $.addEvent('a', 'click', (e) => {
                     if (e.test) {
-                        result++;
+                        targets.push(e.target.id);
                     }
                 });
                 $.triggerOne('a', 'click');
@@ -32,24 +32,24 @@ test.describe('#triggerOne', () => {
                         test: true,
                     },
                 });
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
 
         test('triggers an event for the first node with custom details', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
+                const targets = [];
                 $.addEvent('a', 'click', (e) => {
                     if (e.detail === 'test') {
-                        result++;
+                        targets.push(e.target.id);
                     }
                 });
                 $.triggerOne('a', 'click');
                 $.triggerOne('a', 'click', {
                     detail: 'test',
                 });
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
     });
 
@@ -143,35 +143,35 @@ test.describe('#triggerOne', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click', (_) => {
-                    result++;
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    targets.push(e.target.id);
                 });
                 $.triggerOne(document.getElementById('test1'), 'click');
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
 
         test('works with NodeList nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click', (_) => {
-                    result++;
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    targets.push(e.target.id);
                 });
                 $.triggerOne(document.querySelectorAll('a'), 'click');
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click', (_) => {
-                    result++;
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    targets.push(e.target.id);
                 });
                 $.triggerOne(document.getElementById('div1').children, 'click');
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
@@ -211,16 +211,16 @@ test.describe('#triggerOne', () => {
 
         test('works with array nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
-                $.addEvent('a', 'click', (_) => {
-                    result++;
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    targets.push(e.target.id);
                 });
                 $.triggerOne([
                     document.getElementById('test1'),
                     document.getElementById('test2'),
                 ], 'click');
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
     });
 });

@@ -35,26 +35,26 @@ export function triggerOneTests(triggerOne) {
 
     test.describe('namespaces', () => {
         for (const [name, registeredEvents, triggeredEvent, expected] of [
-            ['triggers a namespaced event for the first node', 'click.test', 'click', 1],
-            ['triggers a deep namespaced event for the first node', 'click.test.deep', 'click', 1],
-            ['triggers a namespaced event with namespacing for the first node', 'click.test', 'click.test', 1],
-            ['triggers a deep namespaced event with namespacing for the first node', 'click.test.deep', 'click.test', 1],
-            ['triggers a deep namespaced event with deep namespacing for the first node', 'click.test.deep', 'click.test.deep', 1],
-            ['does not trigger an event without namespacing for the first node', 'click', 'click.test', 0],
-            ['does not trigger a namespaced event with deep namespacing for the first node', 'click.test', 'click.test.deep', 0],
+            ['triggers a namespaced event for the first node', 'click.test', 'click', ['test1']],
+            ['triggers a deep namespaced event for the first node', 'click.test.deep', 'click', ['test1']],
+            ['triggers a namespaced event with namespacing for the first node', 'click.test', 'click.test', ['test1']],
+            ['triggers a deep namespaced event with namespacing for the first node', 'click.test.deep', 'click.test', ['test1']],
+            ['triggers a deep namespaced event with deep namespacing for the first node', 'click.test.deep', 'click.test.deep', ['test1']],
+            ['does not trigger an event without namespacing for the first node', 'click', 'click.test', []],
+            ['does not trigger a namespaced event with deep namespacing for the first node', 'click.test', 'click.test.deep', []],
         ]) {
             test(name, async ({ page }) => {
-                const calls = await page.evaluateHandle((events) => {
-                    const calls = { count: 0 };
-                    $.addEvent('a', events, () => {
-                        calls.count++;
+                const targets = await page.evaluateHandle((events) => {
+                    const targets = [];
+                    $.addEvent('a', events, (event) => {
+                        targets.push(event.target.id);
                     });
-                    return calls;
+                    return targets;
                 }, registeredEvents);
 
                 await page.evaluate(triggerOne, ['a', triggeredEvent]);
 
-                expect(await calls.evaluate((calls) => calls.count)).toBe(expected);
+                expect(await targets.jsonValue()).toEqual(expected);
             });
         }
     });

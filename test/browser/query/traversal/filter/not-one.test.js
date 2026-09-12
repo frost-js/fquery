@@ -5,7 +5,7 @@ test.describe('QuerySet #notOne', () => {
     test.beforeEach(setup);
 
     test.describe('filter inputs', () => {
-        notOneTests(([nodes, filter]) => $(nodes).notOne(filter).get().map((node) => node.id), { querySet: true });
+        notOneTests(([nodes, filter]) => $(nodes).notOne(filter).get().map((node) => node.id));
 
         test('works with QuerySet filter', async ({ page }) => {
             const ids = await page.evaluate((_) => {
@@ -17,6 +17,36 @@ test.describe('QuerySet #notOne', () => {
             expect(ids).toEqual([
                 'div2',
             ]);
+        });
+
+        test('works with HTMLCollection filter', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $('div').notOne(document.body.children).get().map((node) => node.id));
+
+            expect(ids).toEqual([]);
+        });
+
+        test('works with DocumentFragment filter', async ({ page }) => {
+            const nodes = await page.evaluate((_) => {
+                const fragment = document.createDocumentFragment();
+                fragment.id = 'fragment';
+
+                return $([fragment]).notOne(fragment).get();
+            });
+
+            expect(nodes).toEqual([]);
+        });
+
+        test('works with ShadowRoot filter', async ({ page }) => {
+            const nodes = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                shadow.id = 'shadow';
+
+                return $([shadow]).notOne(shadow).get();
+            });
+
+            expect(nodes).toEqual([]);
         });
     });
 

@@ -4,9 +4,18 @@ import { expect, test } from '#test';
 test.describe('#nearestToNode', () => {
     test.beforeEach(setup);
 
-    nearestToNodeTests((args) => {
-        const node = $.nearestToNode(...args);
-        return node === undefined ? undefined : node.id;
+    nearestToNodeTests((args) => [$.nearestToNode(...args).id]);
+
+    test.describe('empty results', () => {
+        test('returns undefined for empty nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.nearestToNode('#invalid', '[data-toggle="to"]'))).toBe(undefined);
+        });
+
+        test('returns undefined for empty other nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.nearestToNode('[data-toggle="from"]', '#invalid'))).toBe(undefined);
+        });
     });
 
     test.describe('source inputs', () => {

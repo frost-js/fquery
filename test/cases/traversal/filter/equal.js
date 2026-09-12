@@ -34,22 +34,6 @@ export function equalTests(equal) {
             ['HTMLElement', () => ['#parent1 span', document.querySelector('#parent2 > [data-id="span2"]')], ['span2']],
             ['NodeList', () => ['#parent1 span', document.querySelectorAll('#parent2 > span')], ['span2', 'span3']],
             ['HTMLCollection', () => ['#parent1 span', document.getElementById('parent2').children], ['span2', 'span3']],
-            ['DocumentFragment', () => {
-                const fragment1 = document.createDocumentFragment();
-                const fragment2 = document.createDocumentFragment();
-                fragment1.id = 'fragment';
-
-                return [[fragment1], fragment2];
-            }, ['fragment']],
-            ['ShadowRoot', () => {
-                const div1 = document.createElement('div');
-                const div2 = document.createElement('div');
-                const shadow1 = div1.attachShadow({ mode: 'open' });
-                const shadow2 = div2.attachShadow({ mode: 'closed' });
-                shadow1.id = 'shadow';
-
-                return [[shadow1], shadow2];
-            }, ['shadow']],
             ['array', () => ['#parent1 span', [document.querySelector('#parent2 > [data-id="span2"]'), document.querySelector('#parent2 > [data-id="span3"]')]], ['span2', 'span3']],
         ]) {
             test(`works with ${name} other nodes`, async ({ page }) => {

@@ -5,10 +5,7 @@ test.describe('#filterOne', () => {
     test.beforeEach(setup);
 
     test.describe('filter inputs', () => {
-        filterOneTests((args) => {
-            const node = $.filterOne(...args);
-            return node === null ? null : node.id;
-        });
+        filterOneTests((args) => [$.filterOne(...args).id]);
     });
 
     test('returns the first node matching a filter', async ({ page }) => {

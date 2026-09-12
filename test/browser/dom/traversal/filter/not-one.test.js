@@ -5,9 +5,36 @@ test.describe('#notOne', () => {
     test.beforeEach(setup);
 
     test.describe('filter inputs', () => {
-        notOneTests((args) => {
-            const node = $.notOne(...args);
-            return node === null ? null : node.id;
+        notOneTests((args) => [$.notOne(...args).id]);
+
+        test('works with HTMLCollection filter', async ({ page }) => {
+            const node = await page.evaluate((_) =>
+                $.notOne('div', document.body.children));
+
+            expect(node).toBe(null);
+        });
+
+        test('works with DocumentFragment filter', async ({ page }) => {
+            const node = await page.evaluate((_) => {
+                const fragment = document.createDocumentFragment();
+                fragment.id = 'fragment';
+
+                return $.notOne([fragment], fragment);
+            });
+
+            expect(node).toBe(null);
+        });
+
+        test('works with ShadowRoot filter', async ({ page }) => {
+            const node = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                shadow.id = 'shadow';
+
+                return $.notOne([shadow], shadow);
+            });
+
+            expect(node).toBe(null);
         });
     });
 

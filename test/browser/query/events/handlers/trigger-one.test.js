@@ -8,22 +8,22 @@ test.describe('QuerySet #triggerOne', () => {
 
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            let result = 0;
-            $.addEvent('a', 'click', (_) => {
-                result++;
+            const targets = [];
+            $.addEvent('a', 'click', (e) => {
+                targets.push(e.target.id);
             });
             $('a').triggerOne('click');
-            return result;
-        })).toBe(1);
+            return targets;
+        })).toEqual(['test1']);
     });
 
     test.describe('event properties', () => {
         test('triggers an event for the first node with custom data', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
+                const targets = [];
                 $.addEvent('a', 'click', (e) => {
                     if (e.test) {
-                        result++;
+                        targets.push(e.target.id);
                     }
                 });
                 $('a').triggerOne('click');
@@ -33,16 +33,16 @@ test.describe('QuerySet #triggerOne', () => {
                                 test: true,
                             },
                         });
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
 
         test('triggers an event for the first node with custom details', async ({ page }) => {
             expect(await page.evaluate((_) => {
-                let result = 0;
+                const targets = [];
                 $.addEvent('a', 'click', (e) => {
                     if (e.detail === 'test') {
-                        result++;
+                        targets.push(e.target.id);
                     }
                 });
                 $('a').triggerOne('click');
@@ -50,8 +50,8 @@ test.describe('QuerySet #triggerOne', () => {
                         .triggerOne('click', {
                             detail: 'test',
                         });
-                return result;
-            })).toBe(1);
+                return targets;
+            })).toEqual(['test1']);
         });
     });
 

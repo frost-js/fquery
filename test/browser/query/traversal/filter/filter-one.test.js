@@ -5,7 +5,7 @@ test.describe('QuerySet #filterOne', () => {
     test.beforeEach(setup);
 
     test.describe('filter inputs', () => {
-        filterOneTests(([nodes, filter]) => $(nodes).filterOne(filter).get().map((node) => node.id), { querySet: true });
+        filterOneTests(([nodes, filter]) => $(nodes).filterOne(filter).get().map((node) => node.id));
 
         test('works with QuerySet filter', async ({ page }) => {
             const ids = await page.evaluate((_) => {

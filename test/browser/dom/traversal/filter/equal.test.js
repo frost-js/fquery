@@ -4,7 +4,7 @@ import { expect, test } from '#test';
 test.describe('#equal', () => {
     test.beforeEach(setup);
 
-    equalTests((args) => $.equal(...args).map((node) => node.dataset?.id ?? node.id));
+    equalTests((args) => $.equal(...args).map((node) => node.dataset.id));
 
     test.describe('source inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
@@ -77,6 +77,38 @@ test.describe('#equal', () => {
             expect(ids).toEqual([
                 'span2',
                 'span3',
+            ]);
+        });
+    });
+
+    test.describe('comparison inputs', () => {
+        test('works with DocumentFragment other nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const fragment1 = document.createDocumentFragment();
+                const fragment2 = document.createDocumentFragment();
+                fragment1.id = 'fragment';
+
+                return $.equal([fragment1], fragment2).map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'fragment',
+            ]);
+        });
+
+        test('works with ShadowRoot other nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const div1 = document.createElement('div');
+                const div2 = document.createElement('div');
+                const shadow1 = div1.attachShadow({ mode: 'open' });
+                const shadow2 = div2.attachShadow({ mode: 'closed' });
+                shadow1.id = 'shadow';
+
+                return $.equal([shadow1], shadow2).map((node) => node.id);
+            });
+
+            expect(ids).toEqual([
+                'shadow',
             ]);
         });
     });

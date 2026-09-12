@@ -4,7 +4,23 @@ import { expect, test } from '#test';
 test.describe('QuerySet #nearestToNode', () => {
     test.beforeEach(setup);
 
-    nearestToNodeTests(([nodes, ...args]) => $(nodes).nearestToNode(...args).get().map((node) => node.id), { querySet: true });
+    nearestToNodeTests(([nodes, ...args]) => $(nodes).nearestToNode(...args).get().map((node) => node.id));
+
+    test.describe('empty results', () => {
+        test('returns an empty QuerySet for empty nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $('#invalid')
+                        .nearestToNode('[data-toggle="to"]')
+                        .get())).toEqual([]);
+        });
+
+        test('returns an empty QuerySet for empty other nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $('[data-toggle="from"]')
+                        .nearestToNode('#invalid')
+                        .get())).toEqual([]);
+        });
+    });
 
     test('returns a new QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {

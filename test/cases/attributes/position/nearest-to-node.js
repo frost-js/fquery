@@ -26,32 +26,13 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared nearestToNode behavior tests.
- * @param {((args: [NodeInput, NodeInput]) => (string|undefined|Array<string>))} nearestToNode The browser callback for nearestToNode.
- * @param {object} [options] The test options.
- * @param {boolean} [options.querySet=false] Whether the callback returns an array of QuerySet node IDs.
+ * @param {((args: [NodeInput, NodeInput]) => Array<string>)} nearestToNode The browser callback for nearestToNode.
  */
-export function nearestToNodeTests(nearestToNode, { querySet = false } = {}) {
-    const expectedNearest = querySet ? ['test2'] : 'test2';
-    const emptyResult = querySet ? [] : undefined;
-    const emptyDescription = querySet ? 'an empty QuerySet' : 'undefined';
-
+export function nearestToNodeTests(nearestToNode) {
     test('returns the nearest node to another node', async ({ page }) => {
         const result = await page.evaluate(nearestToNode, ['[data-toggle="from"]', '[data-toggle="to"]']);
 
-        expect(result).toEqual(expectedNearest);
-    });
-
-    test.describe('empty inputs', () => {
-        for (const [name, nodes, otherNodes] of [
-            ['nodes', '#invalid', '[data-toggle="to"]'],
-            ['other nodes', '[data-toggle="from"]', '#invalid'],
-        ]) {
-            test(`returns ${emptyDescription} for empty ${name}`, async ({ page }) => {
-                const result = await page.evaluate(nearestToNode, [nodes, otherNodes]);
-
-                expect(result).toEqual(emptyResult);
-            });
-        }
+        expect(result).toEqual(['test2']);
     });
 
     test.describe('comparison inputs', () => {
@@ -65,7 +46,7 @@ export function nearestToNodeTests(nearestToNode, { querySet = false } = {}) {
                 const args = await page.evaluateHandle(createArgs);
                 const result = await page.evaluate(nearestToNode, args);
 
-                expect(result).toEqual(expectedNearest);
+                expect(result).toEqual(['test2']);
             });
         }
     });
