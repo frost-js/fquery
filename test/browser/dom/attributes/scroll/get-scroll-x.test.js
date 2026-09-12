@@ -6,73 +6,28 @@ test.describe('#getScrollX', () => {
 
     getScrollXTests((nodes) => $.getScrollX(nodes));
 
-    test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX(document.getElementById('test1')))).toBe(100);
-    });
+    test.describe('element inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.getScrollX(document.getElementById('test1')))).toBe(100);
+        });
 
-    test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX(document.querySelectorAll('div')))).toBe(100);
-    });
+        test('works with NodeList nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.getScrollX(document.querySelectorAll('div')))).toBe(100);
+        });
 
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX(document.body.children))).toBe(100);
-    });
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.getScrollX(document.body.children))).toBe(100);
+        });
 
-    test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML = '<div style="block; width: 1000px; height: 1000px;"></div>';
-            document.scrollingElement.scrollLeft = 100;
-            return $.getScrollX(document);
-        })).toBe(100);
-    });
-
-    test('works with Document nodes without a scrolling element', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const iframe = document.createElement('iframe');
-            document.body.appendChild(iframe);
-            const doc = iframe.contentDocument;
-            doc.open();
-            doc.write('<html style="overflow: auto;"><body style="overflow: auto; width: 1000px; height: 1000px;"></body></html>');
-            doc.close();
-            doc.defaultView.scrollTo(100, 0);
-            return $.getScrollX(doc);
-        })).toBe(100);
-    });
-
-    test('returns zero for Document nodes without a scrolling element or window', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const doc = document.implementation.createHTMLDocument('');
-            doc.removeChild(doc.documentElement);
-            return $.getScrollX(doc);
-        })).toBe(0);
-    });
-
-    test('works with a form document root whose control shadows scrollLeft', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const doc = document.implementation.createHTMLDocument('');
-            const form = doc.createElement('form');
-            form.innerHTML = '<input name="scrollLeft">';
-            doc.replaceChild(form, doc.documentElement);
-            return $.getScrollX(doc);
-        })).toBe(0);
-    });
-
-    test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML = '<div style="block; width: 1000px; height: 1000px;"></div>';
-            window.scrollTo(100, 0);
-            return $.getScrollX(window);
-        })).toBe(100);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.getScrollX([
-                document.getElementById('test1'),
-                document.getElementById('test2'),
-            ]))).toBe(100);
+        test('works with array nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.getScrollX([
+                    document.getElementById('test1'),
+                    document.getElementById('test2'),
+                ]))).toBe(100);
+        });
     });
 });
