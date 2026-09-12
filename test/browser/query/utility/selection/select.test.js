@@ -1,78 +1,11 @@
+import { selectTests, setup } from '#cases/utility/selection/select.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #select', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="select">' +
-                '<div id="div1" class="select">' +
-                '<span id="span1">Test 1</span>' +
-                '</div>' +
-                '<div id="div2" class="select">' +
-                '<span id="span2">Test 2</span>' +
-                '</div>' +
-                '</div>' +
-                '<input id="input" value="Test 3">' +
-                '<textarea id="textarea">Test 4</textarea>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('creates a selection on the first node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $('.select').select();
-            const selection = document.getSelection();
-            const range = selection.getRangeAt(0);
-            return range.toString();
-        })).toBe('Test 1');
-    });
-
-    test('selects a middle sibling for getSelection', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.getElementById('select').innerHTML =
-                '<span id="span1">Test 1</span>' +
-                '<span id="span2">Test 2</span>' +
-                '<span id="span3">Test 3</span>';
-
-            $('#span2').select();
-            const selected = $.getSelection();
-            return selected.map((node) => node.textContent).join('');
-        })).toBe('Test 2');
-    });
-
-    test('selects a text sibling for getSelection', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const node = document.getElementById('select');
-            node.innerHTML = 'Test 1<span>Test 2</span>Test 3';
-
-            $(node.firstChild).select();
-            const selected = $.getSelection();
-            return selected.map((node) => node.textContent).join('');
-        })).toBe('Test 1');
-    });
-
-    test('selects forms with a control named select', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML = '<form><input name="select"></form>';
-            const form = document.querySelector('form');
-            $('form').select();
-            return $.getSelection()[0] === form;
-        })).toBe(true);
-    });
-
-    test('creates a selection on an input node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $('#input').select();
-            document.execCommand('cut');
-            return document.getElementById('input').value;
-        })).toBe('');
-    });
-
-    test('creates a selection on a textarea node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            $('#textarea').select();
-            document.execCommand('cut');
-            return document.getElementById('textarea').value;
-        })).toBe('');
+    selectTests(([nodes, ...args]) => {
+        $(nodes).select(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -80,5 +13,32 @@ test.describe('QuerySet #select', () => {
             const query = $('.select');
             return query === query.select();
         })).toBe(true);
+    });
+
+    test.describe('form controls', () => {
+        test('selects forms with a control named select', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                document.body.innerHTML = '<form><input name="select"></form>';
+                const form = document.querySelector('form');
+                $('form').select();
+                return $.getSelection()[0] === form;
+            })).toBe(true);
+        });
+
+        test('creates a selection on an input node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                $('#input').select();
+                document.execCommand('cut');
+                return document.getElementById('input').value;
+            })).toBe('');
+        });
+
+        test('creates a selection on a textarea node', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                $('#textarea').select();
+                document.execCommand('cut');
+                return document.getElementById('textarea').value;
+            })).toBe('');
+        });
     });
 });
