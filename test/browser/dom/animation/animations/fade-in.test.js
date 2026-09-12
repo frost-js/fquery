@@ -1,4 +1,4 @@
-import { fadeInTests, setup } from '#cases/animation/animations/fade-in.js';
+import { fadeInStoppingTests, fadeInTests, setup } from '#cases/animation/animations/fade-in.js';
 import { expect, test } from '#test';
 import { advanceClock } from '../../../../setup/browser.js';
 import { expectAnimationState } from '../../../../support/assertions/animation.js';
@@ -8,7 +8,9 @@ test.use({ mockClock: true });
 test.describe('#fadeIn', () => {
     test.beforeEach(setup);
 
-    fadeInTests(() => $.fadeIn, ([nodes, options]) => {
+    fadeInTests(() => $.fadeIn);
+
+    fadeInStoppingTests(([nodes, options]) => {
         const animation = $.fadeIn(nodes, options);
         animation.catch(() => {});
         return () => animation.stop({ finish: false });

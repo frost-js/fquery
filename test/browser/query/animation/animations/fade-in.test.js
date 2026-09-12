@@ -1,4 +1,4 @@
-import { fadeInTests, setup } from '#cases/animation/animations/fade-in.js';
+import { fadeInStoppingTests, fadeInTests, setup } from '#cases/animation/animations/fade-in.js';
 import { expect, test } from '#test';
 import { advanceClock } from '../../../../setup/browser.js';
 import { expectAnimationState } from '../../../../support/assertions/animation.js';
@@ -10,7 +10,9 @@ test.describe('QuerySet #fadeIn', () => {
 
     fadeInTests(() => (nodes, ...args) => {
         $(nodes).fadeIn(...args);
-    }, ([nodes, options]) => {
+    });
+
+    fadeInStoppingTests(([nodes, options]) => {
         const query = $(nodes).fadeIn(options);
         return () => query.stop({ finish: false });
     });

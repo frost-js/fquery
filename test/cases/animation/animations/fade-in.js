@@ -25,9 +25,8 @@ export const setup = async ({ page }) => {
 /**
  * Registers shared fadeIn behavior tests.
  * @param {() => (...args: Parameters<typeof fadeIn>) => void} createFadeIn Creates the browser-side method adapter.
- * @param {((args: [string, AnimationOptions]) => () => void)} startStoppableFadeIn Starts the animation and returns its stop callback.
  */
-export function fadeInTests(createFadeIn, startStoppableFadeIn) {
+export function fadeInTests(createFadeIn) {
     test('adds a fade-in animation to each node', async ({ page }) => {
         const operation = await page.evaluateHandle(createFadeIn);
 
@@ -235,7 +234,13 @@ export function fadeInTests(createFadeIn, startStoppableFadeIn) {
             ]);
         });
     });
+}
 
+/**
+ * Registers shared fadeIn stopping tests.
+ * @param {((args: [string, AnimationOptions]) => () => void)} startStoppableFadeIn Starts the animation and returns its stop callback.
+ */
+export function fadeInStoppingTests(startStoppableFadeIn) {
     test.describe('completion and stopping', () => {
         test('releases opacity without restoring when stopped without finishing', async ({ page }) => {
             const stop = await page.evaluateHandle(startStoppableFadeIn, ['#test2', { duration: 100 }]);
