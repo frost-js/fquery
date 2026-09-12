@@ -1,32 +1,14 @@
+import { addEventOnceTests, setup } from '#cases/events/event-handlers/add-event-once.js';
 import { expect, test } from '#test';
 
 test.describe('#addEventOnce', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>';
-        });
+    test.beforeEach(setup);
+
+    addEventOnceTests((args) => {
+        $.addEventOnce(...args);
     });
 
-    test.describe('registration', () => {
-        test('adds a self-destructing event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
+    test.describe('handler lifecycle', () => {
         test('preserves persistent handlers with the same callback', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 let result = 0;
@@ -44,108 +26,6 @@ test.describe('#addEventOnce', () => {
                 element2.dispatchEvent(event);
                 return result;
             })).toBe(6);
-        });
-
-        test('adds self-destructing events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click');
-                const event2 = new Event('hover');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click hover', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
-        });
-    });
-
-    test.describe('namespaces', () => {
-        test('adds a namespaced self-destructing event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click.test', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
-        test('adds namespaced self-destructing events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click');
-                const event2 = new Event('hover');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click.test hover.test', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
-        });
-
-        test('adds a deep namespaced self-destructing event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click.test.deep', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
-        test('adds deep namespaced self-destructing events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click');
-                const event2 = new Event('hover');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce('a', 'click.test.deep hover.test.deep', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
         });
     });
 

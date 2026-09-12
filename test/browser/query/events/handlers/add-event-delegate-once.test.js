@@ -1,22 +1,11 @@
+import { addEventDelegateOnceTests, setup } from '#cases/events/event-handlers/add-event-delegate-once.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #addEventDelegateOnce', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="parent1">' +
-                '<a href="#" id="test1">Test</a>' +
-                '<span>' +
-                '<a href="#" id="test2">Test</a>' +
-                '</span>' +
-                '</div>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<span>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</span>' +
-                '</div>';
-        });
+    test.beforeEach(setup);
+
+    addEventDelegateOnceTests(([nodes, ...args]) => {
+        $(nodes).addEventDelegateOnce(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -26,32 +15,7 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
         })).toBe(true);
     });
 
-    test.describe('registration', () => {
-        test('adds a self-destructing delegated event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div').addEventDelegateOnce('click', 'a', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
+    test.describe('handler lifecycle', () => {
         test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 let result = 0;
@@ -71,171 +35,6 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
                 element2.dispatchEvent(event);
                 return result;
             })).toBe(6);
-        });
-
-        test('adds self-destructing delegated events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click', {
-                    bubbles: true,
-                });
-                const event2 = new Event('hover', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click hover', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event2);
-                element3.dispatchEvent(event2);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event2);
-                element4.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
-        });
-    });
-
-    test.describe('namespaces', () => {
-        test('adds a namespaced self-destructing delegated event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click.test', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
-        test('adds namespaced self-destructing delegated events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click', {
-                    bubbles: true,
-                });
-                const event2 = new Event('hover', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click.test hover.test', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event2);
-                element3.dispatchEvent(event2);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event2);
-                element4.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
-        });
-
-        test('adds a deep namespaced self-destructing delegated event to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click.test.deep', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
-
-        test('adds deep namespaced self-destructing delegated events to each node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event1 = new Event('click', {
-                    bubbles: true,
-                });
-                const event2 = new Event('hover', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click.test.deep hover.test.deep', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event1);
-                element1.dispatchEvent(event2);
-                element1.dispatchEvent(event2);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event1);
-                element2.dispatchEvent(event2);
-                element2.dispatchEvent(event2);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event1);
-                element3.dispatchEvent(event2);
-                element3.dispatchEvent(event2);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event1);
-                element4.dispatchEvent(event2);
-                element4.dispatchEvent(event2);
-                return result;
-            })).toBe(4);
         });
     });
 
