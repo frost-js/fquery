@@ -1,6 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isElement, isFragment, isNode, isShadow, merge } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isElement, isFragment, isNode, isShadow, merge } from '@fr0st/core';
 import { addEvent } from './../events/event-handlers.js';
 import { parseNodes } from './../filters.js';
 import { createEvent } from './../helpers.js';
@@ -29,7 +29,7 @@ export function clone(selector, { deep = true, events = false, data = false, ani
     });
 
     return nodes.map((node) => {
-        const clone = callDOMMethod(node, 'cloneNode', deep);
+        const clone = callDomMethod(node, 'cloneNode', deep);
 
         if (events || data || animations) {
             deepClone(node, clone, { deep, events, data, animations });
@@ -70,14 +70,14 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
     }
 
     if (deep) {
-        for (const [i, child] of getDOMProperty(node, 'childNodes').entries()) {
-            const childClone = getDOMProperty(clone, 'childNodes').item(i);
+        for (const [i, child] of getDomProperty(node, 'childNodes').entries()) {
+            const childClone = getDomProperty(clone, 'childNodes').item(i);
             deepClone(child, childClone, { deep, events, data, animations });
         }
 
-        const content = getDOMProperty(node, 'content');
+        const content = getDomProperty(node, 'content');
         if (isFragment(content)) {
-            deepClone(content, getDOMProperty(clone, 'content'), { deep, events, data, animations });
+            deepClone(content, getDomProperty(clone, 'content'), { deep, events, data, animations });
         }
     }
 };
@@ -94,7 +94,7 @@ export function detach(selector) {
     });
 
     for (const node of nodes) {
-        callDOMMethod(node, 'remove');
+        callDomMethod(node, 'remove');
     }
 
     return nodes;
@@ -112,7 +112,7 @@ export function empty(selector) {
     });
 
     for (const node of nodes) {
-        const childNodes = merge([], getDOMProperty(node, 'childNodes'));
+        const childNodes = merge([], getDomProperty(node, 'childNodes'));
 
         // Remove descendant elements
         for (const child of childNodes) {
@@ -120,7 +120,7 @@ export function empty(selector) {
                 removeNode(child);
             }
 
-            callDOMMethod(child, 'remove');
+            callDomMethod(child, 'remove');
         }
     }
 };
@@ -143,7 +143,7 @@ export function remove(selector) {
 
         // DocumentFragment and ShadowRoot nodes can not be removed
         if (isNode(node)) {
-            callDOMMethod(node, 'remove');
+            callDomMethod(node, 'remove');
         }
     }
 };
@@ -162,12 +162,12 @@ export function removeNode(node) {
                 cancelable: false,
             });
 
-            callDOMMethod(node, 'dispatchEvent', eventData);
+            callDomMethod(node, 'dispatchEvent', eventData);
         }
 
         for (const [realEventName, realEvents] of Object.entries(nodeEvents)) {
             for (const eventData of realEvents) {
-                callDOMMethod(node, 'removeEventListener', realEventName, eventData.realCallback, { capture: eventData.capture });
+                callDomMethod(node, 'removeEventListener', realEventName, eventData.realCallback, { capture: eventData.capture });
             }
         }
 
@@ -194,20 +194,20 @@ export function removeNode(node) {
     }
 
     // Remove descendant elements
-    const childNodes = merge([], getDOMProperty(node, 'children'));
+    const childNodes = merge([], getDomProperty(node, 'children'));
 
     for (const child of childNodes) {
         removeNode(child);
     }
 
     // Remove ShadowRoot
-    const shadowRoot = getDOMProperty(node, 'shadowRoot');
+    const shadowRoot = getDomProperty(node, 'shadowRoot');
     if (shadowRoot) {
         removeNode(shadowRoot);
     }
 
     // Remove DocumentFragment
-    const content = getDOMProperty(node, 'content');
+    const content = getDomProperty(node, 'content');
     if (isFragment(content)) {
         removeNode(content);
     }
@@ -241,11 +241,11 @@ export function replaceWith(selector, otherSelector) {
     });
 
     const isReplacementTarget = (node) =>
-        getDOMProperty(node, 'parentNode') &&
+        getDomProperty(node, 'parentNode') &&
         !others.includes(node) &&
         !nodes.some((other) =>
             other !== node &&
-            callDOMMethod(other, 'contains', node),
+            callDomMethod(other, 'contains', node),
         );
 
     // Avoid detaching replacements when there is no target to replace.
@@ -266,7 +266,7 @@ export function replaceWith(selector, otherSelector) {
     nodes = nodes.filter(isReplacementTarget);
 
     for (const [i, node] of nodes.entries()) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -284,7 +284,7 @@ export function replaceWith(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(parent, 'insertBefore', clone, node);
+            callDomMethod(parent, 'insertBefore', clone, node);
         }
     }
 

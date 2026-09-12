@@ -1,6 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, merge } from '@fr0st/core';
+import { callDomMethod, getDomProperty, merge } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { getWrapTarget } from './../helpers.js';
@@ -100,7 +100,7 @@ export function getSelection() {
     }
 
     const commonAncestor = range.commonAncestorContainer;
-    const nodes = merge([], getDOMProperty(commonAncestor, 'childNodes'));
+    const nodes = merge([], getDomProperty(commonAncestor, 'childNodes'));
 
     if (!nodes.length) {
         return [commonAncestor];
@@ -118,7 +118,7 @@ export function select(selector) {
         node: true,
     });
 
-    const select = node && getDOMProperty(node, 'select');
+    const select = node && getDomProperty(node, 'select');
 
     if (typeof select === 'function') {
         select.call(node);
@@ -149,7 +149,7 @@ export function selectAll(selector) {
 
     nodes = nodes.filter((node) =>
         !nodes.some((other) =>
-            other !== node && callDOMMethod(other, 'contains', node),
+            other !== node && callDomMethod(other, 'contains', node),
         ),
     );
 
@@ -200,7 +200,7 @@ export function wrapSelection(selector) {
 
     const fragment = range.extractContents();
 
-    callDOMMethod(deepest, 'appendChild', fragment);
+    callDomMethod(deepest, 'appendChild', fragment);
 
     for (const node of nodes.reverse()) {
         range.insertNode(node);

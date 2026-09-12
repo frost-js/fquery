@@ -1,4 +1,4 @@
-import { escapeRegExp, getDOMProperty, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
+import { escapeRegExp, getDomProperty, isArray, isNumeric, isObject, isString, isUndefined, kebabCase, merge } from '@fr0st/core';
 import { getWindow } from './config.js';
 import QuerySet from './query/query-set-core.js';
 
@@ -83,7 +83,7 @@ export function eventNamespacedRegExp(event) {
  */
 export function getWrapTarget(node) {
     let child;
-    while (child = getDOMProperty(node, 'firstElementChild')) {
+    while (child = getDomProperty(node, 'firstElementChild')) {
         node = child;
     }
 

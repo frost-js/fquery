@@ -1,5 +1,5 @@
 
-import { callDOMMethod, merge } from '@fr0st/core';
+import { callDomMethod, merge } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 
 /**
@@ -21,7 +21,7 @@ export function parseDocument(input, { contentType = 'text/html' } = {}) {
  * @returns {Element[]} The parsed elements.
  */
 export function parseHtml(html) {
-    const childNodes = callDOMMethod(getContext(), 'createRange')
+    const childNodes = callDomMethod(getContext(), 'createRange')
         .createContextualFragment(html)
         .children;
 

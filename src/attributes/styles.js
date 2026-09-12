@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { getDOMProperty } from '@fr0st/core';
+import { getDomProperty } from '@fr0st/core';
 import { getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
@@ -26,7 +26,7 @@ export function addClass(selector, ...classes) {
     }
 
     for (const node of nodes) {
-        getDOMProperty(node, 'classList').add(...classes);
+        getDomProperty(node, 'classList').add(...classes);
     }
 };
 
@@ -83,11 +83,11 @@ export function getStyle(selector, style) {
     if (style) {
         style = normalizeCssProperty(style);
 
-        return getDOMProperty(node, 'style').getPropertyValue(style);
+        return getDomProperty(node, 'style').getPropertyValue(style);
     }
 
     const styles = {};
-    const inlineStyles = getDOMProperty(node, 'style');
+    const inlineStyles = getDomProperty(node, 'style');
 
     for (const style of inlineStyles) {
         styles[style] = inlineStyles.getPropertyValue(style);
@@ -110,7 +110,7 @@ export function hide(selector) {
     }
 
     for (const node of nodes) {
-        const style = getDOMProperty(node, 'style');
+        const style = getDomProperty(node, 'style');
         const priority = style.getPropertyPriority('display');
 
         if (!displayLocks.has(node)) {
@@ -138,7 +138,7 @@ export function removeClass(selector, ...classes) {
     }
 
     for (const node of nodes) {
-        getDOMProperty(node, 'classList').remove(...classes);
+        getDomProperty(node, 'classList').remove(...classes);
     }
 };
 
@@ -153,7 +153,7 @@ export function removeStyle(selector, style) {
     style = normalizeCssProperty(style);
 
     for (const node of nodes) {
-        getDOMProperty(node, 'style').removeProperty(style);
+        getDomProperty(node, 'style').removeProperty(style);
     }
 };
 
@@ -174,7 +174,7 @@ export function setStyle(selector, style, value, { important = false } = {}) {
         value = normalizeCssValue(style, value);
 
         for (const node of nodes) {
-            getDOMProperty(node, 'style').setProperty(
+            getDomProperty(node, 'style').setProperty(
                 style,
                 value,
                 important ?
@@ -200,7 +200,7 @@ export function show(selector) {
             release();
         }
 
-        const style = getDOMProperty(node, 'style');
+        const style = getDomProperty(node, 'style');
 
         if (style.display === 'none') {
             style.setProperty('display', '');
@@ -221,7 +221,7 @@ export function toggle(selector, force) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        if (force ?? (getDOMProperty(node, 'style').display === 'none' || css(node, 'display') === 'none')) {
+        if (force ?? (getDomProperty(node, 'style').display === 'none' || css(node, 'display') === 'none')) {
             show(node);
         } else {
             hide(node);
@@ -245,7 +245,7 @@ export function toggleClass(selector, ...classes) {
 
     for (const node of nodes) {
         for (const className of classes) {
-            getDOMProperty(node, 'classList').toggle(className);
+            getDomProperty(node, 'classList').toggle(className);
         }
     }
 };

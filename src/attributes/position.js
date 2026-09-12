@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { callDOMMethod, clampPercent, dist, getDOMProperty } from '@fr0st/core';
+import { callDomMethod, clampPercent, dist, getDomProperty } from '@fr0st/core';
 import { getContext, getWindow } from './../config.js';
 import { parseNode, parseNodes } from './../filters.js';
 import { css } from './styles.js';
@@ -53,10 +53,10 @@ export function constrain(selector, containerSelector) {
 
     const nodes = parseNodes(selector);
 
-    const documentElement = getDOMProperty(getContext(), 'documentElement');
+    const documentElement = getDomProperty(getContext(), 'documentElement');
     const window = getWindow();
-    const getScrollX = (_) => getDOMProperty(documentElement, 'scrollHeight') > window.outerHeight;
-    const getScrollY = (_) => getDOMProperty(documentElement, 'scrollWidth') > window.outerWidth;
+    const getScrollX = (_) => getDomProperty(documentElement, 'scrollHeight') > window.outerHeight;
+    const getScrollY = (_) => getDomProperty(documentElement, 'scrollWidth') > window.outerWidth;
 
     const preScrollX = getScrollX();
     const preScrollY = getScrollY();
@@ -76,7 +76,7 @@ export function constrain(selector, containerSelector) {
                 height -= parseFloat(css(node, 'border-bottom-width'));
             }
 
-            getDOMProperty(node, 'style').setProperty('height', `${Math.max(0, height)}px`);
+            getDomProperty(node, 'style').setProperty('height', `${Math.max(0, height)}px`);
             resized = true;
         }
 
@@ -90,7 +90,7 @@ export function constrain(selector, containerSelector) {
                 width -= parseFloat(css(node, 'border-right-width'));
             }
 
-            getDOMProperty(node, 'style').setProperty('width', `${Math.max(0, width)}px`);
+            getDomProperty(node, 'style').setProperty('width', `${Math.max(0, width)}px`);
             resized = true;
         }
 
@@ -108,7 +108,7 @@ export function constrain(selector, containerSelector) {
         if (leftOffset) {
             const oldLeft = css(node, 'left');
             const trueLeft = oldLeft && oldLeft !== 'auto' ? parseFloat(oldLeft) : 0;
-            getDOMProperty(node, 'style').setProperty('left', `${trueLeft - leftOffset}px`);
+            getDomProperty(node, 'style').setProperty('left', `${trueLeft - leftOffset}px`);
         }
 
         let topOffset;
@@ -121,11 +121,11 @@ export function constrain(selector, containerSelector) {
         if (topOffset) {
             const oldTop = css(node, 'top');
             const trueTop = oldTop && oldTop !== 'auto' ? parseFloat(oldTop) : 0;
-            getDOMProperty(node, 'style').setProperty('top', `${trueTop - topOffset}px`);
+            getDomProperty(node, 'style').setProperty('top', `${trueTop - topOffset}px`);
         }
 
         if (css(node, 'position') === 'static') {
-            getDOMProperty(node, 'style').setProperty('position', 'relative');
+            getDomProperty(node, 'style').setProperty('position', 'relative');
         }
     }
 
@@ -272,18 +272,18 @@ export function position(selector, { offset = false } = {}) {
     }
 
     const result = {
-        x: getDOMProperty(node, 'offsetLeft'),
-        y: getDOMProperty(node, 'offsetTop'),
+        x: getDomProperty(node, 'offsetLeft'),
+        y: getDomProperty(node, 'offsetTop'),
     };
 
     if (offset) {
         let offsetParent = node;
 
-        while (offsetParent = getDOMProperty(offsetParent, 'offsetParent')) {
-            result.x += getDOMProperty(offsetParent, 'offsetLeft') +
-                getDOMProperty(offsetParent, 'clientLeft');
-            result.y += getDOMProperty(offsetParent, 'offsetTop') +
-                getDOMProperty(offsetParent, 'clientTop');
+        while (offsetParent = getDomProperty(offsetParent, 'offsetParent')) {
+            result.x += getDomProperty(offsetParent, 'offsetLeft') +
+                getDomProperty(offsetParent, 'clientLeft');
+            result.y += getDomProperty(offsetParent, 'offsetTop') +
+                getDomProperty(offsetParent, 'clientTop');
         }
     }
 
@@ -303,7 +303,7 @@ export function rect(selector, { offset = false } = {}) {
         return;
     }
 
-    const result = callDOMMethod(node, 'getBoundingClientRect');
+    const result = callDomMethod(node, 'getBoundingClientRect');
 
     if (offset) {
         const window = getWindow();

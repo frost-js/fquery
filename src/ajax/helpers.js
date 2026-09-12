@@ -1,4 +1,4 @@
-import { getDOMProperty, isArray, isObject, isPlainObject, isUndefined } from '@fr0st/core';
+import { getDomProperty, isArray, isObject, isPlainObject, isUndefined } from '@fr0st/core';
 import { getWindow } from './../config.js';
 
 /** @typedef {{name: string, value: *}} FormEntry */
@@ -40,7 +40,7 @@ export function createSearchParams(data) {
  * @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
  * @returns {URL} The URL.
  */
-export function createUrl(url, baseUri = getDOMProperty(getWindow().document, 'baseURI')) {
+export function createUrl(url, baseUri = getDomProperty(getWindow().document, 'baseURI')) {
     const { URL } = getWindow();
 
     return new URL(url, baseUri);

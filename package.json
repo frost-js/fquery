@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/query",
-    "version": "4.1.2",
+    "version": "5.0.0",
     "private": false,
     "description": "Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.",
     "keywords": [
@@ -55,7 +55,7 @@
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@fr0st/core": "^3.1.4"
+        "@fr0st/core": "^4.0.0"
     },
     "devDependencies": {
         "@fr0st/eslint-config": "^5.0.3",

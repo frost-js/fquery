@@ -1,7 +1,7 @@
 /** @import { AnimationOptions } from './animation.js'; */
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { evaluate, getDOMProperty } from '@fr0st/core';
+import { evaluate, getDomProperty } from '@fr0st/core';
 import { assertStyleUnlocked, setStyleLock } from './../attributes/style-locks.js';
 import { css } from './../attributes/styles.js';
 import { parseNodes } from './../filters.js';
@@ -66,7 +66,7 @@ export function fadeIn(selector, options) {
         ['opacity'],
         (node, progress) =>
             setAnimationStyle(
-                getDOMProperty(node, 'style'),
+                getDomProperty(node, 'style'),
                 'opacity',
                 progress.toFixed(2),
             ),
@@ -86,7 +86,7 @@ export function fadeOut(selector, options) {
         ['opacity'],
         (node, progress) =>
             setAnimationStyle(
-                getDOMProperty(node, 'style'),
+                getDomProperty(node, 'style'),
                 'opacity',
                 (1 - progress).toFixed(2),
             ),
@@ -106,7 +106,7 @@ export function rotateIn(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((90 - (progress * 90)) * (options.inverse ? -1 : 1)).toFixed(2);
-            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            setAnimationStyle(getDomProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -129,7 +129,7 @@ export function rotateOut(selector, options) {
         ['transform'],
         (node, progress, options) => {
             const amount = ((progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+            setAnimationStyle(getDomProperty(node, 'style'), 'transform', `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
         },
         {
             x: 0,
@@ -197,7 +197,7 @@ function animateEffect(selector, properties, callback, options) {
         // Animation invokes both callbacks with the animation instance as this.
         return new Animation(node, function(node, progress, options) {
             if (!releases.has(this)) {
-                const style = getDOMProperty(node, 'style');
+                const style = getDomProperty(node, 'style');
 
                 for (const property of properties) {
                     assertStyleUnlocked(node, property);
@@ -273,18 +273,18 @@ function animateSlide(selector, options, out) {
 
             let size; let axis; let inverse;
             if (['top', 'bottom'].includes(dir)) {
-                size = getDOMProperty(node, 'clientHeight');
+                size = getDomProperty(node, 'clientHeight');
                 axis = 'Y';
                 inverse = dir === 'top';
             } else {
-                size = getDOMProperty(node, 'clientWidth');
+                size = getDomProperty(node, 'clientWidth');
                 axis = 'X';
                 inverse = dir === 'left';
             }
 
             const amount = out ? size * progress : size - (size * progress);
             const translateAmount = (amount * (inverse ? -1 : 1)).toFixed(2);
-            setAnimationStyle(getDOMProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
+            setAnimationStyle(getDomProperty(node, 'style'), 'transform', `translate${axis}(${translateAmount}px)`);
         },
         options,
     );
@@ -307,7 +307,7 @@ function animateSqueeze(selector, options, out) {
         selector,
         ['height', 'overflow-x', 'overflow-y', 'transform', 'width'],
         (node, progress, options, initialStyles) => {
-            const style = getDOMProperty(node, 'style');
+            const style = getDomProperty(node, 'style');
             setAnimationStyle(style, 'height', initialStyles.height);
             setAnimationStyle(style, 'width', initialStyles.width);
             setAnimationStyle(style, 'overflow-x', 'hidden');

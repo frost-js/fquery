@@ -3,7 +3,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isDocument, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
 import { parseParams } from './../ajax/helpers.js';
 import { getContext, getWindow } from './../config.js';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
@@ -15,7 +15,7 @@ import { parseFilter, parseNode, parseNodes } from './../filters.js';
  * @returns {boolean} Whether the command was executed.
  */
 export function exec(command, value = null) {
-    return callDOMMethod(getContext(), 'execCommand', command, false, value);
+    return callDomMethod(getContext(), 'execCommand', command, false, value);
 };
 
 /**
@@ -28,13 +28,13 @@ export function index(selector) {
         node: true,
     });
 
-    const parent = node && getDOMProperty(node, 'parentNode');
+    const parent = node && getDomProperty(node, 'parentNode');
 
     if (!parent) {
         return;
     }
 
-    return merge([], getDOMProperty(parent, 'children')).indexOf(node);
+    return merge([], getDomProperty(parent, 'children')).indexOf(node);
 };
 
 /**
@@ -66,7 +66,7 @@ export function normalize(selector) {
     });
 
     for (const node of nodes) {
-        callDOMMethod(node, 'normalize');
+        callDomMethod(node, 'normalize');
     }
 };
 
@@ -95,11 +95,11 @@ export function serializeArray(selector) {
         shadow: true,
     }).flatMap((node) => {
         if (isFragment(node) || isShadow(node)) {
-            return merge([], callDOMMethod(node, 'querySelectorAll', 'input, select, textarea'));
+            return merge([], callDomMethod(node, 'querySelectorAll', 'input, select, textarea'));
         }
 
-        if (callDOMMethod(node, 'matches', 'form')) {
-            return merge([], getDOMProperty(node, 'elements'));
+        if (callDomMethod(node, 'matches', 'form')) {
+            return merge([], getDomProperty(node, 'elements'));
         }
 
         return [node];
@@ -108,7 +108,7 @@ export function serializeArray(selector) {
     const values = [];
 
     for (const node of nodes) {
-        if (callDOMMethod(
+        if (callDomMethod(
             node,
             'matches',
             ':not(input, select, textarea), :disabled, datalist *, ' +
@@ -118,12 +118,12 @@ export function serializeArray(selector) {
             continue;
         }
 
-        const name = callDOMMethod(node, 'getAttribute', 'name');
+        const name = callDomMethod(node, 'getAttribute', 'name');
         if (!name) {
             continue;
         }
 
-        if (callDOMMethod(node, 'matches', 'select')) {
+        if (callDomMethod(node, 'matches', 'select')) {
             for (const option of node.selectedOptions) {
                 if (option.matches(':disabled')) {
                     continue;
@@ -199,8 +199,8 @@ export function sort(selector) {
             other = other.host;
         }
 
-        const nodeConnected = getDOMProperty(node, 'isConnected');
-        const otherConnected = getDOMProperty(other, 'isConnected');
+        const nodeConnected = getDomProperty(node, 'isConnected');
+        const otherConnected = getDomProperty(other, 'isConnected');
 
         if (!nodeConnected || !otherConnected) {
             if (nodeConnected !== otherConnected) {
@@ -217,7 +217,7 @@ export function sort(selector) {
                     -1;
             }
 
-            if (callDOMMethod(node, 'getRootNode') !== callDOMMethod(other, 'getRootNode')) {
+            if (callDomMethod(node, 'getRootNode') !== callDomMethod(other, 'getRootNode')) {
                 return 0;
             }
         }
@@ -226,7 +226,7 @@ export function sort(selector) {
             return 0;
         }
 
-        const pos = callDOMMethod(node, 'compareDocumentPosition', other);
+        const pos = callDomMethod(node, 'compareDocumentPosition', other);
 
         if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) {
             return -1;
@@ -252,5 +252,5 @@ export function tagName(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'tagName').toLowerCase();
+    return getDomProperty(node, 'tagName').toLowerCase();
 };

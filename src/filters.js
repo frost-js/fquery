@@ -3,7 +3,7 @@
 /** @import { QueryContextInput } from './traversal/find.js'; */
 /** @import { QueryInput } from './helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
 import { resolveNode, resolveNodes } from './helpers.js';
 import { parseHtml } from './parser/parser.js';
@@ -40,7 +40,7 @@ export function parseFilter(filter, defaultValue = true) {
     }
 
     if (isString(filter)) {
-        return (node) => isElement(node) && callDOMMethod(node, 'matches', filter);
+        return (node) => isElement(node) && callDomMethod(node, 'matches', filter);
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
@@ -68,11 +68,11 @@ export function parseFilter(filter, defaultValue = true) {
  */
 export function parseFilterContains(filter, defaultValue = true) {
     if (!filter) {
-        return (node) => defaultValue && !!getDOMProperty(node, 'firstElementChild');
+        return (node) => defaultValue && !!getDomProperty(node, 'firstElementChild');
     }
 
     if (isFunction(filter)) {
-        return (node) => merge([], callDOMMethod(node, 'querySelectorAll', '*')).some(filter);
+        return (node) => merge([], callDomMethod(node, 'querySelectorAll', '*')).some(filter);
     }
 
     if (isString(filter)) {
@@ -80,7 +80,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {
-        return (node) => node !== filter && callDOMMethod(node, 'contains', filter);
+        return (node) => node !== filter && callDomMethod(node, 'contains', filter);
     }
 
     filter = parseNodes(filter, {
@@ -90,7 +90,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     });
 
     if (filter.length) {
-        return (node) => filter.some((other) => node !== other && callDOMMethod(node, 'contains', other));
+        return (node) => filter.some((other) => node !== other && callDomMethod(node, 'contains', other));
     }
 
     return (_) => !defaultValue;

@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { callDOMMethod, camelCase, getDOMProperty, isFragment, merge } from '@fr0st/core';
+import { callDomMethod, camelCase, getDomProperty, isFragment, merge } from '@fr0st/core';
 import { parseNode, parseNodes } from './../filters.js';
 import { parseData, parseDataset } from './../helpers.js';
 import { removeNode } from './../manipulation/manipulation.js';
@@ -23,11 +23,11 @@ export function getAttribute(selector, attribute) {
     }
 
     if (attribute) {
-        return callDOMMethod(node, 'getAttribute', attribute);
+        return callDomMethod(node, 'getAttribute', attribute);
     }
 
     return Object.fromEntries(
-        merge([], getDOMProperty(node, 'attributes'))
+        merge([], getDomProperty(node, 'attributes'))
             .map((attribute) => [attribute.nodeName, attribute.nodeValue]),
     );
 };
@@ -48,7 +48,7 @@ export function getDataset(selector, key) {
     if (key) {
         key = camelCase(key);
 
-        const dataset = getDOMProperty(node, 'dataset');
+        const dataset = getDomProperty(node, 'dataset');
 
         return Object.hasOwn(dataset, key) ?
             parseDataset(dataset[key]) :
@@ -56,7 +56,7 @@ export function getDataset(selector, key) {
     }
 
     return Object.fromEntries(
-        Object.entries(getDOMProperty(node, 'dataset'))
+        Object.entries(getDomProperty(node, 'dataset'))
             .map(([key, value]) => [key, parseDataset(value)]),
     );
 };
@@ -73,7 +73,7 @@ export function getHtml(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'innerHTML');
+    return getDomProperty(node, 'innerHTML');
 };
 
 /**
@@ -104,7 +104,7 @@ export function getText(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'textContent');
+    return getDomProperty(node, 'textContent');
 };
 
 /**
@@ -125,7 +125,7 @@ export function removeAttribute(selector, attribute) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        callDOMMethod(node, 'removeAttribute', attribute);
+        callDomMethod(node, 'removeAttribute', attribute);
     }
 };
 
@@ -140,7 +140,7 @@ export function removeDataset(selector, key) {
     for (const node of nodes) {
         key = camelCase(key);
 
-        delete getDOMProperty(node, 'dataset')[key];
+        delete getDomProperty(node, 'dataset')[key];
     }
 };
 
@@ -170,7 +170,7 @@ export function setAttribute(selector, attribute, value) {
 
     for (const [key, value] of Object.entries(attributes)) {
         for (const node of nodes) {
-            callDOMMethod(node, 'setAttribute', key, value);
+            callDomMethod(node, 'setAttribute', key, value);
         }
     }
 };
@@ -189,7 +189,7 @@ export function setDataset(selector, key, value) {
     for (let [key, value] of Object.entries(dataset)) {
         key = camelCase(key);
         for (const node of nodes) {
-            getDOMProperty(node, 'dataset')[key] = value;
+            getDomProperty(node, 'dataset')[key] = value;
         }
     }
 };
@@ -203,11 +203,11 @@ export function setHtml(selector, html) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        const content = getDOMProperty(node, 'content');
+        const content = getDomProperty(node, 'content');
         const target = isFragment(content) ?
             content :
             node;
-        const childNodes = merge([], getDOMProperty(target, 'children'));
+        const childNodes = merge([], getDomProperty(target, 'children'));
 
         for (const child of childNodes) {
             removeNode(child);
@@ -244,7 +244,7 @@ export function setText(selector, text) {
     const nodes = parseNodes(selector);
 
     for (const node of nodes) {
-        const childNodes = merge([], getDOMProperty(node, 'children'));
+        const childNodes = merge([], getDomProperty(node, 'children'));
 
         for (const child of childNodes) {
             removeNode(child);

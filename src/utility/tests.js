@@ -3,7 +3,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { callDOMMethod, camelCase, getDOMProperty, isDocument, isElement, isFragment, isWindow } from '@fr0st/core';
+import { callDomMethod, camelCase, getDomProperty, isDocument, isElement, isFragment, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
 import { parseClasses } from './../helpers.js';
@@ -29,7 +29,7 @@ export function hasAnimation(selector) {
  */
 export function hasAttribute(selector, attribute) {
     return parseNodes(selector)
-        .some((node) => callDOMMethod(node, 'hasAttribute', attribute));
+        .some((node) => callDomMethod(node, 'hasAttribute', attribute));
 };
 
 /**
@@ -42,7 +42,7 @@ export function hasChildren(selector) {
         fragment: true,
         shadow: true,
         document: true,
-    }).some((node) => getDOMProperty(node, 'childElementCount'));
+    }).some((node) => getDomProperty(node, 'childElementCount'));
 };
 
 /**
@@ -56,7 +56,7 @@ export function hasClass(selector, ...classes) {
 
     return parseNodes(selector)
         .some((node) =>
-            classes.some((className) => getDOMProperty(node, 'classList').contains(className)),
+            classes.some((className) => getDomProperty(node, 'classList').contains(className)),
         );
 };
 
@@ -125,7 +125,7 @@ export function hasDataset(selector, key) {
     key = camelCase(key);
 
     return parseNodes(selector)
-        .some((node) => Object.hasOwn(getDOMProperty(node, 'dataset'), key));
+        .some((node) => Object.hasOwn(getDomProperty(node, 'dataset'), key));
 };
 
 /**
@@ -151,7 +151,7 @@ export function hasDescendent(selector, nodeFilter) {
  */
 export function hasFragment(selector) {
     return parseNodes(selector)
-        .some((node) => isFragment(getDOMProperty(node, 'content')));
+        .some((node) => isFragment(getDomProperty(node, 'content')));
 };
 
 /**
@@ -172,7 +172,7 @@ export function hasProperty(selector, property) {
  */
 export function hasShadow(selector) {
     return parseNodes(selector)
-        .some((node) => getDOMProperty(node, 'shadowRoot'));
+        .some((node) => getDomProperty(node, 'shadowRoot'));
 };
 
 /**
@@ -201,7 +201,7 @@ export function isConnected(selector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).some((node) => getDOMProperty(node, 'isConnected'));
+    }).some((node) => getDomProperty(node, 'isConnected'));
 };
 
 /**
@@ -230,7 +230,7 @@ export function isEqual(selector, otherSelector, { shallow = false } = {}) {
     }
 
     return nodes.some((node) =>
-        others.some((other) => callDOMMethod(node, 'isEqualNode', other)),
+        others.some((other) => callDomMethod(node, 'isEqualNode', other)),
     );
 };
 
@@ -263,14 +263,14 @@ export function isHidden(selector) {
         window: true,
     }).some((node) => {
         if (isWindow(node)) {
-            return getDOMProperty(node.document, 'visibilityState') !== 'visible';
+            return getDomProperty(node.document, 'visibilityState') !== 'visible';
         }
 
         if (isDocument(node)) {
-            return getDOMProperty(node, 'visibilityState') !== 'visible';
+            return getDomProperty(node, 'visibilityState') !== 'visible';
         }
 
-        return !isElement(node) || callDOMMethod(node, 'getClientRects').length === 0;
+        return !isElement(node) || callDomMethod(node, 'getClientRects').length === 0;
     });
 };
 
@@ -306,13 +306,13 @@ export function isVisible(selector) {
         window: true,
     }).some((node) => {
         if (isWindow(node)) {
-            return getDOMProperty(node.document, 'visibilityState') === 'visible';
+            return getDomProperty(node.document, 'visibilityState') === 'visible';
         }
 
         if (isDocument(node)) {
-            return getDOMProperty(node, 'visibilityState') === 'visible';
+            return getDomProperty(node, 'visibilityState') === 'visible';
         }
 
-        return isElement(node) && callDOMMethod(node, 'getClientRects').length > 0;
+        return isElement(node) && callDomMethod(node, 'getClientRects').length > 0;
     });
 };

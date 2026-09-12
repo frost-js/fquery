@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isFragment, merge, unique } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isDocument, isFragment, merge, unique } from '@fr0st/core';
 import { parseFilter, parseNode, parseNodes } from './../filters.js';
 
 /**
@@ -34,8 +34,8 @@ export function children(selector, nodeFilter, { first = false, elementsOnly = t
 
     for (const node of nodes) {
         const childNodes = elementsOnly ?
-            merge([], getDOMProperty(node, 'children')) :
-            merge([], getDOMProperty(node, 'childNodes'));
+            merge([], getDomProperty(node, 'children')) :
+            merge([], getDomProperty(node, 'childNodes'));
 
         for (const child of childNodes) {
             if (!nodeFilter(child)) {
@@ -85,20 +85,20 @@ export function commonAncestor(selector) {
     }
 
     // Make sure all nodes have a parent
-    if (nodes.some((node) => !getDOMProperty(node, 'parentNode'))) {
+    if (nodes.some((node) => !getDomProperty(node, 'parentNode'))) {
         return;
     }
 
-    let ancestor = getDOMProperty(nodes[0], 'parentNode');
+    let ancestor = getDomProperty(nodes[0], 'parentNode');
 
     while (ancestor) {
         if (nodes.every((node) =>
-            node !== ancestor && callDOMMethod(ancestor, 'contains', node),
+            node !== ancestor && callDomMethod(ancestor, 'contains', node),
         )) {
             return ancestor;
         }
 
-        ancestor = getDOMProperty(ancestor, 'parentNode');
+        ancestor = getDomProperty(ancestor, 'parentNode');
     }
 };
 
@@ -123,7 +123,7 @@ export function fragment(selector) {
         return;
     }
 
-    const content = getDOMProperty(node, 'content');
+    const content = getDomProperty(node, 'content');
 
     if (isFragment(content)) {
         return content;
@@ -147,7 +147,7 @@ export function next(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        node = getDOMProperty(node, 'nextElementSibling');
+        node = getDomProperty(node, 'nextElementSibling');
 
         if (node && nodeFilter(node)) {
             results.push(node);
@@ -179,7 +179,7 @@ export function nextAll(selector, nodeFilter, limitFilter, { first = false } = {
     const results = [];
 
     for (let node of nodes) {
-        while (node = getDOMProperty(node, 'nextElementSibling')) {
+        while (node = getDomProperty(node, 'nextElementSibling')) {
             if (limitFilter(node)) {
                 break;
             }
@@ -213,7 +213,7 @@ export function offsetParent(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'offsetParent');
+    return getDomProperty(node, 'offsetParent');
 };
 
 /**
@@ -233,7 +233,7 @@ export function parent(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        node = getDOMProperty(node, 'parentNode');
+        node = getDomProperty(node, 'parentNode');
 
         if (!node) {
             continue;
@@ -272,7 +272,7 @@ export function parents(selector, nodeFilter, limitFilter, { first = false } = {
 
     for (let node of nodes) {
         const parents = [];
-        while (node = getDOMProperty(node, 'parentNode')) {
+        while (node = getDomProperty(node, 'parentNode')) {
             if (isDocument(node)) {
                 break;
             }
@@ -317,7 +317,7 @@ export function prev(selector, nodeFilter) {
     const results = [];
 
     for (let node of nodes) {
-        node = getDOMProperty(node, 'previousElementSibling');
+        node = getDomProperty(node, 'previousElementSibling');
 
         if (node && nodeFilter(node)) {
             results.push(node);
@@ -350,7 +350,7 @@ export function prevAll(selector, nodeFilter, limitFilter, { first = false } = {
 
     for (let node of nodes) {
         const siblings = [];
-        while (node = getDOMProperty(node, 'previousElementSibling')) {
+        while (node = getDomProperty(node, 'previousElementSibling')) {
             if (limitFilter(node)) {
                 break;
             }
@@ -386,7 +386,7 @@ export function shadow(selector) {
         return;
     }
 
-    return getDOMProperty(node, 'shadowRoot');
+    return getDomProperty(node, 'shadowRoot');
 };
 
 /**
@@ -407,15 +407,15 @@ export function siblings(selector, nodeFilter, { elementsOnly = true } = {}) {
     const results = [];
 
     for (const node of nodes) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
         }
 
         const siblings = elementsOnly ?
-            getDOMProperty(parent, 'children') :
-            getDOMProperty(parent, 'childNodes');
+            getDomProperty(parent, 'children') :
+            getDomProperty(parent, 'childNodes');
 
         let sibling;
         for (sibling of siblings) {

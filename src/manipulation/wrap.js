@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../filters.js'; */
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isFragment, merge } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isFragment, merge } from '@fr0st/core';
 import { parseFilter, parseNodes } from './../filters.js';
 import { getWrapTarget } from './../helpers.js';
 import { clone, remove } from './manipulation.js';
@@ -22,9 +22,9 @@ export function unwrap(selector, nodeFilter) {
     const parents = [];
 
     for (const node of nodes) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
-        if (!parent || !getDOMProperty(parent, 'parentNode')) {
+        if (!parent || !getDomProperty(parent, 'parentNode')) {
             continue;
         }
 
@@ -40,16 +40,16 @@ export function unwrap(selector, nodeFilter) {
     }
 
     for (const parent of parents) {
-        const outerParent = getDOMProperty(parent, 'parentNode');
+        const outerParent = getDomProperty(parent, 'parentNode');
 
         if (!outerParent) {
             continue;
         }
 
-        const children = merge([], getDOMProperty(parent, 'childNodes'));
+        const children = merge([], getDomProperty(parent, 'childNodes'));
 
         for (const child of children) {
-            callDOMMethod(outerParent, 'insertBefore', child, parent);
+            callDomMethod(outerParent, 'insertBefore', child, parent);
         }
     }
 
@@ -74,7 +74,7 @@ export function wrap(selector, otherSelector) {
     });
 
     for (const node of nodes) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -89,7 +89,7 @@ export function wrap(selector, otherSelector) {
         const firstClone = clones[0];
 
         const firstCloneNode = isFragment(firstClone) ?
-            getDOMProperty(firstClone, 'firstElementChild') :
+            getDomProperty(firstClone, 'firstElementChild') :
             firstClone;
 
         if (!firstCloneNode) {
@@ -99,10 +99,10 @@ export function wrap(selector, otherSelector) {
         const deepest = getWrapTarget(firstCloneNode);
 
         for (const clone of clones) {
-            callDOMMethod(parent, 'insertBefore', clone, node);
+            callDomMethod(parent, 'insertBefore', clone, node);
         }
 
-        callDOMMethod(deepest, 'insertBefore', node, null);
+        callDomMethod(deepest, 'insertBefore', node, null);
     }
 };
 
@@ -135,7 +135,7 @@ export function wrapAll(selector, otherSelector) {
         return;
     }
 
-    const parent = getDOMProperty(firstNode, 'parentNode');
+    const parent = getDomProperty(firstNode, 'parentNode');
 
     if (!parent) {
         return;
@@ -144,7 +144,7 @@ export function wrapAll(selector, otherSelector) {
     const firstClone = clones[0];
 
     const firstCloneNode = isFragment(firstClone) ?
-        getDOMProperty(firstClone, 'firstElementChild') :
+        getDomProperty(firstClone, 'firstElementChild') :
         firstClone;
 
     if (!firstCloneNode) {
@@ -154,11 +154,11 @@ export function wrapAll(selector, otherSelector) {
     const deepest = getWrapTarget(firstCloneNode);
 
     for (const clone of clones) {
-        callDOMMethod(parent, 'insertBefore', clone, firstNode);
+        callDomMethod(parent, 'insertBefore', clone, firstNode);
     }
 
     for (const node of nodes) {
-        callDOMMethod(deepest, 'insertBefore', node, null);
+        callDomMethod(deepest, 'insertBefore', node, null);
     }
 };
 
@@ -181,7 +181,7 @@ export function wrapInner(selector, otherSelector) {
     });
 
     for (const node of nodes) {
-        const children = merge([], getDOMProperty(node, 'childNodes'));
+        const children = merge([], getDomProperty(node, 'childNodes'));
 
         const clones = clone(others, {
             events: true,
@@ -192,7 +192,7 @@ export function wrapInner(selector, otherSelector) {
         const firstClone = clones[0];
 
         const firstCloneNode = isFragment(firstClone) ?
-            getDOMProperty(firstClone, 'firstElementChild') :
+            getDomProperty(firstClone, 'firstElementChild') :
             firstClone;
 
         if (!firstCloneNode) {
@@ -202,11 +202,11 @@ export function wrapInner(selector, otherSelector) {
         const deepest = getWrapTarget(firstCloneNode);
 
         for (const clone of clones) {
-            callDOMMethod(node, 'insertBefore', clone, null);
+            callDomMethod(node, 'insertBefore', clone, null);
         }
 
         for (const child of children) {
-            callDOMMethod(deepest, 'insertBefore', child, null);
+            callDomMethod(deepest, 'insertBefore', child, null);
         }
     }
 };

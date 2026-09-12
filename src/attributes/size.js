@@ -1,6 +1,6 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { getDOMProperty, isDocument, isWindow } from '@fr0st/core';
+import { getDomProperty, isDocument, isWindow } from '@fr0st/core';
 import { parseNode } from './../filters.js';
 import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from './../vars.js';
 import { css } from './styles.js';
@@ -34,14 +34,14 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     }
 
     if (isDocument(node)) {
-        node = getDOMProperty(node, 'documentElement');
+        node = getDomProperty(node, 'documentElement');
     }
 
     if (boxSize >= SCROLL_BOX) {
-        return getDOMProperty(node, 'scrollHeight');
+        return getDomProperty(node, 'scrollHeight');
     }
 
-    let result = getDOMProperty(node, 'clientHeight');
+    let result = getDomProperty(node, 'clientHeight');
 
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-top'));
@@ -50,7 +50,7 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     }
 
     if (boxSize >= BORDER_BOX) {
-        result = getDOMProperty(node, 'offsetHeight') ??
+        result = getDomProperty(node, 'offsetHeight') ??
             result + parseInt(css(node, 'border-top-width')) + parseInt(css(node, 'border-bottom-width'));
     }
 
@@ -85,14 +85,14 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     }
 
     if (isDocument(node)) {
-        node = getDOMProperty(node, 'documentElement');
+        node = getDomProperty(node, 'documentElement');
     }
 
     if (boxSize >= SCROLL_BOX) {
-        return getDOMProperty(node, 'scrollWidth');
+        return getDomProperty(node, 'scrollWidth');
     }
 
-    let result = getDOMProperty(node, 'clientWidth');
+    let result = getDomProperty(node, 'clientWidth');
 
     if (boxSize <= CONTENT_BOX) {
         result -= parseInt(css(node, 'padding-left'));
@@ -101,7 +101,7 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     }
 
     if (boxSize >= BORDER_BOX) {
-        result = getDOMProperty(node, 'offsetWidth') ??
+        result = getDomProperty(node, 'offsetWidth') ??
             result + parseInt(css(node, 'border-left-width')) + parseInt(css(node, 'border-right-width'));
     }
 

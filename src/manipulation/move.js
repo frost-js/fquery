@@ -1,6 +1,6 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty } from '@fr0st/core';
+import { callDomMethod, getDomProperty } from '@fr0st/core';
 import { parseNodes } from './../filters.js';
 import { clone } from './manipulation.js';
 
@@ -13,7 +13,7 @@ export function after(selector, otherSelector) {
     // DocumentFragment and ShadowRoot nodes can not have siblings
     const nodes = parseNodes(selector, {
         node: true,
-    }).filter((node) => getDOMProperty(node, 'parentNode'));
+    }).filter((node) => getDomProperty(node, 'parentNode'));
 
     // ShadowRoot nodes can not be moved
     const others = parseNodes(otherSelector, {
@@ -23,7 +23,7 @@ export function after(selector, otherSelector) {
     }).reverse();
 
     for (const [i, node] of nodes.entries()) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -41,7 +41,7 @@ export function after(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(parent, 'insertBefore', clone, getDOMProperty(node, 'nextSibling'));
+            callDomMethod(parent, 'insertBefore', clone, getDomProperty(node, 'nextSibling'));
         }
     }
 };
@@ -78,7 +78,7 @@ export function append(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(node, 'insertBefore', clone, null);
+            callDomMethod(node, 'insertBefore', clone, null);
         }
     }
 };
@@ -101,7 +101,7 @@ export function before(selector, otherSelector) {
     // DocumentFragment and ShadowRoot nodes can not have siblings
     const nodes = parseNodes(selector, {
         node: true,
-    }).filter((node) => getDOMProperty(node, 'parentNode'));
+    }).filter((node) => getDomProperty(node, 'parentNode'));
 
     // ShadowRoot nodes can not be moved
     const others = parseNodes(otherSelector, {
@@ -111,7 +111,7 @@ export function before(selector, otherSelector) {
     });
 
     for (const [i, node] of nodes.entries()) {
-        const parent = getDOMProperty(node, 'parentNode');
+        const parent = getDomProperty(node, 'parentNode');
 
         if (!parent) {
             continue;
@@ -129,7 +129,7 @@ export function before(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(parent, 'insertBefore', clone, node);
+            callDomMethod(parent, 'insertBefore', clone, node);
         }
     }
 };
@@ -184,7 +184,7 @@ export function prepend(selector, otherSelector) {
         }
 
         for (const clone of clones) {
-            callDOMMethod(node, 'insertBefore', clone, getDOMProperty(node, 'firstChild'));
+            callDomMethod(node, 'insertBefore', clone, getDomProperty(node, 'firstChild'));
         }
     }
 };

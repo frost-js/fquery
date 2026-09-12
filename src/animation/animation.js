@@ -1,4 +1,4 @@
-import { clamp, getDOMProperty } from '@fr0st/core';
+import { clamp, getDomProperty } from '@fr0st/core';
 import { getAnimationDefaults } from './../config.js';
 import { animations } from './../vars.js';
 import { getTime } from './helpers.js';
@@ -87,7 +87,7 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            getDOMProperty(this.#node, 'dataset').animationStart = this.#options.start;
+            getDomProperty(this.#node, 'dataset').animationStart = this.#options.start;
         }
 
         this.#promise = new Promise((resolve, reject) => {
@@ -211,7 +211,7 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            const dataset = getDOMProperty(this.#node, 'dataset');
+            const dataset = getDomProperty(this.#node, 'dataset');
             dataset.animationTime = time;
             dataset.animationProgress = progress;
         }
@@ -220,7 +220,7 @@ export default class Animation {
             this.#callback(this.#node, progress, this.#options);
         } catch (error) {
             if (this.#options.debug) {
-                const dataset = getDOMProperty(this.#node, 'dataset');
+                const dataset = getDomProperty(this.#node, 'dataset');
                 delete dataset.animationStart;
                 delete dataset.animationTime;
                 delete dataset.animationProgress;
@@ -238,7 +238,7 @@ export default class Animation {
         }
 
         if (this.#options.debug) {
-            const dataset = getDOMProperty(this.#node, 'dataset');
+            const dataset = getDomProperty(this.#node, 'dataset');
             delete dataset.animationStart;
             delete dataset.animationTime;
             delete dataset.animationProgress;

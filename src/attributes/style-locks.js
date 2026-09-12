@@ -1,6 +1,6 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, unique } from '@fr0st/core';
+import { callDomMethod, getDomProperty, unique } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { parseNodes } from './../filters.js';
 import { escapeCss, normalizeCssProperty, normalizeCssValue } from './../helpers.js';
@@ -43,7 +43,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
     const originals = unique(parseNodes(selector)).map((node) => {
         assertStyleUnlocked(node, property);
 
-        const style = getDOMProperty(node, 'style');
+        const style = getDomProperty(node, 'style');
         const present = [...style].includes(property);
         const originalValue = style.getPropertyValue(property);
         const priority = style.getPropertyPriority(property);
@@ -120,8 +120,8 @@ export function setStyleLock(selector, property, value, { important = false } = 
  * @throws {Error} When the property or value is unsupported.
  */
 function validateStyleLock(property, value) {
-    const node = callDOMMethod(getContext(), 'createElementNS', 'http://www.w3.org/1999/xhtml', 'div');
-    const style = getDOMProperty(node, 'style');
+    const node = callDomMethod(getContext(), 'createElementNS', 'http://www.w3.org/1999/xhtml', 'div');
+    const style = getDomProperty(node, 'style');
 
     style.setProperty(property, 'initial');
 

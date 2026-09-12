@@ -3,7 +3,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { callDOMMethod, getDOMProperty, isDocument, isElement, isWindow } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isDocument, isElement, isWindow } from '@fr0st/core';
 import { css } from './../attributes/styles.js';
 import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
 import { parseClasses } from './../helpers.js';
@@ -20,7 +20,7 @@ export function connected(selector) {
         node: true,
         fragment: true,
         shadow: true,
-    }).filter((node) => getDOMProperty(node, 'isConnected'));
+    }).filter((node) => getDomProperty(node, 'isConnected'));
 };
 
 /**
@@ -42,7 +42,7 @@ export function equal(selector, otherSelector) {
         shadow: true,
     }).filter((node) =>
         others.some((other) =>
-            callDOMMethod(node, 'isEqualNode', other),
+            callDomMethod(node, 'isEqualNode', other),
         ),
     );
 };
@@ -108,14 +108,14 @@ export function hidden(selector) {
         window: true,
     }).filter((node) => {
         if (isWindow(node)) {
-            return getDOMProperty(node.document, 'visibilityState') !== 'visible';
+            return getDomProperty(node.document, 'visibilityState') !== 'visible';
         }
 
         if (isDocument(node)) {
-            return getDOMProperty(node, 'visibilityState') !== 'visible';
+            return getDomProperty(node, 'visibilityState') !== 'visible';
         }
 
-        return !isElement(node) || callDOMMethod(node, 'getClientRects').length === 0;
+        return !isElement(node) || callDomMethod(node, 'getClientRects').length === 0;
     });
 };
 
@@ -183,14 +183,14 @@ export function visible(selector) {
         window: true,
     }).filter((node) => {
         if (isWindow(node)) {
-            return getDOMProperty(node.document, 'visibilityState') === 'visible';
+            return getDomProperty(node.document, 'visibilityState') === 'visible';
         }
 
         if (isDocument(node)) {
-            return getDOMProperty(node, 'visibilityState') === 'visible';
+            return getDomProperty(node, 'visibilityState') === 'visible';
         }
 
-        return isElement(node) && callDOMMethod(node, 'getClientRects').length > 0;
+        return isElement(node) && callDomMethod(node, 'getClientRects').length > 0;
     });
 };
 
@@ -215,7 +215,7 @@ export function withAnimation(selector) {
 export function withAttribute(selector, attribute) {
     return parseNodes(selector)
         .filter((node) =>
-            callDOMMethod(node, 'hasAttribute', attribute),
+            callDomMethod(node, 'hasAttribute', attribute),
         );
 };
 
@@ -230,7 +230,7 @@ export function withChildren(selector) {
         shadow: true,
         document: true,
     }).filter((node) =>
-        !!getDOMProperty(node, 'childElementCount'),
+        !!getDomProperty(node, 'childElementCount'),
     );
 };
 
@@ -246,7 +246,7 @@ export function withClass(selector, ...classes) {
     return parseNodes(selector)
         .filter((node) =>
             classes.some((className) =>
-                getDOMProperty(node, 'classList').contains(className),
+                getDomProperty(node, 'classList').contains(className),
             ),
         );
 };

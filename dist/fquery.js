@@ -23,7 +23,7 @@
 //#region node_modules/@fr0st/core/dist/frost-core.esm.js
 	var frost_core_esm_exports = /* @__PURE__ */ __exportAll({
 		animation: () => animation,
-		callDOMMethod: () => callDOMMethod,
+		callDomMethod: () => callDomMethod,
 		camelCase: () => camelCase,
 		capitalize: () => capitalize,
 		clamp: () => clamp,
@@ -39,7 +39,7 @@
 		extend: () => extend,
 		flatten: () => flatten,
 		forgetDot: () => forgetDot,
-		getDOMProperty: () => getDOMProperty,
+		getDomProperty: () => getDomProperty,
 		getDot: () => getDot,
 		hasDot: () => hasDot,
 		humanize: () => humanize,
@@ -97,14 +97,14 @@
 	* @param {...*} args The arguments to pass.
 	* @returns {*} The method's return value.
 	*/
-	var callDOMMethod = (node, method, ...args) => Reflect.apply(getDOMProperty(node, method), node, args);
+	var callDomMethod = (node, method, ...args) => Reflect.apply(getDomProperty(node, method), node, args);
 	/**
 	* Reads a DOM prototype property without named-property collisions, or an ordinary property for non-DOM values.
 	* @param {*} node The node or ordinary value.
 	* @param {string|symbol} property The property to read.
 	* @returns {*} The property value.
 	*/
-	var getDOMProperty = (node, property) => {
+	var getDomProperty = (node, property) => {
 		const prototype = Object.getPrototypeOf(node);
 		return prototype && "nodeType" in prototype ? Reflect.get(prototype, property, node) : node[property];
 	};
@@ -121,7 +121,7 @@
 	* @param {*} value The value to read.
 	* @returns {*} The node type, or the input if falsy.
 	*/
-	var getNodeType = (value) => value && getDOMProperty(value, "nodeType");
+	var getNodeType = (value) => value && getDomProperty(value, "nodeType");
 	/**
 	* Checks whether a value is an array.
 	* @param {*} value The value to test.
@@ -248,7 +248,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a Window.
 	*/
-	var isWindow = (value) => !!value && !!value.document && getDOMProperty(value.document, "defaultView") === value;
+	var isWindow = (value) => !!value && !!value.document && getDomProperty(value.document, "defaultView") === value;
 	/**
 	* Math methods
 	*/
@@ -991,7 +991,7 @@
 	* @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
 	* @returns {URL} The URL.
 	*/
-	function createUrl(url, baseUri = getDOMProperty(getWindow().document, "baseURI")) {
+	function createUrl(url, baseUri = getDomProperty(getWindow().document, "baseURI")) {
 		const { URL } = getWindow();
 		return new URL(url, baseUri);
 	}
@@ -1556,7 +1556,7 @@
 	*/
 	function getWrapTarget(node) {
 		let child;
-		while (child = getDOMProperty(node, "firstElementChild")) node = child;
+		while (child = getDomProperty(node, "firstElementChild")) node = child;
 		return node;
 	}
 	/**
@@ -1683,7 +1683,7 @@
 	* @returns {Element[]} The parsed elements.
 	*/
 	function parseHtml(html) {
-		const childNodes = callDOMMethod(getContext(), "createRange").createContextualFragment(html).children;
+		const childNodes = callDomMethod(getContext(), "createRange").createContextualFragment(html).children;
 		return merge([], childNodes);
 	}
 
@@ -1722,11 +1722,11 @@
 			if (match[1] === ".") return findByClass$1(match[2], context);
 			return findByTag$1(match[2], context);
 		}
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDomMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = callDOMMethod(node, "querySelectorAll", selector);
+			const newNodes = callDomMethod(node, "querySelectorAll", selector);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1738,13 +1738,13 @@
 	* @returns {Element[]} The matching nodes.
 	*/
 	function findByClass$1(className, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return merge([], callDOMMethod(context, "getElementsByClassName", className));
+		if (isDocument(context) || isElement(context)) return merge([], callDomMethod(context, "getElementsByClassName", className));
 		const selector = `.${escapeCss(className)}`;
-		if (isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
+		if (isFragment(context) || isShadow(context)) return merge([], callDomMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelectorAll", selector) : callDOMMethod(node, "getElementsByClassName", className);
+			const newNodes = isFragment(node) || isShadow(node) ? callDomMethod(node, "querySelectorAll", selector) : callDomMethod(node, "getElementsByClassName", className);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1757,11 +1757,11 @@
 	*/
 	function findById$1(id, context = getContext()) {
 		const selector = `#${escapeCss(id)}`;
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDomMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = callDOMMethod(node, "querySelectorAll", selector);
+			const newNodes = callDomMethod(node, "querySelectorAll", selector);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1773,12 +1773,12 @@
 	* @returns {Element[]} The matching nodes.
 	*/
 	function findByTag$1(tagName, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return merge([], callDOMMethod(context, "getElementsByTagName", tagName));
-		if (isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", tagName));
+		if (isDocument(context) || isElement(context)) return merge([], callDomMethod(context, "getElementsByTagName", tagName));
+		if (isFragment(context) || isShadow(context)) return merge([], callDomMethod(context, "querySelectorAll", tagName));
 		const nodes = resolveContexts(context);
 		const results = [];
 		for (const node of nodes) {
-			const newNodes = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelectorAll", tagName) : callDOMMethod(node, "getElementsByTagName", tagName);
+			const newNodes = isFragment(node) || isShadow(node) ? callDomMethod(node, "querySelectorAll", tagName) : callDomMethod(node, "getElementsByTagName", tagName);
 			results.push(...newNodes);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -1797,11 +1797,11 @@
 			if (match[1] === ".") return findOneByClass$1(match[2], context);
 			return findOneByTag$1(match[2], context);
 		}
-		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
+		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return callDomMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = callDOMMethod(node, "querySelector", selector);
+			const result = callDomMethod(node, "querySelector", selector);
 			if (result) return result;
 		}
 		return null;
@@ -1813,13 +1813,13 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneByClass$1(className, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return callDOMMethod(context, "getElementsByClassName", className).item(0);
+		if (isDocument(context) || isElement(context)) return callDomMethod(context, "getElementsByClassName", className).item(0);
 		const selector = `.${escapeCss(className)}`;
-		if (isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
+		if (isFragment(context) || isShadow(context)) return callDomMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelector", selector) : callDOMMethod(node, "getElementsByClassName", className).item(0);
+			const result = isFragment(node) || isShadow(node) ? callDomMethod(node, "querySelector", selector) : callDomMethod(node, "getElementsByClassName", className).item(0);
 			if (result) return result;
 		}
 		return null;
@@ -1831,13 +1831,13 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneById$1(id, context = getContext()) {
-		if (isDocument(context)) return callDOMMethod(context, "getElementById", id);
+		if (isDocument(context)) return callDomMethod(context, "getElementById", id);
 		const selector = `#${escapeCss(id)}`;
-		if (isElement(context) || isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
+		if (isElement(context) || isFragment(context) || isShadow(context)) return callDomMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isDocument(node) ? callDOMMethod(node, "getElementById", id) : callDOMMethod(node, "querySelector", selector);
+			const result = isDocument(node) ? callDomMethod(node, "getElementById", id) : callDomMethod(node, "querySelector", selector);
 			if (result) return result;
 		}
 		return null;
@@ -1849,12 +1849,12 @@
 	* @returns {Element|null|undefined} The matching element, or `undefined` if none matches.
 	*/
 	function findOneByTag$1(tagName, context = getContext()) {
-		if (isDocument(context) || isElement(context)) return callDOMMethod(context, "getElementsByTagName", tagName).item(0);
-		if (isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", tagName);
+		if (isDocument(context) || isElement(context)) return callDomMethod(context, "getElementsByTagName", tagName).item(0);
+		if (isFragment(context) || isShadow(context)) return callDomMethod(context, "querySelector", tagName);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
 		for (const node of nodes) {
-			const result = isFragment(node) || isShadow(node) ? callDOMMethod(node, "querySelector", tagName) : callDOMMethod(node, "getElementsByTagName", tagName).item(0);
+			const result = isFragment(node) || isShadow(node) ? callDomMethod(node, "querySelector", tagName) : callDomMethod(node, "getElementsByTagName", tagName).item(0);
 			if (result) return result;
 		}
 		return null;
@@ -1888,7 +1888,7 @@
 	function parseFilter(filter, defaultValue = true) {
 		if (!filter) return (_) => defaultValue;
 		if (isFunction(filter)) return filter;
-		if (isString(filter)) return (node) => isElement(node) && callDOMMethod(node, "matches", filter);
+		if (isString(filter)) return (node) => isElement(node) && callDomMethod(node, "matches", filter);
 		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node === filter;
 		filter = parseNodes(filter, {
 			node: true,
@@ -1905,16 +1905,16 @@
 	* @returns {NodeFilterCallback} The node contains filter callback.
 	*/
 	function parseFilterContains(filter, defaultValue = true) {
-		if (!filter) return (node) => defaultValue && !!getDOMProperty(node, "firstElementChild");
-		if (isFunction(filter)) return (node) => merge([], callDOMMethod(node, "querySelectorAll", "*")).some(filter);
+		if (!filter) return (node) => defaultValue && !!getDomProperty(node, "firstElementChild");
+		if (isFunction(filter)) return (node) => merge([], callDomMethod(node, "querySelectorAll", "*")).some(filter);
 		if (isString(filter)) return (node) => !!findOne$1(filter, node);
-		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node !== filter && callDOMMethod(node, "contains", filter);
+		if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node !== filter && callDomMethod(node, "contains", filter);
 		filter = parseNodes(filter, {
 			node: true,
 			fragment: true,
 			shadow: true
 		});
-		if (filter.length) return (node) => filter.some((other) => node !== other && callDOMMethod(node, "contains", other));
+		if (filter.length) return (node) => filter.some((other) => node !== other && callDomMethod(node, "contains", other));
 		return (_) => !defaultValue;
 	}
 	/**
@@ -2194,7 +2194,7 @@
 				...options
 			};
 			if (!("start" in this.#options)) this.#options.start = getTime();
-			if (this.#options.debug) getDOMProperty(this.#node, "dataset").animationStart = this.#options.start;
+			if (this.#options.debug) getDomProperty(this.#node, "dataset").animationStart = this.#options.start;
 			this.#promise = new Promise((resolve, reject) => {
 				this.#resolve = resolve;
 				this.#reject = reject;
@@ -2275,7 +2275,7 @@
 				}
 			}
 			if (this.#options.debug) {
-				const dataset = getDOMProperty(this.#node, "dataset");
+				const dataset = getDomProperty(this.#node, "dataset");
 				dataset.animationTime = time;
 				dataset.animationProgress = progress;
 			}
@@ -2283,7 +2283,7 @@
 				this.#callback(this.#node, progress, this.#options);
 			} catch (error) {
 				if (this.#options.debug) {
-					const dataset = getDOMProperty(this.#node, "dataset");
+					const dataset = getDomProperty(this.#node, "dataset");
 					delete dataset.animationStart;
 					delete dataset.animationTime;
 					delete dataset.animationProgress;
@@ -2295,7 +2295,7 @@
 			}
 			if (progress < 1) return false;
 			if (this.#options.debug) {
-				const dataset = getDOMProperty(this.#node, "dataset");
+				const dataset = getDomProperty(this.#node, "dataset");
 				delete dataset.animationStart;
 				delete dataset.animationTime;
 				delete dataset.animationProgress;
@@ -2375,7 +2375,7 @@
 		const testStyle = validateStyleLock(property, value);
 		const originals = unique(parseNodes(selector)).map((node) => {
 			assertStyleUnlocked(node, property);
-			const style = getDOMProperty(node, "style");
+			const style = getDomProperty(node, "style");
 			const present = [...style].includes(property);
 			const originalValue = style.getPropertyValue(property);
 			const priority = style.getPropertyPriority(property);
@@ -2421,8 +2421,8 @@
 	* @throws {Error} When the property or value is unsupported.
 	*/
 	function validateStyleLock(property, value) {
-		const node = callDOMMethod(getContext(), "createElementNS", "http://www.w3.org/1999/xhtml", "div");
-		const style = getDOMProperty(node, "style");
+		const node = callDomMethod(getContext(), "createElementNS", "http://www.w3.org/1999/xhtml", "div");
+		const style = getDomProperty(node, "style");
 		style.setProperty(property, "initial");
 		if (property === "all" || style.length !== 1 || style.item(0) !== property) throw new Error(`Cannot lock CSS property "${property}". Use a supported longhand or custom property.`);
 		style.cssText = "";
@@ -2445,7 +2445,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) getDOMProperty(node, "classList").add(...classes);
+		for (const node of nodes) getDomProperty(node, "classList").add(...classes);
 	}
 	/**
 	* Gets computed CSS style value(s) for the first node.
@@ -2477,10 +2477,10 @@
 		if (!node) return;
 		if (style) {
 			style = normalizeCssProperty(style);
-			return getDOMProperty(node, "style").getPropertyValue(style);
+			return getDomProperty(node, "style").getPropertyValue(style);
 		}
 		const styles = {};
-		const inlineStyles = getDOMProperty(node, "style");
+		const inlineStyles = getDomProperty(node, "style");
 		for (const style of inlineStyles) styles[style] = inlineStyles.getPropertyValue(style);
 		return styles;
 	}
@@ -2492,7 +2492,7 @@
 		const nodes = parseNodes(selector);
 		for (const node of nodes) if (!displayLocks.has(node)) assertStyleUnlocked(node, "display");
 		for (const node of nodes) {
-			const style = getDOMProperty(node, "style");
+			const style = getDomProperty(node, "style");
 			const priority = style.getPropertyPriority("display");
 			if (!displayLocks.has(node)) displayLocks.set(node, setStyleLock$1(node, "display", "none", { important: priority === "important" }));
 			else style.setProperty("display", "none", priority);
@@ -2507,7 +2507,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) getDOMProperty(node, "classList").remove(...classes);
+		for (const node of nodes) getDomProperty(node, "classList").remove(...classes);
 	}
 	/**
 	* Removes a style property from each node.
@@ -2517,7 +2517,7 @@
 	function removeStyle$1(selector, style) {
 		const nodes = parseNodes(selector);
 		style = normalizeCssProperty(style);
-		for (const node of nodes) getDOMProperty(node, "style").removeProperty(style);
+		for (const node of nodes) getDomProperty(node, "style").removeProperty(style);
 	}
 	/**
 	* Sets style properties for each node.
@@ -2532,7 +2532,7 @@
 		for (let [style, value] of Object.entries(styles)) {
 			style = normalizeCssProperty(style);
 			value = normalizeCssValue(style, value);
-			for (const node of nodes) getDOMProperty(node, "style").setProperty(style, value, important ? "important" : "");
+			for (const node of nodes) getDomProperty(node, "style").setProperty(style, value, important ? "important" : "");
 		}
 	}
 	/**
@@ -2547,7 +2547,7 @@
 				displayLocks.delete(node);
 				release();
 			}
-			const style = getDOMProperty(node, "style");
+			const style = getDomProperty(node, "style");
 			if (style.display === "none") style.setProperty("display", "");
 			if (css$1(node, "display") === "none") style.setProperty("display", "revert");
 		}
@@ -2559,7 +2559,7 @@
 	*/
 	function toggle$1(selector, force) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) if (force ?? (getDOMProperty(node, "style").display === "none" || css$1(node, "display") === "none")) show$1(node);
+		for (const node of nodes) if (force ?? (getDomProperty(node, "style").display === "none" || css$1(node, "display") === "none")) show$1(node);
 		else hide$1(node);
 	}
 	/**
@@ -2571,7 +2571,7 @@
 		const nodes = parseNodes(selector);
 		classes = parseClasses(classes);
 		if (!classes.length) return;
-		for (const node of nodes) for (const className of classes) getDOMProperty(node, "classList").toggle(className);
+		for (const node of nodes) for (const className of classes) getDomProperty(node, "classList").toggle(className);
 	}
 
 //#endregion
@@ -2620,7 +2620,7 @@
 	* @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 	*/
 	function fadeIn$1(selector, options) {
-		return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDOMProperty(node, "style"), "opacity", progress.toFixed(2)), options);
+		return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDomProperty(node, "style"), "opacity", progress.toFixed(2)), options);
 	}
 	/**
 	* Fades the opacity of each node out.
@@ -2629,7 +2629,7 @@
 	* @returns {AnimationSet} A new AnimationSet that resolves when the animation has completed.
 	*/
 	function fadeOut$1(selector, options) {
-		return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDOMProperty(node, "style"), "opacity", (1 - progress).toFixed(2)), options);
+		return animateEffect(selector, ["opacity"], (node, progress) => setAnimationStyle(getDomProperty(node, "style"), "opacity", (1 - progress).toFixed(2)), options);
 	}
 	/**
 	* Rotates each node in on an X, Y or Z.
@@ -2640,7 +2640,7 @@
 	function rotateIn$1(selector, options) {
 		return animateEffect(selector, ["transform"], (node, progress, options) => {
 			const amount = ((90 - progress * 90) * (options.inverse ? -1 : 1)).toFixed(2);
-			setAnimationStyle(getDOMProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+			setAnimationStyle(getDomProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 		}, {
 			x: 0,
 			y: 1,
@@ -2657,7 +2657,7 @@
 	function rotateOut$1(selector, options) {
 		return animateEffect(selector, ["transform"], (node, progress, options) => {
 			const amount = (progress * 90 * (options.inverse ? -1 : 1)).toFixed(2);
-			setAnimationStyle(getDOMProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
+			setAnimationStyle(getDomProperty(node, "style"), "transform", `rotate3d(${options.x}, ${options.y}, ${options.z}, ${amount}deg)`);
 		}, {
 			x: 0,
 			y: 1,
@@ -2716,7 +2716,7 @@
 			let initialStyles;
 			return new Animation(node, function(node, progress, options) {
 				if (!releases.has(this)) {
-					const style = getDOMProperty(node, "style");
+					const style = getDomProperty(node, "style");
 					for (const property of properties) assertStyleUnlocked(node, property);
 					const declarations = originals || properties.map((property) => ({
 						property,
@@ -2761,16 +2761,16 @@
 			let axis;
 			let inverse;
 			if (["top", "bottom"].includes(dir)) {
-				size = getDOMProperty(node, "clientHeight");
+				size = getDomProperty(node, "clientHeight");
 				axis = "Y";
 				inverse = dir === "top";
 			} else {
-				size = getDOMProperty(node, "clientWidth");
+				size = getDomProperty(node, "clientWidth");
 				axis = "X";
 				inverse = dir === "left";
 			}
 			const translateAmount = ((out ? size * progress : size - size * progress) * (inverse ? -1 : 1)).toFixed(2);
-			setAnimationStyle(getDOMProperty(node, "style"), "transform", `translate${axis}(${translateAmount}px)`);
+			setAnimationStyle(getDomProperty(node, "style"), "transform", `translate${axis}(${translateAmount}px)`);
 		}, options);
 	}
 	/**
@@ -2792,7 +2792,7 @@
 			"transform",
 			"width"
 		], (node, progress, options, initialStyles) => {
-			const style = getDOMProperty(node, "style");
+			const style = getDomProperty(node, "style");
 			setAnimationStyle(style, "height", initialStyles.height);
 			setAnimationStyle(style, "width", initialStyles.width);
 			setAnimationStyle(style, "overflow-x", "hidden");
@@ -2840,10 +2840,10 @@
 	* @returns {Element|undefined} The matching delegate element, or no match.
 	*/
 	function getDelegate(node, target, selector, scoped) {
-		const matches = scoped ? merge([], callDOMMethod(node, "querySelectorAll", selector)) : null;
+		const matches = scoped ? merge([], callDomMethod(node, "querySelectorAll", selector)) : null;
 		while (target && target !== node) {
-			if (isElement(target) && (matches ? matches.includes(target) : callDOMMethod(target, "matches", selector))) return target;
-			target = getDOMProperty(target, "parentNode");
+			if (isElement(target) && (matches ? matches.includes(target) : callDomMethod(target, "matches", selector))) return target;
+			target = getDomProperty(target, "parentNode");
 		}
 	}
 	/**
@@ -2984,7 +2984,7 @@
 					eventName,
 					realEventName
 				});
-				callDOMMethod(node, "addEventListener", realEventName, realCallback, {
+				callDomMethod(node, "addEventListener", realEventName, realCallback, {
 					capture,
 					passive
 				});
@@ -3082,7 +3082,7 @@
 					if (callback && callback !== eventData.callback && callback !== eventData.realCallback) return true;
 					if (delegate && delegate !== eventData.delegate) return true;
 					if (capture !== null && capture !== eventData.capture) return true;
-					callDOMMethod(node, "removeEventListener", realEventName, eventData.realCallback, eventData.capture);
+					callDomMethod(node, "removeEventListener", realEventName, eventData.realCallback, eventData.capture);
 					return false;
 				});
 				if (!otherEvents.length) delete nodeEvents[realEventName];
@@ -3150,7 +3150,7 @@
 			eventData.namespace = event.substring(realEvent.length + 1);
 			eventData.namespaceRegExp = eventNamespacedRegExp(event);
 		}
-		return callDOMMethod(node, "dispatchEvent", eventData);
+		return callDomMethod(node, "dispatchEvent", eventData);
 	}
 
 //#endregion
@@ -3176,7 +3176,7 @@
 	function attachShadow$1(selector, { open = true } = {}) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return callDOMMethod(node, "attachShadow", { mode: open ? "open" : "closed" });
+		return callDomMethod(node, "attachShadow", { mode: open ? "open" : "closed" });
 	}
 	/**
 	* Creates a new DOM element.
@@ -3185,26 +3185,26 @@
 	* @returns {HTMLElement} The new HTMLElement.
 	*/
 	function create(tagName = "div", options = {}) {
-		const node = callDOMMethod(getContext(), "createElement", tagName);
+		const node = callDomMethod(getContext(), "createElement", tagName);
 		if ("html" in options) node.innerHTML = options.html;
 		else if ("text" in options) node.textContent = options.text;
 		if ("class" in options) {
 			const classes = parseClasses(wrap$2(options.class));
-			getDOMProperty(node, "classList").add(...classes);
+			getDomProperty(node, "classList").add(...classes);
 		}
 		if ("style" in options) for (let [style, value] of Object.entries(options.style)) {
 			style = normalizeCssProperty(style);
 			value = normalizeCssValue(style, value);
-			getDOMProperty(node, "style").setProperty(style, value);
+			getDomProperty(node, "style").setProperty(style, value);
 		}
 		if ("value" in options) node.value = options.value;
-		if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) callDOMMethod(node, "setAttribute", key, value);
+		if ("attributes" in options) for (const [key, value] of Object.entries(options.attributes)) callDomMethod(node, "setAttribute", key, value);
 		if ("properties" in options) for (const [key, value] of Object.entries(options.properties)) node[key] = value;
 		if ("dataset" in options) {
 			const dataset = parseData(options.dataset, null, { json: true });
 			for (let [key, value] of Object.entries(dataset)) {
 				key = camelCase(key);
-				getDOMProperty(node, "dataset")[key] = value;
+				getDomProperty(node, "dataset")[key] = value;
 			}
 		}
 		return node;
@@ -3215,21 +3215,21 @@
 	* @returns {Node} The new comment node.
 	*/
 	function createComment(comment) {
-		return callDOMMethod(getContext(), "createComment", comment);
+		return callDomMethod(getContext(), "createComment", comment);
 	}
 	/**
 	* Creates a new document fragment.
 	* @returns {DocumentFragment} The new DocumentFragment.
 	*/
 	function createFragment() {
-		return callDOMMethod(getContext(), "createDocumentFragment");
+		return callDomMethod(getContext(), "createDocumentFragment");
 	}
 	/**
 	* Creates a new range object.
 	* @returns {Range} The new Range.
 	*/
 	function createRange() {
-		return callDOMMethod(getContext(), "createRange");
+		return callDomMethod(getContext(), "createRange");
 	}
 	/**
 	* Creates a new text node.
@@ -3237,7 +3237,7 @@
 	* @returns {Node} The new text node.
 	*/
 	function createText(text) {
-		return callDOMMethod(getContext(), "createTextNode", text);
+		return callDomMethod(getContext(), "createTextNode", text);
 	}
 
 //#endregion
@@ -3261,7 +3261,7 @@
 			node: true,
 			fragment: true
 		}).map((node) => {
-			const clone = callDOMMethod(node, "cloneNode", deep);
+			const clone = callDomMethod(node, "cloneNode", deep);
 			if (events || data || animations) deepClone(node, clone, {
 				deep,
 				events,
@@ -3291,14 +3291,14 @@
 			for (const animation of nodeAnimations) animation.clone(clone);
 		}
 		if (deep) {
-			for (const [i, child] of getDOMProperty(node, "childNodes").entries()) deepClone(child, getDOMProperty(clone, "childNodes").item(i), {
+			for (const [i, child] of getDomProperty(node, "childNodes").entries()) deepClone(child, getDomProperty(clone, "childNodes").item(i), {
 				deep,
 				events: events$1,
 				data: data$1,
 				animations: animations$1
 			});
-			const content = getDOMProperty(node, "content");
-			if (isFragment(content)) deepClone(content, getDOMProperty(clone, "content"), {
+			const content = getDomProperty(node, "content");
+			if (isFragment(content)) deepClone(content, getDomProperty(clone, "content"), {
 				deep,
 				events: events$1,
 				data: data$1,
@@ -3313,7 +3313,7 @@
 	*/
 	function detach$1(selector) {
 		const nodes = parseNodes(selector, { node: true });
-		for (const node of nodes) callDOMMethod(node, "remove");
+		for (const node of nodes) callDomMethod(node, "remove");
 		return nodes;
 	}
 	/**
@@ -3327,10 +3327,10 @@
 			document: true
 		});
 		for (const node of nodes) {
-			const childNodes = merge([], getDOMProperty(node, "childNodes"));
+			const childNodes = merge([], getDomProperty(node, "childNodes"));
 			for (const child of childNodes) {
 				if (isElement(child) || isFragment(child) || isShadow(child)) removeNode(child);
-				callDOMMethod(child, "remove");
+				callDomMethod(child, "remove");
 			}
 		}
 	}
@@ -3346,7 +3346,7 @@
 		});
 		for (const node of nodes) {
 			if (isElement(node) || isFragment(node) || isShadow(node)) removeNode(node);
-			if (isNode(node)) callDOMMethod(node, "remove");
+			if (isNode(node)) callDomMethod(node, "remove");
 		}
 	}
 	/**
@@ -3361,9 +3361,9 @@
 					bubbles: false,
 					cancelable: false
 				});
-				callDOMMethod(node, "dispatchEvent", eventData);
+				callDomMethod(node, "dispatchEvent", eventData);
 			}
-			for (const [realEventName, realEvents] of Object.entries(nodeEvents)) for (const eventData of realEvents) callDOMMethod(node, "removeEventListener", realEventName, eventData.realCallback, { capture: eventData.capture });
+			for (const [realEventName, realEvents] of Object.entries(nodeEvents)) for (const eventData of realEvents) callDomMethod(node, "removeEventListener", realEventName, eventData.realCallback, { capture: eventData.capture });
 			events.delete(node);
 		}
 		if (queues.has(node)) queues.delete(node);
@@ -3373,11 +3373,11 @@
 		}
 		if (styles.has(node)) styles.delete(node);
 		if (data.has(node)) data.delete(node);
-		const childNodes = merge([], getDOMProperty(node, "children"));
+		const childNodes = merge([], getDomProperty(node, "children"));
 		for (const child of childNodes) removeNode(child);
-		const shadowRoot = getDOMProperty(node, "shadowRoot");
+		const shadowRoot = getDomProperty(node, "shadowRoot");
 		if (shadowRoot) removeNode(shadowRoot);
-		const content = getDOMProperty(node, "content");
+		const content = getDomProperty(node, "content");
 		if (isFragment(content)) removeNode(content);
 	}
 	/**
@@ -3400,14 +3400,14 @@
 			fragment: true,
 			html: true
 		});
-		const isReplacementTarget = (node) => getDOMProperty(node, "parentNode") && !others.includes(node) && !nodes.some((other) => other !== node && callDOMMethod(other, "contains", node));
+		const isReplacementTarget = (node) => getDomProperty(node, "parentNode") && !others.includes(node) && !nodes.some((other) => other !== node && callDomMethod(other, "contains", node));
 		if (!nodes.some(isReplacementTarget)) return;
 		const fragment = createFragment();
 		for (const other of others) fragment.insertBefore(other, null);
 		others = merge([], fragment.childNodes);
 		nodes = nodes.filter(isReplacementTarget);
 		for (const [i, node] of nodes.entries()) {
-			const parent = getDOMProperty(node, "parentNode");
+			const parent = getDomProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -3416,7 +3416,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
+			for (const clone of clones) callDomMethod(parent, "insertBefore", clone, node);
 		}
 		remove$1(nodes);
 	}
@@ -3436,8 +3436,8 @@
 	function getAttribute$1(selector, attribute) {
 		const node = parseNode(selector);
 		if (!node) return;
-		if (attribute) return callDOMMethod(node, "getAttribute", attribute);
-		return Object.fromEntries(merge([], getDOMProperty(node, "attributes")).map((attribute) => [attribute.nodeName, attribute.nodeValue]));
+		if (attribute) return callDomMethod(node, "getAttribute", attribute);
+		return Object.fromEntries(merge([], getDomProperty(node, "attributes")).map((attribute) => [attribute.nodeName, attribute.nodeValue]));
 	}
 	/**
 	* Gets dataset value(s) for the first node.
@@ -3450,10 +3450,10 @@
 		if (!node) return;
 		if (key) {
 			key = camelCase(key);
-			const dataset = getDOMProperty(node, "dataset");
+			const dataset = getDomProperty(node, "dataset");
 			return Object.hasOwn(dataset, key) ? parseDataset(dataset[key]) : void 0;
 		}
-		return Object.fromEntries(Object.entries(getDOMProperty(node, "dataset")).map(([key, value]) => [key, parseDataset(value)]));
+		return Object.fromEntries(Object.entries(getDomProperty(node, "dataset")).map(([key, value]) => [key, parseDataset(value)]));
 	}
 	/**
 	* Gets the HTML contents of the first node.
@@ -3463,7 +3463,7 @@
 	function getHtml$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return getDOMProperty(node, "innerHTML");
+		return getDomProperty(node, "innerHTML");
 	}
 	/**
 	* Gets a property value for the first node.
@@ -3484,7 +3484,7 @@
 	function getText$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return getDOMProperty(node, "textContent");
+		return getDomProperty(node, "textContent");
 	}
 	/**
 	* Gets the value property of the first node.
@@ -3501,7 +3501,7 @@
 	*/
 	function removeAttribute$1(selector, attribute) {
 		const nodes = parseNodes(selector);
-		for (const node of nodes) callDOMMethod(node, "removeAttribute", attribute);
+		for (const node of nodes) callDomMethod(node, "removeAttribute", attribute);
 	}
 	/**
 	* Removes a dataset value from each node.
@@ -3512,7 +3512,7 @@
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
 			key = camelCase(key);
-			delete getDOMProperty(node, "dataset")[key];
+			delete getDomProperty(node, "dataset")[key];
 		}
 	}
 	/**
@@ -3533,7 +3533,7 @@
 	function setAttribute$1(selector, attribute, value) {
 		const nodes = parseNodes(selector);
 		const attributes = parseData(attribute, value);
-		for (const [key, value] of Object.entries(attributes)) for (const node of nodes) callDOMMethod(node, "setAttribute", key, value);
+		for (const [key, value] of Object.entries(attributes)) for (const node of nodes) callDomMethod(node, "setAttribute", key, value);
 	}
 	/**
 	* Sets a dataset value for each node.
@@ -3546,7 +3546,7 @@
 		const dataset = parseData(key, value, { json: true });
 		for (let [key, value] of Object.entries(dataset)) {
 			key = camelCase(key);
-			for (const node of nodes) getDOMProperty(node, "dataset")[key] = value;
+			for (const node of nodes) getDomProperty(node, "dataset")[key] = value;
 		}
 	}
 	/**
@@ -3557,9 +3557,9 @@
 	function setHtml$1(selector, html) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
-			const content = getDOMProperty(node, "content");
+			const content = getDomProperty(node, "content");
 			const target = isFragment(content) ? content : node;
-			const childNodes = merge([], getDOMProperty(target, "children"));
+			const childNodes = merge([], getDomProperty(target, "children"));
 			for (const child of childNodes) removeNode(child);
 			node.innerHTML = html;
 		}
@@ -3583,7 +3583,7 @@
 	function setText$1(selector, text) {
 		const nodes = parseNodes(selector);
 		for (const node of nodes) {
-			const childNodes = merge([], getDOMProperty(node, "children"));
+			const childNodes = merge([], getDomProperty(node, "children"));
 			for (const child of childNodes) removeNode(child);
 			node.textContent = text;
 		}
@@ -3717,10 +3717,10 @@
 		const containerBox = rect$1(containerSelector);
 		if (!containerBox) return;
 		const nodes = parseNodes(selector);
-		const documentElement = getDOMProperty(getContext(), "documentElement");
+		const documentElement = getDomProperty(getContext(), "documentElement");
 		const window = getWindow();
-		const getScrollX = (_) => getDOMProperty(documentElement, "scrollHeight") > window.outerHeight;
-		const getScrollY = (_) => getDOMProperty(documentElement, "scrollWidth") > window.outerWidth;
+		const getScrollX = (_) => getDomProperty(documentElement, "scrollHeight") > window.outerHeight;
+		const getScrollY = (_) => getDomProperty(documentElement, "scrollWidth") > window.outerWidth;
 		const preScrollX = getScrollX();
 		const preScrollY = getScrollY();
 		for (const node of nodes) {
@@ -3735,7 +3735,7 @@
 					height -= parseFloat(css$1(node, "border-top-width"));
 					height -= parseFloat(css$1(node, "border-bottom-width"));
 				}
-				getDOMProperty(node, "style").setProperty("height", `${Math.max(0, height)}px`);
+				getDomProperty(node, "style").setProperty("height", `${Math.max(0, height)}px`);
 				resized = true;
 			}
 			if (nodeBox.width > containerBox.width) {
@@ -3746,7 +3746,7 @@
 					width -= parseFloat(css$1(node, "border-left-width"));
 					width -= parseFloat(css$1(node, "border-right-width"));
 				}
-				getDOMProperty(node, "style").setProperty("width", `${Math.max(0, width)}px`);
+				getDomProperty(node, "style").setProperty("width", `${Math.max(0, width)}px`);
 				resized = true;
 			}
 			if (resized) nodeBox = rect$1(node);
@@ -3756,7 +3756,7 @@
 			if (leftOffset) {
 				const oldLeft = css$1(node, "left");
 				const trueLeft = oldLeft && oldLeft !== "auto" ? parseFloat(oldLeft) : 0;
-				getDOMProperty(node, "style").setProperty("left", `${trueLeft - leftOffset}px`);
+				getDomProperty(node, "style").setProperty("left", `${trueLeft - leftOffset}px`);
 			}
 			let topOffset;
 			if (nodeBox.top - containerBox.top < 0) topOffset = nodeBox.top - containerBox.top;
@@ -3764,9 +3764,9 @@
 			if (topOffset) {
 				const oldTop = css$1(node, "top");
 				const trueTop = oldTop && oldTop !== "auto" ? parseFloat(oldTop) : 0;
-				getDOMProperty(node, "style").setProperty("top", `${trueTop - topOffset}px`);
+				getDomProperty(node, "style").setProperty("top", `${trueTop - topOffset}px`);
 			}
-			if (css$1(node, "position") === "static") getDOMProperty(node, "style").setProperty("position", "relative");
+			if (css$1(node, "position") === "static") getDomProperty(node, "style").setProperty("position", "relative");
 		}
 		const postScrollX = getScrollX();
 		const postScrollY = getScrollY();
@@ -3864,14 +3864,14 @@
 		const node = parseNode(selector);
 		if (!node) return;
 		const result = {
-			x: getDOMProperty(node, "offsetLeft"),
-			y: getDOMProperty(node, "offsetTop")
+			x: getDomProperty(node, "offsetLeft"),
+			y: getDomProperty(node, "offsetTop")
 		};
 		if (offset) {
 			let offsetParent = node;
-			while (offsetParent = getDOMProperty(offsetParent, "offsetParent")) {
-				result.x += getDOMProperty(offsetParent, "offsetLeft") + getDOMProperty(offsetParent, "clientLeft");
-				result.y += getDOMProperty(offsetParent, "offsetTop") + getDOMProperty(offsetParent, "clientTop");
+			while (offsetParent = getDomProperty(offsetParent, "offsetParent")) {
+				result.x += getDomProperty(offsetParent, "offsetLeft") + getDomProperty(offsetParent, "clientLeft");
+				result.y += getDomProperty(offsetParent, "offsetTop") + getDomProperty(offsetParent, "clientTop");
 			}
 		}
 		return result;
@@ -3885,7 +3885,7 @@
 	function rect$1(selector, { offset = false } = {}) {
 		const node = parseNode(selector);
 		if (!node) return;
-		const result = callDOMMethod(node, "getBoundingClientRect");
+		const result = callDomMethod(node, "getBoundingClientRect");
 		if (offset) {
 			const window = getWindow();
 			result.x += window.scrollX;
@@ -3910,10 +3910,10 @@
 		if (!node) return;
 		if (isWindow(node)) return node.scrollX;
 		if (isDocument(node)) {
-			const scrollingElement = getDOMProperty(node, "scrollingElement");
-			return scrollingElement ? getDOMProperty(scrollingElement, "scrollLeft") : getDOMProperty(node, "defaultView")?.scrollX ?? 0;
+			const scrollingElement = getDomProperty(node, "scrollingElement");
+			return scrollingElement ? getDomProperty(scrollingElement, "scrollLeft") : getDomProperty(node, "defaultView")?.scrollX ?? 0;
 		}
-		return getDOMProperty(node, "scrollLeft");
+		return getDomProperty(node, "scrollLeft");
 	}
 	/**
 	* Gets the scroll Y position of the first node.
@@ -3928,10 +3928,10 @@
 		if (!node) return;
 		if (isWindow(node)) return node.scrollY;
 		if (isDocument(node)) {
-			const scrollingElement = getDOMProperty(node, "scrollingElement");
-			return scrollingElement ? getDOMProperty(scrollingElement, "scrollTop") : getDOMProperty(node, "defaultView")?.scrollY ?? 0;
+			const scrollingElement = getDomProperty(node, "scrollingElement");
+			return scrollingElement ? getDomProperty(scrollingElement, "scrollTop") : getDomProperty(node, "defaultView")?.scrollY ?? 0;
 		}
-		return getDOMProperty(node, "scrollTop");
+		return getDomProperty(node, "scrollTop");
 	}
 	/**
 	* Scrolls each node to an X,Y position.
@@ -3946,11 +3946,11 @@
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(x, y);
 		else if (isDocument(node)) {
-			const scrollingElement = getDOMProperty(node, "scrollingElement");
+			const scrollingElement = getDomProperty(node, "scrollingElement");
 			if (scrollingElement) {
 				scrollingElement.scrollLeft = x;
 				scrollingElement.scrollTop = y;
-			} else getDOMProperty(node, "defaultView")?.scroll(x, y);
+			} else getDomProperty(node, "defaultView")?.scroll(x, y);
 		} else {
 			node.scrollLeft = x;
 			node.scrollTop = y;
@@ -3968,10 +3968,10 @@
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(x, node.scrollY);
 		else if (isDocument(node)) {
-			const scrollingElement = getDOMProperty(node, "scrollingElement");
+			const scrollingElement = getDomProperty(node, "scrollingElement");
 			if (scrollingElement) scrollingElement.scrollLeft = x;
 			else {
-				const window = getDOMProperty(node, "defaultView");
+				const window = getDomProperty(node, "defaultView");
 				window?.scroll(x, window.scrollY);
 			}
 		} else node.scrollLeft = x;
@@ -3988,10 +3988,10 @@
 		});
 		for (const node of nodes) if (isWindow(node)) node.scroll(node.scrollX, y);
 		else if (isDocument(node)) {
-			const scrollingElement = getDOMProperty(node, "scrollingElement");
+			const scrollingElement = getDomProperty(node, "scrollingElement");
 			if (scrollingElement) scrollingElement.scrollTop = y;
 			else {
-				const window = getDOMProperty(node, "defaultView");
+				const window = getDomProperty(node, "defaultView");
 				window?.scroll(window.scrollX, y);
 			}
 		} else node.scrollTop = y;
@@ -4018,15 +4018,15 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return outer ? node.outerHeight : node.innerHeight;
-		if (isDocument(node)) node = getDOMProperty(node, "documentElement");
-		if (boxSize >= 4) return getDOMProperty(node, "scrollHeight");
-		let result = getDOMProperty(node, "clientHeight");
+		if (isDocument(node)) node = getDomProperty(node, "documentElement");
+		if (boxSize >= 4) return getDomProperty(node, "scrollHeight");
+		let result = getDomProperty(node, "clientHeight");
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-top"));
 			result -= parseInt(css$1(node, "padding-bottom"));
 			result = Math.max(0, result);
 		}
-		if (boxSize >= 2) result = getDOMProperty(node, "offsetHeight") ?? result + parseInt(css$1(node, "border-top-width")) + parseInt(css$1(node, "border-bottom-width"));
+		if (boxSize >= 2) result = getDomProperty(node, "offsetHeight") ?? result + parseInt(css$1(node, "border-top-width")) + parseInt(css$1(node, "border-bottom-width"));
 		if (boxSize >= 3) {
 			result += parseInt(css$1(node, "margin-top"));
 			result += parseInt(css$1(node, "margin-bottom"));
@@ -4046,15 +4046,15 @@
 		});
 		if (!node) return;
 		if (isWindow(node)) return outer ? node.outerWidth : node.innerWidth;
-		if (isDocument(node)) node = getDOMProperty(node, "documentElement");
-		if (boxSize >= 4) return getDOMProperty(node, "scrollWidth");
-		let result = getDOMProperty(node, "clientWidth");
+		if (isDocument(node)) node = getDomProperty(node, "documentElement");
+		if (boxSize >= 4) return getDomProperty(node, "scrollWidth");
+		let result = getDomProperty(node, "clientWidth");
 		if (boxSize <= 0) {
 			result -= parseInt(css$1(node, "padding-left"));
 			result -= parseInt(css$1(node, "padding-right"));
 			result = Math.max(0, result);
 		}
-		if (boxSize >= 2) result = getDOMProperty(node, "offsetWidth") ?? result + parseInt(css$1(node, "border-left-width")) + parseInt(css$1(node, "border-right-width"));
+		if (boxSize >= 2) result = getDomProperty(node, "offsetWidth") ?? result + parseInt(css$1(node, "border-left-width")) + parseInt(css$1(node, "border-right-width"));
 		if (boxSize >= 3) {
 			result += parseInt(css$1(node, "margin-left"));
 			result += parseInt(css$1(node, "margin-right"));
@@ -4071,7 +4071,7 @@
 	*/
 	function getCookie(name) {
 		const prefix = `${name}=`;
-		const cookie = getDOMProperty(getContext(), "cookie").split(";").find((cookie) => cookie.trimStart().startsWith(prefix));
+		const cookie = getDomProperty(getContext(), "cookie").split(";").find((cookie) => cookie.trimStart().startsWith(prefix));
 		if (!cookie) return null;
 		return decodeURIComponent(cookie.trimStart().substring(prefix.length));
 	}
@@ -4160,7 +4160,7 @@
 	function blur$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		callDOMMethod(node, "blur");
+		callDomMethod(node, "blur");
 	}
 	/**
 	* Triggers a click event on the first node.
@@ -4169,7 +4169,7 @@
 	function click$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		callDOMMethod(node, "click");
+		callDomMethod(node, "click");
 	}
 	/**
 	* Triggers a focus event on the first node.
@@ -4178,14 +4178,14 @@
 	function focus$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		callDOMMethod(node, "focus");
+		callDomMethod(node, "focus");
 	}
 	/**
 	* Adds a function to the ready queue.
 	* @param {EventCallback} callback The callback to execute.
 	*/
 	function ready(callback) {
-		if (getDOMProperty(getContext(), "readyState") !== "loading") callback();
+		if (getDomProperty(getContext(), "readyState") !== "loading") callback();
 		else getWindow().addEventListener("DOMContentLoaded", callback, { once: true });
 	}
 
@@ -4225,14 +4225,14 @@
 	* @param {NodeInput} otherSelector The other node(s), or a query selector or HTML string.
 	*/
 	function after$1(selector, otherSelector) {
-		const nodes = parseNodes(selector, { node: true }).filter((node) => getDOMProperty(node, "parentNode"));
+		const nodes = parseNodes(selector, { node: true }).filter((node) => getDomProperty(node, "parentNode"));
 		const others = parseNodes(otherSelector, {
 			node: true,
 			fragment: true,
 			html: true
 		}).reverse();
 		for (const [i, node] of nodes.entries()) {
-			const parent = getDOMProperty(node, "parentNode");
+			const parent = getDomProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -4241,7 +4241,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, getDOMProperty(node, "nextSibling"));
+			for (const clone of clones) callDomMethod(parent, "insertBefore", clone, getDomProperty(node, "nextSibling"));
 		}
 	}
 	/**
@@ -4268,7 +4268,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
+			for (const clone of clones) callDomMethod(node, "insertBefore", clone, null);
 		}
 	}
 	/**
@@ -4285,14 +4285,14 @@
 	* @param {NodeInput} otherSelector The other node(s), or a query selector or HTML string.
 	*/
 	function before$1(selector, otherSelector) {
-		const nodes = parseNodes(selector, { node: true }).filter((node) => getDOMProperty(node, "parentNode"));
+		const nodes = parseNodes(selector, { node: true }).filter((node) => getDomProperty(node, "parentNode"));
 		const others = parseNodes(otherSelector, {
 			node: true,
 			fragment: true,
 			html: true
 		});
 		for (const [i, node] of nodes.entries()) {
-			const parent = getDOMProperty(node, "parentNode");
+			const parent = getDomProperty(node, "parentNode");
 			if (!parent) continue;
 			let clones;
 			if (i === nodes.length - 1) clones = others;
@@ -4301,7 +4301,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
+			for (const clone of clones) callDomMethod(parent, "insertBefore", clone, node);
 		}
 	}
 	/**
@@ -4344,7 +4344,7 @@
 				data: true,
 				animations: true
 			});
-			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, getDOMProperty(node, "firstChild"));
+			for (const clone of clones) callDomMethod(node, "insertBefore", clone, getDomProperty(node, "firstChild"));
 		}
 	}
 	/**
@@ -4370,17 +4370,17 @@
 		nodeFilter = parseFilter(nodeFilter);
 		const parents = [];
 		for (const node of nodes) {
-			const parent = getDOMProperty(node, "parentNode");
-			if (!parent || !getDOMProperty(parent, "parentNode")) continue;
+			const parent = getDomProperty(node, "parentNode");
+			if (!parent || !getDomProperty(parent, "parentNode")) continue;
 			if (parents.includes(parent)) continue;
 			if (!nodeFilter(parent)) continue;
 			parents.push(parent);
 		}
 		for (const parent of parents) {
-			const outerParent = getDOMProperty(parent, "parentNode");
+			const outerParent = getDomProperty(parent, "parentNode");
 			if (!outerParent) continue;
-			const children = merge([], getDOMProperty(parent, "childNodes"));
-			for (const child of children) callDOMMethod(outerParent, "insertBefore", child, parent);
+			const children = merge([], getDomProperty(parent, "childNodes"));
+			for (const child of children) callDomMethod(outerParent, "insertBefore", child, parent);
 		}
 		remove$1(parents);
 	}
@@ -4396,7 +4396,7 @@
 			html: true
 		});
 		for (const node of nodes) {
-			const parent = getDOMProperty(node, "parentNode");
+			const parent = getDomProperty(node, "parentNode");
 			if (!parent) continue;
 			const clones = clone$1(others, {
 				events: true,
@@ -4404,11 +4404,11 @@
 				animations: true
 			});
 			const firstClone = clones[0];
-			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+			const firstCloneNode = isFragment(firstClone) ? getDomProperty(firstClone, "firstElementChild") : firstClone;
 			if (!firstCloneNode) continue;
 			const deepest = getWrapTarget(firstCloneNode);
-			for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, node);
-			callDOMMethod(deepest, "insertBefore", node, null);
+			for (const clone of clones) callDomMethod(parent, "insertBefore", clone, node);
+			callDomMethod(deepest, "insertBefore", node, null);
 		}
 	}
 	/**
@@ -4429,14 +4429,14 @@
 		});
 		const firstNode = nodes[0];
 		if (!firstNode) return;
-		const parent = getDOMProperty(firstNode, "parentNode");
+		const parent = getDomProperty(firstNode, "parentNode");
 		if (!parent) return;
 		const firstClone = clones[0];
-		const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+		const firstCloneNode = isFragment(firstClone) ? getDomProperty(firstClone, "firstElementChild") : firstClone;
 		if (!firstCloneNode) return;
 		const deepest = getWrapTarget(firstCloneNode);
-		for (const clone of clones) callDOMMethod(parent, "insertBefore", clone, firstNode);
-		for (const node of nodes) callDOMMethod(deepest, "insertBefore", node, null);
+		for (const clone of clones) callDomMethod(parent, "insertBefore", clone, firstNode);
+		for (const node of nodes) callDomMethod(deepest, "insertBefore", node, null);
 	}
 	/**
 	* Wraps the contents of each node with other nodes.
@@ -4454,18 +4454,18 @@
 			html: true
 		});
 		for (const node of nodes) {
-			const children = merge([], getDOMProperty(node, "childNodes"));
+			const children = merge([], getDomProperty(node, "childNodes"));
 			const clones = clone$1(others, {
 				events: true,
 				data: true,
 				animations: true
 			});
 			const firstClone = clones[0];
-			const firstCloneNode = isFragment(firstClone) ? getDOMProperty(firstClone, "firstElementChild") : firstClone;
+			const firstCloneNode = isFragment(firstClone) ? getDomProperty(firstClone, "firstElementChild") : firstClone;
 			if (!firstCloneNode) continue;
 			const deepest = getWrapTarget(firstCloneNode);
-			for (const clone of clones) callDOMMethod(node, "insertBefore", clone, null);
-			for (const child of children) callDOMMethod(deepest, "insertBefore", child, null);
+			for (const clone of clones) callDomMethod(node, "insertBefore", clone, null);
+			for (const child of children) callDomMethod(deepest, "insertBefore", child, null);
 		}
 	}
 
@@ -5516,7 +5516,7 @@
 		});
 		const results = [];
 		for (const node of nodes) {
-			const childNodes = elementsOnly ? merge([], getDOMProperty(node, "children")) : merge([], getDOMProperty(node, "childNodes"));
+			const childNodes = elementsOnly ? merge([], getDomProperty(node, "children")) : merge([], getDomProperty(node, "childNodes"));
 			for (const child of childNodes) {
 				if (!nodeFilter(child)) continue;
 				results.push(child);
@@ -5549,11 +5549,11 @@
 			window: true
 		});
 		if (!nodes.length) return;
-		if (nodes.some((node) => !getDOMProperty(node, "parentNode"))) return;
-		let ancestor = getDOMProperty(nodes[0], "parentNode");
+		if (nodes.some((node) => !getDomProperty(node, "parentNode"))) return;
+		let ancestor = getDomProperty(nodes[0], "parentNode");
 		while (ancestor) {
-			if (nodes.every((node) => node !== ancestor && callDOMMethod(ancestor, "contains", node))) return ancestor;
-			ancestor = getDOMProperty(ancestor, "parentNode");
+			if (nodes.every((node) => node !== ancestor && callDomMethod(ancestor, "contains", node))) return ancestor;
+			ancestor = getDomProperty(ancestor, "parentNode");
 		}
 	}
 	/**
@@ -5572,7 +5572,7 @@
 	function fragment$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		const content = getDOMProperty(node, "content");
+		const content = getDomProperty(node, "content");
 		if (isFragment(content)) return content;
 	}
 	/**
@@ -5586,7 +5586,7 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (let node of nodes) {
-			node = getDOMProperty(node, "nextElementSibling");
+			node = getDomProperty(node, "nextElementSibling");
 			if (node && nodeFilter(node)) results.push(node);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -5604,7 +5604,7 @@
 		limitFilter = parseFilter(limitFilter, false);
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
-		for (let node of nodes) while (node = getDOMProperty(node, "nextElementSibling")) {
+		for (let node of nodes) while (node = getDomProperty(node, "nextElementSibling")) {
 			if (limitFilter(node)) break;
 			if (!nodeFilter(node)) continue;
 			results.push(node);
@@ -5620,7 +5620,7 @@
 	function offsetParent$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return getDOMProperty(node, "offsetParent");
+		return getDomProperty(node, "offsetParent");
 	}
 	/**
 	* Returns the parent of each node (optionally matching a filter).
@@ -5633,7 +5633,7 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (let node of nodes) {
-			node = getDOMProperty(node, "parentNode");
+			node = getDomProperty(node, "parentNode");
 			if (!node) continue;
 			if (!nodeFilter(node)) continue;
 			results.push(node);
@@ -5655,7 +5655,7 @@
 		const results = [];
 		for (let node of nodes) {
 			const parents = [];
-			while (node = getDOMProperty(node, "parentNode")) {
+			while (node = getDomProperty(node, "parentNode")) {
 				if (isDocument(node)) break;
 				if (limitFilter(node)) break;
 				if (!nodeFilter(node)) continue;
@@ -5677,7 +5677,7 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (let node of nodes) {
-			node = getDOMProperty(node, "previousElementSibling");
+			node = getDomProperty(node, "previousElementSibling");
 			if (node && nodeFilter(node)) results.push(node);
 		}
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -5697,7 +5697,7 @@
 		const results = [];
 		for (let node of nodes) {
 			const siblings = [];
-			while (node = getDOMProperty(node, "previousElementSibling")) {
+			while (node = getDomProperty(node, "previousElementSibling")) {
 				if (limitFilter(node)) break;
 				if (!nodeFilter(node)) continue;
 				siblings.unshift(node);
@@ -5715,7 +5715,7 @@
 	function shadow$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return getDOMProperty(node, "shadowRoot");
+		return getDomProperty(node, "shadowRoot");
 	}
 	/**
 	* Returns all siblings for each node (optionally matching a filter).
@@ -5729,9 +5729,9 @@
 		const nodes = parseNodes(selector, { node: true });
 		const results = [];
 		for (const node of nodes) {
-			const parent = getDOMProperty(node, "parentNode");
+			const parent = getDomProperty(node, "parentNode");
 			if (!parent) continue;
-			const siblings = elementsOnly ? getDOMProperty(parent, "children") : getDOMProperty(parent, "childNodes");
+			const siblings = elementsOnly ? getDomProperty(parent, "children") : getDomProperty(parent, "childNodes");
 			let sibling;
 			for (sibling of siblings) {
 				if (node === sibling) continue;
@@ -5758,7 +5758,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => getDOMProperty(node, "isConnected"));
+		}).filter((node) => getDomProperty(node, "isConnected"));
 	}
 	/**
 	* Returns all nodes considered equal to any of the other nodes.
@@ -5776,7 +5776,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).filter((node) => others.some((other) => callDOMMethod(node, "isEqualNode", other)));
+		}).filter((node) => others.some((other) => callDomMethod(node, "isEqualNode", other)));
 	}
 	/**
 	* Returns all nodes matching a filter.
@@ -5825,9 +5825,9 @@
 			document: true,
 			window: true
 		}).filter((node) => {
-			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") !== "visible";
-			if (isDocument(node)) return getDOMProperty(node, "visibilityState") !== "visible";
-			return !isElement(node) || callDOMMethod(node, "getClientRects").length === 0;
+			if (isWindow(node)) return getDomProperty(node.document, "visibilityState") !== "visible";
+			if (isDocument(node)) return getDomProperty(node, "visibilityState") !== "visible";
+			return !isElement(node) || callDomMethod(node, "getClientRects").length === 0;
 		});
 	}
 	/**
@@ -5887,9 +5887,9 @@
 			document: true,
 			window: true
 		}).filter((node) => {
-			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") === "visible";
-			if (isDocument(node)) return getDOMProperty(node, "visibilityState") === "visible";
-			return isElement(node) && callDOMMethod(node, "getClientRects").length > 0;
+			if (isWindow(node)) return getDomProperty(node.document, "visibilityState") === "visible";
+			if (isDocument(node)) return getDomProperty(node, "visibilityState") === "visible";
+			return isElement(node) && callDomMethod(node, "getClientRects").length > 0;
 		});
 	}
 	/**
@@ -5907,7 +5907,7 @@
 	* @returns {Node[]} The filtered nodes.
 	*/
 	function withAttribute$1(selector, attribute) {
-		return parseNodes(selector).filter((node) => callDOMMethod(node, "hasAttribute", attribute));
+		return parseNodes(selector).filter((node) => callDomMethod(node, "hasAttribute", attribute));
 	}
 	/**
 	* Returns all nodes with child elements.
@@ -5919,7 +5919,7 @@
 			fragment: true,
 			shadow: true,
 			document: true
-		}).filter((node) => !!getDOMProperty(node, "childElementCount"));
+		}).filter((node) => !!getDomProperty(node, "childElementCount"));
 	}
 	/**
 	* Returns all nodes with any of the specified classes.
@@ -5929,7 +5929,7 @@
 	*/
 	function withClass$1(selector, ...classes) {
 		classes = parseClasses(classes);
-		return parseNodes(selector).filter((node) => classes.some((className) => getDOMProperty(node, "classList").contains(className)));
+		return parseNodes(selector).filter((node) => classes.some((className) => getDomProperty(node, "classList").contains(className)));
 	}
 	/**
 	* Returns all nodes with a CSS animation.
@@ -6355,7 +6355,7 @@
 	* @returns {boolean} Whether the command was executed.
 	*/
 	function exec(command, value = null) {
-		return callDOMMethod(getContext(), "execCommand", command, false, value);
+		return callDomMethod(getContext(), "execCommand", command, false, value);
 	}
 	/**
 	* Gets the index of the first node relative to its parent.
@@ -6364,9 +6364,9 @@
 	*/
 	function index$1(selector) {
 		const node = parseNode(selector, { node: true });
-		const parent = node && getDOMProperty(node, "parentNode");
+		const parent = node && getDomProperty(node, "parentNode");
 		if (!parent) return;
-		return merge([], getDOMProperty(parent, "children")).indexOf(node);
+		return merge([], getDomProperty(parent, "children")).indexOf(node);
 	}
 	/**
 	* Gets the index of the first node matching a filter.
@@ -6393,7 +6393,7 @@
 			shadow: true,
 			document: true
 		});
-		for (const node of nodes) callDOMMethod(node, "normalize");
+		for (const node of nodes) callDomMethod(node, "normalize");
 	}
 	/**
 	* Returns a serialized string containing names and values of all form nodes.
@@ -6416,16 +6416,16 @@
 			fragment: true,
 			shadow: true
 		}).flatMap((node) => {
-			if (isFragment(node) || isShadow(node)) return merge([], callDOMMethod(node, "querySelectorAll", "input, select, textarea"));
-			if (callDOMMethod(node, "matches", "form")) return merge([], getDOMProperty(node, "elements"));
+			if (isFragment(node) || isShadow(node)) return merge([], callDomMethod(node, "querySelectorAll", "input, select, textarea"));
+			if (callDomMethod(node, "matches", "form")) return merge([], getDomProperty(node, "elements"));
 			return [node];
 		});
 		const values = [];
 		for (const node of nodes) {
-			if (callDOMMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) continue;
-			const name = callDOMMethod(node, "getAttribute", "name");
+			if (callDomMethod(node, "matches", ":not(input, select, textarea), :disabled, datalist *, input:is([type=button], [type=submit], [type=reset], [type=file], [type=image]), input:is([type=radio], [type=checkbox]):not(:checked)")) continue;
+			const name = callDomMethod(node, "getAttribute", "name");
 			if (!name) continue;
-			if (callDOMMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
+			if (callDomMethod(node, "matches", "select")) for (const option of node.selectedOptions) {
 				if (option.matches(":disabled")) continue;
 				values.push({
 					name,
@@ -6463,18 +6463,18 @@
 			const isOtherShadow = isShadow(other);
 			if (isNodeShadow) node = node.host;
 			if (isOtherShadow) other = other.host;
-			const nodeConnected = getDOMProperty(node, "isConnected");
-			const otherConnected = getDOMProperty(other, "isConnected");
+			const nodeConnected = getDomProperty(node, "isConnected");
+			const otherConnected = getDomProperty(other, "isConnected");
 			if (!nodeConnected || !otherConnected) {
 				if (nodeConnected !== otherConnected) {
 					if (isNodeShadow && !nodeConnected) return 1;
 					if (isOtherShadow && !otherConnected) return -1;
 					return nodeConnected ? 1 : -1;
 				}
-				if (callDOMMethod(node, "getRootNode") !== callDOMMethod(other, "getRootNode")) return 0;
+				if (callDomMethod(node, "getRootNode") !== callDomMethod(other, "getRootNode")) return 0;
 			}
 			if (node === other) return 0;
-			const pos = callDOMMethod(node, "compareDocumentPosition", other);
+			const pos = callDomMethod(node, "compareDocumentPosition", other);
 			if (pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINED_BY) return -1;
 			if (pos & Node.DOCUMENT_POSITION_PRECEDING || pos & Node.DOCUMENT_POSITION_CONTAINS) return 1;
 			return 0;
@@ -6488,7 +6488,7 @@
 	function tagName$1(selector) {
 		const node = parseNode(selector);
 		if (!node) return;
-		return getDOMProperty(node, "tagName").toLowerCase();
+		return getDomProperty(node, "tagName").toLowerCase();
 	}
 
 //#endregion
@@ -6549,7 +6549,7 @@
 		const range = selection.getRangeAt(0);
 		if (range.collapsed) return [];
 		const commonAncestor = range.commonAncestorContainer;
-		const nodes = merge([], getDOMProperty(commonAncestor, "childNodes"));
+		const nodes = merge([], getDomProperty(commonAncestor, "childNodes"));
 		if (!nodes.length) return [commonAncestor];
 		return nodes.filter((node) => range.intersectsNode(node));
 	}
@@ -6559,7 +6559,7 @@
 	*/
 	function select$1(selector) {
 		const node = parseNode(selector, { node: true });
-		const select = node && getDOMProperty(node, "select");
+		const select = node && getDomProperty(node, "select");
 		if (typeof select === "function") {
 			select.call(node);
 			return;
@@ -6577,7 +6577,7 @@
 	*/
 	function selectAll$1(selector) {
 		let nodes = sort$1(selector);
-		nodes = nodes.filter((node) => !nodes.some((other) => other !== node && callDOMMethod(other, "contains", node)));
+		nodes = nodes.filter((node) => !nodes.some((other) => other !== node && callDomMethod(other, "contains", node)));
 		const selection = getWindow().getSelection();
 		if (selection.rangeCount) selection.removeAllRanges();
 		if (!nodes.length) return;
@@ -6604,7 +6604,7 @@
 		selection.removeAllRanges();
 		const deepest = getWrapTarget(nodes[0]);
 		const fragment = range.extractContents();
-		callDOMMethod(deepest, "appendChild", fragment);
+		callDomMethod(deepest, "appendChild", fragment);
 		for (const node of nodes.reverse()) range.insertNode(node);
 	}
 
@@ -6673,7 +6673,7 @@
 	* @returns {boolean} Whether any of the nodes has the attribute.
 	*/
 	function hasAttribute$1(selector, attribute) {
-		return parseNodes(selector).some((node) => callDOMMethod(node, "hasAttribute", attribute));
+		return parseNodes(selector).some((node) => callDomMethod(node, "hasAttribute", attribute));
 	}
 	/**
 	* Checks whether any of the nodes has child nodes.
@@ -6685,7 +6685,7 @@
 			fragment: true,
 			shadow: true,
 			document: true
-		}).some((node) => getDOMProperty(node, "childElementCount"));
+		}).some((node) => getDomProperty(node, "childElementCount"));
 	}
 	/**
 	* Checks whether any of the nodes has any of the specified classes.
@@ -6695,7 +6695,7 @@
 	*/
 	function hasClass$1(selector, ...classes) {
 		classes = parseClasses(classes);
-		return parseNodes(selector).some((node) => classes.some((className) => getDOMProperty(node, "classList").contains(className)));
+		return parseNodes(selector).some((node) => classes.some((className) => getDomProperty(node, "classList").contains(className)));
 	}
 	/**
 	* Checks whether any of the nodes has a CSS animation.
@@ -6740,7 +6740,7 @@
 	*/
 	function hasDataset$1(selector, key) {
 		key = camelCase(key);
-		return parseNodes(selector).some((node) => Object.hasOwn(getDOMProperty(node, "dataset"), key));
+		return parseNodes(selector).some((node) => Object.hasOwn(getDomProperty(node, "dataset"), key));
 	}
 	/**
 	* Checks whether any of the nodes contains a descendant matching a filter.
@@ -6762,7 +6762,7 @@
 	* @returns {boolean} Whether any of the nodes has a DocumentFragment.
 	*/
 	function hasFragment$1(selector) {
-		return parseNodes(selector).some((node) => isFragment(getDOMProperty(node, "content")));
+		return parseNodes(selector).some((node) => isFragment(getDomProperty(node, "content")));
 	}
 	/**
 	* Checks whether any of the nodes has a specified property.
@@ -6779,7 +6779,7 @@
 	* @returns {boolean} Whether any of the nodes has a ShadowRoot.
 	*/
 	function hasShadow$1(selector) {
-		return parseNodes(selector).some((node) => getDOMProperty(node, "shadowRoot"));
+		return parseNodes(selector).some((node) => getDomProperty(node, "shadowRoot"));
 	}
 	/**
 	* Checks whether any of the nodes matches a filter.
@@ -6805,7 +6805,7 @@
 			node: true,
 			fragment: true,
 			shadow: true
-		}).some((node) => getDOMProperty(node, "isConnected"));
+		}).some((node) => getDomProperty(node, "isConnected"));
 	}
 	/**
 	* Checks whether any of the nodes is considered equal to any of the other nodes.
@@ -6829,7 +6829,7 @@
 			nodes = clone$1(nodes, { deep: false });
 			others = clone$1(others, { deep: false });
 		}
-		return nodes.some((node) => others.some((other) => callDOMMethod(node, "isEqualNode", other)));
+		return nodes.some((node) => others.some((other) => callDomMethod(node, "isEqualNode", other)));
 	}
 	/**
 	* Checks whether any of the nodes or a parent of any of the nodes is "fixed".
@@ -6850,9 +6850,9 @@
 			document: true,
 			window: true
 		}).some((node) => {
-			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") !== "visible";
-			if (isDocument(node)) return getDOMProperty(node, "visibilityState") !== "visible";
-			return !isElement(node) || callDOMMethod(node, "getClientRects").length === 0;
+			if (isWindow(node)) return getDomProperty(node.document, "visibilityState") !== "visible";
+			if (isDocument(node)) return getDomProperty(node, "visibilityState") !== "visible";
+			return !isElement(node) || callDomMethod(node, "getClientRects").length === 0;
 		});
 	}
 	/**
@@ -6884,9 +6884,9 @@
 			document: true,
 			window: true
 		}).some((node) => {
-			if (isWindow(node)) return getDOMProperty(node.document, "visibilityState") === "visible";
-			if (isDocument(node)) return getDOMProperty(node, "visibilityState") === "visible";
-			return isElement(node) && callDOMMethod(node, "getClientRects").length > 0;
+			if (isWindow(node)) return getDomProperty(node.document, "visibilityState") === "visible";
+			if (isDocument(node)) return getDomProperty(node, "visibilityState") === "visible";
+			return isElement(node) && callDomMethod(node, "getClientRects").length > 0;
 		});
 	}
 
@@ -7402,11 +7402,11 @@
 			type: "text/javascript",
 			...attributes
 		};
-		if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now(), getDOMProperty(context, "baseURI"));
-		const script = callDOMMethod(context, "createElement", "script");
+		if (!cache) attributes.src = appendQueryString(attributes.src, "_", Date.now(), getDomProperty(context, "baseURI"));
+		const script = callDomMethod(context, "createElement", "script");
 		script.async = "async" in attributes ? isEnabled(attributes.async) : false;
 		for (const [key, value] of Object.entries(attributes)) setScriptAttribute(script, key, value);
-		getDOMProperty(context, "head").appendChild(script);
+		getDomProperty(context, "head").appendChild(script);
 		return new Promise((resolve, reject) => {
 			script.onload = (_) => resolve();
 			script.onerror = (error) => reject(error);
@@ -7450,10 +7450,10 @@
 			rel: "stylesheet",
 			...attributes
 		};
-		if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now(), getDOMProperty(context, "baseURI"));
-		const link = callDOMMethod(context, "createElement", "link");
+		if (!cache) attributes.href = appendQueryString(attributes.href, "_", Date.now(), getDomProperty(context, "baseURI"));
+		const link = callDomMethod(context, "createElement", "link");
 		for (const [key, value] of Object.entries(attributes)) link.setAttribute(key, value);
-		getDOMProperty(context, "head").appendChild(link);
+		getDomProperty(context, "head").appendChild(link);
 		return new Promise((resolve, reject) => {
 			link.onload = (_) => resolve();
 			link.onerror = (error) => reject(error);
@@ -7485,7 +7485,7 @@
 	* @returns {string} The sanitized HTML string.
 	*/
 	function sanitize(html, allowedTags$1 = allowedTags) {
-		const template = callDOMMethod(getContext(), "createElement", "template");
+		const template = callDomMethod(getContext(), "createElement", "template");
 		template.innerHTML = html;
 		const fragment = template.content;
 		const childNodes = merge([], fragment.children);
@@ -7504,7 +7504,7 @@
 		if (!isAllowed || !uriAttributes.has(name)) return isAllowed;
 		try {
 			const { URL } = getWindow();
-			return new URL(attribute.nodeValue, getDOMProperty(getContext(), "baseURI")).protocol !== "javascript:";
+			return new URL(attribute.nodeValue, getDomProperty(getContext(), "baseURI")).protocol !== "javascript:";
 		} catch {
 			return false;
 		}
@@ -7515,18 +7515,18 @@
 	* @param {AllowedTags} [allowedTags] The allowed tags and attributes.
 	*/
 	function sanitizeNode(node, allowedTags$2 = allowedTags) {
-		const name = getDOMProperty(node, "tagName").toLowerCase();
+		const name = getDomProperty(node, "tagName").toLowerCase();
 		if (!Object.hasOwn(allowedTags$2, name)) {
-			callDOMMethod(node, "remove");
+			callDomMethod(node, "remove");
 			return;
 		}
 		const allowedAttributes = [];
 		if (Object.hasOwn(allowedTags$2, "*")) allowedAttributes.push(...allowedTags$2["*"]);
 		allowedAttributes.push(...allowedTags$2[name]);
-		const attributes = merge([], getDOMProperty(node, "attributes"));
-		for (const attribute of attributes) if (!isAllowedAttribute(attribute, allowedAttributes)) callDOMMethod(node, "removeAttribute", attribute.nodeName);
-		const content = getDOMProperty(node, "content");
-		const childNodes = merge([], isFragment(content) ? content.children : getDOMProperty(node, "children"));
+		const attributes = merge([], getDomProperty(node, "attributes"));
+		for (const attribute of attributes) if (!isAllowedAttribute(attribute, allowedAttributes)) callDomMethod(node, "removeAttribute", attribute.nodeName);
+		const content = getDomProperty(node, "content");
+		const childNodes = merge([], isFragment(content) ? content.children : getDomProperty(node, "children"));
 		for (const child of childNodes) sanitizeNode(child, allowedTags$2);
 	}
 

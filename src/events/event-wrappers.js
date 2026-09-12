@@ -1,6 +1,6 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
-import { callDOMMethod, getDOMProperty, isElement, isWindow, merge } from '@fr0st/core';
+import { callDomMethod, getDomProperty, isElement, isWindow, merge } from '@fr0st/core';
 
 /**
  * Returns the closest matching delegate before the container boundary.
@@ -12,18 +12,18 @@ import { callDOMMethod, getDOMProperty, isElement, isWindow, merge } from '@fr0s
  */
 function getDelegate(node, target, selector, scoped) {
     const matches = scoped ?
-        merge([], callDOMMethod(node, 'querySelectorAll', selector)) :
+        merge([], callDomMethod(node, 'querySelectorAll', selector)) :
         null;
 
     while (target && target !== node) {
         if (
             isElement(target) &&
-            (matches ? matches.includes(target) : callDOMMethod(target, 'matches', selector))
+            (matches ? matches.includes(target) : callDomMethod(target, 'matches', selector))
         ) {
             return target;
         }
 
-        target = getDOMProperty(target, 'parentNode');
+        target = getDomProperty(target, 'parentNode');
     }
 };
 
