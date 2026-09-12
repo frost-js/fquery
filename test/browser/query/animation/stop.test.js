@@ -1,40 +1,14 @@
+import { setup, stopTests } from '#cases/animation/stop.js';
 import { expect, test } from '#test';
 import { advanceClock } from '../../../setup/browser.js';
-import { expectAnimationState } from '../../../support/assertions/animation.js';
 
 test.use({ mockClock: true });
 
 test.describe('QuerySet #stop', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="test1"></div>' +
-                '<div id="test2" class="animate"></div>' +
-                '<div id="test3"></div>' +
-                '<div id="test4" class="animate"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('stops animations on all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.animate(
-                '.animate',
-                (_) => { },
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-        await advanceClock(page, 25);
-        await page.evaluate((_) => {
-            $('.animate').stop();
-        });
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test2', '#test3', '#test4'],
-            },
-        ]);
+    stopTests(([nodes, ...args]) => {
+        $(nodes).stop(...args);
     });
 
     test('clears pending animations in a named queue when stopping', async ({ page }) => {
@@ -64,36 +38,6 @@ test.describe('QuerySet #stop', () => {
         });
         await advanceClock(page, 150);
         expect(await page.locator('#test2').getAttribute('data-test')).toBeNull();
-    });
-
-    test('stops animations on all nodes (without finishing)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.animate(
-                '.animate',
-                (_) => { },
-                {
-                    duration: 100,
-                    debug: true,
-                },
-            );
-        });
-        await advanceClock(page, 50);
-        const testHtml = await page.evaluate((_) => {
-            $('.animate').stop({ finish: false });
-            return document.body.innerHTML;
-        });
-        await expectAnimationState(page, [
-            {
-                selectors: ['#test1', '#test3'],
-            },
-            {
-                selectors: ['#test2', '#test4'],
-                progress: 0.5,
-            },
-        ]);
-        await advanceClock(page, 25);
-        const html = await page.evaluate((_) => document.body.innerHTML);
-        expect(html).toBe(testHtml);
     });
 
     test('returns the QuerySet', async ({ page }) => {
