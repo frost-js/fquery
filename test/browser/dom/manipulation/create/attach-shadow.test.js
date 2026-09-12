@@ -1,85 +1,54 @@
+import { attachShadowTests, setup } from '#cases/manipulation/create/attach-shadow.js';
 import { expect, test } from '#test';
 
 test.describe('#attachShadow', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('attaches a shadow root to the first node', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            const shadowRoot = $.attachShadow('#test');
+    attachShadowTests((args) => $.attachShadow(...args));
 
-            return {
-                returnedShadowRoot: shadowRoot instanceof ShadowRoot,
-                elementShadowRoot: document.getElementById('test').shadowRoot instanceof ShadowRoot,
-            };
-        });
+    test.describe('node inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            const hasShadowRoot = await page.evaluate(() => {
+                const element = document.getElementById('test');
 
-        expect(result).toEqual({
-            returnedShadowRoot: true,
-            elementShadowRoot: true,
-        });
-    });
+                $.attachShadow(element);
 
-    test('attaches a closed shadow root to the first node', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            const shadowRoot = $.attachShadow('#test', { open: false });
+                return element.shadowRoot instanceof ShadowRoot;
+            });
 
-            return {
-                returnedShadowRoot: shadowRoot instanceof ShadowRoot,
-                elementShadowRoot: document.getElementById('test').shadowRoot,
-            };
+            expect(hasShadowRoot).toBe(true);
         });
 
-        expect(result).toEqual({
-            returnedShadowRoot: true,
-            elementShadowRoot: null,
-        });
-    });
+        test('works with NodeList nodes', async ({ page }) => {
+            const hasShadowRoot = await page.evaluate(() => {
+                $.attachShadow(document.querySelectorAll('div'));
 
-    test('works with HTMLElement nodes', async ({ page }) => {
-        const hasShadowRoot = await page.evaluate(() => {
-            const element = document.getElementById('test');
+                return document.getElementById('test').shadowRoot instanceof ShadowRoot;
+            });
 
-            $.attachShadow(element);
-
-            return element.shadowRoot instanceof ShadowRoot;
+            expect(hasShadowRoot).toBe(true);
         });
 
-        expect(hasShadowRoot).toBe(true);
-    });
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            const hasShadowRoot = await page.evaluate(() => {
+                $.attachShadow(document.body.children);
 
-    test('works with NodeList nodes', async ({ page }) => {
-        const hasShadowRoot = await page.evaluate(() => {
-            $.attachShadow(document.querySelectorAll('div'));
+                return document.getElementById('test').shadowRoot instanceof ShadowRoot;
+            });
 
-            return document.getElementById('test').shadowRoot instanceof ShadowRoot;
+            expect(hasShadowRoot).toBe(true);
         });
 
-        expect(hasShadowRoot).toBe(true);
-    });
+        test('works with array nodes', async ({ page }) => {
+            const hasShadowRoot = await page.evaluate(() => {
+                const element = document.getElementById('test');
 
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        const hasShadowRoot = await page.evaluate(() => {
-            $.attachShadow(document.body.children);
+                $.attachShadow([element]);
 
-            return document.getElementById('test').shadowRoot instanceof ShadowRoot;
+                return element.shadowRoot instanceof ShadowRoot;
+            });
+
+            expect(hasShadowRoot).toBe(true);
         });
-
-        expect(hasShadowRoot).toBe(true);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        const hasShadowRoot = await page.evaluate(() => {
-            const element = document.getElementById('test');
-
-            $.attachShadow([element]);
-
-            return element.shadowRoot instanceof ShadowRoot;
-        });
-
-        expect(hasShadowRoot).toBe(true);
     });
 });

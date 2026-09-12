@@ -1,43 +1,10 @@
+import { attachShadowTests, setup } from '#cases/manipulation/create/attach-shadow.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #attachShadow', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="test"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('attaches a shadow root to the first node', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            const shadowRoot = $('#test').attachShadow().get(0);
-
-            return {
-                returnedShadowRoot: shadowRoot instanceof ShadowRoot,
-                elementShadowRoot: document.getElementById('test').shadowRoot instanceof ShadowRoot,
-            };
-        });
-
-        expect(result).toEqual({
-            returnedShadowRoot: true,
-            elementShadowRoot: true,
-        });
-    });
-
-    test('attaches a closed shadow root to the first node', async ({ page }) => {
-        const result = await page.evaluate(() => {
-            const shadowRoot = $('#test').attachShadow({ open: false }).get(0);
-
-            return {
-                returnedShadowRoot: shadowRoot instanceof ShadowRoot,
-                elementShadowRoot: document.getElementById('test').shadowRoot,
-            };
-        });
-
-        expect(result).toEqual({
-            returnedShadowRoot: true,
-            elementShadowRoot: null,
-        });
-    });
+    attachShadowTests(([nodes, ...args]) => $(nodes).attachShadow(...args).get(0));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate(() => {
