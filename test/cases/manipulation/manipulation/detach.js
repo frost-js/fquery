@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { detach } from '../../../../src/manipulation/manipulation.js'; */
 
 import { expect, test } from '#test';
 
@@ -24,18 +25,22 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared detach behavior tests.
- * @param {((args: [string]) => Array<Node>)} detach The browser callback for detach.
+ * @param {() => typeof detach} createDetach Creates the browser-side method adapter.
  */
-export function detachTests(detach) {
+export function detachTests(createDetach) {
     test('detaches all nodes from the DOM', async ({ page }) => {
-        await page.evaluate(detach, ['a']);
+        const operation = await page.evaluateHandle(createDetach);
+
+        await operation.evaluate((operation, args) => operation(...args), ['a']);
 
         await expect(page.locator('#parent1 > *')).toHaveCount(0);
         await expect(page.locator('#parent2 > *')).toHaveCount(0);
     });
 
     test('returns detached nodes', async ({ page }) => {
-        const nodes = await page.evaluateHandle(detach, ['a']);
+        const operation = await page.evaluateHandle(createDetach);
+
+        const nodes = await operation.evaluateHandle((operation, args) => operation(...args), ['a']);
         const ids = await nodes.evaluate((nodes) => nodes.map((node) => node.id));
 
         expect(ids).toEqual([
@@ -44,5 +49,133 @@ export function detachTests(detach) {
             'test3',
             'test4',
         ]);
+    });
+
+    test.describe('preserved state', () => {
+        test('does not remove events', async ({ page }) => {
+            const operation = await page.evaluateHandle(createDetach);
+
+            const clickCount = await page.evaluate((operation) => {
+                let count = 0;
+
+                $.addEvent('a', 'click', () => {
+                    count++;
+                });
+
+                const nodes = operation('a');
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+
+                $.triggerEvent('a', 'click');
+
+                return count;
+            }, operation);
+
+            expect(clickCount).toBe(4);
+        });
+
+        test('does not remove data', async ({ page }) => {
+            const operation = await page.evaluateHandle(createDetach);
+
+            const values = await page.evaluate((operation) => {
+                $.setData('a', 'test', 'Test');
+
+                const nodes = operation('a');
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+
+                return nodes.map((node) => $.getData(node, 'test'));
+            }, operation);
+
+            expect(values).toEqual([
+                'Test',
+                'Test',
+                'Test',
+                'Test',
+            ]);
+        });
+
+        test('does not remove animations', async ({ page }) => {
+            const operation = await page.evaluateHandle(createDetach);
+
+            await page.evaluate(() => {
+                $.animate(
+                    'a',
+                    () => {},
+                    {
+                        duration: 100,
+                        debug: true,
+                    },
+                );
+            });
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('a')].length === 4 &&
+                [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
+            )).toBe(true);
+
+            await page.evaluate((operation) => {
+                const nodes = operation('a');
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+            }, operation);
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('body > a')].length === 4 &&
+                [...document.querySelectorAll('body > a')].every((node) => Boolean(node.dataset.animationProgress)),
+            )).toBe(true);
+
+            await expect.poll(async () => await page.evaluate(() =>
+                [...document.querySelectorAll('body > a')].every((node) =>
+                    !node.dataset.animationProgress &&
+                    !node.dataset.animationStart &&
+                    !node.dataset.animationTime),
+            )).toBe(true);
+        });
+
+        test('does not remove queue', async ({ page }) => {
+            const operation = await page.evaluateHandle(createDetach);
+
+            await page.evaluate(() => {
+                document.documentElement.removeAttribute('data-queue-checkpoint');
+
+                setTimeout(() => {
+                    document.documentElement.setAttribute('data-queue-checkpoint', 'done');
+                }, 110);
+
+                $.queue('a', (node) => {
+                    node.dataset.queueState = 'running';
+
+                    return new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                });
+                $.queue('a', (node) => {
+                    node.dataset.test = 'Test';
+                });
+            });
+
+            await expect.poll(async () => await page.locator('#test1').getAttribute('data-queue-state')).toBe('running');
+
+            await page.evaluate((operation) => {
+                const nodes = operation('a');
+
+                for (const node of nodes) {
+                    document.body.appendChild(node);
+                }
+            }, operation);
+
+            await expect.poll(async () => await page.locator('html').getAttribute('data-queue-checkpoint')).toBe('done');
+            await expect(page.locator('#test1')).toHaveAttribute('data-test', 'Test');
+            await expect(page.locator('#test2')).toHaveAttribute('data-test', 'Test');
+            await expect(page.locator('#test3')).toHaveAttribute('data-test', 'Test');
+            await expect(page.locator('#test4')).toHaveAttribute('data-test', 'Test');
+        });
     });
 }

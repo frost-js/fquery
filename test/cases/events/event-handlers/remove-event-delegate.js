@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { removeEventDelegate } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -23,10 +24,10 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared removeEventDelegate namespace behavior tests.
- * @param {((args: [string, string, string]) => void)} removeEventDelegate The browser callback for removeEventDelegate.
+ * Registers shared removeEventDelegate behavior tests.
+ * @param {() => typeof removeEventDelegate} createRemoveEventDelegate Creates the browser-side method adapter.
  */
-export function removeEventDelegateTests(removeEventDelegate) {
+export function removeEventDelegateTests(createRemoveEventDelegate) {
     test.describe('namespaces', () => {
         for (const [name, registeredEvents, removedEvents, expected] of [
             ['removes a namespaced delegated event from each node', 'click.test', 'click', 0],
@@ -45,6 +46,8 @@ export function removeEventDelegateTests(removeEventDelegate) {
             ['does not remove namespaced delegated events with deep namespacing from each node', 'click.test hover.test', 'click.test.deep hover.test.deep', 8],
         ]) {
             test(name, async ({ page }) => {
+                const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
                 const calls = await page.evaluateHandle((events) => {
                     const calls = { count: 0 };
                     $.addEventDelegate('div', events, 'a', () => {
@@ -53,7 +56,7 @@ export function removeEventDelegateTests(removeEventDelegate) {
                     return calls;
                 }, registeredEvents);
 
-                await page.evaluate(removeEventDelegate, ['div', removedEvents, 'a']);
+                await operation.evaluate((operation, args) => operation(...args), ['div', removedEvents, 'a']);
 
                 const count = await calls.evaluate((calls, registeredEvents) => {
                     const events = registeredEvents.split(' ').map((event) =>
@@ -71,5 +74,226 @@ export function removeEventDelegateTests(removeEventDelegate) {
                 expect(count).toBe(expected);
             });
         }
+    });
+
+    test.describe('event types and handlers', () => {
+        test('removes all delegated events from each node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                    result++;
+                });
+                operation('div', null, 'a');
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('removes all delegated events of a type from each node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                    result++;
+                });
+                operation('div', 'click', 'a');
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                return result;
+            }, operation)).toBe(4);
+        });
+
+        test('removes all delegated events of types from each node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                    result++;
+                });
+                operation('div', 'click hover', 'a');
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('removes a specific delegated event from each node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const callback = (_) => {
+                    result++;
+                };
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', callback);
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                operation('div', 'click', 'a', callback);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(4);
+        });
+
+        test('does not remove a specific delegated event of the wrong type from each node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const callback = (_) => {
+                    result++;
+                };
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', callback);
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                operation('div', 'hover', 'a', callback);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(8);
+        });
+    });
+
+    test.describe('capture', () => {
+        test('removes capture events', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event1 = new Event('click');
+                const event2 = new Event('hover');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                    result++;
+                }, true);
+                operation('div', null, 'a');
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('works with capture', async ({ page }) => {
+            const operation = await page.evaluateHandle(createRemoveEventDelegate);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event1 = new Event('click', {
+                    bubbles: true,
+                });
+                const event2 = new Event('hover');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                $.addEventDelegate('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                $.addEventDelegate('div', 'hover', 'a', (_) => {
+                    result++;
+                }, { capture: true });
+                operation('div', null, 'a', null, { capture: true });
+                element1.dispatchEvent(event1);
+                element1.dispatchEvent(event2);
+                element2.dispatchEvent(event1);
+                element2.dispatchEvent(event2);
+                element3.dispatchEvent(event1);
+                element3.dispatchEvent(event2);
+                element4.dispatchEvent(event1);
+                element4.dispatchEvent(event2);
+                return result;
+            }, operation)).toBe(4);
+        });
     });
 }
