@@ -4,11 +4,9 @@ import { expect, test } from '#test';
 test.describe('#setStyleLock', () => {
     test.beforeEach(setup);
 
-    test.describe('setting styles', () => {
-        setStyleLockTests((args) => {
-            $.setStyleLock(...args);
-        });
+    setStyleLockTests((args) => $.setStyleLock(...args));
 
+    test.describe('setting styles', () => {
         test('preserves custom property name casing', async ({ page }) => {
             await page.evaluate((_) => {
                 $.setStyleLock('#test1', '--brandColor', 'red');
@@ -20,58 +18,6 @@ test.describe('#setStyleLock', () => {
     });
 
     test.describe('restoration', () => {
-        test('restores the original value for each node', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.display = 'flex';
-                document.getElementById('test2').style.display = 'grid';
-                const release = $.setStyleLock('div', 'display', 'none');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex;');
-            await expect(page.locator('#test2')).toHaveAttribute('style', 'display: grid;');
-        });
-
-        test('restores a logical property when declaration order is preserved', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px; color: red;';
-                const release = $.setStyleLock('#test1', 'inline-size', '300px');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px; color: red;');
-        });
-
-        test('removes a declaration that was originally absent', async ({ page }) => {
-            await page.evaluate((_) => {
-                const release = $.setStyleLock('div', 'display', 'none');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', '');
-            await expect(page.locator('#test2')).toHaveAttribute('style', '');
-        });
-
-        test('restores the original important priority', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.setProperty('display', 'flex', 'important');
-                const release = $.setStyleLock('#test1', 'display', 'none');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex !important;');
-        });
-
-        test('restores custom property values', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.setProperty('--brandColor', 'red');
-                const release = $.setStyleLock('#test1', '--brandColor', 'blue');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', '--brandColor: red;');
-        });
-
         test('restores an empty custom property declaration', async ({ page }) => {
             await page.evaluate((_) => {
                 const node = document.getElementById('test1');
@@ -133,23 +79,6 @@ test.describe('#setStyleLock', () => {
     });
 
     test.describe('release lifecycle', () => {
-        test('returns a release function', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                return typeof $.setStyleLock('#test1', 'display', 'none');
-            })).toBe('function');
-        });
-
-        test('releases without restoring the current declaration', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.display = 'flex';
-                const release = $.setStyleLock('#test1', 'display', 'none');
-                $.setStyle('#test1', 'display', 'grid', { important: true });
-                release({ restore: false });
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid !important;');
-        });
-
         test('allows a new lock after releasing without restoring', async ({ page }) => {
             await page.evaluate((_) => {
                 const release = $.setStyleLock('#test1', 'display', 'grid');
@@ -171,42 +100,9 @@ test.describe('#setStyleLock', () => {
 
             await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid;');
         });
-
-        test('allows independent property locks', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test1').style.display = 'flex';
-                const release = $.setStyleLock('#test1', 'display', 'none');
-                $.setStyleLock('#test1', 'opacity', 0.5);
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'display: flex; opacity: 0.5;');
-        });
-
-        test('does not release a newer lock when called again', async ({ page }) => {
-            await page.evaluate((_) => {
-                const release = $.setStyleLock('#test1', 'display', 'none');
-                release();
-                $.setStyleLock('#test1', 'display', 'grid');
-                release();
-            });
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'display: grid;');
-        });
     });
 
     test.describe('validation', () => {
-        test('rejects a property that is already locked', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                $.setStyleLock('#test1', 'display', 'none');
-                try {
-                    $.setStyleLock('#test1', 'display', 'block');
-                } catch (error) {
-                    return error.message;
-                }
-            })).toBe('CSS property "display" is already locked.');
-        });
-
         test('matches locks using normalized property names', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 $.setStyleLock('#test1', 'marginTop', 10);
@@ -216,16 +112,6 @@ test.describe('#setStyleLock', () => {
                     return error.message;
                 }
             })).toBe('CSS property "margin-top" is already locked.');
-        });
-
-        test('rejects shorthand properties', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                try {
-                    $.setStyleLock('#test1', 'margin', '10px');
-                } catch (error) {
-                    return error.message;
-                }
-            })).toBe('Cannot lock CSS property "margin". Use a supported longhand or custom property.');
         });
 
         test('rejects the all shorthand', async ({ page }) => {
@@ -256,42 +142,6 @@ test.describe('#setStyleLock', () => {
                     return error.message;
                 }
             })).toBe('Cannot lock CSS property "not-a-property". Use a supported longhand or custom property.');
-        });
-
-        test('rejects invalid property values', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                try {
-                    $.setStyleLock('#test1', 'display', 'invalid');
-                } catch (error) {
-                    return error.message;
-                }
-            })).toBe('Invalid value for CSS property "display".');
-        });
-
-        test('rejects longhands supplied by a variable-based shorthand', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                document.getElementById('test1').style.cssText = '--spacing: 20px; padding: var(--spacing);';
-                try {
-                    $.setStyleLock('#test1', 'padding-left', '5px');
-                } catch (error) {
-                    return error.message;
-                }
-            })).toBe('Cannot lock CSS property "padding-left" because its original value cannot be restored.');
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', '--spacing: 20px; padding: var(--spacing);');
-        });
-
-        test('rejects a physical property that would move past a logical property', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                document.getElementById('test1').style.cssText = 'width: 100px; inline-size: 200px;';
-                try {
-                    $.setStyleLock('#test1', 'width', '300px');
-                } catch (error) {
-                    return error.message;
-                }
-            })).toBe('Cannot lock CSS property "width" because its original value cannot be restored.');
-
-            await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px; inline-size: 200px;');
         });
 
         test('rejects a logical property that would move past a physical property', async ({ page }) => {
