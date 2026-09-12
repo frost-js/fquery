@@ -1,25 +1,10 @@
+import { contentsTests, setup } from '#cases/traversal/traversal/contents.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #contents', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="parent1" class="parent">Test 1<div id="child1"></div>Test 2</div><div id="parent2" class="parent">Test 3<div id="child2"></div>Test 4</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns all children of each node', async ({ page }) => {
-        const text = await page.evaluate((_) =>
-            $('.parent').contents().get().map((node) => node.textContent));
-
-        expect(text).toEqual([
-            'Test 1',
-            '',
-            'Test 2',
-            'Test 3',
-            '',
-            'Test 4',
-        ]);
-    });
+    contentsTests((nodes) => $(nodes).contents().get().map((node) => node.textContent));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
@@ -32,49 +17,51 @@ test.describe('QuerySet #contents', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const text = await page.evaluate((_) => {
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                'Test 1<div id="child1"></div>Test 2',
-            );
+    test.describe('node inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const text = await page.evaluate((_) => {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    'Test 1<div id="child1"></div>Test 2',
+                );
 
-            return $(fragment).contents().get().map((node) => node.textContent);
+                return $(fragment).contents().get().map((node) => node.textContent);
+            });
+
+            expect(text).toEqual([
+                'Test 1',
+                '',
+                'Test 2',
+            ]);
         });
 
-        expect(text).toEqual([
-            'Test 1',
-            '',
-            'Test 2',
-        ]);
-    });
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const text = await page.evaluate((_) => {
+                const div = document.createElement('div');
+                const shadow = div.attachShadow({ mode: 'open' });
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(
+                    'Test 1<div id="child1"></div>Test 2',
+                );
+                shadow.appendChild(fragment);
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const text = await page.evaluate((_) => {
-            const div = document.createElement('div');
-            const shadow = div.attachShadow({ mode: 'open' });
-            const range = document.createRange();
-            const fragment = range.createContextualFragment(
-                'Test 1<div id="child1"></div>Test 2',
-            );
-            shadow.appendChild(fragment);
+                return $(shadow).contents().get().map((node) => node.textContent);
+            });
 
-            return $(shadow).contents().get().map((node) => node.textContent);
+            expect(text).toEqual([
+                'Test 1',
+                '',
+                'Test 2',
+            ]);
         });
 
-        expect(text).toEqual([
-            'Test 1',
-            '',
-            'Test 2',
-        ]);
-    });
+        test('works with Document nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) =>
+                $(document).contents().get().map((node) => node.id));
 
-    test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $(document).contents().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'html',
-        ]);
+            expect(ids).toEqual([
+                'html',
+            ]);
+        });
     });
 });
