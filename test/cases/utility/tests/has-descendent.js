@@ -1,4 +1,6 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
+/** @import { NodeInput } from '../../../../src/helpers.js'; */
 
 import { expect, test } from '#test';
 
@@ -28,7 +30,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared hasDescendent behavior tests.
- * @param {((args: [string, string?]) => boolean)} hasDescendent The browser callback for hasDescendent.
+ * @param {((args: [NodeInput, NodeFilterInput?]) => boolean)} hasDescendent The browser callback for hasDescendent.
  */
 export function hasDescendentTests(hasDescendent) {
     test('returns true if any node has a descendent matching a filter', async ({ page }) => {
@@ -45,5 +47,54 @@ export function hasDescendentTests(hasDescendent) {
 
     test('returns false if no nodes have a descendent without a filter', async ({ page }) => {
         expect(await page.evaluate(hasDescendent, ['div:not(.test)'])).toBe(false);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs] of [
+            ['function', () => ['div', (node) => node.id === 'a1']],
+            ['HTMLElement', () => ['div', document.getElementById('a1')]],
+            ['NodeList', () => ['div', document.querySelectorAll('a')]],
+            ['HTMLCollection', () => ['div', document.getElementById('span1').children]],
+            ['array', () => ['div', [document.getElementById('a1'), document.getElementById('a2')]]],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+
+                expect(await page.evaluate(hasDescendent, args)).toBe(true);
+            });
+        }
+    });
+
+    test.describe('self-exclusion', () => {
+        test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
+            const args = await page.evaluateHandle(() => {
+                const node = document.getElementById('div1');
+
+                return [node, node];
+            });
+
+            expect(await page.evaluate(hasDescendent, args)).toBe(false);
+        });
+
+        test('does not match the node itself with an array filter', async ({ page }) => {
+            const args = await page.evaluateHandle(() => {
+                const node = document.getElementById('div1');
+
+                return [node, [node]];
+            });
+
+            expect(await page.evaluate(hasDescendent, args)).toBe(false);
+        });
+
+        test('matches a descendent when the array filter also contains the node itself', async ({ page }) => {
+            const args = await page.evaluateHandle(() => {
+                const node = document.getElementById('div1');
+                const child = document.getElementById('span1');
+
+                return [node, [node, child]];
+            });
+
+            expect(await page.evaluate(hasDescendent, args)).toBe(true);
+        });
     });
 }
