@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('#removeEvent', () => {
     test.beforeEach(setup);
 
+    removeEventTests((args) => {
+        $.removeEvent(...args);
+    });
+
     test.describe('event types and handlers', () => {
         test('removes all events from each node', async ({ page }) => {
             expect(await page.evaluate((_) => {
@@ -143,10 +147,6 @@ test.describe('#removeEvent', () => {
                 return result;
             })).toBe(4);
         });
-    });
-
-    removeEventTests((args) => {
-        $.removeEvent(...args);
     });
 
     test.describe('cloning after removal', () => {

@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('#triggerOne', () => {
     test.beforeEach(setup);
 
+    test.describe('empty selections', () => {
+        triggerOneTests((args) => $.triggerOne(...args));
+    });
+
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
@@ -215,10 +219,6 @@ test.describe('#triggerOne', () => {
                 });
             })).toBe(true);
         });
-    });
-
-    test.describe('empty selections', () => {
-        triggerOneTests((args) => $.triggerOne(...args));
     });
 
     test.describe('node inputs', () => {

@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('QuerySet #removeEvent', () => {
     test.beforeEach(setup);
 
+    removeEventTests(([nodes, ...args]) => {
+        $(nodes).removeEvent(...args);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('a');
@@ -150,10 +154,6 @@ test.describe('QuerySet #removeEvent', () => {
                 return result;
             })).toBe(4);
         });
-    });
-
-    removeEventTests(([nodes, ...args]) => {
-        $(nodes).removeEvent(...args);
     });
 
     test.describe('cloning after removal', () => {

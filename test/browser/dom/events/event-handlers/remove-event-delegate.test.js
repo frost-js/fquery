@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('#removeEventDelegate', () => {
     test.beforeEach(setup);
 
+    removeEventDelegateTests((args) => {
+        $.removeEventDelegate(...args);
+    });
+
     test.describe('event types and handlers', () => {
         test('removes all delegated events from each node', async ({ page }) => {
             expect(await page.evaluate((_) => {
@@ -152,10 +156,6 @@ test.describe('#removeEventDelegate', () => {
                 return result;
             })).toBe(8);
         });
-    });
-
-    removeEventDelegateTests((args) => {
-        $.removeEventDelegate(...args);
     });
 
     test.describe('capture', () => {

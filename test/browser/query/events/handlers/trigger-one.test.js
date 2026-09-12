@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('QuerySet #triggerOne', () => {
     test.beforeEach(setup);
 
+    test.describe('empty selections', () => {
+        triggerOneTests(([nodes, ...args]) => $(nodes).triggerOne(...args));
+    });
+
     test('triggers an event for the first node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
@@ -221,10 +225,6 @@ test.describe('QuerySet #triggerOne', () => {
                         });
             })).toBe(true);
         });
-    });
-
-    test.describe('empty selections', () => {
-        triggerOneTests(([nodes, ...args]) => $(nodes).triggerOne(...args));
     });
 
     test.describe('node inputs', () => {

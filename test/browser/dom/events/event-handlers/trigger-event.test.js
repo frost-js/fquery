@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('#triggerEvent', () => {
     test.beforeEach(setup);
 
+    triggerEventTests((args) => {
+        $.triggerEvent(...args);
+    });
+
     test('triggers an event for each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
@@ -27,10 +31,6 @@ test.describe('#triggerEvent', () => {
             $.triggerEvent('a', 'click hover');
             return result;
         })).toBe(4);
-    });
-
-    triggerEventTests((args) => {
-        $.triggerEvent(...args);
     });
 
     test.describe('event properties', () => {

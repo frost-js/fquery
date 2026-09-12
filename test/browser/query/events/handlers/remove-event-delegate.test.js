@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('QuerySet #removeEventDelegate', () => {
     test.beforeEach(setup);
 
+    removeEventDelegateTests(([nodes, ...args]) => {
+        $(nodes).removeEventDelegate(...args);
+    });
+
     test('returns the QuerySet', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('a');
@@ -159,10 +163,6 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 return result;
             })).toBe(8);
         });
-    });
-
-    removeEventDelegateTests(([nodes, ...args]) => {
-        $(nodes).removeEventDelegate(...args);
     });
 
     test.describe('capture', () => {

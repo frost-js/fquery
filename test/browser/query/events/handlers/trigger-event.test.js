@@ -4,6 +4,10 @@ import { expect, test } from '#test';
 test.describe('QuerySet #triggerEvent', () => {
     test.beforeEach(setup);
 
+    triggerEventTests(([nodes, ...args]) => {
+        $(nodes).triggerEvent(...args);
+    });
+
     test('triggers an event for each node', async ({ page }) => {
         expect(await page.evaluate((_) => {
             let result = 0;
@@ -31,10 +35,6 @@ test.describe('QuerySet #triggerEvent', () => {
             const query = $('a');
             return query === query.triggerEvent('click');
         })).toBe(true);
-    });
-
-    triggerEventTests(([nodes, ...args]) => {
-        $(nodes).triggerEvent(...args);
     });
 
     test.describe('event properties', () => {
