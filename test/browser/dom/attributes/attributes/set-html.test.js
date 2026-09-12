@@ -8,268 +8,276 @@ test.describe('#setHTML', () => {
         });
     });
 
-    test('sets the HTML contents for all nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.setHTML('div', '<span>Test 2</span>');
-        });
-
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test1 > *')).toHaveCount(1);
-        await expect(page.locator('#test2 > *')).toHaveCount(1);
-    });
-
-    test('sets HTML contents for nodes with a string content property', async ({ page }) => {
-        await page.evaluate(() => {
-            document.getElementById('test1').content = 'Test 1';
-
-            $.setHTML('#test1', '<span>Test 2</span>');
-        });
-
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test1 > *')).toHaveCount(1);
-    });
-
-    test('removes events recursively', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const node = document.getElementById('inner');
-
-            $.addEvent(node, 'click', () => {
-                count++;
+    test.describe('content replacement', () => {
+        test('sets the HTML contents for all nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.setHTML('div', '<span>Test 2</span>');
             });
 
-            $.setHTML('div', '<span>Test 2</span>');
-            document.body.appendChild(node);
-            $.triggerEvent(node, 'click');
-
-            return count;
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test1 > *')).toHaveCount(1);
+            await expect(page.locator('#test2 > *')).toHaveCount(1);
         });
 
-        expect(clickCount).toBe(0);
-    });
+        test('sets HTML contents for nodes with a string content property', async ({ page }) => {
+            await page.evaluate(() => {
+                document.getElementById('test1').content = 'Test 1';
 
-    test('removes events recursively inside template contents', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const node = document.getElementById('inner');
-            const template = document.createElement('template');
-            template.content.appendChild(document.getElementById('test1'));
-            document.body.appendChild(template);
-
-            $.addEvent(node, 'click', () => {
-                count++;
+                $.setHTML('#test1', '<span>Test 2</span>');
             });
 
-            $.setHTML(template, '<span>Test 2</span>');
-            document.body.appendChild(node);
-            $.triggerEvent(node, 'click');
-
-            return count;
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test1 > *')).toHaveCount(1);
         });
-
-        expect(clickCount).toBe(0);
     });
 
-    test('preserves events in the host shadow root', async ({ page }) => {
-        const clickCount = await page.evaluate(() => {
-            let count = 0;
-            const node = document.getElementById('inner');
-            const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
-            shadow.appendChild(node);
+    test.describe('cleanup', () => {
+        test('removes events recursively', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const node = document.getElementById('inner');
 
-            $.addEvent([shadow, node], 'click', () => {
-                count++;
+                $.addEvent(node, 'click', () => {
+                    count++;
+                });
+
+                $.setHTML('div', '<span>Test 2</span>');
+                document.body.appendChild(node);
+                $.triggerEvent(node, 'click');
+
+                return count;
             });
 
-            $.setHTML('#test1', '<span>Test 2</span>');
-            $.triggerEvent(node, 'click');
-
-            return count;
+            expect(clickCount).toBe(0);
         });
 
-        expect(clickCount).toBe(2);
-        await expect(page.locator('#inner')).toHaveText('Test 1');
-    });
+        test('removes data recursively', async ({ page }) => {
+            const storedValue = await page.evaluate(() => {
+                const node = document.getElementById('inner');
 
-    test('removes data recursively', async ({ page }) => {
-        const storedValue = await page.evaluate(() => {
-            const node = document.getElementById('inner');
+                $.setData(node, 'test', 'Test');
+                $.setHTML('div', '<span>Test 2</span>');
+                document.body.appendChild(node);
 
-            $.setData(node, 'test', 'Test');
-            $.setHTML('div', '<span>Test 2</span>');
-            document.body.appendChild(node);
+                return $.getData(node, 'test');
+            });
 
-            return $.getData(node, 'test');
+            expect(storedValue).toBeUndefined();
         });
 
-        expect(storedValue).toBeUndefined();
-    });
+        test('removes animations recursively', async ({ page }) => {
+            await page.evaluate(() => {
+                $.animate('#inner', () => {}, { duration: 100, debug: true });
+            });
 
-    test('removes data recursively inside template contents', async ({ page }) => {
-        const storedValue = await page.evaluate(() => {
-            const node = document.getElementById('inner');
-            const template = document.createElement('template');
-            template.content.appendChild(document.getElementById('test1'));
-            document.body.appendChild(template);
+            await expect.poll(async () =>
+                await page.evaluate(() => Boolean(document.getElementById('inner')?.dataset.animationProgress))).toBe(true);
 
-            $.setData(node, 'test', 'Test');
-            $.setHTML(template, '<span>Test 2</span>');
-            document.body.appendChild(node);
-
-            return $.getData(node, 'test');
-        });
-
-        expect(storedValue).toBeUndefined();
-    });
-
-    test('preserves data in the host shadow root', async ({ page }) => {
-        const storedValue = await page.evaluate(() => {
-            const node = document.getElementById('inner');
-            const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
-            shadow.appendChild(node);
-
-            $.setData(node, 'test', 'Test');
-            $.setHTML('#test1', '<span>Test 2</span>');
-
-            return $.getData(node, 'test');
-        });
-
-        expect(storedValue).toBe('Test');
-        await expect(page.locator('#inner')).toHaveText('Test 1');
-    });
-
-    test('preserves data on the template content fragment', async ({ page }) => {
-        const storedValue = await page.evaluate(() => {
-            const template = document.createElement('template');
-            template.content.appendChild(document.getElementById('test1'));
-            document.body.appendChild(template);
-
-            $.setData(template.content, 'test', 'Test');
-            $.setHTML(template, '<span>Test 2</span>');
-            document.getElementById('test2').appendChild(template.content);
-
-            return $.getData(template.content, 'test');
-        });
-
-        expect(storedValue).toBe('Test');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
-        await expect(page.locator('#inner')).toHaveCount(0);
-    });
-
-    test('removes animations recursively', async ({ page }) => {
-        await page.evaluate(() => {
-            $.animate('#inner', () => {}, { duration: 100, debug: true });
-        });
-
-        await expect.poll(async () =>
-            await page.evaluate(() => Boolean(document.getElementById('inner')?.dataset.animationProgress))).toBe(true);
-
-        await page.evaluate(() => {
-            const node = document.getElementById('inner');
-
-            $.setHTML('div', '<span>Test 2</span>');
-            document.body.appendChild(node);
-        });
-
-        await expect.poll(async () =>
             await page.evaluate(() => {
                 const node = document.getElementById('inner');
 
-                return Boolean(node) &&
-                    !node.dataset.animationProgress &&
-                    !node.dataset.animationStart &&
-                    !node.dataset.animationTime;
-            })).toBe(true);
-    });
-
-    test('removes queue recursively', async ({ page }) => {
-        await setupClock(page);
-
-        await page.evaluate(() => {
-            window.innerQueueStartedAt = null;
-
-            $.queue('#inner', () => new Promise((resolve) => {
-                window.innerQueueStartedAt = performance.now();
-                setTimeout(resolve, 100);
-            }));
-
-            $.queue('#inner', (node) => {
-                node.dataset.test = 'Test';
-            });
-        });
-
-        await advanceClock(page, 10);
-        await expect.poll(async () =>
-            await page.evaluate(() => window.innerQueueStartedAt !== null)).toBe(true);
-
-        await page.evaluate(() => {
-            const node = document.getElementById('inner');
-
-            $.setHTML('div', '<span>Test 2</span>');
-            document.body.appendChild(node);
-        });
-
-        await advanceClock(page, 120);
-
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
-        await expect(page.locator('#inner')).toHaveText('Test 1');
-        expect(await page.locator('#inner').getAttribute('data-test')).toBeNull();
-    });
-
-    test('triggers a remove event recursively', async ({ page }) => {
-        const removeEventCount = await page.evaluate(() => {
-            let count = 0;
-
-            $.addEvent('#inner', 'remove', () => {
-                count++;
+                $.setHTML('div', '<span>Test 2</span>');
+                document.body.appendChild(node);
             });
 
-            $.setHTML('div', '<span>Test 2</span>');
+            await expect.poll(async () =>
+                await page.evaluate(() => {
+                    const node = document.getElementById('inner');
 
-            return count;
+                    return Boolean(node) &&
+                        !node.dataset.animationProgress &&
+                        !node.dataset.animationStart &&
+                        !node.dataset.animationTime;
+                })).toBe(true);
         });
 
-        expect(removeEventCount).toBe(1);
+        test('removes queue recursively', async ({ page }) => {
+            await setupClock(page);
+
+            await page.evaluate(() => {
+                window.innerQueueStartedAt = null;
+
+                $.queue('#inner', () => new Promise((resolve) => {
+                    window.innerQueueStartedAt = performance.now();
+                    setTimeout(resolve, 100);
+                }));
+
+                $.queue('#inner', (node) => {
+                    node.dataset.test = 'Test';
+                });
+            });
+
+            await advanceClock(page, 10);
+            await expect.poll(async () =>
+                await page.evaluate(() => window.innerQueueStartedAt !== null)).toBe(true);
+
+            await page.evaluate(() => {
+                const node = document.getElementById('inner');
+
+                $.setHTML('div', '<span>Test 2</span>');
+                document.body.appendChild(node);
+            });
+
+            await advanceClock(page, 120);
+
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+            await expect(page.locator('#inner')).toHaveText('Test 1');
+            expect(await page.locator('#inner').getAttribute('data-test')).toBeNull();
+        });
+
+        test('triggers a remove event recursively', async ({ page }) => {
+            const removeEventCount = await page.evaluate(() => {
+                let count = 0;
+
+                $.addEvent('#inner', 'remove', () => {
+                    count++;
+                });
+
+                $.setHTML('div', '<span>Test 2</span>');
+
+                return count;
+            });
+
+            expect(removeEventCount).toBe(1);
+        });
     });
 
-    test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.setHTML(document.getElementById('test1'), '<span>Test 2</span>');
+    test.describe('shadow and template contents', () => {
+        test('removes events recursively inside template contents', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const node = document.getElementById('inner');
+                const template = document.createElement('template');
+                template.content.appendChild(document.getElementById('test1'));
+                document.body.appendChild(template);
+
+                $.addEvent(node, 'click', () => {
+                    count++;
+                });
+
+                $.setHTML(template, '<span>Test 2</span>');
+                document.body.appendChild(node);
+                $.triggerEvent(node, 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(0);
         });
 
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > *')).toHaveCount(0);
+        test('preserves events in the host shadow root', async ({ page }) => {
+            const clickCount = await page.evaluate(() => {
+                let count = 0;
+                const node = document.getElementById('inner');
+                const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
+                shadow.appendChild(node);
+
+                $.addEvent([shadow, node], 'click', () => {
+                    count++;
+                });
+
+                $.setHTML('#test1', '<span>Test 2</span>');
+                $.triggerEvent(node, 'click');
+
+                return count;
+            });
+
+            expect(clickCount).toBe(2);
+            await expect(page.locator('#inner')).toHaveText('Test 1');
+        });
+
+        test('removes data recursively inside template contents', async ({ page }) => {
+            const storedValue = await page.evaluate(() => {
+                const node = document.getElementById('inner');
+                const template = document.createElement('template');
+                template.content.appendChild(document.getElementById('test1'));
+                document.body.appendChild(template);
+
+                $.setData(node, 'test', 'Test');
+                $.setHTML(template, '<span>Test 2</span>');
+                document.body.appendChild(node);
+
+                return $.getData(node, 'test');
+            });
+
+            expect(storedValue).toBeUndefined();
+        });
+
+        test('preserves data in the host shadow root', async ({ page }) => {
+            const storedValue = await page.evaluate(() => {
+                const node = document.getElementById('inner');
+                const shadow = document.getElementById('test1').attachShadow({ mode: 'open' });
+                shadow.appendChild(node);
+
+                $.setData(node, 'test', 'Test');
+                $.setHTML('#test1', '<span>Test 2</span>');
+
+                return $.getData(node, 'test');
+            });
+
+            expect(storedValue).toBe('Test');
+            await expect(page.locator('#inner')).toHaveText('Test 1');
+        });
+
+        test('preserves data on the template content fragment', async ({ page }) => {
+            const storedValue = await page.evaluate(() => {
+                const template = document.createElement('template');
+                template.content.appendChild(document.getElementById('test1'));
+                document.body.appendChild(template);
+
+                $.setData(template.content, 'test', 'Test');
+                $.setHTML(template, '<span>Test 2</span>');
+                document.getElementById('test2').appendChild(template.content);
+
+                return $.getData(template.content, 'test');
+            });
+
+            expect(storedValue).toBe('Test');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+            await expect(page.locator('#inner')).toHaveCount(0);
+        });
     });
 
-    test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.setHTML(document.querySelectorAll('div'), '<span>Test 2</span>');
+    test.describe('node inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.setHTML(document.getElementById('test1'), '<span>Test 2</span>');
+            });
+
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > *')).toHaveCount(0);
         });
 
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
-    });
+        test('works with NodeList nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.setHTML(document.querySelectorAll('div'), '<span>Test 2</span>');
+            });
 
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.setHTML(document.body.children, '<span>Test 2</span>');
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
         });
 
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
-    });
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.setHTML(document.body.children, '<span>Test 2</span>');
+            });
 
-    test('works with array nodes', async ({ page }) => {
-        await page.evaluate(() => {
-            $.setHTML([
-                document.getElementById('test1'),
-                document.getElementById('test2'),
-            ], '<span>Test 2</span>');
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
         });
 
-        await expect(page.locator('#test1 > span')).toHaveText('Test 2');
-        await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+        test('works with array nodes', async ({ page }) => {
+            await page.evaluate(() => {
+                $.setHTML([
+                    document.getElementById('test1'),
+                    document.getElementById('test2'),
+                ], '<span>Test 2</span>');
+            });
+
+            await expect(page.locator('#test1 > span')).toHaveText('Test 2');
+            await expect(page.locator('#test2 > span')).toHaveText('Test 2');
+        });
     });
 });
