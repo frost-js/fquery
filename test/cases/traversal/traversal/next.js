@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared next behavior tests.
- * @param {((args: [string, string?]) => Array<string>)} next The browser callback for next.
+ * @param {((args: [string, NodeFilterInput?]) => Array<string>)} next The browser callback for next.
  */
 export function nextTests(next) {
     test('returns the next sibling of each node', async ({ page }) => {
@@ -34,5 +35,22 @@ export function nextTests(next) {
         expect(ids).toEqual([
             'span7',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['.span', (node) => node.id === 'span7'], ['span7']],
+            ['HTMLElement', () => ['.span', document.getElementById('span7')], ['span7']],
+            ['NodeList', () => ['.span', document.querySelectorAll('#span7')], ['span7']],
+            ['HTMLCollection', () => ['.span', document.getElementById('parent2').children], ['span7']],
+            ['array', () => ['.span', [document.getElementById('span3'), document.getElementById('span7')]], ['span3', 'span7']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(next, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }

@@ -17,72 +17,18 @@ test.describe('QuerySet #siblings', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings((node) => node.id === 'span5').get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span1, #span10');
 
-        expect(ids).toEqual([
-            'span5',
-        ]);
-    });
+                return $('.span').siblings(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings(document.getElementById('span1')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings(document.querySelectorAll('#span1, #span10')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span10',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').siblings(document.getElementById('parent2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span6',
-            'span7',
-            'span9',
-            'span10',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span')
-                .siblings([
-                    document.getElementById('span1'),
-                    document.getElementById('span10'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span1',
-            'span10',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span1, #span10');
-
-            return $('.span').siblings(query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'span1',
+                'span10',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'span1',
-            'span10',
-        ]);
     });
 });

@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared siblings behavior tests.
- * @param {((args: [string, string?]) => Array<string>)} siblings The browser callback for siblings.
+ * @param {((args: [string, NodeFilterInput?]) => Array<string>)} siblings The browser callback for siblings.
  */
 export function siblingsTests(siblings) {
     test('returns all siblings of each node', async ({ page }) => {
@@ -41,5 +42,22 @@ export function siblingsTests(siblings) {
             'span1',
             'span10',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['.span', (node) => node.id === 'span5'], ['span5']],
+            ['HTMLElement', () => ['.span', document.getElementById('span1')], ['span1']],
+            ['NodeList', () => ['.span', document.querySelectorAll('#span1, #span10')], ['span1', 'span10']],
+            ['HTMLCollection', () => ['.span', document.getElementById('parent2').children], ['span6', 'span7', 'span9', 'span10']],
+            ['array', () => ['.span', [document.getElementById('span1'), document.getElementById('span10')]], ['span1', 'span10']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(siblings, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }

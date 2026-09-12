@@ -17,67 +17,17 @@ test.describe('QuerySet #next', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').next((node) => node.id === 'span7').get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span7');
 
-        expect(ids).toEqual([
-            'span7',
-        ]);
-    });
+                return $('.span').next(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').next(document.getElementById('span7')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span7',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').next(document.querySelectorAll('#span7')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span7',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').next(document.getElementById('parent2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span7',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span')
-                .next([
-                    document.getElementById('span3'),
-                    document.getElementById('span7'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-            'span7',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span7');
-
-            return $('.span').next(query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'span7',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'span7',
-        ]);
     });
 });

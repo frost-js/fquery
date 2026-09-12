@@ -17,60 +17,17 @@ test.describe('QuerySet #parent', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').parent((node) => node.id === 'span2').get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span2');
 
-        expect(ids).toEqual([
-            'span2',
-        ]);
-    });
+                return $('a').parent(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').parent(document.getElementById('span2')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').parent(document.querySelectorAll('#span2')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').parent(document.getElementById('child2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').parent([document.getElementById('span2')]).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span2',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span2');
-
-            return $('a').parent(query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'span2',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'span2',
-        ]);
     });
 });

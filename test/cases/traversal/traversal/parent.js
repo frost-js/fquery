@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared parent behavior tests.
- * @param {((args: [string, string?]) => Array<string>)} parent The browser callback for parent.
+ * @param {((args: [string, NodeFilterInput?]) => Array<string>)} parent The browser callback for parent.
  */
 export function parentTests(parent) {
     test('returns the parents of each node', async ({ page }) => {
@@ -34,5 +35,22 @@ export function parentTests(parent) {
         expect(ids).toEqual([
             'span2',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['a', (node) => node.id === 'span2'], ['span2']],
+            ['HTMLElement', () => ['a', document.getElementById('span2')], ['span2']],
+            ['NodeList', () => ['a', document.querySelectorAll('#span2')], ['span2']],
+            ['HTMLCollection', () => ['a', document.getElementById('child2').children], ['span2']],
+            ['array', () => ['a', [document.getElementById('span2')]], ['span2']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(parent, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }
