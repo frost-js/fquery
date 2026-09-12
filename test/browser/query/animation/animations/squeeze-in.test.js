@@ -5,7 +5,7 @@ import { expectAnimationState } from '../../../../support/assertions/animation.j
 
 test.use({ mockClock: true });
 
-test.describe('QuerySetIn', () => {
+test.describe('QuerySet #squeezeIn', () => {
     test.beforeEach(setup);
 
     squeezeInTests(([nodes, ...args]) => {
