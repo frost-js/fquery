@@ -50,7 +50,7 @@ export const setup = async ({ page }) => {
  * @param {((nodes: string) => Array<{ name: string, value: string }>)} serializeArray The browser callback for serializeArray.
  */
 export function serializeArrayTests(serializeArray) {
-    test('returns a serialized string of all form elements', async ({ page }) => {
+    test('returns an array of form control names and values', async ({ page }) => {
         expect(await page.evaluate(serializeArray, 'form')).toEqual([
             {
                 name: 'test1',
