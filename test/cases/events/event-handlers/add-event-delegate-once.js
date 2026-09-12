@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { addEventDelegateOnce } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -27,10 +28,10 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared addEventDelegateOnce registration and namespace tests.
- * @param {((args: [string, string, string, EventListener]) => void)} addEventDelegateOnce The browser callback for addEventDelegateOnce.
+ * Registers shared addEventDelegateOnce behavior tests.
+ * @param {() => typeof addEventDelegateOnce} createAddEventDelegateOnce Creates the browser-side method adapter.
  */
-export function addEventDelegateOnceTests(addEventDelegateOnce) {
+export function addEventDelegateOnceTests(createAddEventDelegateOnce) {
     for (const [group, cases] of [
         ['registration', [
             ['adds a self-destructing delegated event to each node', 'click', ['click'], 2],
@@ -46,6 +47,8 @@ export function addEventDelegateOnceTests(addEventDelegateOnce) {
         test.describe(group, () => {
             for (const [name, registeredEvents, eventTypes, expected] of cases) {
                 test(name, async ({ page }) => {
+                    const operation = await page.evaluateHandle(createAddEventDelegateOnce);
+
                     const calls = await page.evaluateHandle(() => ({ count: 0 }));
                     const args = await page.evaluateHandle(({ calls, events }) => [
                         'div', events, 'a',
@@ -54,7 +57,7 @@ export function addEventDelegateOnceTests(addEventDelegateOnce) {
                         },
                     ], { calls, events: registeredEvents });
 
-                    await page.evaluate(addEventDelegateOnce, args);
+                    await operation.evaluate((operation, args) => operation(...args), args);
 
                     const count = await calls.evaluate((calls, eventTypes) => {
                         const events = eventTypes.map((type) => new Event(type, { bubbles: true }));
@@ -74,4 +77,81 @@ export function addEventDelegateOnceTests(addEventDelegateOnce) {
             }
         });
     }
+
+    test.describe('handler lifecycle', () => {
+        test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventDelegateOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click', {
+                    bubbles: true,
+                });
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test3');
+                const callback = (_) => {
+                    result++;
+                };
+                $.addEventDelegate('div', 'click', 'a', callback);
+                operation('div', 'click', 'a', callback);
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(6);
+        });
+    });
+
+    test.describe('capture', () => {
+        test('does not capture events', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventDelegateOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                operation('div', 'click', 'a', (_) => {
+                    result++;
+                });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('works with capture', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventDelegateOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const element3 = document.getElementById('test3');
+                const element4 = document.getElementById('test4');
+                operation('div', 'click', 'a', (_) => {
+                    result++;
+                }, { capture: true });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element3.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                element4.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(2);
+        });
+    });
 }

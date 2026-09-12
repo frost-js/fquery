@@ -4,7 +4,7 @@ import { expect, test } from '#test';
 test.describe('QuerySet #addEvent', () => {
     test.beforeEach(setup);
 
-    addEventTests(([nodes, ...args]) => {
+    addEventTests(() => (nodes, ...args) => {
         $(nodes).addEvent(...args);
     });
 
@@ -13,44 +13,6 @@ test.describe('QuerySet #addEvent', () => {
             const query = $('a');
             return query === query.addEvent('click', (_) => null);
         })).toBe(true);
-    });
-
-    test.describe('capture', () => {
-        test('does not capture events', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $(document)
-                        .addEvent('click', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(0);
-        });
-
-        test('works with capture', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $(document)
-                        .addEvent('click', (_) => {
-                            result++;
-                        }, { capture: true });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(4);
-        });
     });
 
     test.describe('node inputs', () => {

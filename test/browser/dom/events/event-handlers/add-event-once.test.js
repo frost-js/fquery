@@ -4,66 +4,7 @@ import { expect, test } from '#test';
 test.describe('#addEventOnce', () => {
     test.beforeEach(setup);
 
-    addEventOnceTests((args) => {
-        $.addEventOnce(...args);
-    });
-
-    test.describe('handler lifecycle', () => {
-        test('preserves persistent handlers with the same callback', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const callback = (_) => {
-                    result++;
-                };
-                $.addEvent('a', 'click', callback);
-                $.addEventOnce('a', 'click', callback);
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(6);
-        });
-    });
-
-    test.describe('capture', () => {
-        test('does not capture events', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce(document, 'click', (_) => {
-                    result++;
-                });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(0);
-        });
-
-        test('works with capture', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                $.addEventOnce(document, 'click', (_) => {
-                    result++;
-                }, { capture: true });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(1);
-        });
-    });
+    addEventOnceTests(() => $.addEventOnce);
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {

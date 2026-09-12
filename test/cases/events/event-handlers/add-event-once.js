@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { addEventOnce } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -17,10 +18,10 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared addEventOnce registration and namespace tests.
- * @param {((args: [string, string, EventListener]) => void)} addEventOnce The browser callback for addEventOnce.
+ * Registers shared addEventOnce behavior tests.
+ * @param {() => typeof addEventOnce} createAddEventOnce Creates the browser-side method adapter.
  */
-export function addEventOnceTests(addEventOnce) {
+export function addEventOnceTests(createAddEventOnce) {
     for (const [group, cases] of [
         ['registration', [
             ['adds a self-destructing event to each node', 'click', ['click'], 2],
@@ -36,6 +37,8 @@ export function addEventOnceTests(addEventOnce) {
         test.describe(group, () => {
             for (const [name, registeredEvents, eventTypes, expected] of cases) {
                 test(name, async ({ page }) => {
+                    const operation = await page.evaluateHandle(createAddEventOnce);
+
                     const calls = await page.evaluateHandle(() => ({ count: 0 }));
                     const args = await page.evaluateHandle(({ calls, events }) => [
                         'a', events,
@@ -44,7 +47,7 @@ export function addEventOnceTests(addEventOnce) {
                         },
                     ], { calls, events: registeredEvents });
 
-                    await page.evaluate(addEventOnce, args);
+                    await operation.evaluate((operation, args) => operation(...args), args);
 
                     const count = await calls.evaluate((calls, eventTypes) => {
                         const events = eventTypes.map((type) => new Event(type));
@@ -64,4 +67,67 @@ export function addEventOnceTests(addEventOnce) {
             }
         });
     }
+
+    test.describe('handler lifecycle', () => {
+        test('preserves persistent handlers with the same callback', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                const callback = (_) => {
+                    result++;
+                };
+                $.addEvent('a', 'click', callback);
+                operation('a', 'click', callback);
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(6);
+        });
+    });
+
+    test.describe('capture', () => {
+        test('does not capture events', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                operation(document, 'click', (_) => {
+                    result++;
+                });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('works with capture', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEventOnce);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                operation(document, 'click', (_) => {
+                    result++;
+                }, { capture: true });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(1);
+        });
+    });
 }

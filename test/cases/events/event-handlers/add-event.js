@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { addEvent } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -17,10 +18,10 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared addEvent registration and namespace tests.
- * @param {((args: [string, string, EventListener]) => void)} addEvent The browser callback for addEvent.
+ * Registers shared addEvent behavior tests.
+ * @param {() => typeof addEvent} createAddEvent Creates the browser-side method adapter.
  */
-export function addEventTests(addEvent) {
+export function addEventTests(createAddEvent) {
     for (const [group, cases] of [
         ['registration', [
             ['adds an event to each node', 'click', ['click'], 4],
@@ -36,6 +37,8 @@ export function addEventTests(addEvent) {
         test.describe(group, () => {
             for (const [name, registeredEvents, eventTypes, expected] of cases) {
                 test(name, async ({ page }) => {
+                    const operation = await page.evaluateHandle(createAddEvent);
+
                     const calls = await page.evaluateHandle(() => ({ count: 0 }));
                     const args = await page.evaluateHandle(({ calls, events }) => [
                         'a', events,
@@ -44,7 +47,7 @@ export function addEventTests(addEvent) {
                         },
                     ], { calls, events: registeredEvents });
 
-                    await page.evaluate(addEvent, args);
+                    await operation.evaluate((operation, args) => operation(...args), args);
 
                     const count = await calls.evaluate((calls, eventTypes) => {
                         const events = eventTypes.map((type) => new Event(type));
@@ -68,6 +71,8 @@ export function addEventTests(addEvent) {
     test.describe('event names', () => {
         for (const eventName of ['constructor', 'toString', '__proto__']) {
             test(`adds events named ${eventName}`, async ({ page }) => {
+                const operation = await page.evaluateHandle(createAddEvent);
+
                 const calls = await page.evaluateHandle(() => ({ count: 0 }));
                 const args = await page.evaluateHandle(({ calls, eventName }) => [
                     'a', eventName,
@@ -76,7 +81,7 @@ export function addEventTests(addEvent) {
                     },
                 ], { calls, eventName });
 
-                await page.evaluate(addEvent, args);
+                await operation.evaluate((operation, args) => operation(...args), args);
 
                 const count = await calls.evaluate((calls, eventName) => {
                     const event = new Event(eventName);
@@ -88,5 +93,45 @@ export function addEventTests(addEvent) {
                 expect(count).toBe(2);
             });
         }
+    });
+
+    test.describe('capture', () => {
+        test('does not capture events', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEvent);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                operation(document, 'click', (_) => {
+                    result++;
+                });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(0);
+        });
+
+        test('works with capture', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAddEvent);
+
+            expect(await page.evaluate((operation) => {
+                let result = 0;
+                const event = new Event('click');
+                const element1 = document.getElementById('test1');
+                const element2 = document.getElementById('test2');
+                operation(document, 'click', (_) => {
+                    result++;
+                }, { capture: true });
+                element1.dispatchEvent(event);
+                element1.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                element2.dispatchEvent(event);
+                return result;
+            }, operation)).toBe(4);
+        });
     });
 }

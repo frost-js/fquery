@@ -4,7 +4,7 @@ import { expect, test } from '#test';
 test.describe('QuerySet #addEventDelegateOnce', () => {
     test.beforeEach(setup);
 
-    addEventDelegateOnceTests(([nodes, ...args]) => {
+    addEventDelegateOnceTests(() => (nodes, ...args) => {
         $(nodes).addEventDelegateOnce(...args);
     });
 
@@ -13,79 +13,6 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
             const query = $('div');
             return query === query.addEventDelegateOnce('click', 'a', (_) => null);
         })).toBe(true);
-    });
-
-    test.describe('handler lifecycle', () => {
-        test('preserves persistent delegated handlers with the same callback', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click', {
-                    bubbles: true,
-                });
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test3');
-                const callback = (_) => {
-                    result++;
-                };
-                $('div').addEventDelegate('click', 'a', callback);
-                $('div').addEventDelegateOnce('click', 'a', callback);
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                return result;
-            })).toBe(6);
-        });
-    });
-
-    test.describe('capture', () => {
-        test('does not capture events', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click', 'a', (_) => {
-                            result++;
-                        });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                return result;
-            })).toBe(0);
-        });
-
-        test('works with capture', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                let result = 0;
-                const event = new Event('click');
-                const element1 = document.getElementById('test1');
-                const element2 = document.getElementById('test2');
-                const element3 = document.getElementById('test3');
-                const element4 = document.getElementById('test4');
-                $('div')
-                        .addEventDelegateOnce('click', 'a', (_) => {
-                            result++;
-                        }, { capture: true });
-                element1.dispatchEvent(event);
-                element1.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element2.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element3.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                element4.dispatchEvent(event);
-                return result;
-            })).toBe(2);
-        });
     });
 
     test.describe('node inputs', () => {
