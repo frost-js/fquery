@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared parents behavior tests.
- * @param {((args: [string, (string|null)?, string?]) => Array<string>)} parents The browser callback for parents.
+ * @param {((args: [string, (NodeFilterInput|null)?, NodeFilterInput?]) => Array<string>)} parents The browser callback for parents.
  */
 export function parentsTests(parents) {
     test('returns the parents of each node', async ({ page }) => {
@@ -52,5 +53,39 @@ export function parentsTests(parents) {
             'span1',
             'span2',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['a', (node) => node.tagName === 'DIV'], ['parent1', 'child1', 'parent2', 'child2']],
+            ['HTMLElement', () => ['a', document.getElementById('child1')], ['child1']],
+            ['NodeList', () => ['a', document.querySelectorAll('div')], ['parent1', 'child1', 'parent2', 'child2']],
+            ['HTMLCollection', () => ['a', document.body.children], ['parent1', 'parent2']],
+            ['array', () => ['a', [document.getElementById('parent1'), document.getElementById('child1'), document.getElementById('parent2'), document.getElementById('child2')]], ['parent1', 'child1', 'parent2', 'child2']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(parents, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
+    });
+
+    test.describe('limit inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['a', null, (node) => node.id === 'body'], ['parent1', 'child1', 'span1', 'parent2', 'child2', 'span2']],
+            ['HTMLElement', () => ['a', null, document.body], ['parent1', 'child1', 'span1', 'parent2', 'child2', 'span2']],
+            ['NodeList', () => ['a', null, document.querySelectorAll('div')], ['span1', 'span2']],
+            ['HTMLCollection', () => ['a', null, document.body.children], ['child1', 'span1', 'child2', 'span2']],
+            ['array', () => ['a', null, [document.getElementById('parent1'), document.getElementById('parent2')]], ['child1', 'span1', 'child2', 'span2']],
+        ]) {
+            test(`works with ${name} limit`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(parents, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }

@@ -17,136 +17,30 @@ test.describe('QuerySet #nextAll', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll((node) => node.id === 'span8').get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span4, #span8');
 
-        expect(ids).toEqual([
-            'span8',
-        ]);
-    });
+                return $('.span').nextAll(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(document.getElementById('span4')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span4',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(document.querySelectorAll('#span4, #span8')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span4',
-            'span8',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(document.getElementById('parent2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span7',
-            'span8',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span')
-                .nextAll([
-                    document.getElementById('span4'),
-                    document.getElementById('span8'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span4',
-            'span8',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span4, #span8');
-
-            return $('.span').nextAll(query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'span4',
+                'span8',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'span4',
-            'span8',
-        ]);
-    });
+        test('works with QuerySet limit', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span4, #span7');
 
-    test('works with function limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(null, (node) => node.id === 'span7').get().map((node) => node.id));
+                return $('.span').nextAll(null, query).get().map((node) => node.id);
+            });
 
-        expect(ids).toEqual([
-            'span3',
-            'span4',
-        ]);
-    });
-
-    test('works with HTMLElement limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(null, document.getElementById('span7')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-            'span4',
-        ]);
-    });
-
-    test('works with NodeList limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(null, document.querySelectorAll('#span4, #span7')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-        ]);
-    });
-
-    test('works with HTMLCollection limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span').nextAll(null, document.getElementById('parent2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-            'span4',
-        ]);
-    });
-
-    test('works with array limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('.span')
-                .nextAll(null, [
-                    document.getElementById('span4'),
-                    document.getElementById('span7'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'span3',
-        ]);
-    });
-
-    test('works with QuerySet limit', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span4, #span7');
-
-            return $('.span').nextAll(null, query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'span3',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'span3',
-        ]);
     });
 });

@@ -17,128 +17,30 @@ test.describe('QuerySet #closest', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with function filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest((node) => node.tagName === 'DIV').get().map((node) => node.id));
+    test.describe('QuerySet inputs', () => {
+        test('works with QuerySet filter', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('div');
 
-        expect(ids).toEqual([
-            'child1',
-            'child2',
-        ]);
-    });
+                return $('a').closest(query).get().map((node) => node.id);
+            });
 
-    test('works with HTMLElement filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest(document.getElementById('child1')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with NodeList filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest(document.querySelectorAll('div')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-            'child2',
-        ]);
-    });
-
-    test('works with HTMLCollection filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest(document.body.children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'parent1',
-            'parent2',
-        ]);
-    });
-
-    test('works with array filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a')
-                .closest([
-                    document.getElementById('child1'),
-                    document.getElementById('child2'),
-                ])
-                .get()
-                .map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-            'child2',
-        ]);
-    });
-
-    test('works with QuerySet filter', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('div');
-
-            return $('a').closest(query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'child1',
+                'child2',
+            ]);
         });
 
-        expect(ids).toEqual([
-            'child1',
-            'child2',
-        ]);
-    });
+        test('works with QuerySet limit', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const query = $('#span2');
 
-    test('works with function limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest('div', (node) => node.id === 'span2').get().map((node) => node.id));
+                return $('a').closest('div', query).get().map((node) => node.id);
+            });
 
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with HTMLElement limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest('div', document.getElementById('span2')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with NodeList limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest('div', document.querySelectorAll('#span2')).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with HTMLCollection limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest('div', document.getElementById('child2').children).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with array limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('a').closest('div', [document.getElementById('span2')]).get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
-    });
-
-    test('works with QuerySet limit', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const query = $('#span2');
-
-            return $('a').closest('div', query).get().map((node) => node.id);
+            expect(ids).toEqual([
+                'child1',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'child1',
-        ]);
     });
 });

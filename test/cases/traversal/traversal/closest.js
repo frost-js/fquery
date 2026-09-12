@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared closest behavior tests.
- * @param {((args: [string, string?, string?]) => Array<string>)} closest The browser callback for closest.
+ * @param {((args: [string, (NodeFilterInput|null)?, NodeFilterInput?]) => Array<string>)} closest The browser callback for closest.
  */
 export function closestTests(closest) {
     test('returns the closest ancestor of each node', async ({ page }) => {
@@ -43,5 +44,39 @@ export function closestTests(closest) {
         expect(ids).toEqual([
             'child1',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['a', (node) => node.tagName === 'DIV'], ['child1', 'child2']],
+            ['HTMLElement', () => ['a', document.getElementById('child1')], ['child1']],
+            ['NodeList', () => ['a', document.querySelectorAll('div')], ['child1', 'child2']],
+            ['HTMLCollection', () => ['a', document.body.children], ['parent1', 'parent2']],
+            ['array', () => ['a', [document.getElementById('child1'), document.getElementById('child2')]], ['child1', 'child2']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(closest, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
+    });
+
+    test.describe('limit inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['a', 'div', (node) => node.id === 'span2'], ['child1']],
+            ['HTMLElement', () => ['a', 'div', document.getElementById('span2')], ['child1']],
+            ['NodeList', () => ['a', 'div', document.querySelectorAll('#span2')], ['child1']],
+            ['HTMLCollection', () => ['a', 'div', document.getElementById('child2').children], ['child1']],
+            ['array', () => ['a', 'div', [document.getElementById('span2')]], ['child1']],
+        ]) {
+            test(`works with ${name} limit`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(closest, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }

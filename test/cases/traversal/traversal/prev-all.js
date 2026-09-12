@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared prevAll behavior tests.
- * @param {((args: [string, string?]) => Array<string>)} prevAll The browser callback for prevAll.
+ * @param {((args: [string, (NodeFilterInput|null)?, NodeFilterInput?]) => Array<string>)} prevAll The browser callback for prevAll.
  */
 export function prevAllTests(prevAll) {
     test('returns all previous siblings of each node', async ({ page }) => {
@@ -37,5 +38,39 @@ export function prevAllTests(prevAll) {
             'span1',
             'span5',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['.span', (node) => node.id === 'span5'], ['span5']],
+            ['HTMLElement', () => ['.span', document.getElementById('span1')], ['span1']],
+            ['NodeList', () => ['.span', document.querySelectorAll('#span1, #span5')], ['span1', 'span5']],
+            ['HTMLCollection', () => ['.span', document.getElementById('parent2').children], ['span5', 'span6']],
+            ['array', () => ['.span', [document.getElementById('span1'), document.getElementById('span5')]], ['span1', 'span5']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(prevAll, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
+    });
+
+    test.describe('limit inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['.span', null, (node) => node.id === 'span6'], ['span1', 'span2']],
+            ['HTMLElement', () => ['.span', null, document.getElementById('span6')], ['span1', 'span2']],
+            ['NodeList', () => ['.span', null, document.querySelectorAll('#span1, #span6')], ['span2']],
+            ['HTMLCollection', () => ['.span', null, document.getElementById('parent2').children], ['span1', 'span2']],
+            ['array', () => ['.span', null, [document.getElementById('span1'), document.getElementById('span6')]], ['span2']],
+        ]) {
+            test(`works with ${name} limit`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(prevAll, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }

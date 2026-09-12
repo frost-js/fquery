@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,7 +17,7 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared children behavior tests.
- * @param {((args: [string, string?]) => Array<string>)} children The browser callback for children.
+ * @param {((args: [string, NodeFilterInput?]) => Array<string>)} children The browser callback for children.
  */
 export function childrenTests(children) {
     test('returns all children of each node', async ({ page }) => {
@@ -43,5 +44,22 @@ export function childrenTests(children) {
             'child7',
             'child8',
         ]);
+    });
+
+    test.describe('filter inputs', () => {
+        for (const [name, createArgs, expected] of [
+            ['function', () => ['.parent', (node) => node.tagName === 'SPAN'], ['child3', 'child4', 'child7', 'child8']],
+            ['HTMLElement', () => ['.parent', document.getElementById('child3')], ['child3']],
+            ['NodeList', () => ['.parent', document.querySelectorAll('span')], ['child3', 'child4', 'child7', 'child8']],
+            ['HTMLCollection', () => ['.parent', document.getElementById('parent1').children], ['child1', 'child2', 'child3', 'child4']],
+            ['array', () => ['.parent', [document.getElementById('child3'), document.getElementById('child4'), document.getElementById('child7'), document.getElementById('child8')]], ['child3', 'child4', 'child7', 'child8']],
+        ]) {
+            test(`works with ${name} filter`, async ({ page }) => {
+                const args = await page.evaluateHandle(createArgs);
+                const ids = await page.evaluate(children, args);
+
+                expect(ids).toEqual(expected);
+            });
+        }
     });
 }
