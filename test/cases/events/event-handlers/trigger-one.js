@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { TriggerEventOptions } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -20,9 +21,23 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared triggerOne behavior tests.
- * @param {((args: [string|Array<string>, string]) => (boolean|undefined))} triggerOne The browser callback for triggerOne.
+ * @param {((args: [string|Array<string>, string, TriggerEventOptions?]) => (boolean|undefined))} triggerOne The browser callback for triggerOne.
  */
 export function triggerOneTests(triggerOne) {
+    test('triggers an event for the first node', async ({ page }) => {
+        const targets = await page.evaluateHandle((_) => {
+            const targets = [];
+            $.addEvent('a', 'click', (e) => {
+                targets.push(e.target.id);
+            });
+            return targets;
+        });
+
+        await page.evaluate(triggerOne, ['a', 'click']);
+
+        expect(await targets.jsonValue()).toEqual(['test1']);
+    });
+
     test.describe('empty selections', () => {
         test('returns undefined for an empty array', async ({ page }) => {
             expect(await page.evaluate(triggerOne, [[], 'click'])).toBe(undefined);
@@ -57,5 +72,147 @@ export function triggerOneTests(triggerOne) {
                 expect(await targets.jsonValue()).toEqual(expected);
             });
         }
+    });
+
+    test.describe('event properties', () => {
+        test('triggers an event for the first node with custom data', async ({ page }) => {
+            const targets = await page.evaluateHandle((_) => {
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    if (e.test) {
+                        targets.push(e.target.id);
+                    }
+                });
+                return targets;
+            });
+
+            await page.evaluate(triggerOne, ['a', 'click']);
+            await page.evaluate(triggerOne, ['a', 'click', {
+                data: {
+                    test: true,
+                },
+            }]);
+
+            expect(await targets.jsonValue()).toEqual(['test1']);
+        });
+
+        test('triggers an event for the first node with custom details', async ({ page }) => {
+            const targets = await page.evaluateHandle((_) => {
+                const targets = [];
+                $.addEvent('a', 'click', (e) => {
+                    if (e.detail === 'test') {
+                        targets.push(e.target.id);
+                    }
+                });
+                return targets;
+            });
+
+            await page.evaluate(triggerOne, ['a', 'click']);
+            await page.evaluate(triggerOne, ['a', 'click', {
+                detail: 'test',
+            }]);
+
+            expect(await targets.jsonValue()).toEqual(['test1']);
+        });
+    });
+
+    test.describe('propagation', () => {
+        test('bubbles to other event listeners', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('#div1', 'click', (_) => {
+                    calls.count++;
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerOne, ['a', 'click']);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(1);
+        });
+
+        test('can be prevented from bubbling', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('#div1', 'click', (_) => {
+                    calls.count++;
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerOne, ['a', 'click', {
+                bubbles: false,
+            }]);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(0);
+        });
+    });
+
+    test.describe('cancellation', () => {
+        test('returns false if the event is cancelled', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEvent('#test1', 'click', (e) => {
+                    e.preventDefault();
+                });
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click'])).toBe(false);
+        });
+
+        test('returns false if the event returns false', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEvent('#test1', 'click', (_) => false);
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click'])).toBe(false);
+        });
+
+        test('returns false if a delegated event returns false', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEventDelegate('#div1', 'click', 'a', (_) => false);
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click'])).toBe(false);
+        });
+
+        test('returns true if the event is not cancelled', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEvent('#test1', 'click', (_) => { });
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click'])).toBe(true);
+        });
+
+        test('returns true if a delegated event is not cancelled', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEventDelegate('#div1', 'click', 'a', (_) => { });
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click'])).toBe(true);
+        });
+
+        test('can be prevented from being cancelled', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEvent('#test1', 'click', (e) => {
+                    e.preventDefault();
+                });
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click', {
+                cancelable: false,
+            }])).toBe(true);
+        });
+
+        test('can be prevented from being cancelled with delegate', async ({ page }) => {
+            await page.evaluate((_) => {
+                $.addEventDelegate('#div1', 'click', 'a', (e) => {
+                    e.preventDefault();
+                });
+            });
+
+            expect(await page.evaluate(triggerOne, ['#test1', 'click', {
+                cancelable: false,
+            }])).toBe(true);
+        });
     });
 }

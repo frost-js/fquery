@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { TriggerEventOptions } from '../../../../src/events/event-handlers.js'; */
 
 import { expect, test } from '#test';
 
@@ -19,10 +20,41 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared triggerEvent namespace behavior tests.
- * @param {((args: [string, string]) => void)} triggerEvent The browser callback for triggerEvent.
+ * Registers shared triggerEvent behavior tests.
+ * @param {((args: [string, string, TriggerEventOptions?]) => void)} triggerEvent The browser callback for triggerEvent.
  */
 export function triggerEventTests(triggerEvent) {
+    test('triggers an event for each node', async ({ page }) => {
+        const calls = await page.evaluateHandle((_) => {
+            const calls = { count: 0 };
+            $.addEvent('a', 'click', (_) => {
+                calls.count++;
+            });
+            return calls;
+        });
+
+        await page.evaluate(triggerEvent, ['a', 'click']);
+
+        expect(await calls.evaluate((calls) => calls.count)).toBe(2);
+    });
+
+    test('triggers events for each node', async ({ page }) => {
+        const calls = await page.evaluateHandle((_) => {
+            const calls = { count: 0 };
+            $.addEvent('a', 'click', (_) => {
+                calls.count++;
+            });
+            $.addEvent('a', 'hover', (_) => {
+                calls.count++;
+            });
+            return calls;
+        });
+
+        await page.evaluate(triggerEvent, ['a', 'click hover']);
+
+        expect(await calls.evaluate((calls) => calls.count)).toBe(4);
+    });
+
     test.describe('namespaces', () => {
         for (const [name, registeredEvents, triggeredEvents, expected] of [
             ['triggers a namespaced event for each node', 'click.test', 'click', 2],
@@ -54,5 +86,128 @@ export function triggerEventTests(triggerEvent) {
                 expect(await calls.evaluate((calls) => calls.count)).toBe(expected);
             });
         }
+    });
+
+    test.describe('event properties', () => {
+        test('triggers an event for each node with custom data', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('a', 'click', (e) => {
+                    if (e.test) {
+                        calls.count++;
+                    }
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerEvent, ['a', 'click']);
+            await page.evaluate(triggerEvent, ['a', 'click', {
+                data: {
+                    test: true,
+                },
+            }]);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(2);
+        });
+
+        test('triggers an event for each node with custom details', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('a', 'click', (e) => {
+                    if (e.detail === 'test') {
+                        calls.count++;
+                    }
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerEvent, ['a', 'click']);
+            await page.evaluate(triggerEvent, ['a', 'click', {
+                detail: 'test',
+            }]);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(2);
+        });
+    });
+
+    test.describe('propagation', () => {
+        test('bubbles to other event listeners', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('#div1', 'click', (_) => {
+                    calls.count++;
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerEvent, ['a', 'click']);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(2);
+        });
+
+        test('can be prevented from bubbling', async ({ page }) => {
+            const calls = await page.evaluateHandle((_) => {
+                const calls = { count: 0 };
+                $.addEvent('#div1', 'click', (_) => {
+                    calls.count++;
+                });
+                return calls;
+            });
+
+            await page.evaluate(triggerEvent, ['a', 'click', {
+                bubbles: false,
+            }]);
+
+            expect(await calls.evaluate((calls) => calls.count)).toBe(0);
+        });
+    });
+
+    test.describe('cancellation', () => {
+        test('can be cancelled', async ({ page }) => {
+            const state = await page.evaluateHandle((_) => {
+                const state = { value: undefined };
+                $.addEvent('#test1', 'click', (e) => {
+                    state.value = e.cancelable;
+                });
+                return state;
+            });
+
+            await page.evaluate(triggerEvent, ['#test1', 'click']);
+
+            expect(await state.evaluate((state) => state.value)).toBe(true);
+        });
+
+        test('does not carry cancellation between nodes', async ({ page }) => {
+            const state = await page.evaluateHandle((_) => {
+                const state = { value: undefined };
+                $.addEvent('#test1', 'click', (e) => {
+                    e.preventDefault();
+                });
+                $.addEvent('#test2', 'click', (e) => {
+                    state.value = e.defaultPrevented;
+                });
+                return state;
+            });
+
+            await page.evaluate(triggerEvent, ['a', 'click']);
+
+            expect(await state.evaluate((state) => state.value)).toBe(false);
+        });
+
+        test('can be prevented from being cancelled', async ({ page }) => {
+            const state = await page.evaluateHandle((_) => {
+                const state = { value: undefined };
+                $.addEvent('#test1', 'click', (e) => {
+                    state.value = e.cancelable;
+                });
+                return state;
+            });
+
+            await page.evaluate(triggerEvent, ['#test1', 'click', {
+                cancelable: false,
+            }]);
+
+            expect(await state.evaluate((state) => state.value)).toBe(false);
+        });
     });
 }
