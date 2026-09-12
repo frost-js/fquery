@@ -66,9 +66,7 @@ test.describe('#selectAll', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.selectAll(
-                document.getElementById('div3'),
-            );
+            $.selectAll(document.getElementById('div3'));
             const selection = document.getSelection();
             const range = selection.getRangeAt(0);
             return range.toString();
@@ -77,9 +75,7 @@ test.describe('#selectAll', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.selectAll(
-                document.querySelectorAll('.select'),
-            );
+            $.selectAll(document.querySelectorAll('.select'));
             const selection = document.getSelection();
             const range = selection.getRangeAt(0);
             return range.toString();
@@ -88,9 +84,7 @@ test.describe('#selectAll', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.selectAll(
-                document.getElementById('select').children,
-            );
+            $.selectAll(document.getElementById('select').children);
             const selection = document.getSelection();
             const range = selection.getRangeAt(0);
             return range.toString();

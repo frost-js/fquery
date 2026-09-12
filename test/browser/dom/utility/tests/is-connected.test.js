@@ -18,30 +18,22 @@ test.describe('#isConnected', () => {
 
     test('returns false if no nodes are connected to the DOM', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isConnected(
-                document.createElement('div'),
-            ))).toBe(false);
+            $.isConnected(document.createElement('div')))).toBe(false);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isConnected(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.isConnected(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isConnected(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.isConnected(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isConnected(
-                document.body.children,
-            ))).toBe(true);
+            $.isConnected(document.body.children))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {

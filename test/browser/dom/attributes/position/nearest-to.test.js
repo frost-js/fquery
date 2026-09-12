@@ -40,33 +40,21 @@ test.describe('#nearestTo', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            const nearest = $.nearestTo(
-                document.getElementById('test1'),
-                1000,
-                1000,
-            );
+            const nearest = $.nearestTo(document.getElementById('test1'), 1000, 1000);
             return nearest.id;
         })).toBe('test1');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            const nearest = $.nearestTo(
-                document.querySelectorAll('div'),
-                1000,
-                1000,
-            );
+            const nearest = $.nearestTo(document.querySelectorAll('div'), 1000, 1000);
             return nearest.id;
         })).toBe('test2');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            const nearest = $.nearestTo(
-                document.body.children,
-                1000,
-                1000,
-            );
+            const nearest = $.nearestTo(document.body.children, 1000, 1000);
             return nearest.id;
         })).toBe('test2');
     });

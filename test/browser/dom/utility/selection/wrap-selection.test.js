@@ -76,9 +76,7 @@ test.describe('#wrapSelection', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.wrapSelection(
-                document.querySelector('.outer'),
-            );
+            $.wrapSelection(document.querySelector('.outer'));
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -104,9 +102,7 @@ test.describe('#wrapSelection', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.wrapSelection(
-                document.querySelectorAll('.outer'),
-            );
+            $.wrapSelection(document.querySelectorAll('.outer'));
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -132,9 +128,7 @@ test.describe('#wrapSelection', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.wrapSelection(
-                document.getElementById('wrapper').children,
-            );
+            $.wrapSelection(document.getElementById('wrapper').children);
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -194,9 +188,7 @@ test.describe('#wrapSelection', () => {
 
     test('works with array nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.wrapSelection([
-                document.querySelector('.outer'),
-            ]);
+            $.wrapSelection([document.querySelector('.outer')]);
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +

@@ -18,26 +18,17 @@ test.describe('#percentX', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.percentX(
-                document.getElementById('test1'),
-                700,
-            ))).toBe(50);
+            $.percentX(document.getElementById('test1'), 700))).toBe(50);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.percentX(
-                document.querySelectorAll('div'),
-                700,
-            ))).toBe(50);
+            $.percentX(document.querySelectorAll('div'), 700))).toBe(50);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.percentX(
-                document.body.children,
-                700,
-            ))).toBe(50);
+            $.percentX(document.body.children, 700))).toBe(50);
     });
 
     test('works with array nodes', async ({ page }) => {

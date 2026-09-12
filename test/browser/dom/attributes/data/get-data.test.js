@@ -15,26 +15,17 @@ test.describe('#getData', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getData(
-                document.getElementById('test1'),
-                'test',
-            ))).toBe('Test 1');
+            $.getData(document.getElementById('test1'), 'test'))).toBe('Test 1');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getData(
-                document.querySelectorAll('div'),
-                'test',
-            ))).toBe('Test 1');
+            $.getData(document.querySelectorAll('div'), 'test'))).toBe('Test 1');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getData(
-                document.body.children,
-                'test',
-            ))).toBe('Test 1');
+            $.getData(document.body.children, 'test'))).toBe('Test 1');
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {

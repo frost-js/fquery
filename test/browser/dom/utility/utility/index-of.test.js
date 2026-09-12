@@ -8,26 +8,17 @@ test.describe('#indexOf', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                document.getElementById('div2'),
-                '.test',
-            ))).toBe(0);
+            $.indexOf(document.getElementById('div2'), '.test'))).toBe(0);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                document.querySelectorAll('div'),
-                '.test',
-            ))).toBe(1);
+            $.indexOf(document.querySelectorAll('div'), '.test'))).toBe(1);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                document.body.children,
-                '.test',
-            ))).toBe(1);
+            $.indexOf(document.body.children, '.test'))).toBe(1);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
@@ -57,34 +48,22 @@ test.describe('#indexOf', () => {
 
     test('works with function filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                'div',
-                (node) => node.id === 'div2',
-            ))).toBe(1);
+            $.indexOf('div', (node) => node.id === 'div2'))).toBe(1);
     });
 
     test('works with HTMLElement filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                'div',
-                document.getElementById('div2'),
-            ))).toBe(1);
+            $.indexOf('div', document.getElementById('div2')))).toBe(1);
     });
 
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                'div',
-                document.querySelectorAll('.test'),
-            ))).toBe(1);
+            $.indexOf('div', document.querySelectorAll('.test')))).toBe(1);
     });
 
     test('works with HTMLCollection filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.indexOf(
-                'div',
-                document.body.children,
-            ))).toBe(0);
+            $.indexOf('div', document.body.children))).toBe(0);
     });
 
     test('works with DocumentFragment filter', async ({ page }) => {

@@ -32,8 +32,7 @@ test.describe('QuerySet #wrapSelection', () => {
 
     test('wraps selected nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('.outer')
-                    .wrapSelection();
+            $('.outer').wrapSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -116,8 +115,7 @@ test.describe('QuerySet #wrapSelection', () => {
             const fragment = range.createContextualFragment(
                 '<div class="div-outer"><div class="div-inner"></div></div>',
             );
-            $(fragment)
-                    .wrapSelection();
+            $(fragment).wrapSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +

@@ -67,10 +67,7 @@ test.describe('#cloneData', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                document.getElementById('test1'),
-                '[data-toggle="noData"]',
-            );
+            $.cloneData(document.getElementById('test1'), '[data-toggle="noData"]');
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),
@@ -87,10 +84,7 @@ test.describe('#cloneData', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                document.querySelectorAll('[data-toggle="data"]'),
-                '[data-toggle="noData"]',
-            );
+            $.cloneData(document.querySelectorAll('[data-toggle="data"]'), '[data-toggle="noData"]');
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),
@@ -109,10 +103,7 @@ test.describe('#cloneData', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                document.getElementById('dataParent').children,
-                '[data-toggle="noData"]',
-            );
+            $.cloneData(document.getElementById('dataParent').children, '[data-toggle="noData"]');
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),
@@ -228,10 +219,7 @@ test.describe('#cloneData', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                '[data-toggle="data"]',
-                document.getElementById('test3'),
-            );
+            $.cloneData('[data-toggle="data"]', document.getElementById('test3'));
             return $.getData('#test3');
         })).toEqual({
             test1: 'Test 1',
@@ -241,10 +229,7 @@ test.describe('#cloneData', () => {
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                '[data-toggle="data"]',
-                document.querySelectorAll('[data-toggle="noData"]'),
-            );
+            $.cloneData('[data-toggle="data"]', document.querySelectorAll('[data-toggle="noData"]'));
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),
@@ -263,10 +248,7 @@ test.describe('#cloneData', () => {
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                '[data-toggle="data"]',
-                document.getElementById('noDataParent').children,
-            );
+            $.cloneData('[data-toggle="data"]', document.getElementById('noDataParent').children);
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),

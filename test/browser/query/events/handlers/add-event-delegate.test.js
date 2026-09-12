@@ -288,8 +288,7 @@ test.describe('QuerySet #addEventDelegate', () => {
                 });
                 const parent = document.getElementById('parent1');
                 const element = document.getElementById('test1');
-                $(parent)
-                        .addEventDelegate('click', 'a', (_) => null);
+                $(parent).addEventDelegate('click', 'a', (_) => null);
                 parent.addEventListener('click', (e) => {
                     result = e.currentTarget === parent;
                 });
@@ -306,8 +305,7 @@ test.describe('QuerySet #addEventDelegate', () => {
                 });
                 const parent = document.getElementById('parent1');
                 const element = document.getElementById('test1');
-                $(parent)
-                        .addEventDelegate('click', 'a', (_) => null);
+                $(parent).addEventDelegate('click', 'a', (_) => null);
                 parent.addEventListener('click', (e) => {
                     result = e.delegateTarget === undefined;
                 });

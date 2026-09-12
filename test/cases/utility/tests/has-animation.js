@@ -15,9 +15,7 @@ export const setup = async ({ page }) => {
             '<div id="div2"></div>' +
             '<div id="div3" class="test"></div>' +
             '<div id="div4"></div>';
-        $.fadeIn(
-            '.test',
-        );
+        $.fadeIn('.test');
     });
 };
 

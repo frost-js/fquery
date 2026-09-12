@@ -39,8 +39,7 @@ test.describe('QuerySet #serialize', () => {
             const fragment = range.createContextualFragment(
                 document.body.innerHTML,
             );
-            return $(fragment)
-                    .serialize();
+            return $(fragment).serialize();
         })).toBe('test1=Test%201&test2=2&test3=Test%203&test4=42&test5%5B%5D=51&test5%5B%5D=52&test6=Test%206&test8=Test%208b&test9%5B%5D=Test%209a&test9%5B%5D=Test%209b');
     });
 
@@ -53,8 +52,7 @@ test.describe('QuerySet #serialize', () => {
                 document.body.innerHTML,
             );
             shadow.appendChild(fragment);
-            return $(shadow)
-                    .serialize();
+            return $(shadow).serialize();
         })).toBe('test1=Test%201&test2=2&test3=Test%203&test4=42&test5%5B%5D=51&test5%5B%5D=52&test6=Test%206&test8=Test%208b&test9%5B%5D=Test%209a&test9%5B%5D=Test%209b');
     });
 });

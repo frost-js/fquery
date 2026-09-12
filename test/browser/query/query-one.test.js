@@ -138,27 +138,21 @@ test.describe('#queryOne', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                document.getElementById('child1'),
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne(document.getElementById('child1')).get().map((node) => node.id))).toEqual([
             'child1',
         ]);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                document.querySelectorAll('#parent1 > div'),
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne(document.querySelectorAll('#parent1 > div')).get().map((node) => node.id))).toEqual([
             'child1',
         ]);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                document.getElementById('parent1').children,
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne(document.getElementById('parent1').children).get().map((node) => node.id))).toEqual([
             'child1',
         ]);
     });
@@ -231,30 +225,21 @@ test.describe('#queryOne', () => {
 
     test('works with HTMLElement context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                'span',
-                document.getElementById('child1'),
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne('span', document.getElementById('child1')).get().map((node) => node.id))).toEqual([
             'span1',
         ]);
     });
 
     test('works with NodeList context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                'span',
-                document.querySelectorAll('#parent1 > div'),
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne('span', document.querySelectorAll('#parent1 > div')).get().map((node) => node.id))).toEqual([
             'span1',
         ]);
     });
 
     test('works with HTMLCollection context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.queryOne(
-                'span',
-                document.getElementById('parent1').children,
-            ).get().map((node) => node.id))).toEqual([
+            $.queryOne('span', document.getElementById('parent1').children).get().map((node) => node.id))).toEqual([
             'span1',
         ]);
     });

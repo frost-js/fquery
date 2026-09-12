@@ -17,8 +17,7 @@ test.describe('QuerySet #blur', () => {
                 result = true;
             });
             element.focus();
-            $('input')
-                    .blur();
+            $('input').blur();
             return result;
         })).toBe(true);
     });

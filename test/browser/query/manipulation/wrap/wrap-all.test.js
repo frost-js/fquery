@@ -63,9 +63,7 @@ test.describe('QuerySet #wrapAll', () => {
     test.describe('wrapper inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').wrapAll(
-                    document.querySelector('.outer'),
-                );
+                $('a').wrapAll(document.querySelector('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -93,9 +91,7 @@ test.describe('QuerySet #wrapAll', () => {
 
         test('works with NodeList other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').wrapAll(
-                    document.querySelectorAll('.outer'),
-                );
+                $('a').wrapAll(document.querySelectorAll('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -123,9 +119,7 @@ test.describe('QuerySet #wrapAll', () => {
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').wrapAll(
-                    document.getElementById('wrapper').children,
-                );
+                $('a').wrapAll(document.getElementById('wrapper').children);
 
                 return document.body.innerHTML;
             });
@@ -153,9 +147,7 @@ test.describe('QuerySet #wrapAll', () => {
 
         test('works with array other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').wrapAll([
-                    document.querySelector('.outer'),
-                ]);
+                $('a').wrapAll([document.querySelector('.outer')]);
 
                 return document.body.innerHTML;
             });

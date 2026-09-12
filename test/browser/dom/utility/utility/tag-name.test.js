@@ -18,23 +18,17 @@ test.describe('#tagName', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.tagName(
-                document.getElementById('span1'),
-            ))).toBe('span');
+            $.tagName(document.getElementById('span1')))).toBe('span');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.tagName(
-                document.querySelectorAll('div'),
-            ))).toBe('div');
+            $.tagName(document.querySelectorAll('div')))).toBe('div');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.tagName(
-                document.body.children,
-            ))).toBe('div');
+            $.tagName(document.body.children))).toBe('div');
     });
 
     test('works with array nodes', async ({ page }) => {

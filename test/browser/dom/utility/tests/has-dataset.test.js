@@ -20,26 +20,17 @@ test.describe('#hasDataset', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDataset(
-                document.getElementById('div1'),
-                'text',
-            ))).toBe(true);
+            $.hasDataset(document.getElementById('div1'), 'text'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDataset(
-                document.querySelectorAll('div'),
-                'text',
-            ))).toBe(true);
+            $.hasDataset(document.querySelectorAll('div'), 'text'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDataset(
-                document.body.children,
-                'text',
-            ))).toBe(true);
+            $.hasDataset(document.body.children, 'text'))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

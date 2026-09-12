@@ -12,8 +12,7 @@ test.describe('QuerySet #hasChildren', () => {
             const fragment = range.createContextualFragment(
                 '<div></div>',
             );
-            return $(fragment)
-                    .hasChildren();
+            return $(fragment).hasChildren();
         })).toBe(true);
     });
 
@@ -26,14 +25,12 @@ test.describe('QuerySet #hasChildren', () => {
                 '<div></div>',
             );
             shadow.appendChild(fragment);
-            return $(shadow)
-                    .hasChildren();
+            return $(shadow).hasChildren();
         })).toBe(true);
     });
 
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(document)
-                    .hasChildren())).toBe(true);
+            $(document).hasChildren())).toBe(true);
     });
 });

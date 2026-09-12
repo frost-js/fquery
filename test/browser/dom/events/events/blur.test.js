@@ -30,9 +30,7 @@ test.describe('#blur', () => {
                 result = true;
             });
             element.focus();
-            $.blur(
-                document.getElementById('test1'),
-            );
+            $.blur(document.getElementById('test1'));
             return result;
         })).toBe(true);
     });
@@ -45,9 +43,7 @@ test.describe('#blur', () => {
                 result = true;
             });
             element.focus();
-            $.blur(
-                document.querySelectorAll('input'),
-            );
+            $.blur(document.querySelectorAll('input'));
             return result;
         })).toBe(true);
     });
@@ -60,9 +56,7 @@ test.describe('#blur', () => {
                 result = true;
             });
             element.focus();
-            $.blur(
-                document.body.children,
-            );
+            $.blur(document.body.children);
             return result;
         })).toBe(true);
     });

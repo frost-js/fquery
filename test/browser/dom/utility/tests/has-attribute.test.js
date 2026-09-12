@@ -8,26 +8,17 @@ test.describe('#hasAttribute', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAttribute(
-                document.getElementById('div1'),
-                'class',
-            ))).toBe(true);
+            $.hasAttribute(document.getElementById('div1'), 'class'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAttribute(
-                document.querySelectorAll('div'),
-                'class',
-            ))).toBe(true);
+            $.hasAttribute(document.querySelectorAll('div'), 'class'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAttribute(
-                document.body.children,
-                'class',
-            ))).toBe(true);
+            $.hasAttribute(document.body.children, 'class'))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

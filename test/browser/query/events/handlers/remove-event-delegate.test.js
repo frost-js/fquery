@@ -42,8 +42,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click hover', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate(null, 'a');
+                $('div').removeEventDelegate(null, 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -75,8 +74,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click hover', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click', 'a');
+                $('div').removeEventDelegate('click', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -108,8 +106,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click hover', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click hover', 'a');
+                $('div').removeEventDelegate('click hover', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -139,8 +136,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click', 'a', callback);
+                $('div').removeEventDelegate('click', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -166,8 +162,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('hover', 'a', callback);
+                $('div').removeEventDelegate('hover', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -191,8 +186,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click', 'a');
+                $('div').removeEventDelegate('click', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -217,8 +211,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test hover.test', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click hover', 'a');
+                $('div').removeEventDelegate('click hover', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -244,8 +237,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click', 'a');
+                $('div').removeEventDelegate('click', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -270,8 +262,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep hover.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click hover', 'a');
+                $('div').removeEventDelegate('click hover', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -297,8 +288,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test', 'a');
+                $('div').removeEventDelegate('click.test', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -323,8 +313,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test hover.test', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test hover.test', 'a');
+                $('div').removeEventDelegate('click.test hover.test', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -350,8 +339,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test', 'a');
+                $('div').removeEventDelegate('click.test', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -376,8 +364,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep hover.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test hover.test', 'a');
+                $('div').removeEventDelegate('click.test hover.test', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -403,8 +390,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test.deep', 'a');
+                $('div').removeEventDelegate('click.test.deep', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -429,8 +415,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click.test.deep hover.test.deep', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test.deep hover.test.deep', 'a');
+                $('div').removeEventDelegate('click.test.deep hover.test.deep', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -456,8 +441,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test', 'a');
+                $('div').removeEventDelegate('click.test', 'a');
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -482,8 +466,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click hover', 'a', (_) => {
                     result++;
                 });
-                $('div')
-                        .removeEventDelegate('click.test hover.test', 'a');
+                $('div').removeEventDelegate('click.test hover.test', 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -561,8 +544,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click hover', 'a', (_) => {
                     result++;
                 }, true);
-                $('div')
-                        .removeEventDelegate(null, 'a');
+                $('div').removeEventDelegate(null, 'a');
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -592,8 +574,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate('div', 'hover', 'a', (_) => {
                     result++;
                 }, { capture: true });
-                $('div')
-                        .removeEventDelegate(null, 'a', null, { capture: true });
+                $('div').removeEventDelegate(null, 'a', null, { capture: true });
                 element1.dispatchEvent(event1);
                 element1.dispatchEvent(event2);
                 element2.dispatchEvent(event1);
@@ -625,8 +606,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate(shadow, 'click', 'a', (_) => {
                     result++;
                 });
-                $(shadow)
-                        .removeEventDelegate('click', 'a', callback);
+                $(shadow).removeEventDelegate('click', 'a', callback);
                 a.dispatchEvent(event);
                 return result;
             })).toBe(1);
@@ -649,8 +629,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 $.addEventDelegate(document, 'click', 'a', (_) => {
                     result++;
                 });
-                $(document)
-                        .removeEventDelegate('click', 'a', callback);
+                $(document).removeEventDelegate('click', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);

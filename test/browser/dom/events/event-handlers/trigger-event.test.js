@@ -335,10 +335,7 @@ test.describe('#triggerEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerEvent(
-                    document.getElementById('test1'),
-                    'click',
-                );
+                $.triggerEvent(document.getElementById('test1'), 'click');
                 return result;
             })).toBe(1);
         });
@@ -349,10 +346,7 @@ test.describe('#triggerEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerEvent(
-                    document.querySelectorAll('a'),
-                    'click',
-                );
+                $.triggerEvent(document.querySelectorAll('a'), 'click');
                 return result;
             })).toBe(2);
         });
@@ -363,10 +357,7 @@ test.describe('#triggerEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerEvent(
-                    document.getElementById('div1').children,
-                    'click',
-                );
+                $.triggerEvent(document.getElementById('div1').children, 'click');
                 return result;
             })).toBe(2);
         });

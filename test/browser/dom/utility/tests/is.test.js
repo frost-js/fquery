@@ -8,26 +8,17 @@ test.describe('#is', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                document.getElementById('div1'),
-                '.test',
-            ))).toBe(true);
+            $.is(document.getElementById('div1'), '.test'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                document.querySelectorAll('div'),
-                '.test',
-            ))).toBe(true);
+            $.is(document.querySelectorAll('div'), '.test'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                document.body.children,
-                '.test',
-            ))).toBe(true);
+            $.is(document.body.children, '.test'))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
@@ -57,45 +48,28 @@ test.describe('#is', () => {
 
     test('works with function filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                'div',
-                (node) => node.classList.contains('test'),
-            ))).toBe(true);
+            $.is('div', (node) => node.classList.contains('test')))).toBe(true);
     });
 
     test('works with HTMLElement filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                'div',
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.is('div', document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                'div',
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.is('div', document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.is(
-                'div',
-                document.body.children,
-            ))).toBe(true);
+            $.is('div', document.body.children))).toBe(true);
     });
 
     test('works with DocumentFragment filter', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $.is(
-                [
-                    fragment,
-                ],
-                fragment,
-            );
+            return $.is([fragment], fragment);
         })).toBe(true);
     });
 
@@ -103,12 +77,7 @@ test.describe('#is', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $.is(
-                [
-                    shadow,
-                ],
-                shadow,
-            );
+            return $.is([shadow], shadow);
         })).toBe(true);
     });
 

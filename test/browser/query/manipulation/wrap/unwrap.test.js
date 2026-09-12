@@ -56,9 +56,7 @@ test.describe('QuerySet #unwrap', () => {
 
         test('works with function filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').unwrap(
-                    (node) => node.id === 'parent1',
-                );
+                $('a').unwrap((node) => node.id === 'parent1');
 
                 return document.body.innerHTML;
             });
@@ -73,9 +71,7 @@ test.describe('QuerySet #unwrap', () => {
 
         test('works with HTMLElement filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').unwrap(
-                    document.getElementById('parent1'),
-                );
+                $('a').unwrap(document.getElementById('parent1'));
 
                 return document.body.innerHTML;
             });
@@ -90,9 +86,7 @@ test.describe('QuerySet #unwrap', () => {
 
         test('works with NodeList filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').unwrap(
-                    document.querySelectorAll('#parent1'),
-                );
+                $('a').unwrap(document.querySelectorAll('#parent1'));
 
                 return document.body.innerHTML;
             });
@@ -107,9 +101,7 @@ test.describe('QuerySet #unwrap', () => {
 
         test('works with HTMLCollection filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').unwrap(
-                    document.body.children,
-                );
+                $('a').unwrap(document.body.children);
 
                 return document.body.innerHTML;
             });
@@ -122,9 +114,7 @@ test.describe('QuerySet #unwrap', () => {
 
         test('works with array filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('a').unwrap([
-                    document.getElementById('parent1'),
-                ]);
+                $('a').unwrap([document.getElementById('parent1')]);
 
                 return document.body.innerHTML;
             });

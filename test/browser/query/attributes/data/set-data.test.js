@@ -34,8 +34,7 @@ test.describe('QuerySet #setData', () => {
 
     test('sets data for all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('div')
-                    .setData('test', 'Test 1');
+            $('div').setData('test', 'Test 1');
             return [
                 $.getData('#test1'),
                 $.getData('#test2'),
@@ -74,8 +73,7 @@ test.describe('QuerySet #setData', () => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, 'test', 'Test 1');
-            return $(fragment)
-                    .getData();
+            return $(fragment).getData();
         })).toEqual({
             test: 'Test 1',
         });
@@ -86,8 +84,7 @@ test.describe('QuerySet #setData', () => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, 'test', 'Test 1');
-            return $(shadow)
-                    .getData();
+            return $(shadow).getData();
         })).toEqual({
             test: 'Test 1',
         });
@@ -96,8 +93,7 @@ test.describe('QuerySet #setData', () => {
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.setData(document, 'test', 'Test 1');
-            return $(document)
-                    .getData();
+            return $(document).getData();
         })).toEqual({
             test: 'Test 1',
         });
@@ -106,8 +102,7 @@ test.describe('QuerySet #setData', () => {
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.setData(window, 'test', 'Test 1');
-            return $(window)
-                    .getData();
+            return $(window).getData();
         })).toEqual({
             test: 'Test 1',
         });

@@ -8,13 +8,11 @@ test.describe('QuerySet #isVisible', () => {
 
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(document)
-                    .isVisible())).toBe(true);
+            $(document).isVisible())).toBe(true);
     });
 
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(window)
-                    .isVisible())).toBe(true);
+            $(window).isVisible())).toBe(true);
     });
 });

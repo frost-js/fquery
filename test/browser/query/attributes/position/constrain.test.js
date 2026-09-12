@@ -17,8 +17,7 @@ test.describe('QuerySet #constrain', () => {
 
     test('constrains each node inside another node', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('[data-toggle="from"]')
-                    .constrain('[data-toggle="to"]');
+            $('[data-toggle="from"]').constrain('[data-toggle="to"]');
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -117,10 +116,7 @@ test.describe('QuerySet #constrain', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('[data-toggle="from"]')
-                    .constrain(
-                        document.getElementById('test3'),
-                    );
+            $('[data-toggle="from"]').constrain(document.getElementById('test3'));
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -134,10 +130,7 @@ test.describe('QuerySet #constrain', () => {
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('[data-toggle="from"]')
-                    .constrain(
-                        document.querySelectorAll('[data-toggle="to"]'),
-                    );
+            $('[data-toggle="from"]').constrain(document.querySelectorAll('[data-toggle="to"]'));
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -151,10 +144,7 @@ test.describe('QuerySet #constrain', () => {
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('[data-toggle="from"]')
-                    .constrain(
-                        document.getElementById('toParent').children,
-                    );
+            $('[data-toggle="from"]').constrain(document.getElementById('toParent').children);
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -187,8 +177,7 @@ test.describe('QuerySet #constrain', () => {
     test('works with QuerySet other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('[data-toggle="to"]');
-            $('[data-toggle="from"]')
-                    .constrain(query);
+            $('[data-toggle="from"]').constrain(query);
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +

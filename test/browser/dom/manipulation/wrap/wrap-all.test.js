@@ -53,10 +53,7 @@ test.describe('#wrapAll', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    document.getElementById('test1'),
-                    '.outer',
-                );
+                $.wrapAll(document.getElementById('test1'), '.outer');
 
                 return document.body.innerHTML;
             });
@@ -84,10 +81,7 @@ test.describe('#wrapAll', () => {
 
         test('works with NodeList nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    document.querySelectorAll('a'),
-                    '.outer',
-                );
+                $.wrapAll(document.querySelectorAll('a'), '.outer');
 
                 return document.body.innerHTML;
             });
@@ -115,10 +109,7 @@ test.describe('#wrapAll', () => {
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    document.getElementById('parent1').children,
-                    '.outer',
-                );
+                $.wrapAll(document.getElementById('parent1').children, '.outer');
 
                 return document.body.innerHTML;
             });
@@ -181,10 +172,7 @@ test.describe('#wrapAll', () => {
     test.describe('wrapper inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    'a',
-                    document.querySelector('.outer'),
-                );
+                $.wrapAll('a', document.querySelector('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -212,10 +200,7 @@ test.describe('#wrapAll', () => {
 
         test('works with NodeList other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    'a',
-                    document.querySelectorAll('.outer'),
-                );
+                $.wrapAll('a', document.querySelectorAll('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -243,10 +228,7 @@ test.describe('#wrapAll', () => {
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll(
-                    'a',
-                    document.getElementById('wrapper').children,
-                );
+                $.wrapAll('a', document.getElementById('wrapper').children);
 
                 return document.body.innerHTML;
             });
@@ -274,9 +256,7 @@ test.describe('#wrapAll', () => {
 
         test('works with array other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrapAll('a', [
-                    document.querySelector('.outer'),
-                ]);
+                $.wrapAll('a', [document.querySelector('.outer')]);
 
                 return document.body.innerHTML;
             });

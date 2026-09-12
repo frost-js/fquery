@@ -42,9 +42,7 @@ test.describe('#shadow', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const hasShadow = await page.evaluate((_) => {
-            const shadow = $.shadow(
-                document.getElementById('div1'),
-            );
+            const shadow = $.shadow(document.getElementById('div1'));
 
             return shadow instanceof ShadowRoot;
         });
@@ -54,9 +52,7 @@ test.describe('#shadow', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         const hasShadow = await page.evaluate((_) => {
-            const shadow = $.shadow(
-                document.querySelectorAll('div'),
-            );
+            const shadow = $.shadow(document.querySelectorAll('div'));
 
             return shadow instanceof ShadowRoot;
         });

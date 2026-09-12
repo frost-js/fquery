@@ -31,8 +31,7 @@ test.describe('QuerySet #beforeSelection', () => {
 
     test('inserts each node before the selected nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('a')
-                    .beforeSelection();
+            $('a').beforeSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -79,8 +78,7 @@ test.describe('QuerySet #beforeSelection', () => {
             const fragment = range.createContextualFragment(
                 '<div><span></span></div>',
             );
-            $(fragment)
-                    .beforeSelection();
+            $(fragment).beforeSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +

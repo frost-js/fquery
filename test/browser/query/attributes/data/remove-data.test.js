@@ -22,8 +22,7 @@ test.describe('QuerySet #removeData', () => {
                 testA: 'Test 1',
                 testB: 'Test 2',
             });
-            $(fragment)
-                    .removeData('testA');
+            $(fragment).removeData('testA');
             return $.getData(fragment);
         })).toEqual({
             testB: 'Test 2',
@@ -38,8 +37,7 @@ test.describe('QuerySet #removeData', () => {
                 testA: 'Test 1',
                 testB: 'Test 2',
             });
-            $(shadow)
-                    .removeData('testA');
+            $(shadow).removeData('testA');
             return $.getData(shadow);
         })).toEqual({
             testB: 'Test 2',
@@ -52,8 +50,7 @@ test.describe('QuerySet #removeData', () => {
                 testA: 'Test 1',
                 testB: 'Test 2',
             });
-            $(document)
-                    .removeData('testA');
+            $(document).removeData('testA');
             return $.getData(document);
         })).toEqual({
             testB: 'Test 2',
@@ -66,8 +63,7 @@ test.describe('QuerySet #removeData', () => {
                 testA: 'Test 1',
                 testB: 'Test 2',
             });
-            $(window)
-                    .removeData('testA');
+            $(window).removeData('testA');
             return $.getData(window);
         })).toEqual({
             testB: 'Test 2',

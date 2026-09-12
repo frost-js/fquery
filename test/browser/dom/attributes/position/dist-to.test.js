@@ -8,29 +8,17 @@ test.describe('#distTo', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.distTo(
-                document.getElementById('test1'),
-                580,
-                128,
-            ))).toBe(122);
+            $.distTo(document.getElementById('test1'), 580, 128))).toBe(122);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.distTo(
-                document.querySelectorAll('div'),
-                580,
-                128,
-            ))).toBe(122);
+            $.distTo(document.querySelectorAll('div'), 580, 128))).toBe(122);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.distTo(
-                document.body.children,
-                580,
-                128,
-            ))).toBe(122);
+            $.distTo(document.body.children, 580, 128))).toBe(122);
     });
 
     test('works with array nodes', async ({ page }) => {

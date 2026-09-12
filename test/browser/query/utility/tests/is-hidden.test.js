@@ -9,8 +9,7 @@ test.describe('QuerySet #isHidden', () => {
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const myDoc = new Document();
-            return $(myDoc)
-                    .isHidden();
+            return $(myDoc).isHidden();
         })).toBe(true);
     });
 
@@ -21,8 +20,7 @@ test.describe('QuerySet #isHidden', () => {
                 id: 'window',
             };
             myWindow.document.defaultView = myWindow;
-            return $(myWindow)
-                    .isHidden();
+            return $(myWindow).isHidden();
         })).toBe(true);
     });
 });

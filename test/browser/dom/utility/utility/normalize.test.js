@@ -68,9 +68,7 @@ test.describe('#normalize', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.normalize(
-                document.getElementById('parent1'),
-            );
+            $.normalize(document.getElementById('parent1'));
             return [
                 document.getElementById('child1').childNodes.length,
                 document.getElementById('child2').childNodes.length,
@@ -83,9 +81,7 @@ test.describe('#normalize', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.normalize(
-                document.querySelectorAll('.test'),
-            );
+            $.normalize(document.querySelectorAll('.test'));
             return [
                 document.getElementById('child1').childNodes.length,
                 document.getElementById('child2').childNodes.length,
@@ -98,9 +94,7 @@ test.describe('#normalize', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.normalize(
-                document.body.children,
-            );
+            $.normalize(document.body.children);
             return [
                 document.getElementById('child1').childNodes.length,
                 document.getElementById('child2').childNodes.length,

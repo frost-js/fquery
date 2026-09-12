@@ -34,8 +34,7 @@ test.describe('QuerySet #setProperty', () => {
 
     test('sets a property for all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('input')
-                    .setProperty('test', 'Test');
+            $('input').setProperty('test', 'Test');
             return [
                 document.getElementById('test1').test,
                 document.getElementById('test2').test,

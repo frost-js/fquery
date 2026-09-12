@@ -13,8 +13,7 @@ test.describe('QuerySet #removeProperty', () => {
 
     test('removes a property for all nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $('input')
-                    .removeProperty('test');
+            $('input').removeProperty('test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))

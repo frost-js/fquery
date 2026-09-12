@@ -10,8 +10,7 @@ test.describe('QuerySet #getScrollX', () => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="block; width: 1000px; height: 1000px;"></div>';
             document.scrollingElement.scrollLeft = 100;
-            return $(document)
-                    .getScrollX();
+            return $(document).getScrollX();
         })).toBe(100);
     });
 
@@ -50,8 +49,7 @@ test.describe('QuerySet #getScrollX', () => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="block; width: 1000px; height: 1000px;"></div>';
             window.scrollTo(100, 0);
-            return $(window)
-                    .getScrollX();
+            return $(window).getScrollX();
         })).toBe(100);
     });
 });

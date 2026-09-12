@@ -12,8 +12,7 @@ test.describe('QuerySet #hasDescendent', () => {
             const fragment = range.createContextualFragment(
                 '<div></div>',
             );
-            return $(fragment)
-                    .hasDescendent('div');
+            return $(fragment).hasDescendent('div');
         })).toBe(true);
     });
 
@@ -26,29 +25,23 @@ test.describe('QuerySet #hasDescendent', () => {
                 '<div></div>',
             );
             shadow.appendChild(fragment);
-            return $(shadow)
-                    .hasDescendent('div');
+            return $(shadow).hasDescendent('div');
         })).toBe(true);
     });
 
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(document)
-                    .hasDescendent('div'))).toBe(true);
+            $(document).hasDescendent('div'))).toBe(true);
     });
 
     test('works with function filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .hasDescendent((node) => node.id === 'a1'))).toBe(true);
+            $('div').hasDescendent((node) => node.id === 'a1'))).toBe(true);
     });
 
     test('works with HTMLElement filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .hasDescendent(
-                        document.getElementById('a1'),
-                    ))).toBe(true);
+            $('div').hasDescendent(document.getElementById('a1')))).toBe(true);
     });
 
     test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
@@ -60,18 +53,12 @@ test.describe('QuerySet #hasDescendent', () => {
 
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .hasDescendent(
-                        document.querySelectorAll('a'),
-                    ))).toBe(true);
+            $('div').hasDescendent(document.querySelectorAll('a')))).toBe(true);
     });
 
     test('works with HTMLCollection filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .hasDescendent(
-                        document.getElementById('span1').children,
-                    ))).toBe(true);
+            $('div').hasDescendent(document.getElementById('span1').children))).toBe(true);
     });
 
     test('does not match the node itself with an array filter', async ({ page }) => {
@@ -101,8 +88,7 @@ test.describe('QuerySet #hasDescendent', () => {
     test('works with QuerySet filter', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('a');
-            return $('div')
-                    .hasDescendent(query);
+            return $('div').hasDescendent(query);
         })).toBe(true);
     });
 });

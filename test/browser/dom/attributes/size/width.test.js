@@ -72,23 +72,17 @@ test.describe('#width', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.width(
-                document.getElementById('test1'),
-            ))).toBe(1250);
+            $.width(document.getElementById('test1')))).toBe(1250);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.width(
-                document.querySelectorAll('div'),
-            ))).toBe(1250);
+            $.width(document.querySelectorAll('div')))).toBe(1250);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.width(
-                document.body.children,
-            ))).toBe(1250);
+            $.width(document.body.children))).toBe(1250);
     });
 
     test('works with Document nodes', async ({ page }) => {

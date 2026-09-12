@@ -24,8 +24,7 @@ test.describe('QuerySet #cloneEvents', () => {
     test('clones all events from all elements to all other elements', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const event = new Event('click');
-            $('[data-toggle="event"]')
-                    .cloneEvents('[data-toggle="noEvent"]');
+            $('[data-toggle="event"]').cloneEvents('[data-toggle="noEvent"]');
             document.getElementById('test1').dispatchEvent(event);
             document.getElementById('test2').dispatchEvent(event);
             document.getElementById('test3').dispatchEvent(event);
@@ -91,8 +90,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent('#eventParent', 'click', (_) => {
                     result++;
                 }, { capture: true });
-                $('#eventParent')
-                        .cloneEvents('#noEventParent');
+                $('#eventParent').cloneEvents('#noEventParent');
                 document.getElementById('test1').dispatchEvent(event);
                 document.getElementById('test2').dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
@@ -112,8 +110,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(shadow, 'click', (_) => {
                     result++;
                 });
-                $(shadow)
-                        .cloneEvents('[data-toggle="noEvent"]');
+                $(shadow).cloneEvents('[data-toggle="noEvent"]');
                 shadow.dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
                 document.getElementById('test4').dispatchEvent(event);
@@ -128,8 +125,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(document, 'click', (_) => {
                     result++;
                 });
-                $(document)
-                        .cloneEvents('[data-toggle="noEvent"]');
+                $(document).cloneEvents('[data-toggle="noEvent"]');
                 document.dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
                 document.getElementById('test4').dispatchEvent(event);
@@ -144,8 +140,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(window, 'click', (_) => {
                     result++;
                 });
-                $(window)
-                        .cloneEvents('[data-toggle="noEvent"]');
+                $(window).cloneEvents('[data-toggle="noEvent"]');
                 window.dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
                 document.getElementById('test4').dispatchEvent(event);
@@ -159,8 +154,7 @@ test.describe('QuerySet #cloneEvents', () => {
             expect(await page.evaluate((_) => {
                 const event = new Event('click');
                 const element = document.getElementById('test3');
-                $('[data-toggle="event"]')
-                        .cloneEvents(element);
+                $('[data-toggle="event"]').cloneEvents(element);
                 document.getElementById('test1').dispatchEvent(event);
                 document.getElementById('test2').dispatchEvent(event);
                 element.dispatchEvent(event);
@@ -179,10 +173,7 @@ test.describe('QuerySet #cloneEvents', () => {
         test('works with NodeList other nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 const event = new Event('click');
-                $('[data-toggle="event"]')
-                        .cloneEvents(
-                            document.querySelectorAll('[data-toggle="noEvent"]'),
-                        );
+                $('[data-toggle="event"]').cloneEvents(document.querySelectorAll('[data-toggle="noEvent"]'));
                 document.getElementById('test1').dispatchEvent(event);
                 document.getElementById('test2').dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
@@ -201,10 +192,7 @@ test.describe('QuerySet #cloneEvents', () => {
         test('works with HTMLCollection other nodes', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 const event = new Event('click');
-                $('[data-toggle="event"]')
-                        .cloneEvents(
-                            document.getElementById('noEventParent').children,
-                        );
+                $('[data-toggle="event"]').cloneEvents(document.getElementById('noEventParent').children);
                 document.getElementById('test1').dispatchEvent(event);
                 document.getElementById('test2').dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);
@@ -230,8 +218,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(a, 'click', (_) => {
                     result++;
                 });
-                $(a)
-                        .cloneEvents(shadow);
+                $(a).cloneEvents(shadow);
                 a.dispatchEvent(event);
                 shadow.dispatchEvent(event);
                 return result;
@@ -246,8 +233,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(a, 'click', (_) => {
                     result++;
                 });
-                $(a)
-                        .cloneEvents(document);
+                $(a).cloneEvents(document);
                 a.dispatchEvent(event);
                 document.dispatchEvent(event);
                 return result;
@@ -262,8 +248,7 @@ test.describe('QuerySet #cloneEvents', () => {
                 $.addEvent(a, 'click', (_) => {
                     result++;
                 });
-                $(a)
-                        .cloneEvents(window);
+                $(a).cloneEvents(window);
                 a.dispatchEvent(event);
                 window.dispatchEvent(event);
                 return result;
@@ -299,8 +284,7 @@ test.describe('QuerySet #cloneEvents', () => {
             expect(await page.evaluate((_) => {
                 const event = new Event('click');
                 const query = $('[data-toggle="noEvent"]');
-                $('[data-toggle="event"]')
-                        .cloneEvents(query);
+                $('[data-toggle="event"]').cloneEvents(query);
                 document.getElementById('test1').dispatchEvent(event);
                 document.getElementById('test2').dispatchEvent(event);
                 document.getElementById('test3').dispatchEvent(event);

@@ -28,9 +28,7 @@ test.describe('#focus', () => {
             element.addEventListener('focus', (_) => {
                 result = true;
             });
-            $.focus(
-                document.getElementById('test1'),
-            );
+            $.focus(document.getElementById('test1'));
             return result;
         })).toBe(true);
     });
@@ -42,9 +40,7 @@ test.describe('#focus', () => {
             element.addEventListener('focus', (_) => {
                 result = true;
             });
-            $.focus(
-                document.querySelectorAll('input'),
-            );
+            $.focus(document.querySelectorAll('input'));
             return result;
         })).toBe(true);
     });
@@ -56,9 +52,7 @@ test.describe('#focus', () => {
             element.addEventListener('focus', (_) => {
                 result = true;
             });
-            $.focus(
-                document.body.children,
-            );
+            $.focus(document.body.children);
             return result;
         })).toBe(true);
     });

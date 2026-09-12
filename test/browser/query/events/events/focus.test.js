@@ -16,8 +16,7 @@ test.describe('QuerySet #focus', () => {
             element.addEventListener('focus', (_) => {
                 result = true;
             });
-            $('input')
-                    .focus();
+            $('input').focus();
             return result;
         })).toBe(true);
     });

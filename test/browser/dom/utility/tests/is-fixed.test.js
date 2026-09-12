@@ -8,23 +8,17 @@ test.describe('#isFixed', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isFixed(
-                document.getElementById('div2'),
-            ))).toBe(true);
+            $.isFixed(document.getElementById('div2')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isFixed(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.isFixed(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isFixed(
-                document.body.children,
-            ))).toBe(true);
+            $.isFixed(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

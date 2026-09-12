@@ -8,37 +8,23 @@ test.describe('#isSame', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                document.getElementById('div2'),
-                '#div2, #div4',
-            ))).toBe(true);
+            $.isSame(document.getElementById('div2'), '#div2, #div4'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                document.querySelectorAll('div'),
-                '#div2, #div4',
-            ))).toBe(true);
+            $.isSame(document.querySelectorAll('div'), '#div2, #div4'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                document.body.children,
-                '#div2, #div4',
-            ))).toBe(true);
+            $.isSame(document.body.children, '#div2, #div4'))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $.isSame(
-                fragment,
-                [
-                    fragment,
-                ],
-            );
+            return $.isSame(fragment, [fragment]);
         })).toBe(true);
     });
 
@@ -46,12 +32,7 @@ test.describe('#isSame', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $.isSame(
-                shadow,
-                [
-                    shadow,
-                ],
-            );
+            return $.isSame(shadow, [shadow]);
         })).toBe(true);
     });
 
@@ -67,37 +48,23 @@ test.describe('#isSame', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                'div',
-                document.getElementById('div2'),
-            ))).toBe(true);
+            $.isSame('div', document.getElementById('div2')))).toBe(true);
     });
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                'div',
-                document.querySelectorAll('#div2, #div4'),
-            ))).toBe(true);
+            $.isSame('div', document.querySelectorAll('#div2, #div4')))).toBe(true);
     });
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isSame(
-                'div',
-                document.body.children,
-            ))).toBe(true);
+            $.isSame('div', document.body.children))).toBe(true);
     });
 
     test('works with DocumentFragment other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $.isSame(
-                [
-                    fragment,
-                ],
-                fragment,
-            );
+            return $.isSame([fragment], fragment);
         })).toBe(true);
     });
 
@@ -105,12 +72,7 @@ test.describe('#isSame', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $.isSame(
-                [
-                    shadow,
-                ],
-                shadow,
-            );
+            return $.isSame([shadow], shadow);
         })).toBe(true);
     });
 

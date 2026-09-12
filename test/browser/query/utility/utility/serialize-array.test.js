@@ -13,8 +13,7 @@ test.describe('QuerySet #serializeArray', () => {
                 const fragment = range.createContextualFragment(
                     document.body.innerHTML,
                 );
-                return $(fragment)
-                        .serializeArray();
+                return $(fragment).serializeArray();
             })).toEqual([
                 {
                     name: 'test1',
@@ -68,8 +67,7 @@ test.describe('QuerySet #serializeArray', () => {
                     document.body.innerHTML,
                 );
                 shadow.appendChild(fragment);
-                return $(shadow)
-                        .serializeArray();
+                return $(shadow).serializeArray();
             })).toEqual([
                 {
                     name: 'test1',

@@ -10,10 +10,7 @@ test.describe('#removeData', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.removeData(
-                document.getElementById('test1'),
-                'testA',
-            );
+            $.removeData(document.getElementById('test1'), 'testA');
             return $.getData('#test1');
         })).toEqual({
             testB: 'Test 2',
@@ -22,10 +19,7 @@ test.describe('#removeData', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.removeData(
-                document.querySelectorAll('div'),
-                'testA',
-            );
+            $.removeData(document.querySelectorAll('div'), 'testA');
         });
 
         expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
@@ -38,10 +32,7 @@ test.describe('#removeData', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.removeData(
-                document.body.children,
-                'testA',
-            );
+            $.removeData(document.body.children, 'testA');
         });
 
         expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({

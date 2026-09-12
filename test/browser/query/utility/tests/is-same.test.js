@@ -9,8 +9,7 @@ test.describe('QuerySet #isSame', () => {
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $(fragment)
-                    .isSame([fragment]);
+            return $(fragment).isSame([fragment]);
         })).toBe(true);
     });
 
@@ -18,40 +17,29 @@ test.describe('QuerySet #isSame', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $(shadow)
-                    .isSame([shadow]);
+            return $(shadow).isSame([shadow]);
         })).toBe(true);
     });
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .isSame(
-                        document.getElementById('div2'),
-                    ))).toBe(true);
+            $('div').isSame(document.getElementById('div2')))).toBe(true);
     });
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .isSame(
-                        document.querySelectorAll('#div2, #div4'),
-                    ))).toBe(true);
+            $('div').isSame(document.querySelectorAll('#div2, #div4')))).toBe(true);
     });
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .isSame(
-                        document.body.children,
-                    ))).toBe(true);
+            $('div').isSame(document.body.children))).toBe(true);
     });
 
     test('works with DocumentFragment other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $([fragment])
-                    .isSame(fragment);
+            return $([fragment]).isSame(fragment);
         })).toBe(true);
     });
 
@@ -59,8 +47,7 @@ test.describe('QuerySet #isSame', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $([shadow])
-                    .isSame(shadow);
+            return $([shadow]).isSame(shadow);
         })).toBe(true);
     });
 
@@ -76,8 +63,7 @@ test.describe('QuerySet #isSame', () => {
     test('works with QuerySet other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('#div2, #div4');
-            return $('div')
-                    .isSame(query);
+            return $('div').isSame(query);
         })).toBe(true);
     });
 });

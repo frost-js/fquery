@@ -17,8 +17,7 @@ test.describe('QuerySet #triggerEvent', () => {
             $.addEvent('a', 'click', (_) => {
                 result++;
             });
-            $('a')
-                    .triggerEvent('click');
+            $('a').triggerEvent('click');
             return result;
         })).toBe(2);
     });
@@ -29,8 +28,7 @@ test.describe('QuerySet #triggerEvent', () => {
             $.addEvent('a', 'click hover', (_) => {
                 result++;
             });
-            $('a')
-                    .triggerEvent('click hover');
+            $('a').triggerEvent('click hover');
             return result;
         })).toBe(4);
     });
@@ -49,8 +47,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click');
+                $('a').triggerEvent('click');
                 return result;
             })).toBe(2);
         });
@@ -61,8 +58,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test hover.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click hover');
+                $('a').triggerEvent('click hover');
                 return result;
             })).toBe(4);
         });
@@ -73,8 +69,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click');
+                $('a').triggerEvent('click');
                 return result;
             })).toBe(2);
         });
@@ -85,8 +80,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep hover.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click hover');
+                $('a').triggerEvent('click hover');
                 return result;
             })).toBe(4);
         });
@@ -97,8 +91,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test');
+                $('a').triggerEvent('click.test');
                 return result;
             })).toBe(2);
         });
@@ -109,8 +102,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test hover.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test hover.test');
+                $('a').triggerEvent('click.test hover.test');
                 return result;
             })).toBe(4);
         });
@@ -121,8 +113,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test');
+                $('a').triggerEvent('click.test');
                 return result;
             })).toBe(2);
         });
@@ -133,8 +124,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep hover.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test hover.test');
+                $('a').triggerEvent('click.test hover.test');
                 return result;
             })).toBe(4);
         });
@@ -145,8 +135,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test.deep');
+                $('a').triggerEvent('click.test.deep');
                 return result;
             })).toBe(2);
         });
@@ -157,8 +146,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test.deep hover.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test.deep hover.test.deep');
+                $('a').triggerEvent('click.test.deep hover.test.deep');
                 return result;
             })).toBe(4);
         });
@@ -169,8 +157,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test');
+                $('a').triggerEvent('click.test');
                 return result;
             })).toBe(0);
         });
@@ -181,8 +168,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click hover', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test hover.test');
+                $('a').triggerEvent('click.test hover.test');
                 return result;
             })).toBe(0);
         });
@@ -193,8 +179,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test.deep');
+                $('a').triggerEvent('click.test.deep');
                 return result;
             })).toBe(0);
         });
@@ -205,8 +190,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('a', 'click.test hover.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click.test.deep hover.test.deep');
+                $('a').triggerEvent('click.test.deep hover.test.deep');
                 return result;
             })).toBe(0);
         });
@@ -257,8 +241,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('#div1', 'click', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerEvent('click');
+                $('a').triggerEvent('click');
                 return result;
             })).toBe(2);
         });
@@ -285,8 +268,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent('#test1', 'click', (e) => {
                     result = e.cancelable;
                 });
-                $('#test1')
-                        .triggerEvent('click');
+                $('#test1').triggerEvent('click');
                 return result;
             })).toBe(true);
         });
@@ -342,8 +324,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent(shadow, 'click', (_) => {
                     result++;
                 });
-                $(shadow)
-                        .triggerEvent('click');
+                $(shadow).triggerEvent('click');
                 return result;
             })).toBe(1);
         });
@@ -354,8 +335,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent(document, 'click', (_) => {
                     result++;
                 });
-                $(document)
-                        .triggerEvent('click');
+                $(document).triggerEvent('click');
                 return result;
             })).toBe(1);
         });
@@ -366,8 +346,7 @@ test.describe('QuerySet #triggerEvent', () => {
                 $.addEvent(window, 'click', (_) => {
                     result++;
                 });
-                $(window)
-                        .triggerEvent('click');
+                $(window).triggerEvent('click');
                 return result;
             })).toBe(1);
         });

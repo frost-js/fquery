@@ -8,23 +8,17 @@ test.describe('#getScrollX', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getScrollX(
-                document.getElementById('test1'),
-            ))).toBe(100);
+            $.getScrollX(document.getElementById('test1')))).toBe(100);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getScrollX(
-                document.querySelectorAll('div'),
-            ))).toBe(100);
+            $.getScrollX(document.querySelectorAll('div')))).toBe(100);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.getScrollX(
-                document.body.children,
-            ))).toBe(100);
+            $.getScrollX(document.body.children))).toBe(100);
     });
 
     test('works with Document nodes', async ({ page }) => {

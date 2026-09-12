@@ -16,38 +16,24 @@ test.describe('#isEqual', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                document.querySelector('#parent1 [data-id="span2"]'),
-                '#parent2 span',
-            ))).toBe(true);
+            $.isEqual(document.querySelector('#parent1 [data-id="span2"]'), '#parent2 span'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                document.querySelectorAll('#parent1 span'),
-                '#parent2 span',
-            ))).toBe(true);
+            $.isEqual(document.querySelectorAll('#parent1 span'), '#parent2 span'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                document.getElementById('parent1').children,
-                '#parent2 span',
-            ))).toBe(true);
+            $.isEqual(document.getElementById('parent1').children, '#parent2 span'))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment1 = document.createDocumentFragment();
             const fragment2 = document.createDocumentFragment();
-            return $.isEqual(
-                fragment1,
-                [
-                    fragment2,
-                ],
-            );
+            return $.isEqual(fragment1, [fragment2]);
         })).toBe(true);
     });
 
@@ -57,12 +43,7 @@ test.describe('#isEqual', () => {
             const div2 = document.createElement('div');
             const shadow1 = div1.attachShadow({ mode: 'open' });
             const shadow2 = div2.attachShadow({ mode: 'closed' });
-            return $.isEqual(
-                shadow1,
-                [
-                    shadow2,
-                ],
-            );
+            return $.isEqual(shadow1, [shadow2]);
         })).toBe(true);
     });
 
@@ -77,38 +58,24 @@ test.describe('#isEqual', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                '#parent1 span',
-                document.querySelector('#parent2 > [data-id="span2"]'),
-            ))).toBe(true);
+            $.isEqual('#parent1 span', document.querySelector('#parent2 > [data-id="span2"]')))).toBe(true);
     });
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                '#parent1 span',
-                document.querySelectorAll('#parent2 > span'),
-            ))).toBe(true);
+            $.isEqual('#parent1 span', document.querySelectorAll('#parent2 > span')))).toBe(true);
     });
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.isEqual(
-                '#parent1 span',
-                document.getElementById('parent2').children,
-            ))).toBe(true);
+            $.isEqual('#parent1 span', document.getElementById('parent2').children))).toBe(true);
     });
 
     test('works with DocumentFragment other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment1 = document.createDocumentFragment();
             const fragment2 = document.createDocumentFragment();
-            return $.isEqual(
-                [
-                    fragment1,
-                ],
-                fragment2,
-            );
+            return $.isEqual([fragment1], fragment2);
         })).toBe(true);
     });
 
@@ -118,12 +85,7 @@ test.describe('#isEqual', () => {
             const div2 = document.createElement('div');
             const shadow1 = div1.attachShadow({ mode: 'open' });
             const shadow2 = div2.attachShadow({ mode: 'closed' });
-            return $.isEqual(
-                [
-                    shadow1,
-                ],
-                shadow2,
-            );
+            return $.isEqual([shadow1], shadow2);
         })).toBe(true);
     });
 

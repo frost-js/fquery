@@ -3,9 +3,7 @@ import { expect, test } from '#test';
 test.describe('#parseDocument', () => {
     test('parses a HTML string', async ({ page }) => {
         const html = await page.evaluate(() => {
-            const parsedDocument = $.parseDocument(
-                '<html><head></head><body><div></div></body></html>',
-            );
+            const parsedDocument = $.parseDocument('<html><head></head><body><div></div></body></html>');
 
             return parsedDocument.documentElement.outerHTML;
         });

@@ -228,10 +228,7 @@ test.describe('#triggerOne', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerOne(
-                    document.getElementById('test1'),
-                    'click',
-                );
+                $.triggerOne(document.getElementById('test1'), 'click');
                 return result;
             })).toBe(1);
         });
@@ -242,10 +239,7 @@ test.describe('#triggerOne', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerOne(
-                    document.querySelectorAll('a'),
-                    'click',
-                );
+                $.triggerOne(document.querySelectorAll('a'), 'click');
                 return result;
             })).toBe(1);
         });
@@ -256,10 +250,7 @@ test.describe('#triggerOne', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.triggerOne(
-                    document.getElementById('div1').children,
-                    'click',
-                );
+                $.triggerOne(document.getElementById('div1').children, 'click');
                 return result;
             })).toBe(1);
         });

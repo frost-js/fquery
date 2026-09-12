@@ -10,8 +10,7 @@ test.describe('QuerySet #triggerOne', () => {
             $.addEvent('a', 'click', (_) => {
                 result++;
             });
-            $('a')
-                    .triggerOne('click');
+            $('a').triggerOne('click');
             return result;
         })).toBe(1);
     });
@@ -23,8 +22,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click');
+                $('a').triggerOne('click');
                 return result;
             })).toBe(1);
         });
@@ -35,8 +33,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click');
+                $('a').triggerOne('click');
                 return result;
             })).toBe(1);
         });
@@ -47,8 +44,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click.test');
+                $('a').triggerOne('click.test');
                 return result;
             })).toBe(1);
         });
@@ -59,8 +55,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click.test');
+                $('a').triggerOne('click.test');
                 return result;
             })).toBe(1);
         });
@@ -71,8 +66,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test.deep', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click.test.deep');
+                $('a').triggerOne('click.test.deep');
                 return result;
             })).toBe(1);
         });
@@ -83,8 +77,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click.test');
+                $('a').triggerOne('click.test');
                 return result;
             })).toBe(0);
         });
@@ -95,8 +88,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('a', 'click.test', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click.test.deep');
+                $('a').triggerOne('click.test.deep');
                 return result;
             })).toBe(0);
         });
@@ -111,8 +103,7 @@ test.describe('QuerySet #triggerOne', () => {
                         result++;
                     }
                 });
-                $('a')
-                        .triggerOne('click');
+                $('a').triggerOne('click');
                 $('a')
                         .triggerOne('click', {
                             data: {
@@ -131,8 +122,7 @@ test.describe('QuerySet #triggerOne', () => {
                         result++;
                     }
                 });
-                $('a')
-                        .triggerOne('click');
+                $('a').triggerOne('click');
                 $('a')
                         .triggerOne('click', {
                             detail: 'test',
@@ -149,8 +139,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('#div1', 'click', (_) => {
                     result++;
                 });
-                $('a')
-                        .triggerOne('click');
+                $('a').triggerOne('click');
                 return result;
             })).toBe(1);
         });
@@ -177,40 +166,35 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent('#test1', 'click', (e) => {
                     e.preventDefault();
                 });
-                return $('#test1')
-                        .triggerOne('click');
+                return $('#test1').triggerOne('click');
             })).toBe(false);
         });
 
         test('returns false if the event returns false', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 $.addEvent('#test1', 'click', (_) => false);
-                return $('#test1')
-                        .triggerOne('click');
+                return $('#test1').triggerOne('click');
             })).toBe(false);
         });
 
         test('returns false if a delegated event returns false', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 $.addEventDelegate('#div1', 'click', 'a', (_) => false);
-                return $('#test1')
-                        .triggerOne('click');
+                return $('#test1').triggerOne('click');
             })).toBe(false);
         });
 
         test('returns true if the event is not cancelled', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 $.addEvent('#test1', 'click', (_) => { });
-                return $('#test1')
-                        .triggerOne('click');
+                return $('#test1').triggerOne('click');
             })).toBe(true);
         });
 
         test('returns true if a delegated event is not cancelled', async ({ page }) => {
             expect(await page.evaluate((_) => {
                 $.addEventDelegate('#div1', 'click', 'a', (_) => { });
-                return $('#test1')
-                        .triggerOne('click');
+                return $('#test1').triggerOne('click');
             })).toBe(true);
         });
 
@@ -252,8 +236,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent(shadow, 'click', (_) => {
                     result++;
                 });
-                $(shadow)
-                        .triggerOne('click');
+                $(shadow).triggerOne('click');
                 return result;
             })).toBe(1);
         });
@@ -264,8 +247,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent(document, 'click', (_) => {
                     result++;
                 });
-                $(document)
-                        .triggerOne('click');
+                $(document).triggerOne('click');
                 return result;
             })).toBe(1);
         });
@@ -276,8 +258,7 @@ test.describe('QuerySet #triggerOne', () => {
                 $.addEvent(window, 'click', (_) => {
                     result++;
                 });
-                $(window)
-                        .triggerOne('click');
+                $(window).triggerOne('click');
                 return result;
             })).toBe(1);
         });

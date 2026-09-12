@@ -17,8 +17,7 @@ test.describe('QuerySet #getData', () => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, 'test', 'Test 2');
-            return $(fragment)
-                    .getData('test');
+            return $(fragment).getData('test');
         })).toBe('Test 2');
     });
 
@@ -27,24 +26,21 @@ test.describe('QuerySet #getData', () => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, 'test', 'Test 2');
-            return $(shadow)
-                    .getData('test');
+            return $(shadow).getData('test');
         })).toBe('Test 2');
     });
 
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.setData(document, 'test', 'Test 2');
-            return $(document)
-                    .getData('test');
+            return $(document).getData('test');
         })).toBe('Test 2');
     });
 
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             $.setData(window, 'test', 'Test 2');
-            return $(window)
-                    .getData('test');
+            return $(window).getData('test');
         })).toBe('Test 2');
     });
 });

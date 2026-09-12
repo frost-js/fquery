@@ -8,23 +8,17 @@ test.describe('#hasChildren', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasChildren(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.hasChildren(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasChildren(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.hasChildren(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasChildren(
-                document.body.children,
-            ))).toBe(true);
+            $.hasChildren(document.body.children))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {

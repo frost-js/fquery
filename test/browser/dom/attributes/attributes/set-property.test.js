@@ -41,11 +41,7 @@ test.describe('#setProperty', () => {
     test('works with HTMLElement nodes', async ({ page }) => {
         await page.evaluate((_) => {
             const element = document.getElementById('test1');
-            $.setProperty(
-                element,
-                'test',
-                'Test',
-            );
+            $.setProperty(element, 'test', 'Test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))
@@ -56,11 +52,7 @@ test.describe('#setProperty', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.setProperty(
-                document.querySelectorAll('input'),
-                'test',
-                'Test',
-            );
+            $.setProperty(document.querySelectorAll('input'), 'test', 'Test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))
@@ -71,11 +63,7 @@ test.describe('#setProperty', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.setProperty(
-                document.body.children,
-                'test',
-                'Test',
-            );
+            $.setProperty(document.body.children, 'test', 'Test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))

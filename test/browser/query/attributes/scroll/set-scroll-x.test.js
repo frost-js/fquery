@@ -15,8 +15,7 @@ test.describe('QuerySet #setScrollX', () => {
 
     test('sets the scroll X position for all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('div')
-                    .setScrollX(100);
+            $('div').setScrollX(100);
             return [
                 document.getElementById('test1').scrollLeft,
                 document.getElementById('test2').scrollLeft,
@@ -37,8 +36,7 @@ test.describe('QuerySet #setScrollX', () => {
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(document)
-                    .setScrollX(100);
+            $(document).setScrollX(100);
             return document.scrollingElement.scrollLeft;
         })).toBe(100);
     });
@@ -73,8 +71,7 @@ test.describe('QuerySet #setScrollX', () => {
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(window)
-                    .setScrollX(100);
+            $(window).setScrollX(100);
             return window.scrollX;
         })).toBe(100);
     });

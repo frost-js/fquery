@@ -8,9 +8,7 @@ test.describe('#center', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.center(
-                document.getElementById('test1'),
-            ))).toEqual({
+            $.center(document.getElementById('test1')))).toEqual({
             x: 700,
             y: 150,
         });
@@ -18,9 +16,7 @@ test.describe('#center', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.center(
-                document.querySelectorAll('div'),
-            ))).toEqual({
+            $.center(document.querySelectorAll('div')))).toEqual({
             x: 700,
             y: 150,
         });
@@ -28,9 +24,7 @@ test.describe('#center', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.center(
-                document.body.children,
-            ))).toEqual({
+            $.center(document.body.children))).toEqual({
             x: 700,
             y: 150,
         });

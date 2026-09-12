@@ -46,10 +46,7 @@ test.describe('#unwrap', () => {
 
         test('works with function filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    'a',
-                    (node) => node.id === 'parent1',
-                );
+                $.unwrap('a', (node) => node.id === 'parent1');
 
                 return document.body.innerHTML;
             });
@@ -64,10 +61,7 @@ test.describe('#unwrap', () => {
 
         test('works with HTMLElement filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    'a',
-                    document.getElementById('parent1'),
-                );
+                $.unwrap('a', document.getElementById('parent1'));
 
                 return document.body.innerHTML;
             });
@@ -82,10 +76,7 @@ test.describe('#unwrap', () => {
 
         test('works with NodeList filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    'a',
-                    document.querySelectorAll('#parent1'),
-                );
+                $.unwrap('a', document.querySelectorAll('#parent1'));
 
                 return document.body.innerHTML;
             });
@@ -100,10 +91,7 @@ test.describe('#unwrap', () => {
 
         test('works with HTMLCollection filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    'a',
-                    document.body.children,
-                );
+                $.unwrap('a', document.body.children);
 
                 return document.body.innerHTML;
             });
@@ -116,9 +104,7 @@ test.describe('#unwrap', () => {
 
         test('works with array filter', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap('a', [
-                    document.getElementById('parent1'),
-                ]);
+                $.unwrap('a', [document.getElementById('parent1')]);
 
                 return document.body.innerHTML;
             });
@@ -373,10 +359,7 @@ test.describe('#unwrap', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    document.getElementById('test1'),
-                    '#parent1',
-                );
+                $.unwrap(document.getElementById('test1'), '#parent1');
 
                 return document.body.innerHTML;
             });
@@ -391,10 +374,7 @@ test.describe('#unwrap', () => {
 
         test('works with NodeList nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    document.querySelectorAll('a'),
-                    '#parent1',
-                );
+                $.unwrap(document.querySelectorAll('a'), '#parent1');
 
                 return document.body.innerHTML;
             });
@@ -409,10 +389,7 @@ test.describe('#unwrap', () => {
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.unwrap(
-                    document.getElementById('parent1').children,
-                    '#parent1',
-                );
+                $.unwrap(document.getElementById('parent1').children, '#parent1');
 
                 return document.body.innerHTML;
             });

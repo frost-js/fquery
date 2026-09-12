@@ -13,8 +13,7 @@ test.describe('QuerySet #setValue', () => {
 
     test('sets the input value for all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('input')
-                    .setValue('Test');
+            $('input').setValue('Test');
             return [
                 document.getElementById('test1').value,
                 document.getElementById('test2').value,
@@ -27,16 +26,14 @@ test.describe('QuerySet #setValue', () => {
 
     test('works with textarea input nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('textarea')
-                    .setValue('Test');
+            $('textarea').setValue('Test');
             return document.getElementById('test3').value;
         })).toBe('Test');
     });
 
     test('works with select input nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('select')
-                    .setValue(2);
+            $('select').setValue(2);
             return document.getElementById('test4').value;
         })).toBe('2');
     });

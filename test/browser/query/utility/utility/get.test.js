@@ -25,7 +25,6 @@ test.describe('QuerySet #slice', () => {
 
     test('reduces the node at an index', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .get(1).id)).toBe('div2');
+            $('div').get(1).id)).toBe('div2');
     });
 });

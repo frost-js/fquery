@@ -40,9 +40,7 @@ test.describe('#fragment', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const hasFragment = await page.evaluate((_) => {
-            const fragment = $.fragment(
-                document.getElementById('template1'),
-            );
+            const fragment = $.fragment(document.getElementById('template1'));
 
             return fragment instanceof DocumentFragment;
         });
@@ -52,9 +50,7 @@ test.describe('#fragment', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         const hasFragment = await page.evaluate((_) => {
-            const fragment = $.fragment(
-                document.querySelectorAll('template'),
-            );
+            const fragment = $.fragment(document.querySelectorAll('template'));
 
             return fragment instanceof DocumentFragment;
         });

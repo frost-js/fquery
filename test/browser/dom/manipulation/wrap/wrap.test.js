@@ -11,10 +11,7 @@ test.describe('#wrap', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrap(
-                    document.getElementById('test1'),
-                    '.outer',
-                );
+                $.wrap(document.getElementById('test1'), '.outer');
 
                 return document.body.innerHTML;
             });
@@ -42,10 +39,7 @@ test.describe('#wrap', () => {
 
         test('works with NodeList nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrap(
-                    document.querySelectorAll('a'),
-                    '.outer',
-                );
+                $.wrap(document.querySelectorAll('a'), '.outer');
 
                 return document.body.innerHTML;
             });
@@ -85,10 +79,7 @@ test.describe('#wrap', () => {
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $.wrap(
-                    document.getElementById('parent1').children,
-                    '.outer',
-                );
+                $.wrap(document.getElementById('parent1').children, '.outer');
 
                 return document.body.innerHTML;
             });

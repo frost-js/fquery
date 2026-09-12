@@ -8,23 +8,17 @@ test.describe('#hasFragment', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasFragment(
-                document.getElementById('template1'),
-            ))).toBe(true);
+            $.hasFragment(document.getElementById('template1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasFragment(
-                document.querySelectorAll('template'),
-            ))).toBe(true);
+            $.hasFragment(document.querySelectorAll('template')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasFragment(
-                document.body.children,
-            ))).toBe(true);
+            $.hasFragment(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

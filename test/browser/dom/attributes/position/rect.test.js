@@ -13,9 +13,7 @@ test.describe('#rect', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.rect(
-                document.getElementById('test1'),
-            ).toJSON())).toEqual({
+            $.rect(document.getElementById('test1')).toJSON())).toEqual({
             x: 600,
             y: 50,
             width: 200,
@@ -29,9 +27,7 @@ test.describe('#rect', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.rect(
-                document.querySelectorAll('div'),
-            ).toJSON())).toEqual({
+            $.rect(document.querySelectorAll('div')).toJSON())).toEqual({
             x: 600,
             y: 50,
             width: 200,
@@ -45,9 +41,7 @@ test.describe('#rect', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.rect(
-                document.body.children,
-            ).toJSON())).toEqual({
+            $.rect(document.body.children).toJSON())).toEqual({
             x: 600,
             y: 50,
             width: 200,

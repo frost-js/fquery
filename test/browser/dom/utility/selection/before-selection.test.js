@@ -67,9 +67,7 @@ test.describe('#beforeSelection', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.beforeSelection(
-                document.getElementById('a1'),
-            );
+            $.beforeSelection(document.getElementById('a1'));
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -88,9 +86,7 @@ test.describe('#beforeSelection', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.beforeSelection(
-                document.querySelectorAll('a'),
-            );
+            $.beforeSelection(document.querySelectorAll('a'));
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -108,9 +104,7 @@ test.describe('#beforeSelection', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.beforeSelection(
-                document.getElementById('parent').children,
-            );
+            $.beforeSelection(document.getElementById('parent').children);
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +

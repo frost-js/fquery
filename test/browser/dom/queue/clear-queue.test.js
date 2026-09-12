@@ -168,9 +168,7 @@ test.describe('#clearQueue', () => {
             $.queue('.queue', (node) => {
                 node.dataset.test = 'Test';
             });
-            $.clearQueue(
-                document.getElementById('test2'),
-            );
+            $.clearQueue(document.getElementById('test2'));
         });
 
         await expect.poll(async () => await page.locator('#test2').getAttribute('data-test')).toBeNull();
@@ -184,9 +182,7 @@ test.describe('#clearQueue', () => {
             $.queue('.queue', (node) => {
                 node.dataset.test = 'Test';
             });
-            $.clearQueue(
-                document.querySelectorAll('.queue'),
-            );
+            $.clearQueue(document.querySelectorAll('.queue'));
         });
 
         await expect.poll(async () => await page.locator('#test2').getAttribute('data-test')).toBeNull();
@@ -200,9 +196,7 @@ test.describe('#clearQueue', () => {
             $.queue('.queue', (node) => {
                 node.dataset.test = 'Test';
             });
-            $.clearQueue(
-                document.body.children,
-            );
+            $.clearQueue(document.body.children);
         });
 
         await expect.poll(async () => await page.locator('#test1').getAttribute('data-test')).toBeNull();

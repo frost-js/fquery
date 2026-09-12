@@ -132,9 +132,7 @@ test.describe('QuerySet #wrapInner', () => {
     test.describe('wrapper inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('#wrap > div').wrapInner(
-                    document.querySelector('.outer'),
-                );
+                $('#wrap > div').wrapInner(document.querySelector('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -167,9 +165,7 @@ test.describe('QuerySet #wrapInner', () => {
 
         test('works with NodeList other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('#wrap > div').wrapInner(
-                    document.querySelectorAll('.outer'),
-                );
+                $('#wrap > div').wrapInner(document.querySelectorAll('.outer'));
 
                 return document.body.innerHTML;
             });
@@ -202,9 +198,7 @@ test.describe('QuerySet #wrapInner', () => {
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('#wrap > div').wrapInner(
-                    document.getElementById('wrapper').children,
-                );
+                $('#wrap > div').wrapInner(document.getElementById('wrapper').children);
 
                 return document.body.innerHTML;
             });
@@ -237,9 +231,7 @@ test.describe('QuerySet #wrapInner', () => {
 
         test('works with array other nodes', async ({ page }) => {
             const html = await page.evaluate(() => {
-                $('#wrap > div').wrapInner([
-                    document.querySelector('.outer'),
-                ]);
+                $('#wrap > div').wrapInner([document.querySelector('.outer')]);
 
                 return document.body.innerHTML;
             });

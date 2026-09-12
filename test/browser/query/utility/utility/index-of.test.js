@@ -9,8 +9,7 @@ test.describe('QuerySet #indexOf', () => {
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $(fragment)
-                    .indexOf();
+            return $(fragment).indexOf();
         })).toBe(0);
     });
 
@@ -18,39 +17,28 @@ test.describe('QuerySet #indexOf', () => {
         expect(await page.evaluate((_) => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $(shadow)
-                    .indexOf();
+            return $(shadow).indexOf();
         })).toBe(0);
     });
 
     test('works with function filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .indexOf((node) => node.id === 'div2'))).toBe(1);
+            $('div').indexOf((node) => node.id === 'div2'))).toBe(1);
     });
 
     test('works with HTMLElement filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .indexOf(
-                        document.getElementById('div2'),
-                    ))).toBe(1);
+            $('div').indexOf(document.getElementById('div2')))).toBe(1);
     });
 
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .indexOf(
-                        document.querySelectorAll('.test'),
-                    ))).toBe(1);
+            $('div').indexOf(document.querySelectorAll('.test')))).toBe(1);
     });
 
     test('works with HTMLCollection filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .indexOf(
-                        document.body.children,
-                    ))).toBe(0);
+            $('div').indexOf(document.body.children))).toBe(0);
     });
 
     test('works with DocumentFragment filter', async ({ page }) => {
@@ -88,8 +76,7 @@ test.describe('QuerySet #indexOf', () => {
     test('works with QuerySet filter', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('.test');
-            return $('div')
-                    .indexOf(query);
+            return $('div').indexOf(query);
         })).toBe(1);
     });
 });

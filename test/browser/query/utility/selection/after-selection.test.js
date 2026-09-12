@@ -31,8 +31,7 @@ test.describe('QuerySet #afterSelection', () => {
 
     test('inserts each node after the selected nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('a')
-                    .afterSelection();
+            $('a').afterSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +
@@ -79,8 +78,7 @@ test.describe('QuerySet #afterSelection', () => {
             const fragment = range.createContextualFragment(
                 '<div><span></span></div>',
             );
-            $(fragment)
-                    .afterSelection();
+            $(fragment).afterSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +
             '<div id="div1">' +

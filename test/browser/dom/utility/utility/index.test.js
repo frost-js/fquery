@@ -18,23 +18,17 @@ test.describe('#index', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.index(
-                document.getElementById('div2'),
-            ))).toBe(1);
+            $.index(document.getElementById('div2')))).toBe(1);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.index(
-                document.querySelectorAll('.test'),
-            ))).toBe(1);
+            $.index(document.querySelectorAll('.test')))).toBe(1);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.index(
-                document.body.children,
-            ))).toBe(0);
+            $.index(document.body.children))).toBe(0);
     });
 
     test('works with array nodes', async ({ page }) => {

@@ -109,10 +109,7 @@ test.describe('#constrain', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                document.getElementById('test1'),
-                '[data-toggle="to"]',
-            );
+            $.constrain(document.getElementById('test1'), '[data-toggle="to"]');
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -126,10 +123,7 @@ test.describe('#constrain', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                document.querySelectorAll('[data-toggle="from"]'),
-                '[data-toggle="to"]',
-            );
+            $.constrain(document.querySelectorAll('[data-toggle="from"]'), '[data-toggle="to"]');
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -143,10 +137,7 @@ test.describe('#constrain', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                document.getElementById('fromParent').children,
-                '[data-toggle="to"]',
-            );
+            $.constrain(document.getElementById('fromParent').children, '[data-toggle="to"]');
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -177,10 +168,7 @@ test.describe('#constrain', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                '[data-toggle="from"]',
-                document.getElementById('test3'),
-            );
+            $.constrain('[data-toggle="from"]', document.getElementById('test3'));
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -194,10 +182,7 @@ test.describe('#constrain', () => {
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                '[data-toggle="from"]',
-                document.querySelectorAll('[data-toggle="to"]'),
-            );
+            $.constrain('[data-toggle="from"]', document.querySelectorAll('[data-toggle="to"]'));
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +
@@ -211,10 +196,7 @@ test.describe('#constrain', () => {
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.constrain(
-                '[data-toggle="from"]',
-                document.getElementById('toParent').children,
-            );
+            $.constrain('[data-toggle="from"]', document.getElementById('toParent').children);
             return document.body.innerHTML;
         })).toBe('<div id="fromParent">' +
             '<div id="test1" data-toggle="from" style="display: block; width: 500px; height: 500px; left: 292px; top: 292px; position: relative;"></div>' +

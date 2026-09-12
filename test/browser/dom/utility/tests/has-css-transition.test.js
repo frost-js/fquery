@@ -8,23 +8,17 @@ test.describe('#hasCSSTransition', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSTransition(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.hasCSSTransition(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSTransition(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.hasCSSTransition(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSTransition(
-                document.body.children,
-            ))).toBe(true);
+            $.hasCSSTransition(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

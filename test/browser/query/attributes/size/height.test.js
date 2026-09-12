@@ -8,8 +8,7 @@ test.describe('QuerySet #height', () => {
 
     test('returns the content box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .height({ boxSize: $.CONTENT_BOX }))).toBe(1000);
+            $('div').height({ boxSize: $.CONTENT_BOX }))).toBe(1000);
     });
 
     test('returns zero content box height for a hidden element with padding', async ({ page }) => {
@@ -21,8 +20,7 @@ test.describe('QuerySet #height', () => {
 
     test('returns the border box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .height({ boxSize: $.BORDER_BOX }))).toBe(1052);
+            $('div').height({ boxSize: $.BORDER_BOX }))).toBe(1052);
     });
 
     test('includes horizontal scrollbar space in the border box height', async ({ page }) => {
@@ -49,8 +47,7 @@ test.describe('QuerySet #height', () => {
 
     test('returns the margin box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .height({ boxSize: $.MARGIN_BOX }))).toBe(1152);
+            $('div').height({ boxSize: $.MARGIN_BOX }))).toBe(1152);
     });
 
     test('includes horizontal scrollbar space in the margin box height', async ({ page }) => {
@@ -70,19 +67,16 @@ test.describe('QuerySet #height', () => {
 
     test('returns the scroll box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .height({ boxSize: $.SCROLL_BOX }))).toBe(2550);
+            $('div').height({ boxSize: $.SCROLL_BOX }))).toBe(2550);
     });
 
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(document)
-                    .height())).toBe(1152);
+            $(document).height())).toBe(1152);
     });
 
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(window)
-                    .height())).toBe(600);
+            $(window).height())).toBe(600);
     });
 });

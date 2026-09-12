@@ -167,18 +167,14 @@ test.describe('#query', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                document.getElementById('child1'),
-            ).get().map((node) => node.id))).toEqual([
+            $(document.getElementById('child1')).get().map((node) => node.id))).toEqual([
             'child1',
         ]);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                document.querySelectorAll('#parent1 > div'),
-            ).get().map((node) => node.id))).toEqual([
+            $(document.querySelectorAll('#parent1 > div')).get().map((node) => node.id))).toEqual([
             'child1',
             'child2',
             'child3',
@@ -187,9 +183,7 @@ test.describe('#query', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                document.getElementById('parent1').children,
-            ).get().map((node) => node.id))).toEqual([
+            $(document.getElementById('parent1').children).get().map((node) => node.id))).toEqual([
             'child1',
             'child2',
             'child3',
@@ -277,10 +271,7 @@ test.describe('#query', () => {
 
     test('works with HTMLElement context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                'span',
-                document.getElementById('child1'),
-            ).get().map((node) => node.id))).toEqual([
+            $('span', document.getElementById('child1')).get().map((node) => node.id))).toEqual([
             'span1',
             'span2',
         ]);
@@ -288,10 +279,7 @@ test.describe('#query', () => {
 
     test('works with NodeList context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                'span',
-                document.querySelectorAll('#parent1 > div'),
-            ).get().map((node) => node.id))).toEqual([
+            $('span', document.querySelectorAll('#parent1 > div')).get().map((node) => node.id))).toEqual([
             'span1',
             'span2',
             'span3',
@@ -303,10 +291,7 @@ test.describe('#query', () => {
 
     test('works with HTMLCollection context', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                'span',
-                document.getElementById('parent1').children,
-            ).get().map((node) => node.id))).toEqual([
+            $('span', document.getElementById('parent1').children).get().map((node) => node.id))).toEqual([
             'span1',
             'span2',
             'span3',

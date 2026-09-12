@@ -39,8 +39,7 @@ test.describe('QuerySet #normalize', () => {
 
     test('normalizes all text nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('.test')
-                    .normalize();
+            $('.test').normalize();
             return [
                 document.getElementById('child1').childNodes.length,
                 document.getElementById('child2').childNodes.length,
@@ -53,8 +52,7 @@ test.describe('QuerySet #normalize', () => {
 
     test('retains HTML contents', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('.test')
-                    .normalize();
+            $('.test').normalize();
             return document.body.innerHTML;
         })).toBe('<div id="parent1" class="test">' +
             '<div id="child1">' +
@@ -90,8 +88,7 @@ test.describe('QuerySet #normalize', () => {
             fragment.appendChild(text3);
             fragment.appendChild(text4);
 
-            $(fragment)
-                    .normalize();
+            $(fragment).normalize();
 
             return fragment.childNodes.length;
         })).toBe(3);
@@ -113,8 +110,7 @@ test.describe('QuerySet #normalize', () => {
             shadow.appendChild(text3);
             shadow.appendChild(text4);
 
-            $(shadow)
-                    .normalize();
+            $(shadow).normalize();
 
             return shadow.childNodes.length;
         })).toBe(3);

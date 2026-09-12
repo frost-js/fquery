@@ -25,10 +25,7 @@ test.describe('#removeProperty', () => {
     test('works with HTMLElement nodes', async ({ page }) => {
         await page.evaluate((_) => {
             const element = document.getElementById('test1');
-            $.removeProperty(
-                element,
-                'test',
-            );
+            $.removeProperty(element, 'test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))
@@ -39,10 +36,7 @@ test.describe('#removeProperty', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.removeProperty(
-                document.querySelectorAll('input'),
-                'test',
-            );
+            $.removeProperty(document.querySelectorAll('input'), 'test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))
@@ -53,10 +47,7 @@ test.describe('#removeProperty', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         await page.evaluate((_) => {
-            $.removeProperty(
-                document.body.children,
-                'test',
-            );
+            $.removeProperty(document.body.children, 'test');
         });
 
         expect(await page.locator('#test1').evaluate((element) => element.test))

@@ -8,7 +8,6 @@ test.describe('QuerySet #rect', () => {
 
     test('returns undefined for empty nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('#invalid')
-                    .rect())).toBe(undefined);
+            $('#invalid').rect())).toBe(undefined);
     });
 });

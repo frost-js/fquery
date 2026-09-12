@@ -8,26 +8,17 @@ test.describe('QuerySet #distToNode', () => {
 
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('[data-toggle="from"]')
-                    .distToNode(
-                        document.getElementById('test3'),
-                    ))).toBe(1250);
+            $('[data-toggle="from"]').distToNode(document.getElementById('test3')))).toBe(1250);
     });
 
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('[data-toggle="from"]')
-                    .distToNode(
-                        document.querySelectorAll('[data-toggle="to"]'),
-                    ))).toBe(1250);
+            $('[data-toggle="from"]').distToNode(document.querySelectorAll('[data-toggle="to"]')))).toBe(1250);
     });
 
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('[data-toggle="from"]')
-                    .distToNode(
-                        document.getElementById('toParent').children,
-                    ))).toBe(1250);
+            $('[data-toggle="from"]').distToNode(document.getElementById('toParent').children))).toBe(1250);
     });
 
     test('works with array other nodes', async ({ page }) => {
@@ -42,8 +33,7 @@ test.describe('QuerySet #distToNode', () => {
     test('works with QuerySet other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const query = $('[data-toggle="to"]');
-            return $('[data-toggle="from"]')
-                    .distToNode(query);
+            return $('[data-toggle="from"]').distToNode(query);
         })).toBe(1250);
     });
 });

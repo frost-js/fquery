@@ -599,12 +599,7 @@ test.describe('#removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $.removeEventDelegate(
-                    document.getElementById('parent1'),
-                    'click',
-                    'a',
-                    callback,
-                );
+                $.removeEventDelegate(document.getElementById('parent1'), 'click', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -630,12 +625,7 @@ test.describe('#removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $.removeEventDelegate(
-                    document.querySelectorAll('div'),
-                    'click',
-                    'a',
-                    callback,
-                );
+                $.removeEventDelegate(document.querySelectorAll('div'), 'click', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);
@@ -661,12 +651,7 @@ test.describe('#removeEventDelegate', () => {
                 $.addEventDelegate('div', 'click', 'a', (_) => {
                     result++;
                 });
-                $.removeEventDelegate(
-                    document.body.children,
-                    'click',
-                    'a',
-                    callback,
-                );
+                $.removeEventDelegate(document.body.children, 'click', 'a', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 element3.dispatchEvent(event);

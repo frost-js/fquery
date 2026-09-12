@@ -8,23 +8,17 @@ test.describe('#hasShadow', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasShadow(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.hasShadow(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasShadow(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.hasShadow(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasShadow(
-                document.body.children,
-            ))).toBe(true);
+            $.hasShadow(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

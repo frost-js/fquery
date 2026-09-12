@@ -17,8 +17,7 @@ test.describe('QuerySet #setScroll', () => {
         expect(await page.evaluate((_) => {
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
-            $('div')
-                    .setScroll(100, 50);
+            $('div').setScroll(100, 50);
             return [
                 [
                     element1.scrollLeft,
@@ -45,8 +44,7 @@ test.describe('QuerySet #setScroll', () => {
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(document)
-                    .setScroll(100, 50);
+            $(document).setScroll(100, 50);
             return [
                 document.scrollingElement.scrollLeft,
                 document.scrollingElement.scrollTop,
@@ -86,8 +84,7 @@ test.describe('QuerySet #setScroll', () => {
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(window)
-                    .setScroll(100, 50);
+            $(window).setScroll(100, 50);
             return [
                 window.scrollX,
                 window.scrollY,

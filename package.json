@@ -59,7 +59,7 @@
     },
     "devDependencies": {
         "@fr0st/eslint-config": "^5.0.3",
-        "@playwright/test": "^1.62.1",
+        "@playwright/test": "^1.63.0",
         "eslint": "^10.9.1",
         "monocart-reporter": "^2.12.6",
         "vite": "^8.2.2"

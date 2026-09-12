@@ -51,9 +51,7 @@ test.describe('QuerySet #nearestToNode', () => {
     test('works with HTMLElement other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('[data-toggle="from"]')
-                    .nearestToNode(
-                        document.getElementById('test3'),
-                    )
+                    .nearestToNode(document.getElementById('test3'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'test2',
@@ -63,9 +61,7 @@ test.describe('QuerySet #nearestToNode', () => {
     test('works with NodeList other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('[data-toggle="from"]')
-                    .nearestToNode(
-                        document.querySelectorAll('[data-toggle="to"]'),
-                    )
+                    .nearestToNode(document.querySelectorAll('[data-toggle="to"]'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'test2',
@@ -75,9 +71,7 @@ test.describe('QuerySet #nearestToNode', () => {
     test('works with HTMLCollection other nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('[data-toggle="from"]')
-                    .nearestToNode(
-                        document.getElementById('toParent').children,
-                    )
+                    .nearestToNode(document.getElementById('toParent').children)
                     .get()
                     .map((node) => node.id))).toEqual([
             'test2',

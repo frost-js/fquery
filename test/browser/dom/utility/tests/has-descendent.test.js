@@ -8,26 +8,17 @@ test.describe('#hasDescendent', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                document.getElementById('div1'),
-                'a',
-            ))).toBe(true);
+            $.hasDescendent(document.getElementById('div1'), 'a'))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                document.body.children,
-                'a',
-            ))).toBe(true);
+            $.hasDescendent(document.body.children, 'a'))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                document.querySelectorAll('div'),
-                'a',
-            ))).toBe(true);
+            $.hasDescendent(document.querySelectorAll('div'), 'a'))).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
@@ -70,18 +61,12 @@ test.describe('#hasDescendent', () => {
 
     test('works with function filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                'div',
-                (node) => node.id === 'a1',
-            ))).toBe(true);
+            $.hasDescendent('div', (node) => node.id === 'a1'))).toBe(true);
     });
 
     test('works with HTMLElement filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                'div',
-                document.getElementById('a1'),
-            ))).toBe(true);
+            $.hasDescendent('div', document.getElementById('a1')))).toBe(true);
     });
 
     test('does not match the node itself with an HTMLElement filter', async ({ page }) => {
@@ -93,18 +78,12 @@ test.describe('#hasDescendent', () => {
 
     test('works with NodeList filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                'div',
-                document.querySelectorAll('a'),
-            ))).toBe(true);
+            $.hasDescendent('div', document.querySelectorAll('a')))).toBe(true);
     });
 
     test('works with HTMLCollection filter', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasDescendent(
-                'div',
-                document.getElementById('span1').children,
-            ))).toBe(true);
+            $.hasDescendent('div', document.getElementById('span1').children))).toBe(true);
     });
 
     test('does not match the node itself with an array filter', async ({ page }) => {

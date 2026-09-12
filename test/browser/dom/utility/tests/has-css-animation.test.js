@@ -8,23 +8,17 @@ test.describe('#hasCSSAnimation', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSAnimation(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.hasCSSAnimation(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSAnimation(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.hasCSSAnimation(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasCSSAnimation(
-                document.body.children,
-            ))).toBe(true);
+            $.hasCSSAnimation(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

@@ -8,23 +8,17 @@ test.describe('#hasAnimation', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAnimation(
-                document.getElementById('div1'),
-            ))).toBe(true);
+            $.hasAnimation(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAnimation(
-                document.querySelectorAll('div'),
-            ))).toBe(true);
+            $.hasAnimation(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.hasAnimation(
-                document.body.children,
-            ))).toBe(true);
+            $.hasAnimation(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {

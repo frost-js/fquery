@@ -9,9 +9,7 @@ test.describe('#serializeArray', () => {
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
             expect(await page.evaluate((_) =>
-                $.serializeArray(
-                    document.getElementById('form'),
-                ))).toEqual([
+                $.serializeArray(document.getElementById('form')))).toEqual([
                 {
                     name: 'test1',
                     value: 'Test 1',
@@ -57,9 +55,7 @@ test.describe('#serializeArray', () => {
 
         test('works with NodeList nodes', async ({ page }) => {
             expect(await page.evaluate((_) =>
-                $.serializeArray(
-                    document.querySelectorAll('input, textarea, select'),
-                ))).toEqual([
+                $.serializeArray(document.querySelectorAll('input, textarea, select')))).toEqual([
                 {
                     name: 'test1',
                     value: 'Test 1',
@@ -105,9 +101,7 @@ test.describe('#serializeArray', () => {
 
         test('works with HTMLCollection nodes', async ({ page }) => {
             expect(await page.evaluate((_) =>
-                $.serializeArray(
-                    document.body.children,
-                ))).toEqual([
+                $.serializeArray(document.body.children))).toEqual([
                 {
                     name: 'test1',
                     value: 'Test 1',

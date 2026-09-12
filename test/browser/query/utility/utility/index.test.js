@@ -13,7 +13,6 @@ test.describe('QuerySet #index', () => {
 
     test('returns the index of the first node relative to the parent', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('.test')
-                    .index())).toBe(1);
+            $('.test').index())).toBe(1);
     });
 });

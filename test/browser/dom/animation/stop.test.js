@@ -80,9 +80,7 @@ test.describe('#stop', () => {
         });
         await advanceClock(page, 50);
         await page.evaluate((_) => {
-            $.stop(
-                document.getElementById('test2'),
-            );
+            $.stop(document.getElementById('test2'));
         });
         await expectAnimationState(page, [
             {
@@ -108,9 +106,7 @@ test.describe('#stop', () => {
         });
         await advanceClock(page, 25);
         await page.evaluate((_) => {
-            $.stop(
-                document.querySelectorAll('.animate'),
-            );
+            $.stop(document.querySelectorAll('.animate'));
         });
         await expectAnimationState(page, [
             {
@@ -132,9 +128,7 @@ test.describe('#stop', () => {
         });
         await advanceClock(page, 25);
         await page.evaluate((_) => {
-            $.stop(
-                document.body.children,
-            );
+            $.stop(document.body.children);
         });
         await expectAnimationState(page, [
             {

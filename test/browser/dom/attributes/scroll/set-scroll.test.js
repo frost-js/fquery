@@ -49,11 +49,7 @@ test.describe('#setScroll', () => {
         expect(await page.evaluate((_) => {
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
-            $.setScroll(
-                document.querySelectorAll('div'),
-                100,
-                50,
-            );
+            $.setScroll(document.querySelectorAll('div'), 100, 50);
             return [
                 [
                     element1.scrollLeft,
@@ -74,11 +70,7 @@ test.describe('#setScroll', () => {
         expect(await page.evaluate((_) => {
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
-            $.setScroll(
-                document.body.children,
-                100,
-                50,
-            );
+            $.setScroll(document.body.children, 100, 50);
             return [
                 [
                     element1.scrollLeft,

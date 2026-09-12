@@ -63,11 +63,7 @@ test.describe('#setData', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.setData(
-                document.getElementById('test1'),
-                'test',
-                'Test 1',
-            );
+            $.setData(document.getElementById('test1'), 'test', 'Test 1');
             return $.getData('#test1');
         })).toEqual({
             test: 'Test 1',
@@ -76,11 +72,7 @@ test.describe('#setData', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.setData(
-                document.querySelectorAll('div'),
-                'test',
-                'Test 1',
-            );
+            $.setData(document.querySelectorAll('div'), 'test', 'Test 1');
             return [
                 $.getData('#test1'),
                 $.getData('#test2'),
@@ -97,11 +89,7 @@ test.describe('#setData', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.setData(
-                document.body.children,
-                'test',
-                'Test 1',
-            );
+            $.setData(document.body.children, 'test', 'Test 1');
             return [
                 $.getData('#test1'),
                 $.getData('#test2'),

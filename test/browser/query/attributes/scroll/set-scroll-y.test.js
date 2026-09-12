@@ -15,8 +15,7 @@ test.describe('QuerySet #setScrollY', () => {
 
     test('sets the scroll Y position for all nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $('div')
-                    .setScrollY(100);
+            $('div').setScrollY(100);
             return [
                 document.getElementById('test1').scrollTop,
                 document.getElementById('test2').scrollTop,
@@ -37,8 +36,7 @@ test.describe('QuerySet #setScrollY', () => {
     test('works with Document nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(document)
-                    .setScrollY(100);
+            $(document).setScrollY(100);
             return document.scrollingElement.scrollTop;
         })).toBe(100);
     });
@@ -73,8 +71,7 @@ test.describe('QuerySet #setScrollY', () => {
     test('works with Window nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<div style="display: block; width: 1000px; height: 1000px;"></div>';
-            $(window)
-                    .setScrollY(100);
+            $(window).setScrollY(100);
             return window.scrollY;
         })).toBe(100);
     });

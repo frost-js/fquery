@@ -36,10 +36,7 @@ test.describe('#setScrollY', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.setScrollY(
-                document.querySelectorAll('div'),
-                100,
-            );
+            $.setScrollY(document.querySelectorAll('div'), 100);
             return [
                 document.getElementById('test1').scrollTop,
                 document.getElementById('test2').scrollTop,
@@ -52,10 +49,7 @@ test.describe('#setScrollY', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.setScrollY(
-                document.body.children,
-                100,
-            );
+            $.setScrollY(document.body.children, 100);
             return [
                 document.getElementById('test1').scrollTop,
                 document.getElementById('test2').scrollTop,

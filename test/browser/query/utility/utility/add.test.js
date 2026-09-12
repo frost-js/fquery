@@ -190,9 +190,7 @@ test.describe('QuerySet #add', () => {
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        document.getElementById('child1'),
-                    )
+                    .add(document.getElementById('child1'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',
@@ -203,9 +201,7 @@ test.describe('QuerySet #add', () => {
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        document.querySelectorAll('#parent1 > div'),
-                    )
+                    .add(document.querySelectorAll('#parent1 > div'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',
@@ -218,9 +214,7 @@ test.describe('QuerySet #add', () => {
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        document.getElementById('parent1').children,
-                    )
+                    .add(document.getElementById('parent1').children)
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',
@@ -316,10 +310,7 @@ test.describe('QuerySet #add', () => {
     test('works with HTMLElement context', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        'span',
-                        document.getElementById('child1'),
-                    )
+                    .add('span', document.getElementById('child1'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',
@@ -331,10 +322,7 @@ test.describe('QuerySet #add', () => {
     test('works with NodeList context', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        'span',
-                        document.querySelectorAll('#parent1 > div'),
-                    )
+                    .add('span', document.querySelectorAll('#parent1 > div'))
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',
@@ -350,10 +338,7 @@ test.describe('QuerySet #add', () => {
     test('works with HTMLCollection context', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $('#parent1')
-                    .add(
-                        'span',
-                        document.getElementById('parent1').children,
-                    )
+                    .add('span', document.getElementById('parent1').children)
                     .get()
                     .map((node) => node.id))).toEqual([
             'parent1',

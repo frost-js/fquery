@@ -13,7 +13,6 @@ test.describe('QuerySet #tagName', () => {
 
     test('returns the tag name of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .tagName())).toBe('div');
+            $('div').tagName())).toBe('div');
     });
 });

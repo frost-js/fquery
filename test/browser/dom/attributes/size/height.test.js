@@ -72,23 +72,17 @@ test.describe('#height', () => {
 
     test('works with HTMLElement nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.height(
-                document.getElementById('test1'),
-            ))).toBe(1050);
+            $.height(document.getElementById('test1')))).toBe(1050);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.height(
-                document.querySelectorAll('div'),
-            ))).toBe(1050);
+            $.height(document.querySelectorAll('div')))).toBe(1050);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.height(
-                document.body.children,
-            ))).toBe(1050);
+            $.height(document.body.children))).toBe(1050);
     });
 
     test('works with Document nodes', async ({ page }) => {

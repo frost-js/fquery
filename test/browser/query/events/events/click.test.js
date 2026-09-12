@@ -16,8 +16,7 @@ test.describe('QuerySet #click', () => {
             element.addEventListener('click', (_) => {
                 result = true;
             });
-            $('a')
-                    .click();
+            $('a').click();
             return result;
         })).toBe(true);
     });

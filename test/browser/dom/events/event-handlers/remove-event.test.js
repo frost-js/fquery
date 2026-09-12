@@ -529,11 +529,7 @@ test.describe('#removeEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.removeEvent(
-                    document.querySelectorAll('a'),
-                    'click',
-                    callback,
-                );
+                $.removeEvent(document.querySelectorAll('a'), 'click', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 return result;
@@ -553,11 +549,7 @@ test.describe('#removeEvent', () => {
                 $.addEvent('a', 'click', (_) => {
                     result++;
                 });
-                $.removeEvent(
-                    document.body.children,
-                    'click',
-                    callback,
-                );
+                $.removeEvent(document.body.children, 'click', callback);
                 element1.dispatchEvent(event);
                 element2.dispatchEvent(event);
                 return result;

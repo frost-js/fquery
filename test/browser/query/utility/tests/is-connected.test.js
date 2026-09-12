@@ -13,22 +13,18 @@ test.describe('QuerySet #isConnected', () => {
 
     test('returns true if any node is connected to the DOM', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $('div')
-                    .isConnected())).toBe(true);
+            $('div').isConnected())).toBe(true);
     });
 
     test('returns false if no nodes are connected to the DOM', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $(
-                document.createElement('div'),
-            ).isConnected())).toBe(false);
+            $(document.createElement('div')).isConnected())).toBe(false);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
             const fragment = document.createDocumentFragment();
-            return $(fragment)
-                    .isConnected();
+            return $(fragment).isConnected();
         })).toBe(false);
     });
 
@@ -36,8 +32,7 @@ test.describe('QuerySet #isConnected', () => {
         expect(await page.evaluate((_) => {
             const div = document.getElementById('div1');
             const shadow = div.attachShadow({ mode: 'open' });
-            return $(shadow)
-                    .isConnected();
+            return $(shadow).isConnected();
         })).toBe(true);
     });
 });

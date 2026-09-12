@@ -252,10 +252,7 @@ test.describe('#sanitize', () => {
 
     test('ignores inherited tag rules', async ({ page }) => {
         expect(await page.evaluate((_) =>
-            $.sanitize(
-                '<constructor>Test</constructor>',
-                {},
-            ))).toBe('');
+            $.sanitize('<constructor>Test</constructor>', {}))).toBe('');
     });
 
     test('sanitizes a HTML string with allowed wildcard attributes', async ({ page }) => {

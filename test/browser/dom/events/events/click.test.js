@@ -28,9 +28,7 @@ test.describe('#click', () => {
             element.addEventListener('click', (_) => {
                 result = true;
             });
-            $.click(
-                document.getElementById('test1'),
-            );
+            $.click(document.getElementById('test1'));
             return result;
         })).toBe(true);
     });
@@ -42,9 +40,7 @@ test.describe('#click', () => {
             element.addEventListener('click', (_) => {
                 result = true;
             });
-            $.click(
-                document.querySelectorAll('a'),
-            );
+            $.click(document.querySelectorAll('a'));
             return result;
         })).toBe(true);
     });
@@ -56,9 +52,7 @@ test.describe('#click', () => {
             element.addEventListener('click', (_) => {
                 result = true;
             });
-            $.click(
-                document.body.children,
-            );
+            $.click(document.body.children);
             return result;
         })).toBe(true);
     });

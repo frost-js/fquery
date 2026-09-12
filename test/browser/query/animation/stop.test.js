@@ -28,8 +28,7 @@ test.describe('QuerySet #stop', () => {
         });
         await advanceClock(page, 25);
         await page.evaluate((_) => {
-            $('.animate')
-                    .stop();
+            $('.animate').stop();
         });
         await expectAnimationState(page, [
             {
@@ -80,8 +79,7 @@ test.describe('QuerySet #stop', () => {
         });
         await advanceClock(page, 50);
         const testHtml = await page.evaluate((_) => {
-            $('.animate')
-                    .stop({ finish: false });
+            $('.animate').stop({ finish: false });
             return document.body.innerHTML;
         });
         await expectAnimationState(page, [
