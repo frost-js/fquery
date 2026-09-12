@@ -240,13 +240,10 @@ test.describe('QuerySet #cloneData', () => {
 
     test('works with array other nodes', async ({ page }) => {
         expect(await page.evaluate((_) => {
-            $.cloneData(
-                '[data-toggle="data"]',
-                [
-                    document.getElementById('test3'),
-                    document.getElementById('test4'),
-                ],
-            );
+            $('[data-toggle="data"]').cloneData([
+                document.getElementById('test3'),
+                document.getElementById('test4'),
+            ]);
             return [
                 $.getData('#test3'),
                 $.getData('#test4'),
