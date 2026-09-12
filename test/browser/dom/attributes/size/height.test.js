@@ -4,72 +4,40 @@ import { expect, test } from '#test';
 test.describe('#height', () => {
     test.beforeEach(setup);
 
-    heightTests((nodes) => $.height(nodes));
+    heightTests((args) => $.height(...args));
 
-    test('returns the content box height of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('div', { boxSize: $.CONTENT_BOX }))).toBe(1000);
-    });
+    test.describe('node inputs', () => {
+        test('works with HTMLElement nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height(document.getElementById('test1')))).toBe(1050);
+        });
 
-    test('returns zero content box height for a hidden element with padding', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.getElementById('test1').style.cssText = 'display: none; padding: 10px;';
-            return $.height('#test1', { boxSize: $.CONTENT_BOX });
-        })).toBe(0);
-    });
+        test('works with NodeList nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height(document.querySelectorAll('div')))).toBe(1050);
+        });
 
-    test('returns the border box height of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('div', { boxSize: $.BORDER_BOX }))).toBe(1052);
-    });
+        test('works with HTMLCollection nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height(document.body.children))).toBe(1050);
+        });
 
-    test('returns the border box height of an SVG element', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            document.body.innerHTML = '<svg style="display: block; width: 100px; height: 100px; padding: 10px; border: 2px solid; box-sizing: content-box;"></svg>';
-            return $.height('svg', { boxSize: $.BORDER_BOX });
-        })).toBe(124);
-    });
+        test('works with Document nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height(document))).toBe(1152);
+        });
 
-    test('returns the margin box height of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('div', { boxSize: $.MARGIN_BOX }))).toBe(1152);
-    });
+        test('works with Window nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height(window))).toBe(600);
+        });
 
-    test('returns the scroll box height of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height('div', { boxSize: $.SCROLL_BOX }))).toBe(2550);
-    });
-
-    test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height(document.getElementById('test1')))).toBe(1050);
-    });
-
-    test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height(document.querySelectorAll('div')))).toBe(1050);
-    });
-
-    test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height(document.body.children))).toBe(1050);
-    });
-
-    test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height(document))).toBe(1152);
-    });
-
-    test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height(window))).toBe(600);
-    });
-
-    test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $.height([
-                document.getElementById('test1'),
-                document.getElementById('test2'),
-            ]))).toBe(1050);
+        test('works with array nodes', async ({ page }) => {
+            expect(await page.evaluate((_) =>
+                $.height([
+                    document.getElementById('test1'),
+                    document.getElementById('test2'),
+                ]))).toBe(1050);
+        });
     });
 });
