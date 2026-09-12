@@ -1,31 +1,11 @@
+import { setup, unwrapTests } from '#cases/manipulation/wrap/unwrap.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #unwrap', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML =
-                '<div id="parent1">' +
-                '<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '</div>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('unwraps each node', async ({ page }) => {
-        const html = await page.evaluate(() => {
-            $('a').unwrap();
-
-            return document.body.innerHTML;
-        });
-
-        expect(html).toBe('<a href="#" id="test1">Test</a>' +
-            '<a href="#" id="test2">Test</a>' +
-            '<a href="#" id="test3">Test</a>' +
-            '<a href="#" id="test4">Test</a>');
+    unwrapTests(([nodes, ...args]) => {
+        $(nodes).unwrap(...args);
     });
 
     test('returns the QuerySet', async ({ page }) => {
@@ -39,94 +19,6 @@ test.describe('QuerySet #unwrap', () => {
     });
 
     test.describe('filters', () => {
-        test('unwraps each node with filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap('#parent1');
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>');
-        });
-
-        test('works with function filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap((node) => node.id === 'parent1');
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>');
-        });
-
-        test('works with HTMLElement filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap(document.getElementById('parent1'));
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>');
-        });
-
-        test('works with NodeList filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap(document.querySelectorAll('#parent1'));
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>');
-        });
-
-        test('works with HTMLCollection filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap(document.body.children);
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>');
-        });
-
-        test('works with array filter', async ({ page }) => {
-            const html = await page.evaluate(() => {
-                $('a').unwrap([document.getElementById('parent1')]);
-
-                return document.body.innerHTML;
-            });
-
-            expect(html).toBe('<a href="#" id="test1">Test</a>' +
-                '<a href="#" id="test2">Test</a>' +
-                '<div id="parent2">' +
-                '<a href="#" id="test3">Test</a>' +
-                '<a href="#" id="test4">Test</a>' +
-                '</div>');
-        });
-
         test('works with QuerySet filter', async ({ page }) => {
             const html = await page.evaluate(() => {
                 const query = $('#parent1');
