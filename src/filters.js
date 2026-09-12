@@ -6,7 +6,7 @@
 import { callDOMMethod, getDOMProperty, isArray, isDocument, isElement, isFragment, isFunction, isNode, isShadow, isString, isWindow, merge, unique } from '@fr0st/core';
 import { getContext } from './config.js';
 import { resolveNode, resolveNodes } from './helpers.js';
-import { parseHTML } from './parser/parser.js';
+import { parseHtml } from './parser/parser.js';
 import { find, findOne } from './traversal/find.js';
 
 /**
@@ -106,7 +106,7 @@ export function parseNode(nodes, options = {}) {
     const filter = parseNodesFilter(options);
     const context = options.context || getContext();
     const stringCallback = (node) => options.html && node.trim().charAt(0) === '<' ?
-        parseHTML(node).shift() :
+        parseHtml(node).shift() :
         findOne(node, context);
 
     if (!isArray(nodes)) {
@@ -132,7 +132,7 @@ export function parseNodes(nodes, options = {}) {
     const filter = parseNodesFilter(options);
     const context = options.context || getContext();
     const stringCallback = (node) => options.html && node.trim().charAt(0) === '<' ?
-        parseHTML(node) :
+        parseHtml(node) :
         find(node, context);
 
     if (!isArray(nodes)) {

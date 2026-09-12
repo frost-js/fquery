@@ -256,7 +256,7 @@ export function withClass(selector, ...classes) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @returns {Node[]} The filtered nodes.
  */
-export function withCSSAnimation(selector) {
+export function withCssAnimation(selector) {
     return parseNodes(selector)
         .filter((node) =>
             css(node, 'animation-duration')
@@ -270,7 +270,7 @@ export function withCSSAnimation(selector) {
  * @param {ElementInput} selector The input node(s), or a query selector string.
  * @returns {Node[]} The filtered nodes.
  */
-export function withCSSTransition(selector) {
+export function withCssTransition(selector) {
     return parseNodes(selector)
         .filter((node) =>
             css(node, 'transition-duration')

@@ -20,7 +20,7 @@ export function parseDocument(input, { contentType = 'text/html' } = {}) {
  * @param {string} html The HTML input string.
  * @returns {Element[]} The parsed elements.
  */
-export function parseHTML(html) {
+export function parseHtml(html) {
     const childNodes = callDOMMethod(getContext(), 'createRange')
         .createContextualFragment(html)
         .children;

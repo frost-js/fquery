@@ -18,12 +18,12 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared withCSSAnimation behavior tests.
- * @param {((nodes: string) => Array<string>)} withCSSAnimation The browser callback for withCSSAnimation.
+ * Registers shared withCssAnimation behavior tests.
+ * @param {((nodes: string) => Array<string>)} withCssAnimation The browser callback for withCssAnimation.
  */
-export function withCSSAnimationTests(withCSSAnimation) {
+export function withCssAnimationTests(withCssAnimation) {
     test('returns nodes with CSS animations', async ({ page }) => {
-        const ids = await page.evaluate(withCSSAnimation, 'div');
+        const ids = await page.evaluate(withCssAnimation, 'div');
 
         expect(ids).toEqual([
             'div1',
@@ -38,7 +38,7 @@ export function withCSSAnimationTests(withCSSAnimation) {
         test(`filters nodes with CSS animation durations of 0s, ${duration}`, async ({ page }) => {
             await page.addStyleTag({ content: '.test { animation: spin 0s linear infinite, spin ' + duration + ' linear infinite; }' });
 
-            const ids = await page.evaluate(withCSSAnimation, 'div');
+            const ids = await page.evaluate(withCssAnimation, 'div');
 
             expect(ids).toEqual(expected);
         });

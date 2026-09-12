@@ -1,14 +1,14 @@
-import { setup, withCSSTransitionTests } from '#cases/traversal/filter/with-css-transition.js';
+import { setup, withCssTransitionTests } from '#cases/traversal/filter/with-css-transition.js';
 import { expect, test } from '#test';
 
-test.describe('#withCSSTransition', () => {
+test.describe('#withCssTransition', () => {
     test.beforeEach(setup);
 
-    withCSSTransitionTests((nodes) => $.withCSSTransition(nodes).map((node) => node.id));
+    withCssTransitionTests((nodes) => $.withCssTransition(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSTransition(document.getElementById('div1')).map((node) => node.id));
+            $.withCssTransition(document.getElementById('div1')).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -17,7 +17,7 @@ test.describe('#withCSSTransition', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSTransition(document.querySelectorAll('div')).map((node) => node.id));
+            $.withCssTransition(document.querySelectorAll('div')).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -27,7 +27,7 @@ test.describe('#withCSSTransition', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSTransition(document.body.children).map((node) => node.id));
+            $.withCssTransition(document.body.children).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -37,7 +37,7 @@ test.describe('#withCSSTransition', () => {
 
     test('works with array nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSTransition([
+            $.withCssTransition([
                 document.getElementById('div1'),
                 document.getElementById('div2'),
                 document.getElementById('div3'),

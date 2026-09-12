@@ -968,11 +968,11 @@
 	* @param {string} url The input URL.
 	* @param {string} key The query string key.
 	* @param {string|number} value The query string value.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
 	* @returns {string} The new URL.
 	*/
-	function appendQueryString(url, key, value, baseURI) {
-		const urlData = createUrl(url, baseURI);
+	function appendQueryString(url, key, value, baseUri) {
+		const urlData = createUrl(url, baseUri);
 		urlData.searchParams.append(key, value);
 		return urlData.toString();
 	}
@@ -988,12 +988,12 @@
 	/**
 	* Creates a URL from a URL string.
 	* @param {string} url The URL.
-	* @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+	* @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
 	* @returns {URL} The URL.
 	*/
-	function createUrl(url, baseURI = getDOMProperty(getWindow().document, "baseURI")) {
+	function createUrl(url, baseUri = getDOMProperty(getWindow().document, "baseURI")) {
 		const { URL } = getWindow();
-		return new URL(url, baseURI);
+		return new URL(url, baseUri);
 	}
 	/**
 	* Merges headers case-insensitively, preserving the last value and spelling.
@@ -1538,7 +1538,7 @@
 	* @param {string} value The value to escape.
 	* @returns {string} The escaped value.
 	*/
-	function escapeCSS(value) {
+	function escapeCss(value) {
 		return getWindow().CSS.escape(value);
 	}
 	/**
@@ -1682,7 +1682,7 @@
 	* @param {string} html The HTML input string.
 	* @returns {Element[]} The parsed elements.
 	*/
-	function parseHTML(html) {
+	function parseHtml(html) {
 		const childNodes = callDOMMethod(getContext(), "createRange").createContextualFragment(html).children;
 		return merge([], childNodes);
 	}
@@ -1739,7 +1739,7 @@
 	*/
 	function findByClass$1(className, context = getContext()) {
 		if (isDocument(context) || isElement(context)) return merge([], callDOMMethod(context, "getElementsByClassName", className));
-		const selector = `.${escapeCSS(className)}`;
+		const selector = `.${escapeCss(className)}`;
 		if (isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
@@ -1756,7 +1756,7 @@
 	* @returns {Element[]} The matching nodes.
 	*/
 	function findById$1(id, context = getContext()) {
-		const selector = `#${escapeCSS(id)}`;
+		const selector = `#${escapeCss(id)}`;
 		if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) return merge([], callDOMMethod(context, "querySelectorAll", selector));
 		const nodes = resolveContexts(context);
 		const results = [];
@@ -1814,7 +1814,7 @@
 	*/
 	function findOneByClass$1(className, context = getContext()) {
 		if (isDocument(context) || isElement(context)) return callDOMMethod(context, "getElementsByClassName", className).item(0);
-		const selector = `.${escapeCSS(className)}`;
+		const selector = `.${escapeCss(className)}`;
 		if (isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
@@ -1832,7 +1832,7 @@
 	*/
 	function findOneById$1(id, context = getContext()) {
 		if (isDocument(context)) return callDOMMethod(context, "getElementById", id);
-		const selector = `#${escapeCSS(id)}`;
+		const selector = `#${escapeCss(id)}`;
 		if (isElement(context) || isFragment(context) || isShadow(context)) return callDOMMethod(context, "querySelector", selector);
 		const nodes = resolveContexts(context);
 		if (!nodes.length) return;
@@ -1926,7 +1926,7 @@
 	function parseNode(nodes, options = {}) {
 		const filter = parseNodesFilter(options);
 		const context = options.context || getContext();
-		const stringCallback = (node) => options.html && node.trim().charAt(0) === "<" ? parseHTML(node).shift() : findOne$1(node, context);
+		const stringCallback = (node) => options.html && node.trim().charAt(0) === "<" ? parseHtml(node).shift() : findOne$1(node, context);
 		if (!isArray(nodes)) return resolveNode(nodes, stringCallback, filter);
 		for (const node of nodes) {
 			const result = resolveNode(node, stringCallback, filter);
@@ -1942,7 +1942,7 @@
 	function parseNodes(nodes, options = {}) {
 		const filter = parseNodesFilter(options);
 		const context = options.context || getContext();
-		const stringCallback = (node) => options.html && node.trim().charAt(0) === "<" ? parseHTML(node) : find$1(node, context);
+		const stringCallback = (node) => options.html && node.trim().charAt(0) === "<" ? parseHtml(node) : find$1(node, context);
 		if (!isArray(nodes)) return resolveNodes(nodes, stringCallback, filter);
 		const results = nodes.flatMap((node) => resolveNodes(node, stringCallback, filter));
 		return nodes.length > 1 && results.length > 1 ? unique(results) : results;
@@ -2404,7 +2404,7 @@
 			released = true;
 			if (restore) for (const { style, value, priority, present } of originals) {
 				style.setProperty(property, value, priority);
-				if (present && value === "") style.cssText += ` ${escapeCSS(property)}:${priority ? "!important" : ""};`;
+				if (present && value === "") style.cssText += ` ${escapeCss(property)}:${priority ? "!important" : ""};`;
 			}
 			for (const { node } of originals) {
 				const locks = styleLocks.get(node);
@@ -5936,7 +5936,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @returns {Node[]} The filtered nodes.
 	*/
-	function withCSSAnimation$1(selector) {
+	function withCssAnimation$1(selector) {
 		return parseNodes(selector).filter((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
@@ -5944,7 +5944,7 @@
 	* @param {ElementInput} selector The input node(s), or a query selector string.
 	* @returns {Node[]} The filtered nodes.
 	*/
-	function withCSSTransition$1(selector) {
+	function withCssTransition$1(selector) {
 		return parseNodes(selector).filter((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
 	}
 	/**
@@ -6107,15 +6107,15 @@
 	* Returns all nodes with a CSS animation.
 	* @returns {QuerySet} The QuerySet object.
 	*/
-	function withCSSAnimation() {
-		return new QuerySet(withCSSAnimation$1(this));
+	function withCssAnimation() {
+		return new QuerySet(withCssAnimation$1(this));
 	}
 	/**
 	* Returns all nodes with a CSS transition.
 	* @returns {QuerySet} The QuerySet object.
 	*/
-	function withCSSTransition() {
-		return new QuerySet(withCSSTransition$1(this));
+	function withCssTransition() {
+		return new QuerySet(withCssTransition$1(this));
 	}
 	/**
 	* Returns all nodes with custom data.
@@ -7302,8 +7302,8 @@
 		withAttribute,
 		withChildren,
 		withClass,
-		withCSSAnimation,
-		withCSSTransition,
+		withCssAnimation,
+		withCssTransition,
 		withData,
 		withDescendent,
 		withProperty,
@@ -7662,7 +7662,7 @@
 		parents: parents$1,
 		parseDocument,
 		parseFormData,
-		parseHTML,
+		parseHtml,
 		parseParams,
 		patch,
 		percentX: percentX$1,
@@ -7736,8 +7736,8 @@
 		width: width$1,
 		withAnimation: withAnimation$1,
 		withAttribute: withAttribute$1,
-		withCSSAnimation: withCSSAnimation$1,
-		withCSSTransition: withCSSTransition$1,
+		withCssAnimation: withCssAnimation$1,
+		withCssTransition: withCssTransition$1,
 		withChildren: withChildren$1,
 		withClass: withClass$1,
 		withData: withData$1,

@@ -1,7 +1,7 @@
 /** @import { NodeFilterInput } from '../../filters.js'; */
 /** @import { NodeInput } from '../../helpers.js'; */
 
-import { connected as _connected, equal as _equal, filter as _filter, filterOne as _filterOne, fixed as _fixed, hidden as _hidden, not as _not, notOne as _notOne, same as _same, visible as _visible, withAnimation as _withAnimation, withAttribute as _withAttribute, withChildren as _withChildren, withClass as _withClass, withCSSAnimation as _withCSSAnimation, withCSSTransition as _withCSSTransition, withData as _withData, withDescendent as _withDescendent, withProperty as _withProperty } from './../../traversal/filter.js';
+import { connected as _connected, equal as _equal, filter as _filter, filterOne as _filterOne, fixed as _fixed, hidden as _hidden, not as _not, notOne as _notOne, same as _same, visible as _visible, withAnimation as _withAnimation, withAttribute as _withAttribute, withChildren as _withChildren, withClass as _withClass, withCssAnimation as _withCssAnimation, withCssTransition as _withCssTransition, withData as _withData, withDescendent as _withDescendent, withProperty as _withProperty } from './../../traversal/filter.js';
 import QuerySet from './../query-set-core.js';
 
 /**
@@ -132,16 +132,16 @@ export function withClass(...classes) {
  * Returns all nodes with a CSS animation.
  * @returns {QuerySet} The QuerySet object.
  */
-export function withCSSAnimation() {
-    return new QuerySet(_withCSSAnimation(this));
+export function withCssAnimation() {
+    return new QuerySet(_withCssAnimation(this));
 };
 
 /**
  * Returns all nodes with a CSS transition.
  * @returns {QuerySet} The QuerySet object.
  */
-export function withCSSTransition() {
-    return new QuerySet(_withCSSTransition(this));
+export function withCssTransition() {
+    return new QuerySet(_withCssTransition(this));
 };
 
 /**

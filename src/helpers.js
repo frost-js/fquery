@@ -63,7 +63,7 @@ export function debounce(callback) {
  * @param {string} value The value to escape.
  * @returns {string} The escaped value.
  */
-export function escapeCSS(value) {
+export function escapeCss(value) {
     return getWindow().CSS.escape(value);
 };
 

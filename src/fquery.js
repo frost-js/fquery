@@ -23,13 +23,13 @@ import { attachShadow, create, createComment, createFragment, createRange, creat
 import { clone, detach, empty, remove, replaceAll, replaceWith } from './manipulation/manipulation.js';
 import { after, append, appendTo, before, insertAfter, insertBefore, prepend, prependTo } from './manipulation/move.js';
 import { unwrap, wrap, wrapAll, wrapInner } from './manipulation/wrap.js';
-import { parseDocument, parseHTML } from './parser/parser.js';
+import { parseDocument, parseHtml } from './parser/parser.js';
 import QuerySet from './query/query-set.js';
 import { query, queryOne } from './query/query.js';
 import { clearQueue, queue } from './queue/queue.js';
 import { loadScript, loadScripts } from './scripts/scripts.js';
 import { loadStyle, loadStyles } from './styles/styles.js';
-import { connected, equal, filter, filterOne, fixed, hidden, not, notOne, same, visible, withAnimation, withAttribute, withChildren, withClass, withCSSAnimation, withCSSTransition, withData, withDescendent, withProperty } from './traversal/filter.js';
+import { connected, equal, filter, filterOne, fixed, hidden, not, notOne, same, visible, withAnimation, withAttribute, withChildren, withClass, withCssAnimation, withCssTransition, withData, withDescendent, withProperty } from './traversal/filter.js';
 import { find, findByClass, findById, findByTag, findOne, findOneByClass, findOneById, findOneByTag } from './traversal/find.js';
 import { child, children, closest, commonAncestor, contents, fragment, next, nextAll, offsetParent, parent, parents, prev, prevAll, shadow, siblings } from './traversal/traversal.js';
 import { sanitize } from './utility/sanitize.js';
@@ -168,7 +168,7 @@ Object.assign(query, {
     parents,
     parseDocument,
     parseFormData,
-    parseHTML,
+    parseHtml,
     parseParams,
     patch,
     percentX,
@@ -242,8 +242,8 @@ Object.assign(query, {
     width,
     withAnimation,
     withAttribute,
-    withCSSAnimation,
-    withCSSTransition,
+    withCssAnimation,
+    withCssTransition,
     withChildren,
     withClass,
     withData,

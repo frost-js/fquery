@@ -16,12 +16,12 @@ export const setup = async ({ page }) => {
 };
 
 /**
- * Registers shared withCSSTransition behavior tests.
- * @param {((nodes: string) => Array<string>)} withCSSTransition The browser callback for withCSSTransition.
+ * Registers shared withCssTransition behavior tests.
+ * @param {((nodes: string) => Array<string>)} withCssTransition The browser callback for withCssTransition.
  */
-export function withCSSTransitionTests(withCSSTransition) {
+export function withCssTransitionTests(withCssTransition) {
     test('returns nodes with CSS transitions', async ({ page }) => {
-        const ids = await page.evaluate(withCSSTransition, 'div');
+        const ids = await page.evaluate(withCssTransition, 'div');
 
         expect(ids).toEqual([
             'div1',
@@ -36,7 +36,7 @@ export function withCSSTransitionTests(withCSSTransition) {
         test(`filters nodes with CSS transition durations of 0s, ${duration}`, async ({ page }) => {
             await page.addStyleTag({ content: '.test { transition: opacity 0s, transform ' + duration + '; }' });
 
-            const ids = await page.evaluate(withCSSTransition, 'div');
+            const ids = await page.evaluate(withCssTransition, 'div');
 
             expect(ids).toEqual(expected);
         });

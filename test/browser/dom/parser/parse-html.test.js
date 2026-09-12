@@ -1,9 +1,9 @@
 import { expect, test } from '#test';
 
-test.describe('#parseHTML', () => {
+test.describe('#parseHtml', () => {
     test('returns an array of nodes parsed from a HTML string', async ({ page }) => {
         await page.evaluate(() => {
-            const nodes = $.parseHTML('<div id="div1">' +
+            const nodes = $.parseHtml('<div id="div1">' +
                 '<span id="span1"></span>' +
                 '</div>' +
                 '<div id="div2">' +

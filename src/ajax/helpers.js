@@ -12,11 +12,11 @@ import { getWindow } from './../config.js';
  * @param {string} url The input URL.
  * @param {string} key The query string key.
  * @param {string|number} value The query string value.
- * @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+ * @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
  * @returns {string} The new URL.
  */
-export function appendQueryString(url, key, value, baseURI) {
-    const urlData = createUrl(url, baseURI);
+export function appendQueryString(url, key, value, baseUri) {
+    const urlData = createUrl(url, baseUri);
 
     urlData.searchParams.append(key, value);
 
@@ -37,13 +37,13 @@ export function createSearchParams(data) {
 /**
  * Creates a URL from a URL string.
  * @param {string} url The URL.
- * @param {string} [baseURI] The base URI. Defaults to the configured window's document base URI.
+ * @param {string} [baseUri] The base URI. Defaults to the configured window's document base URI.
  * @returns {URL} The URL.
  */
-export function createUrl(url, baseURI = getDOMProperty(getWindow().document, 'baseURI')) {
+export function createUrl(url, baseUri = getDOMProperty(getWindow().document, 'baseURI')) {
     const { URL } = getWindow();
 
-    return new URL(url, baseURI);
+    return new URL(url, baseUri);
 };
 
 /**

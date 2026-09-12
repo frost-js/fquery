@@ -1,14 +1,14 @@
-import { setup, withCSSAnimationTests } from '#cases/traversal/filter/with-css-animation.js';
+import { setup, withCssAnimationTests } from '#cases/traversal/filter/with-css-animation.js';
 import { expect, test } from '#test';
 
-test.describe('#withCSSAnimation', () => {
+test.describe('#withCssAnimation', () => {
     test.beforeEach(setup);
 
-    withCSSAnimationTests((nodes) => $.withCSSAnimation(nodes).map((node) => node.id));
+    withCssAnimationTests((nodes) => $.withCssAnimation(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSAnimation(document.getElementById('div1')).map((node) => node.id));
+            $.withCssAnimation(document.getElementById('div1')).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -17,7 +17,7 @@ test.describe('#withCSSAnimation', () => {
 
     test('works with NodeList nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSAnimation(document.querySelectorAll('div')).map((node) => node.id));
+            $.withCssAnimation(document.querySelectorAll('div')).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -27,7 +27,7 @@ test.describe('#withCSSAnimation', () => {
 
     test('works with HTMLCollection nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSAnimation(document.body.children).map((node) => node.id));
+            $.withCssAnimation(document.body.children).map((node) => node.id));
 
         expect(ids).toEqual([
             'div1',
@@ -37,7 +37,7 @@ test.describe('#withCSSAnimation', () => {
 
     test('works with array nodes', async ({ page }) => {
         const ids = await page.evaluate((_) =>
-            $.withCSSAnimation([
+            $.withCssAnimation([
                 document.getElementById('div1'),
                 document.getElementById('div2'),
                 document.getElementById('div3'),

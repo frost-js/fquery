@@ -2,7 +2,7 @@
 
 import { callDOMMethod, isArray, isDocument, isElement, isFragment, isShadow, merge, unique } from '@fr0st/core';
 import { getContext } from './../config.js';
-import { escapeCSS, resolveNodes } from './../helpers.js';
+import { escapeCss, resolveNodes } from './../helpers.js';
 
 /**
  * @typedef {Element|Document|DocumentFragment|ShadowRoot} QueryContext
@@ -88,7 +88,7 @@ export function findByClass(className, context = getContext()) {
         return merge([], callDOMMethod(context, 'getElementsByClassName', className));
     }
 
-    const selector = `.${escapeCSS(className)}`;
+    const selector = `.${escapeCss(className)}`;
 
     if (isFragment(context) || isShadow(context)) {
         return merge([], callDOMMethod(context, 'querySelectorAll', selector));
@@ -118,7 +118,7 @@ export function findByClass(className, context = getContext()) {
  * @returns {Element[]} The matching nodes.
  */
 export function findById(id, context = getContext()) {
-    const selector = `#${escapeCSS(id)}`;
+    const selector = `#${escapeCss(id)}`;
 
     if (isDocument(context) || isElement(context) || isFragment(context) || isShadow(context)) {
         return merge([], callDOMMethod(context, 'querySelectorAll', selector));
@@ -229,7 +229,7 @@ export function findOneByClass(className, context = getContext()) {
         return callDOMMethod(context, 'getElementsByClassName', className).item(0);
     }
 
-    const selector = `.${escapeCSS(className)}`;
+    const selector = `.${escapeCss(className)}`;
 
     if (isFragment(context) || isShadow(context)) {
         return callDOMMethod(context, 'querySelector', selector);
@@ -265,7 +265,7 @@ export function findOneById(id, context = getContext()) {
         return callDOMMethod(context, 'getElementById', id);
     }
 
-    const selector = `#${escapeCSS(id)}`;
+    const selector = `#${escapeCss(id)}`;
 
     if (isElement(context) || isFragment(context) || isShadow(context)) {
         return callDOMMethod(context, 'querySelector', selector);

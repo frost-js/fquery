@@ -14,7 +14,7 @@ import { after, append, appendTo, before, insertAfter, insertBefore, prepend, pr
 import { unwrap, wrap, wrapAll, wrapInner } from './manipulation/wrap.js';
 import QuerySet from './query-set-core.js';
 import { clearQueue, delay, queue } from './queue/queue.js';
-import { connected, equal, filter, filterOne, fixed, hidden, not, notOne, same, visible, withAnimation, withAttribute, withChildren, withClass, withCSSAnimation, withCSSTransition, withData, withDescendent, withProperty } from './traversal/filter.js';
+import { connected, equal, filter, filterOne, fixed, hidden, not, notOne, same, visible, withAnimation, withAttribute, withChildren, withClass, withCssAnimation, withCssTransition, withData, withDescendent, withProperty } from './traversal/filter.js';
 import { find, findByClass, findById, findByTag, findOne, findOneByClass, findOneById, findOneByTag } from './traversal/find.js';
 import { child, children, closest, commonAncestor, contents, fragment, next, nextAll, offsetParent, parent, parents, prev, prevAll, shadow, siblings } from './traversal/traversal.js';
 import { afterSelection, beforeSelection, select, selectAll, wrapSelection } from './utility/selection.js';
@@ -183,8 +183,8 @@ const methods = {
     withAttribute,
     withChildren,
     withClass,
-    withCSSAnimation,
-    withCSSTransition,
+    withCssAnimation,
+    withCssTransition,
     withData,
     withDescendent,
     withProperty,

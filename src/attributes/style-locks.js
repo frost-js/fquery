@@ -3,7 +3,7 @@
 import { callDOMMethod, getDOMProperty, unique } from '@fr0st/core';
 import { getContext } from './../config.js';
 import { parseNodes } from './../filters.js';
-import { escapeCSS, normalizeCssProperty, normalizeCssValue } from './../helpers.js';
+import { escapeCss, normalizeCssProperty, normalizeCssValue } from './../helpers.js';
 
 const styleLocks = new WeakMap();
 
@@ -95,7 +95,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
 
                 // setProperty removes empty values, so restore empty custom declarations explicitly.
                 if (present && value === '') {
-                    style.cssText += ` ${escapeCSS(property)}:${priority ? '!important' : ''};`;
+                    style.cssText += ` ${escapeCss(property)}:${priority ? '!important' : ''};`;
                 }
             }
         }

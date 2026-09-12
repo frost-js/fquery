@@ -223,8 +223,8 @@ Filtering methods return matching nodes; their `is...` and `has...` counterparts
 - `withAttribute(attribute)` / `hasAttribute(attribute)`: attribute presence.
 - `withChildren()` / `hasChildren()`: child-element presence.
 - `withClass(...classes)` / `hasClass(...classes)`: class presence.
-- `withCSSAnimation()` / `hasCssAnimation()`: at least one nonzero computed animation duration.
-- `withCSSTransition()` / `hasCssTransition()`: at least one nonzero computed transition duration.
+- `withCssAnimation()` / `hasCssAnimation()`: at least one nonzero computed animation duration.
+- `withCssTransition()` / `hasCssTransition()`: at least one nonzero computed transition duration.
 - `withData(key?)` / `hasData(key?)`: fQuery custom data.
 - `hasDataset(key)`: dataset presence.
 - `withDescendent(nodeFilter?)` / `hasDescendent(nodeFilter?)`: matching descendants, excluding the node itself. Omitting the filter checks for any descendant element.
@@ -467,7 +467,7 @@ Cookie helpers are `$.getCookie(name)`, `$.setCookie(name, value, { expires?, pa
 
 ### Parsing and sanitization
 
-- `$.parseHTML(html)`: parse HTML into an array of elements; top-level text and comment nodes are discarded.
+- `$.parseHtml(html)`: parse HTML into an array of elements; top-level text and comment nodes are discarded.
 - `$.parseDocument(input, { contentType? })`: parse text into a `Document`.
 - `$.sanitize(html, allowedTags?)`: remove disallowed elements and attributes from HTML.
 
