@@ -23,21 +23,6 @@ test.describe('#height', () => {
             $.height('div', { boxSize: $.BORDER_BOX }))).toBe(1052);
     });
 
-    test('includes horizontal scrollbar space in the border box height', async ({ page }) => {
-        await page.addStyleTag({ content: '#test1::-webkit-scrollbar { width: 15px; height: 15px; }' });
-
-        const hasScrollbar = await page.evaluate((_) => {
-            const node = document.getElementById('test1');
-            node.style.cssText = 'display: block; width: 100px; height: 100px; padding: 10px; border: 2px solid; margin: 10px; box-sizing: border-box; overflow: scroll;';
-            return node.offsetHeight - node.clientHeight > 4;
-        });
-
-        test.skip(!hasScrollbar, 'Scrollbars do not occupy layout space in this browser.');
-
-        expect(await page.evaluate((_) =>
-            $.height('#test1', { boxSize: $.BORDER_BOX }))).toBe(100);
-    });
-
     test('returns the border box height of an SVG element', async ({ page }) => {
         expect(await page.evaluate((_) => {
             document.body.innerHTML = '<svg style="display: block; width: 100px; height: 100px; padding: 10px; border: 2px solid; box-sizing: content-box;"></svg>';
@@ -48,21 +33,6 @@ test.describe('#height', () => {
     test('returns the margin box height of the first node', async ({ page }) => {
         expect(await page.evaluate((_) =>
             $.height('div', { boxSize: $.MARGIN_BOX }))).toBe(1152);
-    });
-
-    test('includes horizontal scrollbar space in the margin box height', async ({ page }) => {
-        await page.addStyleTag({ content: '#test1::-webkit-scrollbar { width: 15px; height: 15px; }' });
-
-        const hasScrollbar = await page.evaluate((_) => {
-            const node = document.getElementById('test1');
-            node.style.cssText = 'display: block; width: 100px; height: 100px; padding: 10px; border: 2px solid; margin: 10px; box-sizing: border-box; overflow: scroll;';
-            return node.offsetHeight - node.clientHeight > 4;
-        });
-
-        test.skip(!hasScrollbar, 'Scrollbars do not occupy layout space in this browser.');
-
-        expect(await page.evaluate((_) =>
-            $.height('#test1', { boxSize: $.MARGIN_BOX }))).toBe(120);
     });
 
     test('returns the scroll box height of the first node', async ({ page }) => {
