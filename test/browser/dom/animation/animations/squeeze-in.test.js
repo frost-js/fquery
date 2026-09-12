@@ -8,9 +8,7 @@ test.use({ mockClock: true });
 test.describe('#squeezeIn', () => {
     test.beforeEach(setup);
 
-    squeezeInTests((args) => {
-        $.squeezeIn(...args);
-    });
+    squeezeInTests(() => $.squeezeIn);
 
     test.describe('style locks and restoration', () => {
         test('restores existing inline dimensions, overflow and transform', async ({ page }) => {
@@ -113,55 +111,6 @@ test.describe('#squeezeIn', () => {
             ]);
             expect(await page.evaluate((_) =>
                 document.getElementById('test2').style.getPropertyPriority('overflow-x'))).toBe('important');
-        });
-
-        test('preserves important height while resizing', async ({ page }) => {
-            await page.addStyleTag({ content: '.animate { height: 200px !important; }' });
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.setProperty('height', '100px', 'important');
-                $.squeezeIn('#test2', { duration: 100 });
-            });
-            await advanceClock(page, 50);
-
-            await expect(page.locator('#test2')).toHaveCSS('height', '50px');
-        });
-
-        test('preserves important overflow while clipping', async ({ page }) => {
-            await page.addStyleTag({ content: '.animate { overflow-x: scroll !important; }' });
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.setProperty('overflow-x', 'auto', 'important');
-                $.squeezeIn('#test2', { duration: 100 });
-            });
-            await advanceClock(page, 50);
-
-            await expect(page.locator('#test2')).toHaveCSS('overflow-x', 'hidden');
-        });
-    });
-
-    test.describe('cloning', () => {
-        test('uses the original dimensions while a cloned animation continues', async ({ page }) => {
-            await page.evaluate((_) => {
-                $.squeezeIn('#test2', {
-                    direction: 'top',
-                    duration: 200,
-                    debug: true,
-                });
-            });
-            await advanceClock(page, 100);
-            await page.evaluate((_) => {
-                const [clone] = $.clone('#test2', { animations: true });
-                clone.id = 'clone';
-                document.body.appendChild(clone);
-            });
-            await advanceClock(page, 50);
-
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test2', '#clone'],
-                    progress: 0.875,
-                    styles: { height: '87.5px', transform: 'translateY(12.5px)' },
-                },
-            ]);
         });
     });
 

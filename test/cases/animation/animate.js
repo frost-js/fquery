@@ -1,7 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
-/** @import { AnimationOptions } from '../../../src/animation/animation.js'; */
+/** @import { animate } from '../../../src/animation/animate.js'; */
 
-import { test } from '#test';
+import { expect, test } from '#test';
 import { advanceClock } from '../../setup/browser.js';
 import { expectAnimationState } from '../../support/assertions/animation.js';
 
@@ -23,11 +23,15 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared animate behavior tests.
- * @param {((args: [string, AnimationOptions]) => void)} animate The browser callback that starts an animation with a no-op callback.
+ * @param {() => (...args: Parameters<typeof animate>) => void} createAnimate Creates the browser-side method adapter.
  */
-export function animateTests(animate) {
+export function animateTests(createAnimate) {
     test('adds an animation to each node', async ({ page }) => {
-        await page.evaluate(animate, ['.animate', {
+        const operation = await page.evaluateHandle(createAnimate);
+
+        await operation.evaluate((operation, [nodes, options]) => {
+            operation(nodes, () => {}, options);
+        }, ['.animate', {
             duration: 200,
             debug: true,
         }]);
@@ -51,7 +55,11 @@ export function animateTests(animate) {
 
     test.describe('timing and easing', () => {
         test('adds an animation to each node with duration', async ({ page }) => {
-            await page.evaluate(animate, ['.animate', {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await operation.evaluate((operation, [nodes, options]) => {
+                operation(nodes, () => {}, options);
+            }, ['.animate', {
                 duration: 100,
                 debug: true,
             }]);
@@ -79,7 +87,11 @@ export function animateTests(animate) {
             ['ease-out', 0.7071067812],
         ]) {
             test(`adds an animation to each node (${type})`, async ({ page }) => {
-                await page.evaluate(animate, ['.animate', {
+                const operation = await page.evaluateHandle(createAnimate);
+
+                await operation.evaluate((operation, [nodes, options]) => {
+                    operation(nodes, () => {}, options);
+                }, ['.animate', {
                     duration: 100,
                     type,
                     debug: true,
@@ -104,7 +116,11 @@ export function animateTests(animate) {
         }
 
         test('adds an animation to each node (infinite)', async ({ page }) => {
-            await page.evaluate(animate, ['.animate', {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await operation.evaluate((operation, [nodes, options]) => {
+                operation(nodes, () => {}, options);
+            }, ['.animate', {
                 duration: 100,
                 type: 'linear',
                 infinite: true,
@@ -140,6 +156,105 @@ export function animateTests(animate) {
                     progress: 0.5,
                 },
             ]);
+        });
+    });
+
+    test.describe('start times and zero duration', () => {
+        test('completes zero-duration animations with full progress', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await page.evaluate((operation) => {
+                operation(
+                    '.animate',
+                    (node, progress) => {
+                        node.dataset.test = progress;
+                    },
+                    {
+                        duration: 0,
+                    },
+                );
+            }, operation);
+            await advanceClock(page, 0);
+            await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+            await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
+        });
+
+        test('waits for the start time of zero-duration animations', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await page.evaluate((operation) => {
+                operation(
+                    '.animate',
+                    (node, progress) => {
+                        node.dataset.test = progress;
+                    },
+                    {
+                        duration: 0,
+                        start: performance.now() + 100,
+                    },
+                );
+            }, operation);
+            await advanceClock(page, 50);
+            await expect(page.locator('#test2')).toHaveAttribute('data-test', '0');
+            await expect(page.locator('#test4')).toHaveAttribute('data-test', '0');
+            await advanceClock(page, 100);
+            await expect(page.locator('#test2')).toHaveAttribute('data-test', '1');
+            await expect(page.locator('#test4')).toHaveAttribute('data-test', '1');
+        });
+
+        test('waits for the start time of infinite ease-out animations', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await page.evaluate((operation) => {
+                operation(
+                    '.animate',
+                    (_) => { },
+                    {
+                        duration: 100,
+                        start: performance.now() + 100,
+                        type: 'ease-out',
+                        infinite: true,
+                        debug: true,
+                    },
+                );
+            }, operation);
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#test4'],
+                    progress: 0,
+                },
+            ]);
+            await advanceClock(page, 200);
+            expect(await page.evaluate((_) => $.hasAnimation('.animate'))).toBe(true);
+        });
+    });
+
+    test.describe('debug data', () => {
+        test('writes debug data on forms with a control named dataset', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await page.evaluate((operation) => {
+                document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
+                operation('form', (_) => { }, { duration: 100, type: 'linear', debug: true });
+            }, operation);
+            await advanceClock(page, 50);
+            expect(Number(await page.locator('#form').getAttribute('data-animation-progress'))).toBeCloseTo(0.5, 10);
+            expect(await page.locator('#form').getAttribute('data-animation-start')).not.toBeNull();
+            expect(await page.locator('#form').getAttribute('data-animation-time')).not.toBeNull();
+        });
+
+        test('clears debug data on forms with a control named dataset', async ({ page }) => {
+            const operation = await page.evaluateHandle(createAnimate);
+
+            await page.evaluate((operation) => {
+                document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
+                operation('form', (_) => { }, { duration: 100, type: 'linear', debug: true });
+            }, operation);
+            await advanceClock(page, 150);
+            expect(await page.locator('#form').getAttribute('data-animation-progress')).toBeNull();
+            expect(await page.locator('#form').getAttribute('data-animation-start')).toBeNull();
+            expect(await page.locator('#form').getAttribute('data-animation-time')).toBeNull();
         });
     });
 }

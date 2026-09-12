@@ -8,7 +8,7 @@ test.use({ mockClock: true });
 test.describe('QuerySet #slideIn', () => {
     test.beforeEach(setup);
 
-    slideInTests(([nodes, ...args]) => {
+    slideInTests(() => (nodes, ...args) => {
         $(nodes).slideIn(...args);
     });
 
@@ -21,36 +21,6 @@ test.describe('QuerySet #slideIn', () => {
                 },
             );
         })).toBe(true);
-    });
-
-    test.describe('style locks and restoration', () => {
-        test('preserves margins supplied by a variable-based shorthand', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.cssText = '--spacing: 20px; margin: var(--spacing);';
-                $('#test2').slideIn({ duration: 100 });
-            });
-            await advanceClock(page, 50);
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test2'],
-                    styles: { margin: 'var(--spacing)', transform: 'translateY(50px)' },
-                },
-            ]);
-            await advanceClock(page, 100);
-
-            await expect(page.locator('#test2')).toHaveAttribute('style', '--spacing: 20px; margin: var(--spacing);');
-        });
-
-        test('preserves important transforms during the animation', async ({ page }) => {
-            await page.addStyleTag({ content: '.animate { transform: translateY(200px) !important; }' });
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.setProperty('transform', 'none', 'important');
-                $('#test2').slideIn({ duration: 100 });
-            });
-            await advanceClock(page, 50);
-
-            await expect(page.locator('#test2')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 50)');
-        });
     });
 
     test.describe('queues', () => {

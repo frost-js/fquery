@@ -1,7 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
-/** @import { AnimationOptions } from '../../../../src/animation/animation.js'; */
+/** @import { squeezeIn } from '../../../../src/animation/animations.js'; */
 
-import { test } from '#test';
+import { expect, test } from '#test';
 import { advanceClock } from '../../../setup/browser.js';
 import { expectAnimationState } from '../../../support/assertions/animation.js';
 
@@ -24,11 +24,15 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared squeezeIn behavior tests.
- * @param {((args: [string, AnimationOptions]) => void)} squeezeIn The browser callback for squeezeIn.
+ * @param {() => (...args: Parameters<typeof squeezeIn>) => void} createSqueezeIn Creates the browser-side method adapter.
  */
-export function squeezeInTests(squeezeIn) {
+export function squeezeInTests(createSqueezeIn) {
     test('adds a squeeze-in animation to each node', async ({ page }) => {
-        await page.evaluate(squeezeIn, ['.animate', {
+        const operation = await page.evaluateHandle(createSqueezeIn);
+
+        await operation.evaluate((operation, args) => {
+            operation(...args);
+        }, ['.animate', {
             duration: 200,
             debug: true,
         }]);
@@ -55,7 +59,11 @@ export function squeezeInTests(squeezeIn) {
 
     test.describe('timing and easing', () => {
         test('adds a squeeze-in animation to each node with duration', async ({ page }) => {
-            await page.evaluate(squeezeIn, ['.animate', {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, ['.animate', {
                 duration: 100,
                 debug: true,
             }]);
@@ -86,7 +94,11 @@ export function squeezeInTests(squeezeIn) {
             ['ease-out', 0.7071067812, '70.71px'],
         ]) {
             test(`adds a squeeze-in animation to each node (${type})`, async ({ page }) => {
-                await page.evaluate(squeezeIn, ['.animate', {
+                const operation = await page.evaluateHandle(createSqueezeIn);
+
+                await operation.evaluate((operation, args) => {
+                    operation(...args);
+                }, ['.animate', {
                     duration: 100,
                     type,
                     debug: true,
@@ -114,7 +126,11 @@ export function squeezeInTests(squeezeIn) {
         }
 
         test('adds a squeeze-in animation to each node (infinite)', async ({ page }) => {
-            await page.evaluate(squeezeIn, ['.animate', {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, ['.animate', {
                 duration: 100,
                 type: 'linear',
                 infinite: true,
@@ -167,7 +183,11 @@ export function squeezeInTests(squeezeIn) {
             ['left', { overflow: 'hidden', width: '50px', transform: 'translateX(50px)' }, { overflow: '', width: '', transform: '' }],
         ]) {
             test(`adds a squeeze-in animation to each node (${direction})`, async ({ page }) => {
-                await page.evaluate(squeezeIn, ['.animate', {
+                const operation = await page.evaluateHandle(createSqueezeIn);
+
+                await operation.evaluate((operation, args) => {
+                    operation(...args);
+                }, ['.animate', {
                     direction,
                     duration: 100,
                     debug: true,
@@ -195,12 +215,16 @@ export function squeezeInTests(squeezeIn) {
         }
 
         test('adds a squeeze-in animation to each node (direction callback)', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
             const args = await page.evaluateHandle(() => ['.animate', {
                 direction: (_) => 'bottom',
                 duration: 100,
                 debug: true,
             }]);
-            await page.evaluate(squeezeIn, args);
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, args);
             await advanceClock(page, 50);
             await expectAnimationState(page, [
                 {
@@ -251,8 +275,12 @@ export function squeezeInTests(squeezeIn) {
             ],
         ]) {
             test(name, async ({ page }) => {
+                const operation = await page.evaluateHandle(createSqueezeIn);
+
                 await page.addStyleTag({ content: css });
-                await page.evaluate(squeezeIn, ['.animate', {
+                await operation.evaluate((operation, args) => {
+                    operation(...args);
+                }, ['.animate', {
                     direction,
                     duration: 500,
                     type: 'linear',
@@ -268,5 +296,62 @@ export function squeezeInTests(squeezeIn) {
                 ]);
             });
         }
+    });
+
+    test.describe('style locks and restoration', () => {
+        test('preserves important height while resizing', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
+            await page.addStyleTag({ content: '.animate { height: 200px !important; }' });
+            await page.evaluate((operation) => {
+                document.getElementById('test2').style.setProperty('height', '100px', 'important');
+                operation('#test2', { duration: 100 });
+            }, operation);
+            await advanceClock(page, 50);
+
+            await expect(page.locator('#test2')).toHaveCSS('height', '50px');
+        });
+
+        test('preserves important overflow while clipping', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
+            await page.addStyleTag({ content: '.animate { overflow-x: scroll !important; }' });
+            await page.evaluate((operation) => {
+                document.getElementById('test2').style.setProperty('overflow-x', 'auto', 'important');
+                operation('#test2', { duration: 100 });
+            }, operation);
+            await advanceClock(page, 50);
+
+            await expect(page.locator('#test2')).toHaveCSS('overflow-x', 'hidden');
+        });
+    });
+
+    test.describe('cloning', () => {
+        test('uses the original dimensions while a cloned animation continues', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSqueezeIn);
+
+            await page.evaluate((operation) => {
+                operation('#test2', {
+                    direction: 'top',
+                    duration: 200,
+                    debug: true,
+                });
+            }, operation);
+            await advanceClock(page, 100);
+            await page.evaluate((_) => {
+                const [clone] = $.clone('#test2', { animations: true });
+                clone.id = 'clone';
+                document.body.appendChild(clone);
+            });
+            await advanceClock(page, 50);
+
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2', '#clone'],
+                    progress: 0.875,
+                    styles: { height: '87.5px', transform: 'translateY(12.5px)' },
+                },
+            ]);
+        });
     });
 }

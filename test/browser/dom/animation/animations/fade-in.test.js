@@ -8,8 +8,10 @@ test.use({ mockClock: true });
 test.describe('#fadeIn', () => {
     test.beforeEach(setup);
 
-    fadeInTests((args) => {
-        $.fadeIn(...args);
+    fadeInTests(() => $.fadeIn, ([nodes, options]) => {
+        const animation = $.fadeIn(nodes, options);
+        animation.catch(() => {});
+        return () => animation.stop({ finish: false });
     });
 
     test.describe('style locks and restoration', () => {
@@ -30,28 +32,6 @@ test.describe('#fadeIn', () => {
             ]);
             expect(await page.evaluate((_) => document.getElementById('test2').style.getPropertyPriority('opacity')))
                 .toBe('important');
-        });
-
-        test('preserves important opacity during the animation', async ({ page }) => {
-            await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.setProperty('opacity', '1', 'important');
-                $.fadeIn('#test2', { duration: 100 });
-            });
-            await advanceClock(page, 50);
-
-            await expect(page.locator('#test2')).toHaveCSS('opacity', '0.5');
-        });
-
-        test('does not promote normal opacity to important', async ({ page }) => {
-            await page.addStyleTag({ content: '.animate { opacity: 0.25 !important; }' });
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.setProperty('opacity', '1');
-                $.fadeIn('#test2', { duration: 100 });
-            });
-            await advanceClock(page, 50);
-
-            await expect(page.locator('#test2')).toHaveCSS('opacity', '0.25');
         });
 
         test('locks opacity while the animation is active', async ({ page }) => {
@@ -160,34 +140,6 @@ test.describe('#fadeIn', () => {
             ]);
         });
 
-        test('restores the original opacity of each node on cloned animations', async ({ page }) => {
-            await page.evaluate((_) => {
-                document.getElementById('test2').style.opacity = '0.25';
-                document.getElementById('test4').style.opacity = '0.75';
-                $.fadeIn('.animate', { duration: 100 });
-            });
-            await advanceClock(page, 50);
-            await page.evaluate((_) => {
-                const clones = $.clone('.animate', { animations: true });
-                for (const clone of clones) {
-                    clone.id += '-clone';
-                    document.body.appendChild(clone);
-                }
-            });
-            await advanceClock(page, 100);
-
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test2', '#test2-clone'],
-                    styles: { opacity: '0.25' },
-                },
-                {
-                    selectors: ['#test4', '#test4-clone'],
-                    styles: { opacity: '0.75' },
-                },
-            ]);
-        });
-
         test('restores the original opacity priority on cloned animations', async ({ page }) => {
             await page.evaluate((_) => {
                 document.getElementById('test2').style.setProperty('opacity', '0.25', 'important');
@@ -282,28 +234,6 @@ test.describe('#fadeIn', () => {
                 {
                     selectors: ['#test2'],
                     styles: { opacity: '0.25' },
-                },
-            ]);
-        });
-
-        test('releases opacity without restoring when stopped without finishing', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
-                const animation = $.fadeIn('#test2', { duration: 100 });
-                animation.catch((_) => { });
-                return { animation };
-            });
-            await advanceClock(page, 50);
-            await animationHandle.evaluate(({ animation }) => {
-                animation.stop({ finish: false });
-                const release = $.setStyleLock('#test2', 'opacity', 0.75);
-                release();
-            });
-            await animationHandle.dispose();
-
-            await expectAnimationState(page, [
-                {
-                    selectors: ['#test2'],
-                    styles: { opacity: '0.5' },
                 },
             ]);
         });

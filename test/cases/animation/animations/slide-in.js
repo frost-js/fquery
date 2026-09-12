@@ -1,7 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
-/** @import { AnimationOptions } from '../../../../src/animation/animation.js'; */
+/** @import { slideIn } from '../../../../src/animation/animations.js'; */
 
-import { test } from '#test';
+import { expect, test } from '#test';
 import { advanceClock } from '../../../setup/browser.js';
 import { expectAnimationState } from '../../../support/assertions/animation.js';
 
@@ -24,11 +24,15 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared slideIn behavior tests.
- * @param {((args: [string, AnimationOptions]) => void)} slideIn The browser callback for slideIn.
+ * @param {() => (...args: Parameters<typeof slideIn>) => void} createSlideIn Creates the browser-side method adapter.
  */
-export function slideInTests(slideIn) {
+export function slideInTests(createSlideIn) {
     test('adds a slide-in animation to each node', async ({ page }) => {
-        await page.evaluate(slideIn, ['.animate', {
+        const operation = await page.evaluateHandle(createSlideIn);
+
+        await operation.evaluate((operation, args) => {
+            operation(...args);
+        }, ['.animate', {
             duration: 200,
             debug: true,
         }]);
@@ -55,7 +59,11 @@ export function slideInTests(slideIn) {
 
     test.describe('timing and easing', () => {
         test('adds a slide-in animation to each node with duration', async ({ page }) => {
-            await page.evaluate(slideIn, ['.animate', {
+            const operation = await page.evaluateHandle(createSlideIn);
+
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, ['.animate', {
                 duration: 100,
                 debug: true,
             }]);
@@ -86,7 +94,11 @@ export function slideInTests(slideIn) {
             ['ease-out', 0.7071067812, 'translateY(29.29px)'],
         ]) {
             test(`adds a slide-in animation to each node (${type})`, async ({ page }) => {
-                await page.evaluate(slideIn, ['.animate', {
+                const operation = await page.evaluateHandle(createSlideIn);
+
+                await operation.evaluate((operation, args) => {
+                    operation(...args);
+                }, ['.animate', {
                     duration: 100,
                     type,
                     debug: true,
@@ -114,7 +126,11 @@ export function slideInTests(slideIn) {
         }
 
         test('adds a slide-in animation to each node (infinite)', async ({ page }) => {
-            await page.evaluate(slideIn, ['.animate', {
+            const operation = await page.evaluateHandle(createSlideIn);
+
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, ['.animate', {
                 duration: 100,
                 type: 'linear',
                 infinite: true,
@@ -167,7 +183,11 @@ export function slideInTests(slideIn) {
             ['left', 'translateX(-50px)'],
         ]) {
             test(`adds a slide-in animation to each node (${direction})`, async ({ page }) => {
-                await page.evaluate(slideIn, ['.animate', {
+                const operation = await page.evaluateHandle(createSlideIn);
+
+                await operation.evaluate((operation, args) => {
+                    operation(...args);
+                }, ['.animate', {
                     direction,
                     duration: 100,
                     debug: true,
@@ -195,12 +215,16 @@ export function slideInTests(slideIn) {
         }
 
         test('adds a slide-in animation to each node (direction callback)', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSlideIn);
+
             const args = await page.evaluateHandle(() => ['.animate', {
                 direction: (_) => 'top',
                 duration: 100,
                 debug: true,
             }]);
-            await page.evaluate(slideIn, args);
+            await operation.evaluate((operation, args) => {
+                operation(...args);
+            }, args);
             await advanceClock(page, 50);
             await expectAnimationState(page, [
                 {
@@ -220,6 +244,40 @@ export function slideInTests(slideIn) {
                     styles: { transform: '' },
                 },
             ]);
+        });
+    });
+
+    test.describe('style locks and restoration', () => {
+        test('preserves margins supplied by a variable-based shorthand', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSlideIn);
+
+            await page.evaluate((operation) => {
+                document.getElementById('test2').style.cssText = '--spacing: 20px; margin: var(--spacing);';
+                operation('#test2', { duration: 100 });
+            }, operation);
+            await advanceClock(page, 50);
+            await expectAnimationState(page, [
+                {
+                    selectors: ['#test2'],
+                    styles: { margin: 'var(--spacing)', transform: 'translateY(50px)' },
+                },
+            ]);
+            await advanceClock(page, 100);
+
+            await expect(page.locator('#test2')).toHaveAttribute('style', '--spacing: 20px; margin: var(--spacing);');
+        });
+
+        test('preserves important transforms during the animation', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSlideIn);
+
+            await page.addStyleTag({ content: '.animate { transform: translateY(200px) !important; }' });
+            await page.evaluate((operation) => {
+                document.getElementById('test2').style.setProperty('transform', 'none', 'important');
+                operation('#test2', { duration: 100 });
+            }, operation);
+            await advanceClock(page, 50);
+
+            await expect(page.locator('#test2')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 50)');
         });
     });
 }
