@@ -1,38 +1,25 @@
+import { isConnectedTests, setup } from '#cases/utility/tests/is-connected.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #isConnected', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<div id="div1"></div>' +
-                '<div id="div2"></div>' +
-                '<div id="div3"></div>' +
-                '<div id="div4"></div>';
+    test.beforeEach(setup);
+
+    isConnectedTests((nodes) => $(nodes).isConnected());
+
+    test.describe('node inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                const fragment = document.createDocumentFragment();
+                return $(fragment).isConnected();
+            })).toBe(false);
         });
-    });
 
-    test('returns true if any node is connected to the DOM', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $('div').isConnected())).toBe(true);
-    });
-
-    test('returns false if no nodes are connected to the DOM', async ({ page }) => {
-        expect(await page.evaluate((_) =>
-            $(document.createElement('div')).isConnected())).toBe(false);
-    });
-
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const fragment = document.createDocumentFragment();
-            return $(fragment).isConnected();
-        })).toBe(false);
-    });
-
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            const div = document.getElementById('div1');
-            const shadow = div.attachShadow({ mode: 'open' });
-            return $(shadow).isConnected();
-        })).toBe(true);
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            expect(await page.evaluate((_) => {
+                const div = document.getElementById('div1');
+                const shadow = div.attachShadow({ mode: 'open' });
+                return $(shadow).isConnected();
+            })).toBe(true);
+        });
     });
 });

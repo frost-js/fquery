@@ -1,28 +1,10 @@
+import { connectedTests, setup } from '#cases/traversal/filter/connected.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #connected', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"></div><div id="div2"></div>';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns nodes connected to the DOM', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
-            $('div').connected().get().map((node) => node.id));
-
-        expect(ids).toEqual([
-            'div1',
-            'div2',
-        ]);
-    });
-
-    test('filters out nodes not connected to the DOM', async ({ page }) => {
-        const nodes = await page.evaluate((_) =>
-            $(document.createElement('div')).connected().get());
-
-        expect(nodes).toEqual([]);
-    });
+    connectedTests((nodes) => $(nodes).connected().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
@@ -35,27 +17,29 @@ test.describe('QuerySet #connected', () => {
         expect(isNewQuerySet).toBe(true);
     });
 
-    test('works with DocumentFragment nodes', async ({ page }) => {
-        const nodes = await page.evaluate((_) => {
-            const fragment = document.createDocumentFragment();
+    test.describe('node inputs', () => {
+        test('works with DocumentFragment nodes', async ({ page }) => {
+            const nodes = await page.evaluate((_) => {
+                const fragment = document.createDocumentFragment();
 
-            return $(fragment).connected().get();
+                return $(fragment).connected().get();
+            });
+
+            expect(nodes).toEqual([]);
         });
 
-        expect(nodes).toEqual([]);
-    });
+        test('works with ShadowRoot nodes', async ({ page }) => {
+            const ids = await page.evaluate((_) => {
+                const div = document.getElementById('div1');
+                const shadow = div.attachShadow({ mode: 'open' });
+                shadow.id = 'shadow';
 
-    test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
-            const div = document.getElementById('div1');
-            const shadow = div.attachShadow({ mode: 'open' });
-            shadow.id = 'shadow';
+                return $(shadow).connected().get().map((node) => node.id);
+            });
 
-            return $(shadow).connected().get().map((node) => node.id);
+            expect(ids).toEqual([
+                'shadow',
+            ]);
         });
-
-        expect(ids).toEqual([
-            'shadow',
-        ]);
     });
 });
