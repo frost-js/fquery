@@ -4,7 +4,7 @@ import { expect, test } from '#test';
 test.describe('QuerySet #children', () => {
     test.beforeEach(setup);
 
-    childrenTests(([nodes, ...args]) => $(nodes).children(...args).get().map((node) => node.id));
+    childrenTests(() => (nodes, ...args) => $(nodes).children(...args).get());
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {
@@ -15,36 +15,6 @@ test.describe('QuerySet #children', () => {
         });
 
         expect(isNewQuerySet).toBe(true);
-    });
-
-    test.describe('shadowed properties', () => {
-        test('returns form children when a control shadows children', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form><input id="test1" name="children"><input id="test2"></form>';
-                const nodes = $('form').children().get();
-                return nodes.map((node) => node.id);
-            });
-
-            expect(ids).toEqual([
-                'test1',
-                'test2',
-            ]);
-        });
-
-        test('returns form child nodes when a control shadows childNodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form><input id="test1"><input id="test2" name="childNodes"></form>';
-                const nodes = $('form').children(null, { elementsOnly: false }).get();
-                return nodes.map((node) => node.id);
-            });
-
-            expect(ids).toEqual([
-                'test1',
-                'test2',
-            ]);
-        });
     });
 
     test.describe('node inputs', () => {

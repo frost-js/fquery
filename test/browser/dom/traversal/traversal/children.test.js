@@ -4,42 +4,12 @@ import { expect, test } from '#test';
 test.describe('#children', () => {
     test.beforeEach(setup);
 
-    childrenTests((args) => $.children(...args).map((node) => node.id));
+    childrenTests(() => $.children);
 
     test('returns an empty array for empty nodes', async ({ page }) => {
         const ids = await page.evaluate((_) => $.children('#invalid'));
 
         expect(ids).toEqual([]);
-    });
-
-    test.describe('shadowed properties', () => {
-        test('returns form children when a control shadows children', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form><input id="test1" name="children"><input id="test2"></form>';
-                const nodes = $.children('form');
-                return nodes.map((node) => node.id);
-            });
-
-            expect(ids).toEqual([
-                'test1',
-                'test2',
-            ]);
-        });
-
-        test('returns form child nodes when a control shadows childNodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
-                document.body.innerHTML =
-                    '<form><input id="test1"><input id="test2" name="childNodes"></form>';
-                const nodes = $.children('form', null, { elementsOnly: false });
-                return nodes.map((node) => node.id);
-            });
-
-            expect(ids).toEqual([
-                'test1',
-                'test2',
-            ]);
-        });
     });
 
     test.describe('node inputs', () => {

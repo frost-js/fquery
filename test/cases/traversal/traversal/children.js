@@ -1,5 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
-/** @import { NodeFilterInput } from '../../../../src/filters.js'; */
+/** @import { children } from '../../../../src/traversal/traversal.js'; */
 
 import { expect, test } from '#test';
 
@@ -17,11 +17,13 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared children behavior tests.
- * @param {((args: [string, NodeFilterInput?]) => Array<string>)} children The browser callback for children.
+ * @param {() => typeof children} createChildren Creates the browser-side method adapter.
  */
-export function childrenTests(children) {
+export function childrenTests(createChildren) {
     test('returns all children of each node', async ({ page }) => {
-        const ids = await page.evaluate(children, ['.parent']);
+        const operation = await page.evaluateHandle(createChildren);
+
+        const ids = await operation.evaluate((operation, args) => operation(...args).map((node) => node.id), ['.parent']);
 
         expect(ids).toEqual([
             'child1',
@@ -36,7 +38,9 @@ export function childrenTests(children) {
     });
 
     test('returns all children of each node matching a filter', async ({ page }) => {
-        const ids = await page.evaluate(children, ['.parent', 'span']);
+        const operation = await page.evaluateHandle(createChildren);
+
+        const ids = await operation.evaluate((operation, args) => operation(...args).map((node) => node.id), ['.parent', 'span']);
 
         expect(ids).toEqual([
             'child3',
@@ -44,6 +48,40 @@ export function childrenTests(children) {
             'child7',
             'child8',
         ]);
+    });
+
+    test.describe('shadowed properties', () => {
+        test('returns form children when a control shadows children', async ({ page }) => {
+            const operation = await page.evaluateHandle(createChildren);
+
+            const ids = await page.evaluate((operation) => {
+                document.body.innerHTML =
+                    '<form><input id="test1" name="children"><input id="test2"></form>';
+                const nodes = operation('form');
+                return nodes.map((node) => node.id);
+            }, operation);
+
+            expect(ids).toEqual([
+                'test1',
+                'test2',
+            ]);
+        });
+
+        test('returns form child nodes when a control shadows childNodes', async ({ page }) => {
+            const operation = await page.evaluateHandle(createChildren);
+
+            const ids = await page.evaluate((operation) => {
+                document.body.innerHTML =
+                    '<form><input id="test1"><input id="test2" name="childNodes"></form>';
+                const nodes = operation('form', null, { elementsOnly: false });
+                return nodes.map((node) => node.id);
+            }, operation);
+
+            expect(ids).toEqual([
+                'test1',
+                'test2',
+            ]);
+        });
     });
 
     test.describe('filter inputs', () => {
@@ -55,8 +93,10 @@ export function childrenTests(children) {
             ['array', () => ['.parent', [document.getElementById('child3'), document.getElementById('child4'), document.getElementById('child7'), document.getElementById('child8')]], ['child3', 'child4', 'child7', 'child8']],
         ]) {
             test(`works with ${name} filter`, async ({ page }) => {
+                const operation = await page.evaluateHandle(createChildren);
+
                 const args = await page.evaluateHandle(createArgs);
-                const ids = await page.evaluate(children, args);
+                const ids = await operation.evaluate((operation, args) => operation(...args).map((node) => node.id), args);
 
                 expect(ids).toEqual(expected);
             });
