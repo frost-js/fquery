@@ -2,6 +2,7 @@
 /** @import { unwrap } from '../../../../src/manipulation/wrap.js'; */
 
 import { expect, test } from '#test';
+import { advanceClock, setupClock } from '../../../setup/browser.js';
 
 /**
  * Sets up the page for the shared and dedicated tests.
@@ -119,6 +120,8 @@ export function unwrapTests(createUnwrap) {
         test('removes animations', async ({ page }) => {
             const operation = await page.evaluateHandle(createUnwrap);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate(
                     'div',
@@ -130,11 +133,12 @@ export function unwrapTests(createUnwrap) {
                 );
             });
 
-            await expect.poll(async () =>
-                await page.evaluate(() =>
-                    Boolean(document.querySelector('#parent1')?.dataset.animationProgress) &&
-                    Boolean(document.querySelector('#parent2')?.dataset.animationProgress)),
-            ).toBe(true);
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
+                Boolean(document.querySelector('#parent1')?.dataset.animationProgress) &&
+                Boolean(document.querySelector('#parent2')?.dataset.animationProgress),
+            )).toBe(true);
 
             const state = await page.evaluate((operation) => {
                 const parents = [...document.querySelectorAll('div')];

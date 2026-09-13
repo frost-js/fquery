@@ -277,23 +277,33 @@ export function replaceWithTests(createReplaceWith) {
         test('does not remove animations for other nodes', async ({ page }) => {
             const operation = await page.evaluateHandle(createReplaceWith);
 
+            await setupClock(page);
+
             await page.evaluate((operation) => {
                 $.animate('a', () => {}, { duration: 100, debug: true });
                 operation('div', 'a');
             }, operation);
 
-            await expect.poll(async () =>
-                await page.evaluate(() =>
-                    [...document.querySelectorAll('body > a')].every((node) => Boolean(node.dataset.animationProgress)),
-                )).toBe(true);
+            await advanceClock(page, 20);
 
-            await expect.poll(async () =>
-                await page.evaluate(() =>
-                    [...document.querySelectorAll('body > a')].every((node) =>
+            expect(await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('body > a')];
+
+                return nodes.length === 8 &&
+                    nodes.every((node) => Boolean(node.dataset.animationProgress));
+            })).toBe(true);
+
+            await advanceClock(page, 100);
+
+            expect(await page.evaluate(() => {
+                const nodes = [...document.querySelectorAll('body > a')];
+
+                return nodes.length === 8 &&
+                    nodes.every((node) =>
                         !node.dataset.animationProgress &&
                         !node.dataset.animationStart &&
-                        !node.dataset.animationTime),
-                )).toBe(true);
+                        !node.dataset.animationTime);
+            })).toBe(true);
         });
 
         test('removes queue from nodes', async ({ page }) => {
