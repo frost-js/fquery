@@ -149,36 +149,38 @@ export function detachTests(createDetach) {
         test('does not remove queue', async ({ page }) => {
             const operation = await page.evaluateHandle(createDetach);
 
-            await page.evaluate(() => {
-                document.documentElement.removeAttribute('data-queue-checkpoint');
-
-                setTimeout(() => {
-                    document.documentElement.setAttribute('data-queue-checkpoint', 'done');
-                }, 110);
-
-                $.queue('a', (node) => {
-                    node.dataset.queueState = 'running';
-
-                    return new Promise((resolve) => {
-                        setTimeout(resolve, 100);
-                    });
+            await page.evaluate(async (operation) => {
+                const queuedNodes = [...document.querySelectorAll('a')];
+                const queueResolvers = [];
+                let resolveAllStarted;
+                const allStarted = new Promise((resolve) => {
+                    resolveAllStarted = resolve;
                 });
+
+                $.queue('a', () => new Promise((resolve) => {
+                    queueResolvers.push(resolve);
+
+                    if (queueResolvers.length === queuedNodes.length) {
+                        resolveAllStarted();
+                    }
+                }));
                 $.queue('a', (node) => {
                     node.dataset.test = 'Test';
                 });
-            });
 
-            await expect.poll(async () => await page.locator('#test1').getAttribute('data-queue-state')).toBe('running');
+                await allStarted;
 
-            await page.evaluate((operation) => {
                 const nodes = operation('a');
 
                 for (const node of nodes) {
                     document.body.appendChild(node);
                 }
+
+                queueResolvers.forEach((resolve) => {
+                    resolve();
+                });
             }, operation);
 
-            await expect.poll(async () => await page.locator('html').getAttribute('data-queue-checkpoint')).toBe('done');
             await expect(page.locator('#test1')).toHaveAttribute('data-test', 'Test');
             await expect(page.locator('#test2')).toHaveAttribute('data-test', 'Test');
             await expect(page.locator('#test3')).toHaveAttribute('data-test', 'Test');
