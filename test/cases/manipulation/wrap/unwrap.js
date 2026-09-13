@@ -168,18 +168,27 @@ export function unwrapTests(createUnwrap) {
             const operation = await page.evaluateHandle(createUnwrap);
 
             const state = await page.evaluate(async (operation) => {
-                window.unwrapQueueResolvers = [];
+                const parents = [...document.querySelectorAll('div')];
+                const queueResolvers = [];
+                let resolveAllStarted;
+                const allStarted = new Promise((resolve) => {
+                    resolveAllStarted = resolve;
+                });
 
                 $.queue('div', () =>
                     new Promise((resolve) => {
-                        window.unwrapQueueResolvers.push(resolve);
+                        queueResolvers.push(resolve);
+
+                        if (queueResolvers.length === parents.length) {
+                            resolveAllStarted();
+                        }
                     }),
                 );
                 $.queue('div', (node) => {
                     node.dataset.test = 'Test';
                 });
 
-                const parents = [...document.querySelectorAll('div')];
+                await allStarted;
 
                 operation('a');
 
@@ -187,7 +196,7 @@ export function unwrapTests(createUnwrap) {
                     document.body.appendChild(parent);
                 }
 
-                window.unwrapQueueResolvers.splice(0).forEach((resolve) => {
+                queueResolvers.forEach((resolve) => {
                     resolve();
                 });
 
