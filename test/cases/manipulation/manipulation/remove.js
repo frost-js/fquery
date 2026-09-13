@@ -175,6 +175,8 @@ export function removeTests(createRemove) {
         test('removes animations', async ({ page }) => {
             const operation = await page.evaluateHandle(createRemove);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate(
                     'a',
@@ -186,7 +188,9 @@ export function removeTests(createRemove) {
                 );
             });
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('a')].length === 4 &&
                 [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
             )).toBe(true);
@@ -201,7 +205,7 @@ export function removeTests(createRemove) {
                 }
             }, operation);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('body > a')].every((node) =>
                     !node.dataset.animationProgress &&
                     !node.dataset.animationStart &&
@@ -211,6 +215,8 @@ export function removeTests(createRemove) {
 
         test('removes animations recursively', async ({ page }) => {
             const operation = await page.evaluateHandle(createRemove);
+
+            await setupClock(page);
 
             await page.evaluate(() => {
                 $.animate(
@@ -223,7 +229,9 @@ export function removeTests(createRemove) {
                 );
             });
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('a')].length === 4 &&
                 [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
             )).toBe(true);
@@ -238,7 +246,7 @@ export function removeTests(createRemove) {
                 }
             }, operation);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('body > a')].every((node) =>
                     !node.dataset.animationProgress &&
                     !node.dataset.animationStart &&

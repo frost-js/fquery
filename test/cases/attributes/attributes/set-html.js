@@ -90,12 +90,15 @@ export function setHtmlTests(createSetHtml) {
         test('removes animations recursively', async ({ page }) => {
             const operation = await page.evaluateHandle(createSetHtml);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate('#inner', () => {}, { duration: 100, debug: true });
             });
 
-            await expect.poll(async () =>
-                await page.evaluate(() => Boolean(document.getElementById('inner')?.dataset.animationProgress))).toBe(true);
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() => Boolean(document.getElementById('inner')?.dataset.animationProgress))).toBe(true);
 
             await page.evaluate((operation) => {
                 const node = document.getElementById('inner');
@@ -104,15 +107,14 @@ export function setHtmlTests(createSetHtml) {
                 document.body.appendChild(node);
             }, operation);
 
-            await expect.poll(async () =>
-                await page.evaluate(() => {
-                    const node = document.getElementById('inner');
+            expect(await page.evaluate(() => {
+                const node = document.getElementById('inner');
 
-                    return Boolean(node) &&
-                        !node.dataset.animationProgress &&
-                        !node.dataset.animationStart &&
-                        !node.dataset.animationTime;
-                })).toBe(true);
+                return Boolean(node) &&
+                    !node.dataset.animationProgress &&
+                    !node.dataset.animationStart &&
+                    !node.dataset.animationTime;
+            })).toBe(true);
         });
 
         test('removes queue recursively', async ({ page }) => {

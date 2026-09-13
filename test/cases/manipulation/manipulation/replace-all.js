@@ -2,6 +2,7 @@
 /** @import { replaceAll } from '../../../../src/manipulation/manipulation.js'; */
 
 import { expect, test } from '#test';
+import { advanceClock, setupClock } from '../../../setup/browser.js';
 
 /**
  * Sets up the page for the shared and dedicated tests.
@@ -168,15 +169,18 @@ export function replaceAllTests(createReplaceAll) {
         test('removes animations from other nodes', async ({ page }) => {
             const operation = await page.evaluateHandle(createReplaceAll);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate('div', () => {}, { duration: 100, debug: true });
             });
 
-            await expect.poll(async () =>
-                await page.evaluate(() =>
-                    ['.outer1', '.inner1', '.outer2', '.inner2'].every((selector) =>
-                        Boolean(document.querySelector(selector)?.dataset.animationProgress)),
-                )).toBe(true);
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
+                ['.outer1', '.inner1', '.outer2', '.inner2'].every((selector) =>
+                    Boolean(document.querySelector(selector)?.dataset.animationProgress)),
+            )).toBe(true);
 
             await page.evaluate((operation) => {
                 const nodes = [...document.querySelectorAll('div')];
@@ -188,17 +192,16 @@ export function replaceAllTests(createReplaceAll) {
                 }
             }, operation);
 
-            await expect.poll(async () =>
-                await page.evaluate(() =>
-                    ['.outer1', '.inner1', '.outer2', '.inner2'].every((selector) => {
-                        const node = document.querySelector(selector);
+            expect(await page.evaluate(() =>
+                ['.outer1', '.inner1', '.outer2', '.inner2'].every((selector) => {
+                    const node = document.querySelector(selector);
 
-                        return Boolean(node) &&
-                            !node.dataset.animationProgress &&
-                            !node.dataset.animationStart &&
-                            !node.dataset.animationTime;
-                    }),
-                )).toBe(true);
+                    return Boolean(node) &&
+                        !node.dataset.animationProgress &&
+                        !node.dataset.animationStart &&
+                        !node.dataset.animationTime;
+                }),
+            )).toBe(true);
         });
 
         test('does not remove animations for nodes', async ({ page }) => {

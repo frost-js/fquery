@@ -91,6 +91,8 @@ export function emptyTests(createEmpty) {
         test('removes animations recursively', async ({ page }) => {
             const operation = await page.evaluateHandle(createEmpty);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate(
                     'a',
@@ -102,7 +104,9 @@ export function emptyTests(createEmpty) {
                 );
             });
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('a')].length === 4 &&
                 [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
             )).toBe(true);
@@ -117,7 +121,7 @@ export function emptyTests(createEmpty) {
                 }
             }, operation);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('body > a')].every((node) =>
                     !node.dataset.animationProgress &&
                     !node.dataset.animationStart &&
