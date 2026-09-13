@@ -1,23 +1,10 @@
+import { setup, withAnimationTests } from '#cases/traversal/filter/with-animation.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #withAnimation', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate(() => {
-            document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div><div id="div4"></div>';
-        });
-        await page.evaluate((_) => {
-            $.fadeIn('#div1');
-            $.fadeIn('#div3');
-        });
-    });
+    test.beforeEach(setup);
 
-    test('returns nodes with animations', async ({ page }) => {
-        await expect.poll(async () =>
-            page.evaluate((_) => $('div').withAnimation().get().map((node) => node.id))).toEqual([
-            'div1',
-            'div3',
-        ]);
-    });
+    withAnimationTests((nodes) => $(nodes).withAnimation().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
         const isNewQuerySet = await page.evaluate((_) => {

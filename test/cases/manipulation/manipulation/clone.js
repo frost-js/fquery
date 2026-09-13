@@ -2,6 +2,7 @@
 /** @import { clone } from '../../../../src/manipulation/manipulation.js'; */
 
 import { expect, test } from '#test';
+import { advanceClock, setupClock } from '../../../setup/browser.js';
 
 /**
  * Sets up the page for the shared and dedicated tests.
@@ -244,6 +245,8 @@ export function cloneTests(createClone) {
         test('clones all nodes with animations', async ({ page }) => {
             const operation = await page.evaluateHandle(createClone);
 
+            await setupClock(page);
+
             await page.evaluate((operation) => {
                 $.animate(
                     'a',
@@ -261,14 +264,18 @@ export function cloneTests(createClone) {
                 }
             }, operation);
 
-            await expect.poll(async () => await page.evaluate(() => {
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() => {
                 const nodes = [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')];
 
                 return nodes.length === 8 &&
                     nodes.every((node) => Boolean(node.dataset.animationProgress));
             })).toBe(true);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 100);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('.parent1 > a, .parent2 > a, body > a')].every((node) =>
                     !node.dataset.animationProgress &&
                     !node.dataset.animationStart &&

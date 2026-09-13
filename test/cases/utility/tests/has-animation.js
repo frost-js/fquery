@@ -1,6 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
 
 import { expect, test } from '#test';
+import { advanceClock, setupClock } from '../../../setup/browser.js';
 
 /**
  * Sets up the page for the shared and dedicated tests.
@@ -9,14 +10,18 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
+    await setupClock(page);
+
     await page.evaluate((_) => {
         document.body.innerHTML =
             '<div id="div1" class="test"></div>' +
             '<div id="div2"></div>' +
             '<div id="div3" class="test"></div>' +
             '<div id="div4"></div>';
-        $.fadeIn('.test');
+        $.fadeIn('.test', { duration: 100 });
     });
+
+    await advanceClock(page, 20);
 };
 
 /**
@@ -26,6 +31,10 @@ export const setup = async ({ page }) => {
 export function hasAnimationTests(hasAnimation) {
     test('returns true if any node has an animation', async ({ page }) => {
         expect(await page.evaluate(hasAnimation, 'div')).toBe(true);
+
+        await advanceClock(page, 100);
+
+        expect(await page.evaluate(hasAnimation, 'div')).toBe(false);
     });
 
     test('returns false if no nodes have an animation', async ({ page }) => {

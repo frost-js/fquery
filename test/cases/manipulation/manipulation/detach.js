@@ -2,6 +2,7 @@
 /** @import { detach } from '../../../../src/manipulation/manipulation.js'; */
 
 import { expect, test } from '#test';
+import { advanceClock, setupClock } from '../../../setup/browser.js';
 
 /**
  * Sets up the page for the shared and dedicated tests.
@@ -102,6 +103,8 @@ export function detachTests(createDetach) {
         test('does not remove animations', async ({ page }) => {
             const operation = await page.evaluateHandle(createDetach);
 
+            await setupClock(page);
+
             await page.evaluate(() => {
                 $.animate(
                     'a',
@@ -113,7 +116,9 @@ export function detachTests(createDetach) {
                 );
             });
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 20);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('a')].length === 4 &&
                 [...document.querySelectorAll('a')].every((node) => Boolean(node.dataset.animationProgress)),
             )).toBe(true);
@@ -126,12 +131,14 @@ export function detachTests(createDetach) {
                 }
             }, operation);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('body > a')].length === 4 &&
                 [...document.querySelectorAll('body > a')].every((node) => Boolean(node.dataset.animationProgress)),
             )).toBe(true);
 
-            await expect.poll(async () => await page.evaluate(() =>
+            await advanceClock(page, 100);
+
+            expect(await page.evaluate(() =>
                 [...document.querySelectorAll('body > a')].every((node) =>
                     !node.dataset.animationProgress &&
                     !node.dataset.animationStart &&
