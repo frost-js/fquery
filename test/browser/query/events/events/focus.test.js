@@ -1,24 +1,11 @@
+import { focusTests, setup } from '#cases/events/events/focus.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #focus', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<input type="text" id="test1">' +
-                '<input type="text" id="test2">';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('triggers a focus event on the first node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result;
-            const element = document.getElementById('test1');
-            element.addEventListener('focus', (_) => {
-                result = true;
-            });
-            $('input').focus();
-            return result;
-        })).toBe(true);
+    focusTests(() => (nodes) => {
+        $(nodes).focus();
     });
 
     test('returns the QuerySet', async ({ page }) => {

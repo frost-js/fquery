@@ -1,25 +1,11 @@
+import { blurTests, setup } from '#cases/events/events/blur.js';
 import { expect, test } from '#test';
 
 test.describe('QuerySet #blur', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
-            document.body.innerHTML =
-                '<input type="text" id="test1">' +
-                '<input type="text" id="test2">';
-        });
-    });
+    test.beforeEach(setup);
 
-    test('triggers a blur event on the first node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
-            let result;
-            const element = document.getElementById('test1');
-            element.addEventListener('blur', (_) => {
-                result = true;
-            });
-            element.focus();
-            $('input').blur();
-            return result;
-        })).toBe(true);
+    blurTests(() => (nodes) => {
+        $(nodes).blur();
     });
 
     test('returns the QuerySet', async ({ page }) => {
