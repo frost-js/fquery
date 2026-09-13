@@ -1,4 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
+/** @import { setStyle } from '../../../../src/attributes/styles.js'; */
 
 import { expect, test } from '#test';
 
@@ -16,11 +17,13 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared setStyle behavior tests.
- * @param {((args: [string, string|Record<string, string|number>, (string|number|null)?, { important: boolean }?]) => void)} setStyle The browser callback for setStyle.
+ * @param {() => typeof setStyle} createSetStyle Creates the browser-side method adapter.
  */
-export function setStyleTests(setStyle) {
+export function setStyleTests(createSetStyle) {
     test('sets a styles object for all nodes', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', {
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', {
             display: 'block',
             width: '100%',
             height: '100px',
@@ -32,21 +35,32 @@ export function setStyleTests(setStyle) {
     });
 
     test('sets a style value for all nodes', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', 'display', 'block']);
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', 'display', 'block']);
 
         await expect(page.locator('#test1')).toHaveAttribute('style', 'display: block;');
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: block;');
     });
 
-    test('converts number values to pixels', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', 'width', '100']);
+    for (const [name, value] of [
+        ['number', 100],
+        ['numeric string', '100'],
+    ]) {
+        test(`converts ${name} values to pixels`, async ({ page }) => {
+            const operation = await page.evaluateHandle(createSetStyle);
 
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'width: 100px;');
-    });
+            await operation.evaluate((operation, args) => operation(...args), ['div', 'width', value]);
+
+            await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100px;');
+            await expect(page.locator('#test2')).toHaveAttribute('style', 'width: 100px;');
+        });
+    }
 
     test('converts style object number values to pixels', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', {
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', {
             width: 100,
             height: 100,
         }]);
@@ -55,22 +69,45 @@ export function setStyleTests(setStyle) {
         await expect(page.locator('#test2')).toHaveAttribute('style', 'width: 100px; height: 100px;');
     });
 
-    test('does not convert number values with units to pixels', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', 'width', '100%']);
+    test('preserves string values with units', async ({ page }) => {
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', 'width', '100%']);
 
         await expect(page.locator('#test1')).toHaveAttribute('style', 'width: 100%;');
         await expect(page.locator('#test2')).toHaveAttribute('style', 'width: 100%;');
     });
 
-    test('does not convert number values for CSS number properties', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', 'font-weight', '500']);
+    for (const [name, value] of [
+        ['number', 500],
+        ['numeric string', '500'],
+    ]) {
+        test(`does not convert ${name} values for CSS number properties`, async ({ page }) => {
+            const operation = await page.evaluateHandle(createSetStyle);
 
-        await expect(page.locator('#test1')).toHaveAttribute('style', 'font-weight: 500;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', 'font-weight: 500;');
+            await operation.evaluate((operation, args) => operation(...args), ['div', 'font-weight', value]);
+
+            await expect(page.locator('#test1')).toHaveAttribute('style', 'font-weight: 500;');
+            await expect(page.locator('#test2')).toHaveAttribute('style', 'font-weight: 500;');
+        });
+    }
+
+    test('sets custom properties', async ({ page }) => {
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await page.evaluate((operation) => {
+            operation('div', '--brandColor', 'red');
+            operation('div', { '--spacing-size': 100 });
+        }, operation);
+
+        await expect(page.locator('#test1')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
+        await expect(page.locator('#test2')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
     });
 
     test('sets a style object for all nodes with important', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', {
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', {
             display: 'block',
             width: '100%',
         }, null, { important: true }]);
@@ -80,7 +117,9 @@ export function setStyleTests(setStyle) {
     });
 
     test('sets a style value for all nodes with important', async ({ page }) => {
-        await page.evaluate(setStyle, ['div', 'display', 'block', { important: true }]);
+        const operation = await page.evaluateHandle(createSetStyle);
+
+        await operation.evaluate((operation, args) => operation(...args), ['div', 'display', 'block', { important: true }]);
 
         await expect(page.locator('#test1')).toHaveAttribute('style', 'display: block !important;');
         await expect(page.locator('#test2')).toHaveAttribute('style', 'display: block !important;');

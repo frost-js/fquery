@@ -4,9 +4,7 @@ import { expect, test } from '#test';
 test.describe('#setStyle', () => {
     test.beforeEach(setup);
 
-    setStyleTests((args) => {
-        $.setStyle(...args);
-    });
+    setStyleTests(() => $.setStyle);
 
     test('sets styles on forms with a control whose name is style', async ({ page }) => {
         await page.evaluate((_) => {
@@ -15,16 +13,6 @@ test.describe('#setStyle', () => {
         });
 
         await expect(page.locator('#form')).toHaveAttribute('style', 'color: red;');
-    });
-
-    test('sets custom properties', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.setStyle('div', '--brandColor', 'red');
-            $.setStyle('div', { '--spacing-size': 100 });
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {

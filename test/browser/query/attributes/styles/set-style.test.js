@@ -4,7 +4,7 @@ import { expect, test } from '#test';
 test.describe('QuerySet #setStyle', () => {
     test.beforeEach(setup);
 
-    setStyleTests(([nodes, ...args]) => {
+    setStyleTests(() => (nodes, ...args) => {
         $(nodes).setStyle(...args);
     });
 
@@ -15,17 +15,6 @@ test.describe('QuerySet #setStyle', () => {
         });
 
         await expect(page.locator('#form')).toHaveAttribute('style', 'color: red;');
-    });
-
-    test('sets custom properties', async ({ page }) => {
-        await page.evaluate((_) => {
-            $('div')
-                .setStyle('--brandColor', 'red')
-                .setStyle({ '--spacing-size': 100 });
-        });
-
-        await expect(page.locator('#test1')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
-        await expect(page.locator('#test2')).toHaveAttribute('style', '--brandColor: red; --spacing-size: 100;');
     });
 
     test('returns the QuerySet', async ({ page }) => {
