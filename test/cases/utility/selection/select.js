@@ -1,5 +1,5 @@
 /** @import { Page } from '@playwright/test'; */
-/** @import { NodeInput } from '../../../../src/helpers.js'; */
+/** @import { select } from '../../../../src/utility/selection.js'; */
 
 import { expect, test } from '#test';
 
@@ -27,12 +27,14 @@ export const setup = async ({ page }) => {
 
 /**
  * Registers shared select behavior tests.
- * @param {((args: [NodeInput]) => void)} select The browser callback for select.
+ * @param {() => typeof select} createSelect Creates the browser-side method adapter.
  */
-export function selectTests(select) {
+export function selectTests(createSelect) {
     test.describe('selection behavior', () => {
         test('creates a selection on the first node', async ({ page }) => {
-            await page.evaluate(select, ['.select']);
+            const operation = await page.evaluateHandle(createSelect);
+
+            await operation.evaluate((operation, args) => operation(...args), ['.select']);
 
             const text = await page.evaluate(() => {
                 const selection = document.getSelection();
@@ -44,6 +46,8 @@ export function selectTests(select) {
         });
 
         test('selects a middle sibling for getSelection', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSelect);
+
             await page.evaluate(() => {
                 document.getElementById('select').innerHTML =
                     '<span id="span1">Test 1</span>' +
@@ -51,7 +55,7 @@ export function selectTests(select) {
                     '<span id="span3">Test 3</span>';
             });
 
-            await page.evaluate(select, ['#span2']);
+            await operation.evaluate((operation, args) => operation(...args), ['#span2']);
 
             const text = await page.evaluate(() => {
                 const selected = $.getSelection();
@@ -62,6 +66,8 @@ export function selectTests(select) {
         });
 
         test('selects a text sibling for getSelection', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSelect);
+
             const nodes = await page.evaluateHandle(() => {
                 const node = document.getElementById('select');
                 node.innerHTML = 'Test 1<span>Test 2</span>Test 3';
@@ -69,7 +75,7 @@ export function selectTests(select) {
                 return node.firstChild;
             });
 
-            await page.evaluate(select, [nodes]);
+            await operation.evaluate((operation, args) => operation(...args), [nodes]);
 
             const text = await page.evaluate(() => {
                 const selected = $.getSelection();
@@ -77,6 +83,39 @@ export function selectTests(select) {
             });
 
             expect(text).toBe('Test 1');
+        });
+    });
+
+    test.describe('form controls', () => {
+        test('selects forms with a control named select', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSelect);
+
+            expect(await page.evaluate((operation) => {
+                document.body.innerHTML = '<form><input name="select"></form>';
+                const form = document.querySelector('form');
+                operation('form');
+                return $.getSelection()[0] === form;
+            }, operation)).toBe(true);
+        });
+
+        test('creates a selection on an input node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSelect);
+
+            expect(await page.evaluate((operation) => {
+                operation('#input');
+                document.execCommand('cut');
+                return document.getElementById('input').value;
+            }, operation)).toBe('');
+        });
+
+        test('creates a selection on a textarea node', async ({ page }) => {
+            const operation = await page.evaluateHandle(createSelect);
+
+            expect(await page.evaluate((operation) => {
+                operation('#textarea');
+                document.execCommand('cut');
+                return document.getElementById('textarea').value;
+            }, operation)).toBe('');
         });
     });
 }
