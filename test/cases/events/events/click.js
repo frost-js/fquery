@@ -22,17 +22,19 @@ export const setup = async ({ page }) => {
  * @param {() => typeof click} createClick Creates the browser-side method adapter.
  */
 export function clickTests(createClick) {
-    test('triggers a click event on the first node', async ({ page }) => {
+    test('triggers a click event only on the first node', async ({ page }) => {
         const operation = await page.evaluateHandle(createClick);
 
         expect(await page.evaluate((operation) => {
-            let result;
-            const element = document.getElementById('test1');
-            element.addEventListener('click', (_) => {
-                result = true;
-            });
+            const targets = [];
+            for (const element of document.querySelectorAll('a')) {
+                element.addEventListener('click', (event) => {
+                    targets.push(event.target.id);
+                });
+            }
+
             operation('a');
-            return result;
-        }, operation)).toBe(true);
+            return targets;
+        }, operation)).toEqual(['test1']);
     });
 }

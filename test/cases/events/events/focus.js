@@ -22,17 +22,25 @@ export const setup = async ({ page }) => {
  * @param {() => typeof focus} createFocus Creates the browser-side method adapter.
  */
 export function focusTests(createFocus) {
-    test('triggers a focus event on the first node', async ({ page }) => {
+    test('triggers a focus event only on the first node', async ({ page }) => {
         const operation = await page.evaluateHandle(createFocus);
 
         expect(await page.evaluate((operation) => {
-            let result;
-            const element = document.getElementById('test1');
-            element.addEventListener('focus', (_) => {
-                result = true;
-            });
+            const targets = [];
+            for (const element of document.querySelectorAll('input')) {
+                element.addEventListener('focus', (event) => {
+                    targets.push(event.target.id);
+                });
+            }
+
             operation('input');
-            return result;
-        }, operation)).toBe(true);
+            return {
+                targets,
+                activeElement: document.activeElement.id,
+            };
+        }, operation)).toEqual({
+            targets: ['test1'],
+            activeElement: 'test1',
+        });
     });
 }
