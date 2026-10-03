@@ -13,7 +13,7 @@ import { expectAnimationState } from '../../../support/assertions/animation.js';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +
@@ -213,7 +213,7 @@ export function fadeInTests(createFadeIn) {
                 operation('.animate', { duration: 100 });
             }, operation);
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const clones = $.clone('.animate', { animations: true });
                 for (const clone of clones) {
                     clone.id += '-clone';

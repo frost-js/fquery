@@ -1,6 +1,6 @@
 
 import { callDomMethod, merge } from '@fr0st/core';
-import { getContext, getWindow } from './../config.js';
+import { getContext, getWindow } from '../config.js';
 
 /**
  * Creates a Document object from a string.
@@ -10,10 +10,10 @@ import { getContext, getWindow } from './../config.js';
  */
 export function parseDocument(input, { contentType = 'text/html' } = {}) {
     const { DOMParser } = getWindow();
-    const parser = new DOMParser;
+    const parser = new DOMParser();
 
     return parser.parseFromString(input, contentType);
-};
+}
 
 /**
  * Creates an array containing elements parsed from an HTML string.
@@ -26,4 +26,4 @@ export function parseHtml(html) {
         .children;
 
     return merge([], childNodes);
-};
+}

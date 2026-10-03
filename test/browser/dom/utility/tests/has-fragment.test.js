@@ -7,22 +7,22 @@ test.describe('#hasFragment', () => {
     hasFragmentTests((nodes) => $.hasFragment(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasFragment(document.getElementById('template1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasFragment(document.querySelectorAll('template')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasFragment(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasFragment([
                 document.getElementById('template1'),
                 document.getElementById('template2'),

@@ -1,9 +1,10 @@
 import { expect, test } from '#test';
+import { getScriptIntegrity } from '../../../support/assets.js';
 
 test.describe('#loadScript', () => {
     test.describe('attributes', () => {
         test('loads a script', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadScript('assets/test.js');
             });
 
@@ -16,19 +17,19 @@ test.describe('#loadScript', () => {
         });
 
         test('loads a script with attributes', async ({ page }) => {
-            await page.evaluate((_) => {
-                $.loadScript('assets/test.js', {
-                    integrity: 'sha384-1AK0oxsmb9+cemh1YwLG4rPfSc3jb81aGOY8CBrD6WNTumSzeeAs3p5iYyXJemZu',
-                    crossorigin: 'anonymous',
-                });
-            });
+            const integrity = await getScriptIntegrity('test.js');
+
+            await page.evaluate((integrity) => $.loadScript('assets/test.js', {
+                integrity,
+                crossorigin: 'anonymous',
+            }), integrity);
 
             const script = page.locator('head script');
 
             await expect(script).toHaveCount(1);
             await expect(script).toHaveAttribute('src', 'assets/test.js');
             await expect(script).toHaveAttribute('type', 'text/javascript');
-            await expect(script).toHaveAttribute('integrity', 'sha384-1AK0oxsmb9+cemh1YwLG4rPfSc3jb81aGOY8CBrD6WNTumSzeeAs3p5iYyXJemZu');
+            await expect(script).toHaveAttribute('integrity', integrity);
             await expect(script).toHaveAttribute('crossorigin', 'anonymous');
         });
     });
@@ -62,7 +63,7 @@ test.describe('#loadScript', () => {
 
     test.describe('contexts', () => {
         test('loads a script without cache using the document base URL', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.head.innerHTML = '<base href="/assets/">';
                 $.loadScript('test.js?test=1', null, { cache: false });
             });
@@ -75,7 +76,7 @@ test.describe('#loadScript', () => {
         });
 
         test('loads a script without cache in a context with a different base URL', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const iframe = document.createElement('iframe');
                 document.body.appendChild(iframe);
                 const context = iframe.contentDocument;
@@ -93,7 +94,7 @@ test.describe('#loadScript', () => {
 
     test.describe('completion', () => {
         test('resolves when the script is loaded', async ({ page }) => {
-            const data = await page.evaluate(async (_) => {
+            const data = await page.evaluate(async () => {
                 await $.loadScript('assets/test.js');
                 return window.data;
             });
@@ -102,7 +103,7 @@ test.describe('#loadScript', () => {
         });
 
         test('throws on error', async ({ page }) => {
-            const didThrow = await page.evaluate(async (_) => {
+            const didThrow = await page.evaluate(async () => {
                 try {
                     await $.loadScript('assets/error.js');
                     return false;

@@ -8,7 +8,7 @@ test.describe('QuerySet #filterOne', () => {
         filterOneTests(([nodes, filter]) => $(nodes).filterOne(filter).get().map((node) => node.id));
 
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('[data-filter="test"]');
 
                 return $('div').filterOne(query).get().map((node) => node.id);
@@ -21,7 +21,7 @@ test.describe('QuerySet #filterOne', () => {
     });
 
     test('returns the first filtered node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('div').filterOne('[data-filter="test"]').get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -30,7 +30,7 @@ test.describe('QuerySet #filterOne', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.filterOne('[data-filter="test"]');
 
@@ -42,7 +42,7 @@ test.describe('QuerySet #filterOne', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -55,7 +55,7 @@ test.describe('QuerySet #filterOne', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';

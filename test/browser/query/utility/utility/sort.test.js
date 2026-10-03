@@ -7,7 +7,7 @@ test.describe('QuerySet #sort', () => {
     sortTests((nodes) => $(nodes).sort().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.sort();
             return query2.constructor.name === 'QuerySet' && query1 !== query2;
@@ -16,7 +16,7 @@ test.describe('QuerySet #sort', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
                 return $(fragment)
@@ -29,7 +29,7 @@ test.describe('QuerySet #sort', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -43,7 +43,7 @@ test.describe('QuerySet #sort', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $(document)
                         .sort()
                         .get()
@@ -53,7 +53,7 @@ test.describe('QuerySet #sort', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $(window)
                         .sort()
                         .get()

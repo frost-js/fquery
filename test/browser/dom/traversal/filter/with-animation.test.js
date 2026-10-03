@@ -8,14 +8,14 @@ test.describe('#withAnimation', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.withAnimation(document.getElementById('div1')).map((node) => node.id))).toEqual([
                 'div1',
             ]);
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.withAnimation(document.querySelectorAll('div')).map((node) => node.id))).toEqual([
                 'div1',
                 'div3',
@@ -23,7 +23,7 @@ test.describe('#withAnimation', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.withAnimation(document.body.children).map((node) => node.id))).toEqual([
                 'div1',
                 'div3',
@@ -31,7 +31,7 @@ test.describe('#withAnimation', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.withAnimation([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

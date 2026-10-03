@@ -8,14 +8,14 @@ test.describe('QuerySet #is', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 return $(fragment).is();
             })).toBe(true);
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 return $(shadow).is();
@@ -25,7 +25,7 @@ test.describe('QuerySet #is', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('div');
                 return $('div').is(query);
             })).toBe(true);

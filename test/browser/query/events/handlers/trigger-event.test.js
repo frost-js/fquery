@@ -9,7 +9,7 @@ test.describe('QuerySet #triggerEvent', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
             return query === query.triggerEvent('click');
         })).toBe(true);
@@ -17,10 +17,10 @@ test.describe('QuerySet #triggerEvent', () => {
 
     test.describe('node inputs', () => {
         test('triggers listeners on forms with a control named dispatchEvent', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="dispatchEvent"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEvent('form', 'click', callback);
@@ -30,11 +30,11 @@ test.describe('QuerySet #triggerEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $(shadow).triggerEvent('click');
@@ -43,9 +43,9 @@ test.describe('QuerySet #triggerEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $(document).triggerEvent('click');
@@ -54,9 +54,9 @@ test.describe('QuerySet #triggerEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $(window).triggerEvent('click');

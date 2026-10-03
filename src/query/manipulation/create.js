@@ -1,5 +1,5 @@
-import { attachShadow as _attachShadow } from './../../manipulation/create.js';
-import QuerySet from './../query-set-core.js';
+import { attachShadow as _attachShadow } from '../../manipulation/create.js';
+import QuerySet from '../query-set-core.js';
 
 /**
  * Attaches a shadow DOM tree to the first node.

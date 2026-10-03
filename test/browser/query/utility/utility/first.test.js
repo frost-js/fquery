@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #first', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet #first', () => {
     });
 
     test('reduces the nodes to the first', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div')
                     .first()
                     .get()
@@ -22,7 +22,7 @@ test.describe('QuerySet #first', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.first();
             return query2.constructor.name === 'QuerySet' && query1 !== query2;

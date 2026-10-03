@@ -7,7 +7,7 @@ test.describe('QuerySet #css', () => {
     cssTests(([nodes, ...args]) => $(nodes).css(...args));
 
     test('returns an object with all computed styles for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const style = $('.test').css();
 
             return {

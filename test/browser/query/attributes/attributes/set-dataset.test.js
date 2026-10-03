@@ -9,7 +9,7 @@ test.describe('QuerySet #setDataset', () => {
     });
 
     test('sets dataset values on forms with a control whose id is dataset', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML = '<form id="form"><input id="dataset"></form>';
             $('form').setDataset('test', 'Test');
         });
@@ -19,7 +19,7 @@ test.describe('QuerySet #setDataset', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        const isSameQuerySet = await page.evaluate((_) => {
+        const isSameQuerySet = await page.evaluate(() => {
             const query = $('div');
 
             return query === query.setDataset('text', 'Test');

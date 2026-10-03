@@ -9,7 +9,7 @@ test.describe('QuerySet #setStyle', () => {
     });
 
     test('sets styles on forms with a control whose id is style', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML = '<form id="form"><input id="style"></form>';
             $('form').setStyle('color', 'red');
         });
@@ -18,7 +18,7 @@ test.describe('QuerySet #setStyle', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
             return query === query.setStyle('display', 'block');
         })).toBe(true);

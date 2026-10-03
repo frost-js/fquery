@@ -8,7 +8,7 @@ test.describe('#constrain', () => {
 
     test.describe('source inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain(document.getElementById('test1'), '[data-toggle="to"]');
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -22,7 +22,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain(document.querySelectorAll('[data-toggle="from"]'), '[data-toggle="to"]');
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -36,7 +36,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain(document.getElementById('fromParent').children, '[data-toggle="to"]');
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -50,7 +50,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain([
                     document.getElementById('test1'),
                     document.getElementById('test2'),
@@ -69,7 +69,7 @@ test.describe('#constrain', () => {
 
     test.describe('destination inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain('[data-toggle="from"]', document.getElementById('test3'));
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -83,7 +83,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with NodeList other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain('[data-toggle="from"]', document.querySelectorAll('[data-toggle="to"]'));
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -97,7 +97,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain('[data-toggle="from"]', document.getElementById('toParent').children);
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -111,7 +111,7 @@ test.describe('#constrain', () => {
         });
 
         test('works with array other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.constrain('[data-toggle="from"]', [
                     document.getElementById('test3'),
                     document.getElementById('test4'),

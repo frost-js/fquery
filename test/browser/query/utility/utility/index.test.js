@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #index', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2" class="test"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet #index', () => {
     });
 
     test('returns the index of the first node relative to the parent', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('.test').index())).toBe(1);
     });
 });

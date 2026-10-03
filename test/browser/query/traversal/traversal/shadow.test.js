@@ -6,14 +6,14 @@ test.describe('QuerySet #shadow', () => {
             document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div>';
         });
 
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('div1').attachShadow({ mode: 'open' });
             document.getElementById('div2').attachShadow({ mode: 'closed' });
         });
     });
 
     test('returns the shadow root of the first node', async ({ page }) => {
-        const hasShadow = await page.evaluate((_) => {
+        const hasShadow = await page.evaluate(() => {
             const query = $('div');
             const shadow = query.shadow();
 
@@ -24,7 +24,7 @@ test.describe('QuerySet #shadow', () => {
     });
 
     test('returns an empty QuerySet for closed shadow roots', async ({ page }) => {
-        const isEmpty = await page.evaluate((_) => {
+        const isEmpty = await page.evaluate(() => {
             const query = $('#div2');
             const shadow = query.shadow();
 
@@ -35,7 +35,7 @@ test.describe('QuerySet #shadow', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.shadow();
 

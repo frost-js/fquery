@@ -12,7 +12,7 @@ export const setup = async ({ page }) => {
     await page.evaluate(() => {
         document.body.innerHTML = '<input type="text" id="test1"><input type="number" id="test2">';
     });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.getElementById('test1').test = 'Test 1';
         document.getElementById('test2').test = 'Test 2';
     });

@@ -5,7 +5,7 @@
 /** @import { RemoveEventOptions } from '../../events/event-handlers.js'; */
 /** @import { TriggerEventOptions } from '../../events/event-handlers.js'; */
 
-import { addEvent as _addEvent, addEventDelegate as _addEventDelegate, addEventDelegateOnce as _addEventDelegateOnce, addEventOnce as _addEventOnce, cloneEvents as _cloneEvents, removeEvent as _removeEvent, removeEventDelegate as _removeEventDelegate, triggerEvent as _triggerEvent, triggerOne as _triggerOne } from './../../events/event-handlers.js';
+import { addEvent as _addEvent, addEventDelegate as _addEventDelegate, addEventDelegateOnce as _addEventDelegateOnce, addEventOnce as _addEventOnce, cloneEvents as _cloneEvents, removeEvent as _removeEvent, removeEventDelegate as _removeEventDelegate, triggerEvent as _triggerEvent, triggerOne as _triggerOne } from '../../events/event-handlers.js';
 
 /**
  * Adds an event to each node.
@@ -18,7 +18,7 @@ export function addEvent(events, callback, { capture = false, passive = false } 
     _addEvent(this, events, callback, { capture, passive });
 
     return this;
-};
+}
 
 /**
  * Adds a delegated event to each node.
@@ -32,7 +32,7 @@ export function addEventDelegate(events, delegate, callback, { capture = false, 
     _addEventDelegate(this, events, delegate, callback, { capture, passive });
 
     return this;
-};
+}
 
 /**
  * Adds a self-destructing delegated event to each node.
@@ -46,7 +46,7 @@ export function addEventDelegateOnce(events, delegate, callback, { capture = fal
     _addEventDelegateOnce(this, events, delegate, callback, { capture, passive });
 
     return this;
-};
+}
 
 /**
  * Adds a self-destructing event to each node.
@@ -59,7 +59,7 @@ export function addEventOnce(events, callback, { capture = false, passive = fals
     _addEventOnce(this, events, callback, { capture, passive });
 
     return this;
-};
+}
 
 /**
  * Clones all events from each node to other nodes.
@@ -70,7 +70,7 @@ export function cloneEvents(otherSelector) {
     _cloneEvents(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Removes events from each node.
@@ -83,7 +83,7 @@ export function removeEvent(events, callback, { capture = null } = {}) {
     _removeEvent(this, events, callback, { capture });
 
     return this;
-};
+}
 
 /**
  * Removes delegated events from each node.
@@ -97,7 +97,7 @@ export function removeEventDelegate(events, delegate, callback, { capture = null
     _removeEventDelegate(this, events, delegate, callback, { capture });
 
     return this;
-};
+}
 
 /**
  * Triggers events on each node.
@@ -109,7 +109,7 @@ export function triggerEvent(events, { data = null, detail = null, bubbles = tru
     _triggerEvent(this, events, { data, detail, bubbles, cancelable });
 
     return this;
-};
+}
 
 /**
  * Triggers an event for the first node.
@@ -119,4 +119,4 @@ export function triggerEvent(events, { data = null, detail = null, bubbles = tru
  */
 export function triggerOne(event, { data = null, detail = null, bubbles = true, cancelable = true } = {}) {
     return _triggerOne(this, event, { data, detail, bubbles, cancelable });
-};
+}

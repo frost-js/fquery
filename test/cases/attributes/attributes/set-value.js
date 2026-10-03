@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<input type="text" id="test1">' +
             '<input type="text" id="test2">' +
@@ -27,7 +27,7 @@ export function setValueTests(setValue) {
         test('sets the input value for all nodes', async ({ page }) => {
             await page.evaluate(setValue, ['input', 'Test']);
 
-            expect(await page.evaluate((_) => [
+            expect(await page.evaluate(() => [
                 document.getElementById('test1').value,
                 document.getElementById('test2').value,
             ])).toEqual([
@@ -39,13 +39,13 @@ export function setValueTests(setValue) {
         test('works with textarea input nodes', async ({ page }) => {
             await page.evaluate(setValue, ['textarea', 'Test']);
 
-            expect(await page.evaluate((_) => document.getElementById('test3').value)).toBe('Test');
+            expect(await page.evaluate(() => document.getElementById('test3').value)).toBe('Test');
         });
 
         test('works with select input nodes', async ({ page }) => {
             await page.evaluate(setValue, ['select', 2]);
 
-            expect(await page.evaluate((_) => document.getElementById('test4').value)).toBe('2');
+            expect(await page.evaluate(() => document.getElementById('test4').value)).toBe('2');
         });
     });
 }

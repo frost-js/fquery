@@ -7,7 +7,7 @@ test.describe('#position', () => {
     positionTests((args) => $.position(...args));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.position(document.getElementById('test1')))).toEqual({
             x: 50,
             y: 25,
@@ -15,7 +15,7 @@ test.describe('#position', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.position(document.querySelectorAll('[data-toggle="child"]')))).toEqual({
             x: 50,
             y: 25,
@@ -23,7 +23,7 @@ test.describe('#position', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.position(document.getElementById('parent').children))).toEqual({
             x: 50,
             y: 25,
@@ -31,7 +31,7 @@ test.describe('#position', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.position([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

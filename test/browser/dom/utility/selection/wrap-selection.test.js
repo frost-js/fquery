@@ -10,7 +10,7 @@ test.describe('#wrapSelection', () => {
 
     test.describe('wrapper inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.wrapSelection(document.querySelector('.outer'));
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -36,7 +36,7 @@ test.describe('#wrapSelection', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.wrapSelection(document.querySelectorAll('.outer'));
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -62,7 +62,7 @@ test.describe('#wrapSelection', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.wrapSelection(document.getElementById('wrapper').children);
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -88,7 +88,7 @@ test.describe('#wrapSelection', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div class="div-outer"><div class="div-inner"></div></div>',
@@ -122,7 +122,7 @@ test.describe('#wrapSelection', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.wrapSelection([document.querySelector('.outer')]);
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -148,7 +148,7 @@ test.describe('#wrapSelection', () => {
         });
 
         test('works with HTML nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.wrapSelection('<div class="div-outer"><div class="div-inner"></div></div>');
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +

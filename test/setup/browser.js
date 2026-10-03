@@ -1,7 +1,7 @@
 /** @import { Page } from '@playwright/test'; */
 
 /**
- * Install Playwright's browser clock and pause it at a stable fixed time.
+ * Installs Playwright's browser clock and pause it at a stable fixed time.
  * @param {Page} page The Playwright page.
  * @returns {Promise<void>} The promise.
  */

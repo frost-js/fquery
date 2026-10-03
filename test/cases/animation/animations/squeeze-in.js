@@ -13,7 +13,7 @@ import { expectAnimationState } from '../../../support/assertions/animation.js';
  */
 export const setup = async ({ page }) => {
     await page.addStyleTag({ content: 'div { width: 100px; height: 100px; }' });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +
@@ -218,7 +218,7 @@ export function squeezeInTests(createSqueezeIn) {
             const operation = await page.evaluateHandle(createSqueezeIn);
 
             const args = await page.evaluateHandle(() => ['.animate', {
-                direction: (_) => 'bottom',
+                direction: () => 'bottom',
                 duration: 100,
                 debug: true,
             }]);
@@ -338,7 +338,7 @@ export function squeezeInTests(createSqueezeIn) {
                 });
             }, operation);
             await advanceClock(page, 100);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const [clone] = $.clone('#test2', { animations: true });
                 clone.id = 'clone';
                 document.body.appendChild(clone);

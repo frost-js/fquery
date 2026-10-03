@@ -6,7 +6,7 @@ test.describe('QuerySet #add', () => {
 
     test.describe('selectors', () => {
         test('adds elements by query selector', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('#parent1 > #child1 > span, #parent1 > #child2 > span')
                         .get()
@@ -20,7 +20,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('adds elements by ID', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('#parent2')
                         .get()
@@ -31,7 +31,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('adds elements by class name', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('.span1')
                         .get()
@@ -47,7 +47,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('adds elements by tag name', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('span')
                         .get()
@@ -71,7 +71,7 @@ test.describe('QuerySet #add', () => {
 
     test.describe('result set', () => {
         test('sorts the new set', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent2')
                         .add('#parent1')
                         .get()
@@ -82,7 +82,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('removes duplicate nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('#parent1')
                         .get()
@@ -92,7 +92,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('returns a new QuerySet', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query1 = $('#parent1');
                 const query2 = query1.add('div');
                 return query2.constructor.name === 'QuerySet' && query1 !== query2;
@@ -102,7 +102,7 @@ test.describe('QuerySet #add', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add(document.getElementById('child1'))
                         .get()
@@ -113,7 +113,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add(document.querySelectorAll('#parent1 > div'))
                         .get()
@@ -126,7 +126,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add(document.getElementById('parent1').children)
                         .get()
@@ -139,7 +139,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment('');
                 fragment.id = 'fragment';
@@ -154,7 +154,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -169,7 +169,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add(document)
                         .get()
@@ -180,7 +180,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add(window)
                         .get()
@@ -191,7 +191,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add([
                             document.getElementById('child1'),
@@ -206,7 +206,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with QuerySet nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('#parent1 > #child1 > span, #parent1 > #child2 > span');
                 return $('#parent1')
                         .add(query)
@@ -224,7 +224,7 @@ test.describe('QuerySet #add', () => {
 
     test.describe('contexts', () => {
         test('works with HTMLElement context', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('span', document.getElementById('child1'))
                         .get()
@@ -236,7 +236,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with NodeList context', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('span', document.querySelectorAll('#parent1 > div'))
                         .get()
@@ -252,7 +252,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with HTMLCollection context', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('span', document.getElementById('parent1').children)
                         .get()
@@ -268,7 +268,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with DocumentFragment context', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div id="div1"></div>' +
@@ -285,7 +285,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with ShadowRoot context', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -305,7 +305,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with Document context', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const parser = new DOMParser();
                 const myDoc = parser.parseFromString(
                     '<html>' +
@@ -329,7 +329,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with array context', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#parent1')
                         .add('span', [
                             document.getElementById('child1'),
@@ -349,7 +349,7 @@ test.describe('QuerySet #add', () => {
         });
 
         test('works with QuerySet context', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('#parent1 > div');
                 return $('#parent1')
                         .add('span', query)

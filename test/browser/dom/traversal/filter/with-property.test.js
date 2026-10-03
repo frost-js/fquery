@@ -5,14 +5,14 @@ test.describe('#withProperty', () => {
         await page.evaluate(() => {
             document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div><div id="div4"></div>';
         });
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('div1').test = 'Test 1';
             document.getElementById('div3').test = 'Test 2';
         });
     });
 
     test('returns nodes with a specified property', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withProperty('div', 'test').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -22,7 +22,7 @@ test.describe('#withProperty', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withProperty(document.getElementById('div1'), 'test').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -31,7 +31,7 @@ test.describe('#withProperty', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withProperty(document.querySelectorAll('div'), 'test').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -41,7 +41,7 @@ test.describe('#withProperty', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withProperty(document.body.children, 'test').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -51,7 +51,7 @@ test.describe('#withProperty', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withProperty([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

@@ -3,7 +3,7 @@
 /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
 /** @import { StopAnimationOptions } from '../../animation/animation.js'; */
 
-import { animate as _animate, stop as _stop } from './../../animation/animate.js';
+import { animate as _animate, stop as _stop } from '../../animation/animate.js';
 
 /**
  * Adds an animation to the queue for each node.
@@ -16,7 +16,7 @@ export function animate(callback, { queueName = 'default', ...options } = {}) {
         _animate(node, callback, options),
     { queueName },
     );
-};
+}
 
 /**
  * Stops all animations and clears the queue of each node.
@@ -28,4 +28,4 @@ export function stop({ finish = true } = {}) {
     _stop(this, { finish });
 
     return this;
-};
+}

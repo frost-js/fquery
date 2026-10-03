@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1" style="display: block; height: 1000px; width: 1200px; margin: 50px; padding: 25px; border: 1px solid grey; overflow-x: scroll">' +
             '<div style="display: block; height: 1px; width: 2500px;"></div>' +
@@ -29,7 +29,7 @@ export function widthTests(width) {
     });
 
     test('measures forms with a control named clientWidth', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<form style="width: 100px; padding: 0; border: 0;">' +
                 '<input type="hidden" name="clientWidth">' +

@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#mouseDragFactory', () => {
     test('uses the configured window', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const iframe = document.createElement('iframe');
             document.body.appendChild(iframe);
 
@@ -18,7 +18,7 @@ test.describe('#mouseDragFactory', () => {
                 'mousedown',
                 $.mouseDragFactory(
                     null,
-                    (_) => {
+                    () => {
                         result++;
                     },
                     null,
@@ -36,13 +36,13 @@ test.describe('#mouseDragFactory', () => {
 
     test.describe('mouse callbacks', () => {
         test('creates a mouse drag event', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 $.addEvent(
                     document.body,
                     'mousedown',
-                    $.mouseDragFactory((_) => {
+                    $.mouseDragFactory(() => {
                         result++;
                     }),
                 );
@@ -52,7 +52,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('creates a mouse drag event with move event', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const moveEvent = new Event('mousemove', {
@@ -66,7 +66,7 @@ test.describe('#mouseDragFactory', () => {
                     'mousedown',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         null,
@@ -82,7 +82,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('creates a mouse drag event with up event', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const moveEvent = new Event('mousemove', {
@@ -97,7 +97,7 @@ test.describe('#mouseDragFactory', () => {
                     $.mouseDragFactory(
                         null,
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         { debounce: false },
@@ -113,7 +113,7 @@ test.describe('#mouseDragFactory', () => {
 
     test.describe('callback return values', () => {
         test('does not run callbacks if down callback returns false', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const moveEvent = new Event('mousemove', {
@@ -126,11 +126,11 @@ test.describe('#mouseDragFactory', () => {
                     document.body,
                     'mousedown',
                     $.mouseDragFactory(
-                        (_) => false,
-                        (_) => {
+                        () => false,
+                        () => {
                             result++;
                         },
-                        (_) => {
+                        () => {
                             result++;
                         },
                         { debounce: false },
@@ -145,7 +145,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('does not remove callbacks if up callback returns false', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const moveEvent = new Event('mousemove', {
@@ -158,11 +158,11 @@ test.describe('#mouseDragFactory', () => {
                     document.body,
                     'mousedown',
                     $.mouseDragFactory(
-                        (_) => { },
-                        (_) => {
+                        () => { },
+                        () => {
                             result++;
                         },
-                        (_) => {
+                        () => {
                             return result > 1;
                         },
                         { debounce: false },
@@ -181,7 +181,7 @@ test.describe('#mouseDragFactory', () => {
 
     test.describe('mouse cleanup', () => {
         test('removes move event on mouseup', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const moveEvent = new Event('mousemove', {
@@ -195,7 +195,7 @@ test.describe('#mouseDragFactory', () => {
                     'mousedown',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         null,
@@ -211,7 +211,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('removes up event on mouseup', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const downEvent = new Event('mousedown');
                 const upEvent = new Event('mouseup', {
@@ -223,7 +223,7 @@ test.describe('#mouseDragFactory', () => {
                     $.mouseDragFactory(
                         null,
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         { debounce: false },
@@ -239,7 +239,7 @@ test.describe('#mouseDragFactory', () => {
 
     test.describe('touch dragging', () => {
         test('works with touch events', async ({ page }) => {
-            const hasTouch = await page.evaluate((_) => {
+            const hasTouch = await page.evaluate(() => {
                 if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
                     return false;
                 }
@@ -262,7 +262,7 @@ test.describe('#mouseDragFactory', () => {
 
             test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
@@ -284,13 +284,13 @@ test.describe('#mouseDragFactory', () => {
                     document.body,
                     'touchstart',
                     $.mouseDragFactory(
-                        (_) => {
+                        () => {
                             result++;
                         },
-                        (_) => {
+                        () => {
                             result++;
                         },
-                        (_) => {
+                        () => {
                             result++;
                         },
                         { debounce: false },
@@ -304,7 +304,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('removes callbacks when multiple touches end together', async ({ page }) => {
-            const hasTouch = await page.evaluate((_) => {
+            const hasTouch = await page.evaluate(() => {
                 if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
                     return false;
                 }
@@ -327,7 +327,7 @@ test.describe('#mouseDragFactory', () => {
 
             test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const touch1 = new Touch({
                     identifier: 1,
                     target: document.body,
@@ -354,7 +354,7 @@ test.describe('#mouseDragFactory', () => {
                     'touchstart',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         null,
@@ -371,7 +371,7 @@ test.describe('#mouseDragFactory', () => {
 
     test.describe('touch cancellation', () => {
         test('removes callbacks on touchcancel', async ({ page }) => {
-            const hasTouch = await page.evaluate((_) => {
+            const hasTouch = await page.evaluate(() => {
                 if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
                     return false;
                 }
@@ -394,7 +394,7 @@ test.describe('#mouseDragFactory', () => {
 
             test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
@@ -421,10 +421,10 @@ test.describe('#mouseDragFactory', () => {
                     'touchstart',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
-                        (_) => {
+                        () => {
                             result++;
                         },
                         { debounce: false },
@@ -440,7 +440,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('removes callbacks when multiple touches are cancelled', async ({ page }) => {
-            const hasTouch = await page.evaluate((_) => {
+            const hasTouch = await page.evaluate(() => {
                 if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
                     return false;
                 }
@@ -463,7 +463,7 @@ test.describe('#mouseDragFactory', () => {
 
             test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const touch1 = new Touch({
                     identifier: 1,
                     target: document.body,
@@ -490,7 +490,7 @@ test.describe('#mouseDragFactory', () => {
                     'touchstart',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
                         null,
@@ -505,7 +505,7 @@ test.describe('#mouseDragFactory', () => {
         });
 
         test('removes callbacks on touchcancel if up callback returns false', async ({ page }) => {
-            const hasTouch = await page.evaluate((_) => {
+            const hasTouch = await page.evaluate(() => {
                 if (typeof Touch !== 'function' || typeof TouchEvent !== 'function') {
                     return false;
                 }
@@ -528,7 +528,7 @@ test.describe('#mouseDragFactory', () => {
 
             test.skip(!hasTouch, 'Touch constructors are not usable in this browser.');
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const touch = new Touch({
                     identifier: 1,
                     target: document.body,
@@ -551,10 +551,10 @@ test.describe('#mouseDragFactory', () => {
                     'touchstart',
                     $.mouseDragFactory(
                         null,
-                        (_) => {
+                        () => {
                             result++;
                         },
-                        (_) => false,
+                        () => false,
                         { debounce: false },
                     ),
                 );

@@ -1,5 +1,5 @@
-import { config, getWindow } from './../config.js';
-import { animations } from './../vars.js';
+import { config, getWindow } from '../config.js';
+import { animations } from '../vars.js';
 
 let animating = false;
 
@@ -11,7 +11,7 @@ export function getTime() {
     const { performance } = getWindow();
 
     return performance.now();
-};
+}
 
 /**
  * Starts the animation loop (if not already started).
@@ -23,7 +23,7 @@ export function start() {
 
     animating = true;
     update();
-};
+}
 
 /**
  * Runs a single frame of all animations, and then queue up the next frame.
@@ -54,4 +54,4 @@ function update() {
     } else {
         requestAnimationFrame(update);
     }
-};
+}

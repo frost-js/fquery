@@ -8,10 +8,10 @@ test.describe('#removeEvent', () => {
 
     test.describe('node inputs', () => {
         test('removes listeners from forms with a control named removeEventListener', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="removeEventListener"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEvent('form', 'click', callback);
@@ -23,16 +23,16 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.removeEvent(element1, 'click', callback);
@@ -43,16 +43,16 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.removeEvent(document.querySelectorAll('a'), 'click', callback);
@@ -63,16 +63,16 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.removeEvent(document.body.children, 'click', callback);
@@ -83,16 +83,16 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 $.addEvent(shadow, 'click', callback);
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $.removeEvent(shadow, 'click', callback);
@@ -102,14 +102,14 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 $.addEvent(document, 'click', callback);
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $.removeEvent(document, 'click', callback);
@@ -119,14 +119,14 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 $.addEvent(window, 'click', callback);
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $.removeEvent(window, 'click', callback);
@@ -136,16 +136,16 @@ test.describe('#removeEvent', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.removeEvent([

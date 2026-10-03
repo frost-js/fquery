@@ -9,7 +9,7 @@ test.describe('QuerySet #blur', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             document.getElementById('test1').focus();
             const query = $('input');
             return query === query.blur();

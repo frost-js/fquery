@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="div1">' +
             '<a href="#" id="test1">Test</a>' +
@@ -25,9 +25,9 @@ export const setup = async ({ page }) => {
  */
 export function triggerEventTests(triggerEvent) {
     test('triggers an event for each node', async ({ page }) => {
-        const calls = await page.evaluateHandle((_) => {
+        const calls = await page.evaluateHandle(() => {
             const calls = { count: 0 };
-            $.addEvent('a', 'click', (_) => {
+            $.addEvent('a', 'click', () => {
                 calls.count++;
             });
             return calls;
@@ -39,12 +39,12 @@ export function triggerEventTests(triggerEvent) {
     });
 
     test('triggers events for each node', async ({ page }) => {
-        const calls = await page.evaluateHandle((_) => {
+        const calls = await page.evaluateHandle(() => {
             const calls = { count: 0 };
-            $.addEvent('a', 'click', (_) => {
+            $.addEvent('a', 'click', () => {
                 calls.count++;
             });
-            $.addEvent('a', 'hover', (_) => {
+            $.addEvent('a', 'hover', () => {
                 calls.count++;
             });
             return calls;
@@ -90,10 +90,10 @@ export function triggerEventTests(triggerEvent) {
 
     test.describe('event properties', () => {
         test('triggers an event for each node with custom data', async ({ page }) => {
-            const calls = await page.evaluateHandle((_) => {
+            const calls = await page.evaluateHandle(() => {
                 const calls = { count: 0 };
-                $.addEvent('a', 'click', (e) => {
-                    if (e.test) {
+                $.addEvent('a', 'click', (event) => {
+                    if (event.test) {
                         calls.count++;
                     }
                 });
@@ -111,10 +111,10 @@ export function triggerEventTests(triggerEvent) {
         });
 
         test('triggers an event for each node with custom details', async ({ page }) => {
-            const calls = await page.evaluateHandle((_) => {
+            const calls = await page.evaluateHandle(() => {
                 const calls = { count: 0 };
-                $.addEvent('a', 'click', (e) => {
-                    if (e.detail === 'test') {
+                $.addEvent('a', 'click', (event) => {
+                    if (event.detail === 'test') {
                         calls.count++;
                     }
                 });
@@ -132,9 +132,9 @@ export function triggerEventTests(triggerEvent) {
 
     test.describe('propagation', () => {
         test('bubbles to other event listeners', async ({ page }) => {
-            const calls = await page.evaluateHandle((_) => {
+            const calls = await page.evaluateHandle(() => {
                 const calls = { count: 0 };
-                $.addEvent('#div1', 'click', (_) => {
+                $.addEvent('#div1', 'click', () => {
                     calls.count++;
                 });
                 return calls;
@@ -146,9 +146,9 @@ export function triggerEventTests(triggerEvent) {
         });
 
         test('can be prevented from bubbling', async ({ page }) => {
-            const calls = await page.evaluateHandle((_) => {
+            const calls = await page.evaluateHandle(() => {
                 const calls = { count: 0 };
-                $.addEvent('#div1', 'click', (_) => {
+                $.addEvent('#div1', 'click', () => {
                     calls.count++;
                 });
                 return calls;
@@ -164,10 +164,10 @@ export function triggerEventTests(triggerEvent) {
 
     test.describe('cancellation', () => {
         test('can be cancelled', async ({ page }) => {
-            const state = await page.evaluateHandle((_) => {
+            const state = await page.evaluateHandle(() => {
                 const state = { value: undefined };
-                $.addEvent('#test1', 'click', (e) => {
-                    state.value = e.cancelable;
+                $.addEvent('#test1', 'click', (event) => {
+                    state.value = event.cancelable;
                 });
                 return state;
             });
@@ -178,13 +178,13 @@ export function triggerEventTests(triggerEvent) {
         });
 
         test('does not carry cancellation between nodes', async ({ page }) => {
-            const state = await page.evaluateHandle((_) => {
+            const state = await page.evaluateHandle(() => {
                 const state = { value: undefined };
-                $.addEvent('#test1', 'click', (e) => {
-                    e.preventDefault();
+                $.addEvent('#test1', 'click', (event) => {
+                    event.preventDefault();
                 });
-                $.addEvent('#test2', 'click', (e) => {
-                    state.value = e.defaultPrevented;
+                $.addEvent('#test2', 'click', (event) => {
+                    state.value = event.defaultPrevented;
                 });
                 return state;
             });
@@ -195,10 +195,10 @@ export function triggerEventTests(triggerEvent) {
         });
 
         test('can be prevented from being cancelled', async ({ page }) => {
-            const state = await page.evaluateHandle((_) => {
+            const state = await page.evaluateHandle(() => {
                 const state = { value: undefined };
-                $.addEvent('#test1', 'click', (e) => {
-                    state.value = e.cancelable;
+                $.addEvent('#test1', 'click', (event) => {
+                    state.value = event.cancelable;
                 });
                 return state;
             });

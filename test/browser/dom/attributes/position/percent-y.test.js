@@ -7,7 +7,7 @@ test.describe('#percentY', () => {
     percentYTests((args) => $.percentY(...args));
 
     test('clamps the returned value between 0 and 100', async ({ page }) => {
-        expect(await page.evaluate((_) => [
+        expect(await page.evaluate(() => [
             $.percentY('div', 0),
             $.percentY('div', 2000),
         ])).toEqual([
@@ -17,22 +17,22 @@ test.describe('#percentY', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.percentY(document.getElementById('test1'), 150))).toBe(50);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.percentY(document.querySelectorAll('div'), 150))).toBe(50);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.percentY(document.body.children, 150))).toBe(50);
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.percentY([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

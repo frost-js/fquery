@@ -8,7 +8,7 @@ test.describe('QuerySet #fragment', () => {
     });
 
     test('returns the document fragment of the first node', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const query = $('template');
             const fragment = query.fragment();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #fragment', () => {
     });
 
     test('returns an empty QuerySet for meta nodes with content', async ({ page }) => {
-        const isEmpty = await page.evaluate((_) => {
+        const isEmpty = await page.evaluate(() => {
             document.head.innerHTML = '<meta name="description" content="Test">';
             const query = $('meta');
             const fragment = query.fragment();
@@ -31,7 +31,7 @@ test.describe('QuerySet #fragment', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('template');
             const query2 = query1.fragment();
 

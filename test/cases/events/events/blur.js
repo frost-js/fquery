@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<input type="text" id="test1">' +
             '<input type="text" id="test2">';
@@ -28,7 +28,7 @@ export function blurTests(createBlur) {
         expect(await page.evaluate((operation) => {
             let result;
             const element = document.getElementById('test1');
-            element.addEventListener('blur', (_) => {
+            element.addEventListener('blur', () => {
                 result = true;
             });
             element.focus();

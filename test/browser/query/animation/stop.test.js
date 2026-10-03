@@ -12,9 +12,9 @@ test.describe('QuerySet #stop', () => {
     });
 
     test('clears pending animations in a named queue when stopping', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $('#test2').animate(
-                (_) => { },
+                () => { },
                 {
                     duration: 100,
                     queueName: 'test',
@@ -31,9 +31,9 @@ test.describe('QuerySet #stop', () => {
             );
         });
         await advanceClock(page, 25);
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('#test2').hasAnimation())).toBe(true);
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $('#test2').stop();
         });
         await advanceClock(page, 150);
@@ -41,7 +41,7 @@ test.describe('QuerySet #stop', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.animate');
             return query === query.stop();
         })).toBe(true);

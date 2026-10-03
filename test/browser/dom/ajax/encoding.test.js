@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#ajax encoding', () => {
     test('sends a false request body', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
+        expect(await page.evaluate(async () => {
             const response = await $.ajax({
                 data: false,
                 method: 'POST',
@@ -121,7 +121,7 @@ test.describe('#ajax encoding', () => {
         }
 
         test('encodes parameter names and values', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     data: {
                         'test&key': 'Test&value=1',
@@ -165,7 +165,7 @@ test.describe('#ajax encoding', () => {
         }
 
         test('encodes JSON from a default content-type header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'Content-Type': 'application/json',
@@ -186,8 +186,8 @@ test.describe('#ajax encoding', () => {
 
     test.describe('FormData', () => {
         test('preserves FormData', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
-                const data = new FormData;
+            expect(await page.evaluate(async () => {
+                const data = new FormData();
                 data.append('test', 'Test');
 
                 const response = await $.ajax({
@@ -201,7 +201,7 @@ test.describe('#ajax encoding', () => {
         });
 
         test('encodes object data as FormData', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     method: 'POST',
                     data: {
@@ -222,7 +222,7 @@ test.describe('#ajax encoding', () => {
                 expect(await page.evaluate(async (name) => {
                     const response = await $.ajax({
                         method: 'POST',
-                        data: name === 'FormData' ? new FormData : {
+                        data: name === 'FormData' ? new FormData() : {
                             test: 'Test',
                         },
                         contentType: name === 'FormData' ? 'application/x-www-form-urlencoded' : null,
@@ -278,7 +278,7 @@ test.describe('#ajax encoding', () => {
         }
 
         test('preserves repeated names in FormData', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     method: 'POST',
                     data: [
@@ -306,7 +306,7 @@ test.describe('#ajax encoding', () => {
         });
 
         test('preserves multiple select values in FormData', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.body.innerHTML =
                     '<form>' +
                     '<select name="tags" multiple>' +

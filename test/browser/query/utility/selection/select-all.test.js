@@ -9,7 +9,7 @@ test.describe('QuerySet #selectAll', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.select');
             return query === query.selectAll();
         })).toBe(true);

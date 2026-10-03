@@ -8,7 +8,7 @@ test.describe('QuerySet #offsetParent', () => {
     });
 
     test('returns the offset parent of the first node', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('a').offsetParent().get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -17,7 +17,7 @@ test.describe('QuerySet #offsetParent', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('a');
             const query2 = query1.offsetParent();
 

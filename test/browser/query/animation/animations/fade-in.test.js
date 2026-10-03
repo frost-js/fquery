@@ -18,7 +18,7 @@ test.describe('QuerySet #fadeIn', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.animate');
             return query === query.fadeIn(
                 {
@@ -30,12 +30,12 @@ test.describe('QuerySet #fadeIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('holds an opacity lock while the animation is active', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('#test2').fadeIn({ duration: 100 });
             });
             await advanceClock(page, 50);
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 try {
                     $('#test2').setStyleLock('opacity', 0.25);
                 } catch (error) {
@@ -47,7 +47,7 @@ test.describe('QuerySet #fadeIn', () => {
 
     test.describe('queues', () => {
         test('releases opacity before the next queued effect starts', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('#test2').fadeIn({ duration: 100 }).fadeOut({ duration: 100 });
             });
             await advanceClock(page, 150);
@@ -61,9 +61,9 @@ test.describe('QuerySet #fadeIn', () => {
         });
 
         test('adds the animation to the queue', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('.animate')
-                    .queue((_) =>
+                    .queue(() =>
                         new Promise((resolve) =>
                             setTimeout(resolve, 100),
                         ),
@@ -77,7 +77,7 @@ test.describe('QuerySet #fadeIn', () => {
                     );
             });
             await advanceClock(page, 50);
-            expect(await page.evaluate((_) => document.body.innerHTML)).toBe('<div id="test1"></div>' +
+            expect(await page.evaluate(() => document.body.innerHTML)).toBe('<div id="test1"></div>' +
                     '<div id="test2" class="animate"></div>' +
                     '<div id="test3"></div>' +
                     '<div id="test4" class="animate"></div>');

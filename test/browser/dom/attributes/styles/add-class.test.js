@@ -9,7 +9,7 @@ test.describe('#addClass', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.addClass(document.getElementById('test1'), 'test');
         });
 
@@ -18,7 +18,7 @@ test.describe('#addClass', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.addClass(document.querySelectorAll('div'), 'test');
         });
 
@@ -27,7 +27,7 @@ test.describe('#addClass', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.addClass(document.body.children, 'test');
         });
 
@@ -36,7 +36,7 @@ test.describe('#addClass', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.addClass([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

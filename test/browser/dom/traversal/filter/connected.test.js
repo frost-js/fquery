@@ -8,7 +8,7 @@ test.describe('#connected', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.connected(document.getElementById('div1')).map((node) => node.id));
 
             expect(ids).toEqual([
@@ -17,7 +17,7 @@ test.describe('#connected', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.connected(document.querySelectorAll('div')).map((node) => node.id));
 
             expect(ids).toEqual([
@@ -27,7 +27,7 @@ test.describe('#connected', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.connected(document.body.children).map((node) => node.id));
 
             expect(ids).toEqual([
@@ -37,7 +37,7 @@ test.describe('#connected', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const nodes = await page.evaluate((_) => {
+            const nodes = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
 
                 return $.connected(fragment);
@@ -47,7 +47,7 @@ test.describe('#connected', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.getElementById('div1');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -61,7 +61,7 @@ test.describe('#connected', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.connected([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

@@ -14,7 +14,7 @@ test.describe('#rotateIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('restores existing inline transform', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 for (const node of document.querySelectorAll('.animate')) {
                     node.style.setProperty('transform', 'scale(2)');
                 }
@@ -33,7 +33,7 @@ test.describe('#rotateIn', () => {
 
     test.describe('completion and stopping', () => {
         test('can be stopped', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.rotateIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -53,13 +53,13 @@ test.describe('#rotateIn', () => {
         });
 
         test('can be stopped (without finishing)', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.rotateIn('.animate', {
                     duration: 100,
                     debug: true,
                 });
 
-                animation.catch((_) => { });
+                animation.catch(() => { });
 
                 return { animation };
             });
@@ -94,7 +94,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('resolves when the animation is stopped', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 const animation = $.rotateIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -111,7 +111,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.rotateIn('.animate', {
                         duration: 100,
@@ -127,13 +127,13 @@ test.describe('#rotateIn', () => {
         });
 
         test('does not stop all animations', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.rotateIn('.animate', {
                     duration: 100,
                 });
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -161,7 +161,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('resolves when the animation is completed', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.rotateIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -181,7 +181,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.rotateIn('.animate', {
                         duration: 1000,
@@ -199,7 +199,7 @@ test.describe('#rotateIn', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.rotateIn(
                     document.getElementById('test2'),
                     {
@@ -230,7 +230,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.rotateIn(
                     document.querySelectorAll('.animate'),
                     {
@@ -261,7 +261,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.rotateIn(
                     document.body.children,
                     {
@@ -288,7 +288,7 @@ test.describe('#rotateIn', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.rotateIn([
                     document.getElementById('test2'),
                     document.getElementById('test4'),

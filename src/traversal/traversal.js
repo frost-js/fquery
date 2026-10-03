@@ -2,7 +2,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, isDocument, isFragment, merge, unique } from '@fr0st/core';
-import { parseFilter, parseNode, parseNodes } from './../filters.js';
+import { parseFilter, parseNode, parseNodes } from '../filters.js';
 
 /**
  * Returns the first child of each node (optionally matching a filter).
@@ -12,7 +12,7 @@ import { parseFilter, parseNode, parseNodes } from './../filters.js';
  */
 export function child(selector, nodeFilter) {
     return children(selector, nodeFilter, { first: true });
-};
+}
 
 /**
  * Returns all children of each node (optionally matching a filter).
@@ -53,7 +53,7 @@ export function children(selector, nodeFilter, { first = false, elementsOnly = t
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns the closest ancestor to each node (optionally matching a filter, and before a limit).
@@ -64,7 +64,7 @@ export function children(selector, nodeFilter, { first = false, elementsOnly = t
  */
 export function closest(selector, nodeFilter, limitFilter) {
     return parents(selector, nodeFilter, limitFilter, { first: true });
-};
+}
 
 /**
  * Returns the common ancestor of all nodes.
@@ -100,7 +100,7 @@ export function commonAncestor(selector) {
 
         ancestor = getDomProperty(ancestor, 'parentNode');
     }
-};
+}
 
 /**
  * Returns all children of each node (including text and comment nodes).
@@ -109,7 +109,7 @@ export function commonAncestor(selector) {
  */
 export function contents(selector) {
     return children(selector, false, { elementsOnly: false });
-};
+}
 
 /**
  * Returns the DocumentFragment of the first node.
@@ -128,7 +128,7 @@ export function fragment(selector) {
     if (isFragment(content)) {
         return content;
     }
-};
+}
 
 /**
  * Returns the next sibling for each node (optionally matching a filter).
@@ -157,7 +157,7 @@ export function next(selector, nodeFilter) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all next siblings for each node (optionally matching a filter, and before a limit).
@@ -199,7 +199,7 @@ export function nextAll(selector, nodeFilter, limitFilter, { first = false } = {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns the offset parent (relatively positioned) of the first node.
@@ -214,7 +214,7 @@ export function offsetParent(selector) {
     }
 
     return getDomProperty(node, 'offsetParent');
-};
+}
 
 /**
  * Returns the parent of each node (optionally matching a filter).
@@ -249,7 +249,7 @@ export function parent(selector, nodeFilter) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all parents of each node (optionally matching a filter, and before a limit).
@@ -298,7 +298,7 @@ export function parents(selector, nodeFilter, limitFilter, { first = false } = {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns the previous sibling for each node (optionally matching a filter).
@@ -327,7 +327,7 @@ export function prev(selector, nodeFilter) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all previous siblings for each node (optionally matching a filter, and before a limit).
@@ -372,7 +372,7 @@ export function prevAll(selector, nodeFilter, limitFilter, { first = false } = {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns the ShadowRoot of the first node.
@@ -387,7 +387,7 @@ export function shadow(selector) {
     }
 
     return getDomProperty(node, 'shadowRoot');
-};
+}
 
 /**
  * Returns all siblings for each node (optionally matching a filter).
@@ -434,4 +434,4 @@ export function siblings(selector, nodeFilter, { elementsOnly = true } = {}) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}

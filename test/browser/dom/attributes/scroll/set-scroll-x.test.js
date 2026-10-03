@@ -8,7 +8,7 @@ test.describe('#setScrollX', () => {
 
     test.describe('element inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const element = document.getElementById('test1');
                 $.setScrollX(element, 100);
                 return element.scrollLeft;
@@ -16,7 +16,7 @@ test.describe('#setScrollX', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.setScrollX(document.querySelectorAll('div'), 100);
                 return [
                     document.getElementById('test1').scrollLeft,
@@ -29,7 +29,7 @@ test.describe('#setScrollX', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.setScrollX(document.body.children, 100);
                 return [
                     document.getElementById('test1').scrollLeft,
@@ -42,7 +42,7 @@ test.describe('#setScrollX', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.setScrollX([

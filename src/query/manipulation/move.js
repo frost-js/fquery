@@ -1,7 +1,7 @@
 /** @import { NodeInput } from '../../helpers.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { after as _after, append as _append, appendTo as _appendTo, before as _before, insertAfter as _insertAfter, insertBefore as _insertBefore, prepend as _prepend, prependTo as _prependTo } from './../../manipulation/move.js';
+import { after as _after, append as _append, appendTo as _appendTo, before as _before, insertAfter as _insertAfter, insertBefore as _insertBefore, prepend as _prepend, prependTo as _prependTo } from '../../manipulation/move.js';
 
 /**
  * Inserts each other node after the first node.
@@ -12,7 +12,7 @@ export function after(otherSelector) {
     _after(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Appends each other node to the first node.
@@ -23,7 +23,7 @@ export function append(otherSelector) {
     _append(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Appends each node to the first other node.
@@ -34,7 +34,7 @@ export function appendTo(otherSelector) {
     _appendTo(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Inserts each other node before the first node.
@@ -45,7 +45,7 @@ export function before(otherSelector) {
     _before(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Inserts each node after the first other node.
@@ -56,7 +56,7 @@ export function insertAfter(otherSelector) {
     _insertAfter(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Inserts each node before the first other node.
@@ -67,7 +67,7 @@ export function insertBefore(otherSelector) {
     _insertBefore(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Prepends each other node to the first node.
@@ -78,7 +78,7 @@ export function prepend(otherSelector) {
     _prepend(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Prepends each node to the first other node.
@@ -89,4 +89,4 @@ export function prependTo(otherSelector) {
     _prependTo(this, otherSelector);
 
     return this;
-};
+}

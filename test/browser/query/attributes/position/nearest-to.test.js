@@ -8,7 +8,7 @@ test.describe('QuerySet #nearestTo', () => {
 
     test.describe('empty results', () => {
         test('returns an empty QuerySet for empty nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $('#invalid')
                         .nearestTo(1000, 1000)
                         .get())).toEqual([]);
@@ -16,7 +16,7 @@ test.describe('QuerySet #nearestTo', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.nearestTo(1000, 1000);
             return query2.constructor.name === 'QuerySet' && query1 !== query2;

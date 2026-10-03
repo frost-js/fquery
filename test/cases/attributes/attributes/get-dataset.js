@@ -40,7 +40,7 @@ export function getDatasetTests(getDataset) {
     });
 
     test('returns an empty dataset value', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('test1').setAttribute('data-empty', '');
         });
 

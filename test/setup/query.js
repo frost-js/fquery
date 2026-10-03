@@ -7,7 +7,7 @@
  * @returns {Promise<void>} The promise.
  */
 export const setupQuery = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="parent1">' +
             '<div id="child1">' +

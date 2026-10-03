@@ -10,7 +10,7 @@ test.describe('#setProperty', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const element = document.getElementById('test1');
                 $.setProperty(element, 'test', 'Test');
             });
@@ -22,7 +22,7 @@ test.describe('#setProperty', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.setProperty(document.querySelectorAll('input'), 'test', 'Test');
             });
 
@@ -33,7 +33,7 @@ test.describe('#setProperty', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.setProperty(document.body.children, 'test', 'Test');
             });
 
@@ -44,7 +44,7 @@ test.describe('#setProperty', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.setProperty([

@@ -8,10 +8,10 @@ test.describe('#blur', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('blur', (_) => {
+                element.addEventListener('blur', () => {
                     result = true;
                 });
                 element.focus();
@@ -21,10 +21,10 @@ test.describe('#blur', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('blur', (_) => {
+                element.addEventListener('blur', () => {
                     result = true;
                 });
                 element.focus();
@@ -34,10 +34,10 @@ test.describe('#blur', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('blur', (_) => {
+                element.addEventListener('blur', () => {
                     result = true;
                 });
                 element.focus();
@@ -47,10 +47,10 @@ test.describe('#blur', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('blur', (_) => {
+                element.addEventListener('blur', () => {
                     result = true;
                 });
                 element.focus();

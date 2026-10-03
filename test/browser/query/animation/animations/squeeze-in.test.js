@@ -13,7 +13,7 @@ test.describe('QuerySet #squeezeIn', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.animate');
             return query === query.squeezeIn(
                 {
@@ -25,7 +25,7 @@ test.describe('QuerySet #squeezeIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('preserves overflow supplied by a variable-based shorthand', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test2').style.cssText = '--overflow: scroll; overflow: var(--overflow);';
                 $('#test2').squeezeIn();
             });
@@ -37,9 +37,9 @@ test.describe('QuerySet #squeezeIn', () => {
 
     test.describe('queues', () => {
         test('adds the animation to the queue', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('.animate')
-                    .queue((_) =>
+                    .queue(() =>
                         new Promise((resolve) =>
                             setTimeout(resolve, 100),
                         ),
@@ -53,7 +53,7 @@ test.describe('QuerySet #squeezeIn', () => {
                     );
             });
             await advanceClock(page, 50);
-            expect(await page.evaluate((_) => document.body.innerHTML)).toBe('<div id="test1"></div>' +
+            expect(await page.evaluate(() => document.body.innerHTML)).toBe('<div id="test1"></div>' +
                     '<div id="test2" class="animate"></div>' +
                     '<div id="test3"></div>' +
                     '<div id="test4" class="animate"></div>');

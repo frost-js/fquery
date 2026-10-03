@@ -7,7 +7,7 @@ test.describe('QuerySet #fixed', () => {
     fixedTests((nodes) => $(nodes).fixed().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.fixed();
 

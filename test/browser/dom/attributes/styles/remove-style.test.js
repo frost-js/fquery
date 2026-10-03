@@ -10,7 +10,7 @@ test.describe('#removeStyle', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.removeStyle(document.getElementById('test1'), 'color');
             });
 
@@ -19,7 +19,7 @@ test.describe('#removeStyle', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.removeStyle(document.querySelectorAll('div'), 'color');
             });
 
@@ -28,7 +28,7 @@ test.describe('#removeStyle', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.removeStyle(document.body.children, 'color');
             });
 
@@ -37,7 +37,7 @@ test.describe('#removeStyle', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.removeStyle([
                     document.getElementById('test1'),
                     document.getElementById('test2'),

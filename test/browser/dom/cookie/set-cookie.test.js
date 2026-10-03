@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#setCookie', () => {
     test('sets a cookie', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: '',
                 nodeType: Node.DOCUMENT_NODE,
@@ -14,7 +14,7 @@ test.describe('#setCookie', () => {
     });
 
     test('encodes the cookie value', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: '',
                 nodeType: Node.DOCUMENT_NODE,
@@ -26,7 +26,7 @@ test.describe('#setCookie', () => {
     });
 
     test('sets a cookie with expiration', async ({ page }) => {
-        const cookie = await page.evaluate((_) => {
+        const cookie = await page.evaluate(() => {
             const myDoc = {
                 cookie: '',
                 nodeType: Node.DOCUMENT_NODE,
@@ -48,7 +48,7 @@ test.describe('#setCookie', () => {
     });
 
     test('sets a cookie with path', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: '',
                 nodeType: Node.DOCUMENT_NODE,
@@ -60,7 +60,7 @@ test.describe('#setCookie', () => {
     });
 
     test('sets a cookie with secure', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: '',
                 nodeType: Node.DOCUMENT_NODE,

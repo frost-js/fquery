@@ -1,9 +1,9 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { callDomMethod, camelCase, getDomProperty, isFragment, merge } from '@fr0st/core';
-import { parseNode, parseNodes } from './../filters.js';
-import { parseData, parseDataset } from './../helpers.js';
-import { removeNode } from './../manipulation/manipulation.js';
+import { parseNode, parseNodes } from '../filters.js';
+import { parseData, parseDataset } from '../helpers.js';
+import { removeNode } from '../manipulation/manipulation.js';
 
 /**
  * @typedef {Record<string, *>} AttributeValues
@@ -30,7 +30,7 @@ export function getAttribute(selector, attribute) {
         merge([], getDomProperty(node, 'attributes'))
             .map((attribute) => [attribute.nodeName, attribute.nodeValue]),
     );
-};
+}
 
 /**
  * Gets dataset value(s) for the first node.
@@ -59,7 +59,7 @@ export function getDataset(selector, key) {
         Object.entries(getDomProperty(node, 'dataset'))
             .map(([key, value]) => [key, parseDataset(value)]),
     );
-};
+}
 
 /**
  * Gets the HTML contents of the first node.
@@ -74,7 +74,7 @@ export function getHtml(selector) {
     }
 
     return getDomProperty(node, 'innerHTML');
-};
+}
 
 /**
  * Gets a property value for the first node.
@@ -90,7 +90,7 @@ export function getProperty(selector, property) {
     }
 
     return node[property];
-};
+}
 
 /**
  * Gets the text contents of the first node.
@@ -105,7 +105,7 @@ export function getText(selector) {
     }
 
     return getDomProperty(node, 'textContent');
-};
+}
 
 /**
  * Gets the value property of the first node.
@@ -114,7 +114,7 @@ export function getText(selector) {
  */
 export function getValue(selector) {
     return getProperty(selector, 'value');
-};
+}
 
 /**
  * Removes an attribute from each node.
@@ -127,7 +127,7 @@ export function removeAttribute(selector, attribute) {
     for (const node of nodes) {
         callDomMethod(node, 'removeAttribute', attribute);
     }
-};
+}
 
 /**
  * Removes a dataset value from each node.
@@ -142,7 +142,7 @@ export function removeDataset(selector, key) {
 
         delete getDomProperty(node, 'dataset')[key];
     }
-};
+}
 
 /**
  * Removes a property from each node.
@@ -155,7 +155,7 @@ export function removeProperty(selector, property) {
     for (const node of nodes) {
         delete node[property];
     }
-};
+}
 
 /**
  * Sets an attribute value for each node.
@@ -173,7 +173,7 @@ export function setAttribute(selector, attribute, value) {
             callDomMethod(node, 'setAttribute', key, value);
         }
     }
-};
+}
 
 /**
  * Sets a dataset value for each node.
@@ -192,7 +192,7 @@ export function setDataset(selector, key, value) {
             getDomProperty(node, 'dataset')[key] = value;
         }
     }
-};
+}
 
 /**
  * Sets the HTML contents of each node.
@@ -215,7 +215,7 @@ export function setHtml(selector, html) {
 
         node.innerHTML = html;
     }
-};
+}
 
 /**
  * Sets a property value for each node.
@@ -233,7 +233,7 @@ export function setProperty(selector, property, value) {
             node[key] = value;
         }
     }
-};
+}
 
 /**
  * Sets the text contents of each node.
@@ -252,7 +252,7 @@ export function setText(selector, text) {
 
         node.textContent = text;
     }
-};
+}
 
 /**
  * Sets the value property of each node.
@@ -265,4 +265,4 @@ export function setValue(selector, value) {
     for (const node of nodes) {
         node.value = value;
     }
-};
+}

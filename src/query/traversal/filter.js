@@ -1,8 +1,8 @@
 /** @import { NodeFilterInput } from '../../filters.js'; */
 /** @import { NodeInput } from '../../helpers.js'; */
 
-import { connected as _connected, equal as _equal, filter as _filter, filterOne as _filterOne, fixed as _fixed, hidden as _hidden, not as _not, notOne as _notOne, same as _same, visible as _visible, withAnimation as _withAnimation, withAttribute as _withAttribute, withChildren as _withChildren, withClass as _withClass, withCssAnimation as _withCssAnimation, withCssTransition as _withCssTransition, withData as _withData, withDescendent as _withDescendent, withProperty as _withProperty } from './../../traversal/filter.js';
-import QuerySet from './../query-set-core.js';
+import { connected as _connected, equal as _equal, filter as _filter, filterOne as _filterOne, fixed as _fixed, hidden as _hidden, not as _not, notOne as _notOne, same as _same, visible as _visible, withAnimation as _withAnimation, withAttribute as _withAttribute, withChildren as _withChildren, withClass as _withClass, withCssAnimation as _withCssAnimation, withCssTransition as _withCssTransition, withData as _withData, withDescendent as _withDescendent, withProperty as _withProperty } from '../../traversal/filter.js';
+import QuerySet from '../query-set-core.js';
 
 /**
  * Returns all nodes connected to the DOM.
@@ -10,7 +10,7 @@ import QuerySet from './../query-set-core.js';
  */
 export function connected() {
     return new QuerySet(_connected(this));
-};
+}
 
 /**
  * Returns all nodes considered equal to any of the other nodes.
@@ -19,7 +19,7 @@ export function connected() {
  */
 export function equal(otherSelector) {
     return new QuerySet(_equal(this, otherSelector));
-};
+}
 
 /**
  * Returns all nodes matching a filter.
@@ -28,7 +28,7 @@ export function equal(otherSelector) {
  */
 export function filter(nodeFilter) {
     return new QuerySet(_filter(this, nodeFilter));
-};
+}
 
 /**
  * Returns the first node matching a filter.
@@ -39,7 +39,7 @@ export function filterOne(nodeFilter) {
     const node = _filterOne(this, nodeFilter);
 
     return new QuerySet(node ? [node] : []);
-};
+}
 
 /**
  * Returns all "fixed" nodes.
@@ -47,7 +47,7 @@ export function filterOne(nodeFilter) {
  */
 export function fixed() {
     return new QuerySet(_fixed(this));
-};
+}
 
 /**
  * Returns all hidden nodes.
@@ -55,7 +55,7 @@ export function fixed() {
  */
 export function hidden() {
     return new QuerySet(_hidden(this));
-};
+}
 
 /**
  * Returns all nodes not matching a filter.
@@ -64,7 +64,7 @@ export function hidden() {
  */
 export function not(nodeFilter) {
     return new QuerySet(_not(this, nodeFilter));
-};
+}
 
 /**
  * Returns the first node not matching a filter.
@@ -75,7 +75,7 @@ export function notOne(nodeFilter) {
     const node = _notOne(this, nodeFilter);
 
     return new QuerySet(node ? [node] : []);
-};
+}
 
 /**
  * Returns all nodes considered identical to any of the other nodes.
@@ -84,7 +84,7 @@ export function notOne(nodeFilter) {
  */
 export function same(otherSelector) {
     return new QuerySet(_same(this, otherSelector));
-};
+}
 
 /**
  * Returns all visible nodes.
@@ -92,7 +92,7 @@ export function same(otherSelector) {
  */
 export function visible() {
     return new QuerySet(_visible(this));
-};
+}
 
 /**
  * Returns all nodes with an animation.
@@ -100,7 +100,7 @@ export function visible() {
  */
 export function withAnimation() {
     return new QuerySet(_withAnimation(this));
-};
+}
 
 /**
  * Returns all nodes with a specified attribute.
@@ -109,7 +109,7 @@ export function withAnimation() {
  */
 export function withAttribute(attribute) {
     return new QuerySet(_withAttribute(this, attribute));
-};
+}
 
 /**
  * Returns all nodes with child elements.
@@ -117,7 +117,7 @@ export function withAttribute(attribute) {
  */
 export function withChildren() {
     return new QuerySet(_withChildren(this));
-};
+}
 
 /**
  * Returns all nodes with any of the specified classes.
@@ -126,7 +126,7 @@ export function withChildren() {
  */
 export function withClass(...classes) {
     return new QuerySet(_withClass(this, ...classes));
-};
+}
 
 /**
  * Returns all nodes with a CSS animation.
@@ -134,7 +134,7 @@ export function withClass(...classes) {
  */
 export function withCssAnimation() {
     return new QuerySet(_withCssAnimation(this));
-};
+}
 
 /**
  * Returns all nodes with a CSS transition.
@@ -142,7 +142,7 @@ export function withCssAnimation() {
  */
 export function withCssTransition() {
     return new QuerySet(_withCssTransition(this));
-};
+}
 
 /**
  * Returns all nodes with custom data.
@@ -151,7 +151,7 @@ export function withCssTransition() {
  */
 export function withData(key) {
     return new QuerySet(_withData(this, key));
-};
+}
 
 /**
  * Returns all elements with a descendant matching a filter.
@@ -160,7 +160,7 @@ export function withData(key) {
  */
 export function withDescendent(nodeFilter) {
     return new QuerySet(_withDescendent(this, nodeFilter));
-};
+}
 
 /**
  * Returns all nodes with a specified property.
@@ -169,4 +169,4 @@ export function withDescendent(nodeFilter) {
  */
 export function withProperty(property) {
     return new QuerySet(_withProperty(this, property));
-};
+}

@@ -7,7 +7,7 @@ test.describe('QuerySet #rect', () => {
     rectTests(([nodes, ...args]) => $(nodes).rect(...args) .toJSON());
 
     test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('#invalid').rect())).toBe(undefined);
     });
 });

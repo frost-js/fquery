@@ -12,7 +12,7 @@ test.describe('#squeezeIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('restores existing inline dimensions, overflow and transform', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 for (const node of document.querySelectorAll('.animate')) {
                     node.style.setProperty('height', '80px');
                     node.style.setProperty('overflow', 'scroll');
@@ -35,7 +35,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('rejects overflow supplied by a variable-based shorthand', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.getElementById('test2').style.cssText = '--overflow: scroll; overflow: var(--overflow);';
                 try {
                     await $.squeezeIn('#test2');
@@ -48,7 +48,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('releases earlier properties when a later property is locked', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.getElementById('test2').style.height = '50px';
                 $.setStyleLock('#test2', 'overflow-x', 'scroll');
                 try {
@@ -69,7 +69,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('rejects dimensions that would change declaration precedence', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.getElementById('test2').style.cssText = 'width: 100px; inline-size: 200px;';
                 try {
                     await $.squeezeIn('#test2');
@@ -82,7 +82,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('releases earlier properties when a dimension cannot be restored', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.getElementById('test2').style.cssText = 'width: 100px; inline-size: 200px;';
                 try {
                     await $.squeezeIn('#test2');
@@ -95,7 +95,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('restores separate overflow declarations', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const style = document.getElementById('test2').style;
                 style.setProperty('overflow-x', 'scroll', 'important');
                 style.setProperty('overflow-y', 'auto');
@@ -109,14 +109,14 @@ test.describe('#squeezeIn', () => {
                     styles: { overflowX: 'scroll', overflowY: 'auto' },
                 },
             ]);
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 document.getElementById('test2').style.getPropertyPriority('overflow-x'))).toBe('important');
         });
     });
 
     test.describe('completion and stopping', () => {
         test('can be stopped', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.squeezeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -136,13 +136,13 @@ test.describe('#squeezeIn', () => {
         });
 
         test('can be stopped (without finishing)', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.squeezeIn('.animate', {
                     duration: 100,
                     debug: true,
                 });
 
-                animation.catch((_) => { });
+                animation.catch(() => { });
 
                 return { animation };
             });
@@ -177,7 +177,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('resolves when the animation is stopped', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 const animation = $.squeezeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -194,7 +194,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.squeezeIn('.animate', {
                         duration: 100,
@@ -210,13 +210,13 @@ test.describe('#squeezeIn', () => {
         });
 
         test('does not stop all animations', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.squeezeIn('.animate', {
                     duration: 100,
                 });
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -244,7 +244,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('resolves when the animation is completed', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.squeezeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -264,7 +264,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.squeezeIn('.animate', {
                         duration: 1000,
@@ -282,7 +282,7 @@ test.describe('#squeezeIn', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.squeezeIn(
                     document.getElementById('test2'),
                     {
@@ -313,7 +313,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.squeezeIn(
                     document.querySelectorAll('.animate'),
                     {
@@ -344,7 +344,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.squeezeIn(
                     document.body.children,
                     {
@@ -371,7 +371,7 @@ test.describe('#squeezeIn', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.squeezeIn([
                     document.getElementById('test2'),
                     document.getElementById('test4'),

@@ -9,7 +9,7 @@ test.describe('QuerySet #click', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
             return query === query.click();
         })).toBe(true);

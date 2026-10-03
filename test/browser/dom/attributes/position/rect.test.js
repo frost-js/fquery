@@ -7,12 +7,12 @@ test.describe('#rect', () => {
     rectTests((args) => $.rect(...args).toJSON());
 
     test('returns undefined for empty nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.rect('#invalid'))).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.rect(document.getElementById('test1')).toJSON())).toEqual({
             x: 600,
             y: 50,
@@ -26,7 +26,7 @@ test.describe('#rect', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.rect(document.querySelectorAll('div')).toJSON())).toEqual({
             x: 600,
             y: 50,
@@ -40,7 +40,7 @@ test.describe('#rect', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.rect(document.body.children).toJSON())).toEqual({
             x: 600,
             y: 50,
@@ -54,7 +54,7 @@ test.describe('#rect', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.rect([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

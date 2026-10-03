@@ -7,7 +7,7 @@ test.describe('#getStyle', () => {
     getStyleTests((args) => $.getStyle(...args));
 
     test('returns an object with all style values for the first node', async ({ page }) => {
-        const style = await page.evaluate((_) => $.getStyle('div'));
+        const style = await page.evaluate(() => $.getStyle('div'));
 
         expect(style).toEqual({
             display: 'block',
@@ -17,22 +17,22 @@ test.describe('#getStyle', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await expect.poll(async () => page.evaluate((_) =>
+        await expect.poll(async () => page.evaluate(() =>
             $.getStyle(document.getElementById('test1'), 'display'))).toBe('block');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await expect.poll(async () => page.evaluate((_) =>
+        await expect.poll(async () => page.evaluate(() =>
             $.getStyle(document.querySelectorAll('div'), 'display'))).toBe('block');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await expect.poll(async () => page.evaluate((_) =>
+        await expect.poll(async () => page.evaluate(() =>
             $.getStyle(document.body.children, 'display'))).toBe('block');
     });
 
     test('works with array nodes', async ({ page }) => {
-        await expect.poll(async () => page.evaluate((_) =>
+        await expect.poll(async () => page.evaluate(() =>
             $.getStyle([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

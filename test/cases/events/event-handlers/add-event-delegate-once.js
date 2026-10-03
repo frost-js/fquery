@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="parent1">' +
             '<a href="#" id="test1">Test</a>' +
@@ -89,7 +89,7 @@ export function addEventDelegateOnceTests(createAddEventDelegateOnce) {
                 });
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test3');
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEventDelegate('div', 'click', 'a', callback);
@@ -114,7 +114,7 @@ export function addEventDelegateOnceTests(createAddEventDelegateOnce) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                operation('div', 'click', 'a', (_) => {
+                operation('div', 'click', 'a', () => {
                     result++;
                 });
                 element1.dispatchEvent(event);
@@ -139,7 +139,7 @@ export function addEventDelegateOnceTests(createAddEventDelegateOnce) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                operation('div', 'click', 'a', (_) => {
+                operation('div', 'click', 'a', () => {
                     result++;
                 }, { capture: true });
                 element1.dispatchEvent(event);

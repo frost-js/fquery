@@ -9,7 +9,7 @@ test.describe('QuerySet #setProperty', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('input');
             return query === query.setProperty('test', 'Test');
         })).toBe(true);

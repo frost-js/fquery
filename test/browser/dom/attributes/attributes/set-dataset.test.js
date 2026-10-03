@@ -9,7 +9,7 @@ test.describe('#setDataset', () => {
     });
 
     test('sets dataset values on forms with a control whose name is dataset', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
             $.setDataset('form', 'test', 'Test');
         });
@@ -19,7 +19,7 @@ test.describe('#setDataset', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setDataset(document.getElementById('test1'), 'text', 'Test');
         });
 
@@ -28,7 +28,7 @@ test.describe('#setDataset', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setDataset(document.querySelectorAll('div'), 'text', 'Test');
         });
 
@@ -37,7 +37,7 @@ test.describe('#setDataset', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setDataset(document.body.children, 'text', 'Test');
         });
 
@@ -46,7 +46,7 @@ test.describe('#setDataset', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setDataset([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

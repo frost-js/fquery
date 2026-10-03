@@ -18,7 +18,7 @@ test.describe('#fadeIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('restores existing inline opacity', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 for (const node of document.querySelectorAll('.animate')) {
                     node.style.setProperty('opacity', '0.25', 'important');
                 }
@@ -32,12 +32,12 @@ test.describe('#fadeIn', () => {
                     styles: { opacity: '0.25' },
                 },
             ]);
-            expect(await page.evaluate((_) => document.getElementById('test2').style.getPropertyPriority('opacity')))
+            expect(await page.evaluate(() => document.getElementById('test2').style.getPropertyPriority('opacity')))
                 .toBe('important');
         });
 
         test('locks opacity while the animation is active', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.fadeIn('#test2');
                 try {
                     $.setStyleLock('#test2', 'opacity', 0.25);
@@ -48,7 +48,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('rejects overlapping effects on the same property', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn('#test2', { duration: 100 });
                 $.fadeOut('#test2').catch((error) => {
                     document.getElementById('test2').dataset.error = error.message;
@@ -66,7 +66,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('allows simultaneous effects on different properties', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn('#test2', { duration: 100 });
                 $.rotateIn('#test2', { duration: 100 });
             });
@@ -81,12 +81,12 @@ test.describe('#fadeIn', () => {
         });
 
         test('releases opacity when the animation completes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test2').style.opacity = '0.25';
                 $.fadeIn('#test2', { duration: 100 });
             });
             await advanceClock(page, 100);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const release = $.setStyleLock('#test2', 'opacity', 0.75);
                 release();
             });
@@ -100,7 +100,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('releases opacity when a zero-duration animation completes', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 await $.fadeIn('#test2', { duration: 0 });
                 const release = $.setStyleLock('#test2', 'opacity', 0.75);
                 release();
@@ -117,7 +117,7 @@ test.describe('#fadeIn', () => {
 
     test.describe('cloning', () => {
         test('releases opacity on cloned animations', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test2').style.opacity = '0.25';
                 $.fadeIn('#test2', { duration: 100 });
                 const [clone] = $.clone('#test2', { animations: true });
@@ -125,7 +125,7 @@ test.describe('#fadeIn', () => {
                 document.body.appendChild(clone);
             });
             await advanceClock(page, 100);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const release = $.setStyleLock('#test2, #clone', 'opacity', 0.75);
                 release();
             });
@@ -143,28 +143,28 @@ test.describe('#fadeIn', () => {
         });
 
         test('restores the original opacity priority on cloned animations', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test2').style.setProperty('opacity', '0.25', 'important');
                 $.fadeIn('#test2', { duration: 100 });
             });
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const [clone] = $.clone('#test2', { animations: true });
                 clone.id = 'clone';
                 document.body.appendChild(clone);
             });
             await advanceClock(page, 100);
 
-            expect(await page.evaluate((_) => document.getElementById('clone').style.getPropertyPriority('opacity')))
+            expect(await page.evaluate(() => document.getElementById('clone').style.getPropertyPriority('opacity')))
                 .toBe('important');
         });
 
         test('removes temporary opacity from clones when the original declaration was absent', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn('#test2', { duration: 100 });
             });
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const [clone] = $.clone('#test2', { animations: true });
                 clone.id = 'clone';
                 document.body.appendChild(clone);
@@ -180,18 +180,18 @@ test.describe('#fadeIn', () => {
         });
 
         test('keeps the source opacity locked when a clone is stopped', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn('#test2', { duration: 200 });
             });
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const [clone] = $.clone('#test2', { animations: true });
                 clone.id = 'clone';
                 document.body.appendChild(clone);
             });
             await advanceClock(page, 50);
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.stop('#clone');
                 try {
                     $.setStyleLock('#test2', 'opacity', 0.25);
@@ -204,7 +204,7 @@ test.describe('#fadeIn', () => {
 
     test.describe('completion and stopping', () => {
         test('can be stopped', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.fadeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -224,7 +224,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('releases opacity immediately when stopped', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test2').style.opacity = '0.25';
                 const animation = $.fadeIn('#test2');
                 animation.stop();
@@ -241,12 +241,12 @@ test.describe('#fadeIn', () => {
         });
 
         test('keeps other nodes locked when one node is stopped', async ({ page }) => {
-            await page.evaluate((_) => {
-                $.fadeIn('.animate', { duration: 100 }).catch((_) => { });
+            await page.evaluate(() => {
+                $.fadeIn('.animate', { duration: 100 }).catch(() => { });
             });
             await advanceClock(page, 50);
 
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.stop('#test2', { finish: false });
                 const release = $.setStyleLock('#test2', 'opacity', 0.75);
                 release();
@@ -259,13 +259,13 @@ test.describe('#fadeIn', () => {
         });
 
         test('can be stopped (without finishing)', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.fadeIn('.animate', {
                     duration: 100,
                     debug: true,
                 });
 
-                animation.catch((_) => { });
+                animation.catch(() => { });
 
                 return { animation };
             });
@@ -300,7 +300,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('resolves when the animation is stopped', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 const animation = $.fadeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -317,7 +317,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.fadeIn('.animate', {
                         duration: 100,
@@ -333,13 +333,13 @@ test.describe('#fadeIn', () => {
         });
 
         test('does not stop all animations', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.fadeIn('.animate', {
                     duration: 100,
                 });
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -367,7 +367,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('resolves when the animation is completed', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.fadeIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -387,7 +387,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.fadeIn('.animate', {
                         duration: 1000,
@@ -405,7 +405,7 @@ test.describe('#fadeIn', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn(
                     document.getElementById('test2'),
                     {
@@ -436,7 +436,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn(
                     document.querySelectorAll('.animate'),
                     {
@@ -467,7 +467,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn(
                     document.body.children,
                     {
@@ -494,7 +494,7 @@ test.describe('#fadeIn', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.fadeIn([
                     document.getElementById('test2'),
                     document.getElementById('test4'),

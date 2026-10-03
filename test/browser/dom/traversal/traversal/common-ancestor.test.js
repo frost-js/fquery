@@ -8,13 +8,13 @@ test.describe('#commonAncestor', () => {
 
     test.describe('empty results', () => {
         test('returns undefined for empty nodes', async ({ page }) => {
-            const ancestor = await page.evaluate((_) => $.commonAncestor('#invalid'));
+            const ancestor = await page.evaluate(() => $.commonAncestor('#invalid'));
 
             expect(ancestor).toBe(undefined);
         });
 
         test('returns undefined for nodes in separate detached trees', async ({ page }) => {
-            const ancestor = await page.evaluate((_) => {
+            const ancestor = await page.evaluate(() => {
                 const parent1 = document.createElement('div');
                 const parent2 = document.createElement('div');
                 const node1 = document.createElement('span');
@@ -30,7 +30,7 @@ test.describe('#commonAncestor', () => {
         });
 
         test('returns undefined when a middle node belongs to another tree', async ({ page }) => {
-            const ancestor = await page.evaluate((_) => {
+            const ancestor = await page.evaluate(() => {
                 const parent1 = document.createElement('div');
                 const parent2 = document.createElement('div');
                 const node1 = document.createElement('span');
@@ -50,28 +50,28 @@ test.describe('#commonAncestor', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.commonAncestor(document.getElementById('a1')).id);
 
             expect(id).toBe('span1');
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.commonAncestor(document.querySelectorAll('a')).id);
 
             expect(id).toBe('child');
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.commonAncestor(document.getElementById('span1').children).id);
 
             expect(id).toBe('span1');
         });
 
         test('works with array nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.commonAncestor([
                     document.getElementById('a1'),
                     document.getElementById('a2'),

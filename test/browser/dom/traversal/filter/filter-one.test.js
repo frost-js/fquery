@@ -9,7 +9,7 @@ test.describe('#filterOne', () => {
     });
 
     test('returns the first node matching a filter', async ({ page }) => {
-        const id = await page.evaluate((_) =>
+        const id = await page.evaluate(() =>
             $.filterOne('div', '[data-filter="test"]').id);
 
         expect(id).toBe('div2');
@@ -17,28 +17,28 @@ test.describe('#filterOne', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.filterOne(document.getElementById('div2'), '[data-filter="test"]').id);
 
             expect(id).toBe('div2');
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.filterOne(document.querySelectorAll('div'), '[data-filter="test"]').id);
 
             expect(id).toBe('div2');
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.filterOne(document.body.children, '[data-filter="test"]').id);
 
             expect(id).toBe('div2');
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const id = await page.evaluate((_) => {
+            const id = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -49,7 +49,7 @@ test.describe('#filterOne', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const id = await page.evaluate((_) => {
+            const id = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -61,7 +61,7 @@ test.describe('#filterOne', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const id = await page.evaluate((_) =>
+            const id = await page.evaluate(() =>
                 $.filterOne([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

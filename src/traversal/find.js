@@ -1,8 +1,8 @@
 /** @import QuerySet from '../query/query-set.js'; */
 
 import { callDomMethod, isArray, isDocument, isElement, isFragment, isShadow, merge, unique } from '@fr0st/core';
-import { getContext } from './../config.js';
-import { escapeCss, resolveNodes } from './../helpers.js';
+import { getContext } from '../config.js';
+import { escapeCss, resolveNodes } from '../helpers.js';
 
 /**
  * @typedef {Element|Document|DocumentFragment|ShadowRoot} QueryContext
@@ -30,7 +30,7 @@ function resolveContexts(context) {
     return context.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all nodes matching a selector.
@@ -75,7 +75,7 @@ export function find(selector, context = getContext()) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all nodes with a specific class.
@@ -109,7 +109,7 @@ export function findByClass(className, context = getContext()) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all nodes with a specific ID.
@@ -137,7 +137,7 @@ export function findById(id, context = getContext()) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns all nodes with a specific tag.
@@ -169,7 +169,7 @@ export function findByTag(tagName, context = getContext()) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns a single node matching a selector.
@@ -216,7 +216,7 @@ export function findOne(selector, context = getContext()) {
     }
 
     return null;
-};
+}
 
 /**
  * Returns a single node with a specific class.
@@ -252,7 +252,7 @@ export function findOneByClass(className, context = getContext()) {
     }
 
     return null;
-};
+}
 
 /**
  * Returns a single node with a specific ID.
@@ -288,7 +288,7 @@ export function findOneById(id, context = getContext()) {
     }
 
     return null;
-};
+}
 
 /**
  * Returns a single node with a specific tag.
@@ -322,4 +322,4 @@ export function findOneByTag(tagName, context = getContext()) {
     }
 
     return null;
-};
+}

@@ -1,8 +1,8 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
-import { parseNode, parseNodes } from './../filters.js';
-import { parseData } from './../helpers.js';
-import { data } from './../vars.js';
+import { parseNode, parseNodes } from '../filters.js';
+import { parseData } from '../helpers.js';
+import { data } from '../vars.js';
 
 /**
  * Clones custom data from each node to each other node.
@@ -31,7 +31,7 @@ export function cloneData(selector, otherSelector) {
     for (const nodeData of sourceData) {
         setData(others, nodeData);
     }
-};
+}
 
 /**
  * Gets custom data for the first node.
@@ -56,7 +56,7 @@ export function getData(selector, key) {
     return key ?
         nodeData[key] :
         nodeData;
-};
+}
 
 /**
  * Removes custom data from each node.
@@ -86,7 +86,7 @@ export function removeData(selector, key) {
             data.delete(node);
         }
     }
-};
+}
 
 /**
  * Sets custom data for each node.
@@ -113,4 +113,4 @@ export function setData(selector, key, value) {
 
         Object.assign(nodeData, newData);
     }
-};
+}

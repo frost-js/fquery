@@ -1,5 +1,5 @@
 import { getDomProperty } from '@fr0st/core';
-import { getContext } from './../config.js';
+import { getContext } from '../config.js';
 
 /**
  * Gets a cookie value.
@@ -23,7 +23,7 @@ export function getCookie(name) {
     return decodeURIComponent(
         cookie.trimStart().substring(prefix.length),
     );
-};
+}
 
 /**
  * Removes a cookie.
@@ -46,7 +46,7 @@ export function removeCookie(name, { path = null, secure = false } = {}) {
     }
 
     getContext().cookie = cookie;
-};
+}
 
 /**
  * Sets a cookie value.
@@ -62,7 +62,7 @@ export function setCookie(name, value, { expires = null, path = null, secure = f
     let cookie = `${name}=${encodeURIComponent(value)}`;
 
     if (expires) {
-        const date = new Date;
+        const date = new Date();
         date.setTime(
             date.getTime() +
             expires * 1000,
@@ -79,4 +79,4 @@ export function setCookie(name, value, { expires = null, path = null, secure = f
     }
 
     getContext().cookie = cookie;
-};
+}

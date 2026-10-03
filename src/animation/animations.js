@@ -2,9 +2,9 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { evaluate, getDomProperty } from '@fr0st/core';
-import { assertStyleUnlocked, setStyleLock } from './../attributes/style-locks.js';
-import { css } from './../attributes/styles.js';
-import { parseNodes } from './../filters.js';
+import { assertStyleUnlocked, setStyleLock } from '../attributes/style-locks.js';
+import { css } from '../attributes/styles.js';
+import { parseNodes } from '../filters.js';
 import AnimationSet from './animation-set.js';
 import Animation from './animation.js';
 import { start } from './helpers.js';
@@ -36,7 +36,7 @@ export function dropIn(selector, options) {
             ...options,
         },
     );
-};
+}
 
 /**
  * Drops each node out of place.
@@ -52,7 +52,7 @@ export function dropOut(selector, options) {
             ...options,
         },
     );
-};
+}
 
 /**
  * Fades the opacity of each node in.
@@ -72,7 +72,7 @@ export function fadeIn(selector, options) {
             ),
         options,
     );
-};
+}
 
 /**
  * Fades the opacity of each node out.
@@ -92,7 +92,7 @@ export function fadeOut(selector, options) {
             ),
         options,
     );
-};
+}
 
 /**
  * Rotates each node in on an X, Y or Z.
@@ -115,7 +115,7 @@ export function rotateIn(selector, options) {
             ...options,
         },
     );
-};
+}
 
 /**
  * Rotates each node out on an X, Y or Z.
@@ -138,7 +138,7 @@ export function rotateOut(selector, options) {
             ...options,
         },
     );
-};
+}
 
 /**
  * Slides each node in from a direction.
@@ -148,7 +148,7 @@ export function rotateOut(selector, options) {
  */
 export function slideIn(selector, options) {
     return animateSlide(selector, options, false);
-};
+}
 
 /**
  * Slides each node out from a direction.
@@ -158,7 +158,7 @@ export function slideIn(selector, options) {
  */
 export function slideOut(selector, options) {
     return animateSlide(selector, options, true);
-};
+}
 
 /**
  * Squeezes each node in from a direction.
@@ -168,7 +168,7 @@ export function slideOut(selector, options) {
  */
 export function squeezeIn(selector, options) {
     return animateSqueeze(selector, options, false);
-};
+}
 
 /**
  * Squeezes each node out from a direction.
@@ -178,7 +178,7 @@ export function squeezeIn(selector, options) {
  */
 export function squeezeOut(selector, options) {
     return animateSqueeze(selector, options, true);
-};
+}
 
 /**
  * Animates inline styles and restores their initial values on completion.
@@ -190,7 +190,7 @@ export function squeezeOut(selector, options) {
  */
 function animateEffect(selector, properties, callback, options) {
     const animations = parseNodes(selector).map((node) => {
-        const releases = new WeakMap;
+        const releases = new WeakMap();
         let originals;
         let initialStyles;
 
@@ -250,7 +250,7 @@ function animateEffect(selector, properties, callback, options) {
     start();
 
     return new AnimationSet(animations);
-};
+}
 
 /**
  * Slides each node in or out from a direction.
@@ -288,7 +288,7 @@ function animateSlide(selector, options, out) {
         },
         options,
     );
-};
+}
 
 /**
  * Squeezes each node in or out from a direction.
@@ -341,7 +341,7 @@ function animateSqueeze(selector, options, out) {
         },
         options,
     );
-};
+}
 
 /**
  * Sets an animated style value while preserving its current inline priority.
@@ -351,4 +351,4 @@ function animateSqueeze(selector, options, out) {
  */
 function setAnimationStyle(style, property, value) {
     style.setProperty(property, value, style.getPropertyPriority(property));
-};
+}

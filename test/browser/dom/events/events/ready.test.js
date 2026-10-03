@@ -2,9 +2,9 @@ import { expect, test } from '#test';
 
 test.describe('#ready', () => {
     test('executes a callback when ready', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             let result;
-            $.ready((_) => {
+            $.ready(() => {
                 result = true;
             });
             return result;
@@ -12,7 +12,7 @@ test.describe('#ready', () => {
     });
 
     test('executes a callback when the document is interactive', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 nodeType: Node.DOCUMENT_NODE,
                 readyState: 'interactive',
@@ -20,7 +20,7 @@ test.describe('#ready', () => {
             let result = false;
 
             $.setContext(myDoc);
-            $.ready((_) => {
+            $.ready(() => {
                 result = true;
             });
 

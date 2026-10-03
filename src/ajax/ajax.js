@@ -15,7 +15,7 @@ export function _delete(url, options) {
         method: 'DELETE',
         ...options,
     });
-};
+}
 
 /**
  * Creates an AJAX request.
@@ -24,7 +24,7 @@ export function _delete(url, options) {
  */
 export function ajax(options) {
     return new AjaxRequest(options);
-};
+}
 
 /**
  * Performs an XHR GET request.
@@ -40,7 +40,7 @@ export function get(url, data, options) {
         method: 'GET',
         ...options,
     });
-};
+}
 
 /**
  * Performs an XHR PATCH request.
@@ -56,7 +56,7 @@ export function patch(url, data, options) {
         method: 'PATCH',
         ...options,
     });
-};
+}
 
 /**
  * Performs an XHR POST request.
@@ -72,7 +72,7 @@ export function post(url, data, options) {
         method: 'POST',
         ...options,
     });
-};
+}
 
 /**
  * Performs an XHR PUT request.
@@ -88,4 +88,4 @@ export function put(url, data, options) {
         method: 'PUT',
         ...options,
     });
-};
+}

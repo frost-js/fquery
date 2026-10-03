@@ -1,6 +1,6 @@
 import { clamp, getDomProperty } from '@fr0st/core';
-import { getAnimationDefaults } from './../config.js';
-import { animations } from './../vars.js';
+import { getAnimationDefaults } from '../config.js';
+import { animations } from '../vars.js';
 import { getTime } from './helpers.js';
 
 /**

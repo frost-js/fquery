@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1" style="display: block; height: 100px; overflow-y: scroll;">' +
             '<div style="display: block; width: 1px; height: 1000px;"></div>' +

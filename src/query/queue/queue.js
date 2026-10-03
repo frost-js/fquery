@@ -2,8 +2,8 @@
 /** @import { QueueCallback } from '../../queue/queue.js'; */
 /** @import { QueueOptions } from '../../queue/queue.js'; */
 
-import { getWindow } from './../../config.js';
-import { clearQueue as _clearQueue, queue as _queue } from './../../queue/queue.js';
+import { getWindow } from '../../config.js';
+import { clearQueue as _clearQueue, queue as _queue } from '../../queue/queue.js';
 
 /**
  * Clears the queue of each node.
@@ -14,7 +14,7 @@ export function clearQueue({ queueName = 'default' } = {}) {
     _clearQueue(this, { queueName });
 
     return this;
-};
+}
 
 /**
  * Delays execution of subsequent items in the queue for each node.
@@ -25,13 +25,13 @@ export function clearQueue({ queueName = 'default' } = {}) {
 export function delay(duration, { queueName = 'default' } = {}) {
     const { setTimeout } = getWindow();
 
-    return this.queue((_) =>
+    return this.queue(() =>
         new Promise((resolve) =>
             setTimeout(resolve, duration),
         ),
     { queueName },
     );
-};
+}
 
 /**
  * Queues a callback on each node.
@@ -43,4 +43,4 @@ export function queue(callback, { queueName = 'default' } = {}) {
     _queue(this, callback, { queueName });
 
     return this;
-};
+}

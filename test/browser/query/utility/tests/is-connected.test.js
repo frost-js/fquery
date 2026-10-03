@@ -8,14 +8,14 @@ test.describe('QuerySet #isConnected', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 return $(fragment).isConnected();
             })).toBe(false);
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.getElementById('div1');
                 const shadow = div.attachShadow({ mode: 'open' });
                 return $(shadow).isConnected();

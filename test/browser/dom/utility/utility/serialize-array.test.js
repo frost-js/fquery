@@ -8,7 +8,7 @@ test.describe('#serializeArray', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.serializeArray(document.getElementById('form')))).toEqual([
                 {
                     name: 'test1',
@@ -54,7 +54,7 @@ test.describe('#serializeArray', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.serializeArray(document.querySelectorAll('input, textarea, select')))).toEqual([
                 {
                     name: 'test1',
@@ -100,7 +100,7 @@ test.describe('#serializeArray', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.serializeArray(document.body.children))).toEqual([
                 {
                     name: 'test1',
@@ -146,7 +146,7 @@ test.describe('#serializeArray', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     document.body.innerHTML,
@@ -197,7 +197,7 @@ test.describe('#serializeArray', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -251,7 +251,7 @@ test.describe('#serializeArray', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.serializeArray([
                     document.getElementById('test1'),
                     document.getElementById('test2'),

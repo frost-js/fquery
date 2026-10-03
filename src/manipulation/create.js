@@ -1,9 +1,9 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { callDomMethod, camelCase, getDomProperty, wrap } from '@fr0st/core';
-import { getContext } from './../config.js';
-import { parseNode } from './../filters.js';
-import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
+import { getContext } from '../config.js';
+import { parseNode } from '../filters.js';
+import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from '../helpers.js';
 
 /**
  * @typedef {object} CreateOptions
@@ -35,7 +35,7 @@ export function attachShadow(selector, { open = true } = {}) {
             'open' :
             'closed',
     });
-};
+}
 
 /**
  * Creates a new DOM element.
@@ -93,7 +93,7 @@ export function create(tagName = 'div', options = {}) {
     }
 
     return node;
-};
+}
 
 /**
  * Creates a new comment node.
@@ -102,7 +102,7 @@ export function create(tagName = 'div', options = {}) {
  */
 export function createComment(comment) {
     return callDomMethod(getContext(), 'createComment', comment);
-};
+}
 
 /**
  * Creates a new document fragment.
@@ -110,7 +110,7 @@ export function createComment(comment) {
  */
 export function createFragment() {
     return callDomMethod(getContext(), 'createDocumentFragment');
-};
+}
 
 /**
  * Creates a new range object.
@@ -118,7 +118,7 @@ export function createFragment() {
  */
 export function createRange() {
     return callDomMethod(getContext(), 'createRange');
-};
+}
 
 /**
  * Creates a new text node.
@@ -127,4 +127,4 @@ export function createRange() {
  */
 export function createText(text) {
     return callDomMethod(getContext(), 'createTextNode', text);
-};
+}

@@ -7,7 +7,7 @@ test.describe('QuerySet #children', () => {
     childrenTests(() => (nodes, ...args) => $(nodes).children(...args).get());
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('.parent');
             const query2 = query1.children();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #children', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div id="div1"></div><div id="div2"></div>',
@@ -35,7 +35,7 @@ test.describe('QuerySet #children', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -54,7 +54,7 @@ test.describe('QuerySet #children', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $(document).children('html').get().map((node) => node.id));
 
             expect(ids).toEqual([
@@ -65,7 +65,7 @@ test.describe('QuerySet #children', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('span');
 
                 return $('.parent').children(query).get().map((node) => node.id);

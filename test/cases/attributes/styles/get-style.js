@@ -25,7 +25,7 @@ export function getStyleTests(getStyle) {
     });
 
     test('returns a custom property', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('test1').style.setProperty('--brandColor', 'red');
         });
 

@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet Iterator', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet Iterator', () => {
     });
 
     test('allows iteration of nodes in the set', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const results = [];
             const query = $('div');
             for (const node of query) {

@@ -2,8 +2,8 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
 import { callDomMethod, getDomProperty } from '@fr0st/core';
-import { getContext, getWindow } from './../config.js';
-import { parseNode } from './../filters.js';
+import { getContext, getWindow } from '../config.js';
+import { parseNode } from '../filters.js';
 
 /**
  * Triggers a blur event on the first node.
@@ -17,7 +17,7 @@ export function blur(selector) {
     }
 
     callDomMethod(node, 'blur');
-};
+}
 
 /**
  * Triggers a click event on the first node.
@@ -31,7 +31,7 @@ export function click(selector) {
     }
 
     callDomMethod(node, 'click');
-};
+}
 
 /**
  * Triggers a focus event on the first node.
@@ -45,7 +45,7 @@ export function focus(selector) {
     }
 
     callDomMethod(node, 'focus');
-};
+}
 
 /**
  * Adds a function to the ready queue.
@@ -57,4 +57,4 @@ export function ready(callback) {
     } else {
         getWindow().addEventListener('DOMContentLoaded', callback, { once: true });
     }
-};
+}

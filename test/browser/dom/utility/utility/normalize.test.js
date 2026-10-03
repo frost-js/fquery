@@ -10,7 +10,7 @@ test.describe('#normalize', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.normalize(document.getElementById('parent1'));
                 return [
                     document.getElementById('child1').childNodes.length,
@@ -23,7 +23,7 @@ test.describe('#normalize', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.normalize(document.querySelectorAll('.test'));
                 return [
                     document.getElementById('child1').childNodes.length,
@@ -36,7 +36,7 @@ test.describe('#normalize', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.normalize(document.body.children);
                 return [
                     document.getElementById('child1').childNodes.length,
@@ -49,7 +49,7 @@ test.describe('#normalize', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 const text1 = document.createTextNode('Test 1');
                 const text2 = document.createTextNode('Test 2');
@@ -70,7 +70,7 @@ test.describe('#normalize', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const text1 = document.createTextNode('Test 1');
@@ -92,7 +92,7 @@ test.describe('#normalize', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.normalize([
                     document.getElementById('parent1'),
                     document.getElementById('parent2'),

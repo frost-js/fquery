@@ -1,8 +1,8 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
-import { getWindow } from './../config.js';
-import { parseNodes } from './../filters.js';
-import { queues } from './../vars.js';
+import { getWindow } from '../config.js';
+import { parseNodes } from '../filters.js';
+import { queues } from '../vars.js';
 
 /**
  * @callback QueueCallback
@@ -43,7 +43,7 @@ export function clearQueue(selector, { queueName = 'default' } = {}) {
             queues.delete(node);
         }
     }
-};
+}
 
 /**
  * Runs the next callback for a single node.
@@ -71,11 +71,11 @@ function dequeue(node, { queueName = 'default' } = {}) {
     }
 
     Promise.resolve(next(node))
-        .then((_) => {
+        .then(() => {
             if (queues.get(node) === queue && queue.get(queueName) === callbacks) {
                 dequeue(node, { queueName });
             }
-        }).catch((_) => {
+        }).catch(() => {
             if (queues.get(node) === queue && queue.get(queueName) === callbacks) {
                 queue.delete(queueName);
 
@@ -84,7 +84,7 @@ function dequeue(node, { queueName = 'default' } = {}) {
                 }
             }
         });
-};
+}
 
 /**
  * Queues a callback on each node.
@@ -106,7 +106,7 @@ export function queue(selector, callback, { queueName = 'default' } = {}) {
 
         if (!runningQueue) {
             queue.set(queueName, [
-                (_) => new Promise((resolve) => {
+                () => new Promise((resolve) => {
                     setTimeout(resolve, 1);
                 }),
             ]);
@@ -118,4 +118,4 @@ export function queue(selector, callback, { queueName = 'default' } = {}) {
             dequeue(node, { queueName });
         }
     }
-};
+}

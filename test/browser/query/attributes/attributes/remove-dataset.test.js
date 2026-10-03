@@ -8,7 +8,7 @@ test.describe('QuerySet #removeDataset', () => {
     });
 
     test('removes a dataset value for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $('div').removeDataset('text');
         });
 
@@ -17,7 +17,7 @@ test.describe('QuerySet #removeDataset', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        const isSameQuerySet = await page.evaluate((_) => {
+        const isSameQuerySet = await page.evaluate(() => {
             const query = $('div');
 
             return query === query.removeDataset('text');

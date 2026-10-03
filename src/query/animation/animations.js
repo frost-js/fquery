@@ -1,7 +1,7 @@
 /** @import QuerySet from '../query-set.js'; */
 /** @import { QueuedAnimationOptions } from '../../animation/animation.js'; */
 
-import { dropIn as _dropIn, dropOut as _dropOut, fadeIn as _fadeIn, fadeOut as _fadeOut, rotateIn as _rotateIn, rotateOut as _rotateOut, slideIn as _slideIn, slideOut as _slideOut, squeezeIn as _squeezeIn, squeezeOut as _squeezeOut } from './../../animation/animations.js';
+import { dropIn as _dropIn, dropOut as _dropOut, fadeIn as _fadeIn, fadeOut as _fadeOut, rotateIn as _rotateIn, rotateOut as _rotateOut, slideIn as _slideIn, slideOut as _slideOut, squeezeIn as _squeezeIn, squeezeOut as _squeezeOut } from '../../animation/animations.js';
 
 /**
  * Adds a drop in animation to the queue for each node.
@@ -13,7 +13,7 @@ export function dropIn({ queueName = 'default', ...options } = {}) {
         _dropIn(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a drop out animation to the queue for each node.
@@ -25,7 +25,7 @@ export function dropOut({ queueName = 'default', ...options } = {}) {
         _dropOut(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a fade in animation to the queue for each node.
@@ -37,7 +37,7 @@ export function fadeIn({ queueName = 'default', ...options } = {}) {
         _fadeIn(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a fade out animation to the queue for each node.
@@ -49,7 +49,7 @@ export function fadeOut({ queueName = 'default', ...options } = {}) {
         _fadeOut(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a rotate in animation to the queue for each node.
@@ -61,7 +61,7 @@ export function rotateIn({ queueName = 'default', ...options } = {}) {
         _rotateIn(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a rotate out animation to the queue for each node.
@@ -73,7 +73,7 @@ export function rotateOut({ queueName = 'default', ...options } = {}) {
         _rotateOut(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a slide in animation to the queue for each node.
@@ -85,7 +85,7 @@ export function slideIn({ queueName = 'default', ...options } = {}) {
         _slideIn(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a slide out animation to the queue for each node.
@@ -97,7 +97,7 @@ export function slideOut({ queueName = 'default', ...options } = {}) {
         _slideOut(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a squeeze in animation to the queue for each node.
@@ -109,7 +109,7 @@ export function squeezeIn({ queueName = 'default', ...options } = {}) {
         _squeezeIn(node, options),
     { queueName },
     );
-};
+}
 
 /**
  * Adds a squeeze out animation to the queue for each node.
@@ -121,4 +121,4 @@ export function squeezeOut({ queueName = 'default', ...options } = {}) {
         _squeezeOut(node, options),
     { queueName },
     );
-};
+}

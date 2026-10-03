@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<a href="#" id="test1">Test</a>' +
             '<a href="#" id="test2">Test</a>';
@@ -77,7 +77,7 @@ export function addEventOnceTests(createAddEventOnce) {
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEvent('a', 'click', callback);
@@ -100,7 +100,7 @@ export function addEventOnceTests(createAddEventOnce) {
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                operation(document, 'click', (_) => {
+                operation(document, 'click', () => {
                     result++;
                 });
                 element1.dispatchEvent(event);
@@ -119,7 +119,7 @@ export function addEventOnceTests(createAddEventOnce) {
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                operation(document, 'click', (_) => {
+                operation(document, 'click', () => {
                     result++;
                 }, { capture: true });
                 element1.dispatchEvent(event);

@@ -9,7 +9,7 @@ test.describe('QuerySet #removeEvent', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
             return query === query.removeEvent();
         })).toBe(true);
@@ -17,10 +17,10 @@ test.describe('QuerySet #removeEvent', () => {
 
     test.describe('node inputs', () => {
         test('removes listeners from forms with a control named removeEventListener', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="removeEventListener"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $('form').addEvent('click', callback);
@@ -32,16 +32,16 @@ test.describe('QuerySet #removeEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 $.addEvent(shadow, 'click', callback);
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $(shadow).removeEvent('click', callback);
@@ -51,14 +51,14 @@ test.describe('QuerySet #removeEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 $.addEvent(document, 'click', callback);
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $(document).removeEvent('click', callback);
@@ -68,14 +68,14 @@ test.describe('QuerySet #removeEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 $.addEvent(window, 'click', callback);
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $(window).removeEvent('click', callback);

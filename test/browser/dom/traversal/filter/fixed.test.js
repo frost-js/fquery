@@ -7,7 +7,7 @@ test.describe('#fixed', () => {
     fixedTests((nodes) => $.fixed(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.fixed(document.getElementById('div2')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -16,7 +16,7 @@ test.describe('#fixed', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.fixed(document.querySelectorAll('div')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -26,7 +26,7 @@ test.describe('#fixed', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.fixed(document.body.children).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -36,7 +36,7 @@ test.describe('#fixed', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.fixed([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

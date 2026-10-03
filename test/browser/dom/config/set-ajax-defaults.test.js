@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#setAjaxDefaults', () => {
     test('overrides a default header with different casing', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setAjaxDefaults({
                 headers: {
                     'Content-Type': 'text/plain',
@@ -20,7 +20,7 @@ test.describe('#setAjaxDefaults', () => {
     });
 
     test('overrides a default header when changing back to its original casing', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setAjaxDefaults({
                 headers: {
                     'X-Test': 'Test 1',
@@ -43,7 +43,7 @@ test.describe('#setAjaxDefaults', () => {
     });
 
     test('preserves other default headers when updating a header', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setAjaxDefaults({
                 headers: {
                     'X-Default': 'Test 1',
@@ -63,7 +63,7 @@ test.describe('#setAjaxDefaults', () => {
     });
 
     test('preserves default headers when setting other options', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setAjaxDefaults({
                 headers: {
                     'X-Test': 'Test 1',
@@ -79,7 +79,7 @@ test.describe('#setAjaxDefaults', () => {
     });
 
     test('preserves default headers when a request overrides them', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
+        expect(await page.evaluate(async () => {
             $.setAjaxDefaults({
                 headers: {
                     'X-Test': 'Test 1',

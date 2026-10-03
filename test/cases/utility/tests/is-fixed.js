@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  */
 export const setup = async ({ page }) => {
     await page.addStyleTag({ content: '.test { position: fixed; }' });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="div1">' +
             '<span id="span1"></span>' +

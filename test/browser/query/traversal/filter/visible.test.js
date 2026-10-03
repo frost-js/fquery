@@ -7,7 +7,7 @@ test.describe('QuerySet #visible', () => {
     visibleTests((nodes) => $(nodes).visible().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.visible();
 
@@ -18,7 +18,7 @@ test.describe('QuerySet #visible', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $(document).visible().get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -27,7 +27,7 @@ test.describe('QuerySet #visible', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $(window).visible().get().map((node) => node.id));
 
         expect(ids).toEqual([

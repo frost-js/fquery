@@ -8,7 +8,7 @@ test.describe('QuerySet #withAttribute', () => {
     });
 
     test('returns nodes with a specified attribute', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('div').withAttribute('title').get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -18,7 +18,7 @@ test.describe('QuerySet #withAttribute', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.withAttribute('title');
 

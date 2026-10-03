@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="eventParent">' +
             '<div id="test1" data-toggle="event"></div>' +
@@ -19,11 +19,11 @@ export const setup = async ({ page }) => {
             '<div id="test3" data-toggle="noEvent"></div>' +
             '<div id="test4" data-toggle="noEvent"></div>' +
             '</div>';
-        $.addEvent('#test1', 'click', (e) => {
-            e.currentTarget.dataset.test1 = 'Test 1';
+        $.addEvent('#test1', 'click', (event) => {
+            event.currentTarget.dataset.test1 = 'Test 1';
         });
-        $.addEvent('#test2', 'click', (e) => {
-            e.currentTarget.dataset.test2 = 'Test 2';
+        $.addEvent('#test2', 'click', (event) => {
+            event.currentTarget.dataset.test2 = 'Test 2';
         });
     });
 };
@@ -36,7 +36,7 @@ export function cloneEventsTests(cloneEvents) {
     test('clones all events from all elements to all other elements', async ({ page }) => {
         await page.evaluate(cloneEvents, ['[data-toggle="event"]', '[data-toggle="noEvent"]']);
 
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const event = new Event('click');
             document.getElementById('test1').dispatchEvent(event);
             document.getElementById('test2').dispatchEvent(event);

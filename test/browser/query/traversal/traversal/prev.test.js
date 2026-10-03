@@ -7,7 +7,7 @@ test.describe('QuerySet #prev', () => {
     prevTests(([nodes, ...args]) => $(nodes).prev(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('.span');
             const query2 = query1.prev();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #prev', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('#span6');
 
                 return $('.span').prev(query).get().map((node) => node.id);

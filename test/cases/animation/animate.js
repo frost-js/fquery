@@ -12,7 +12,7 @@ import { expectAnimationState } from '../../support/assertions/animation.js';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +
@@ -208,7 +208,7 @@ export function animateTests(createAnimate) {
             await page.evaluate((operation) => {
                 operation(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         start: performance.now() + 100,
@@ -226,7 +226,7 @@ export function animateTests(createAnimate) {
                 },
             ]);
             await advanceClock(page, 200);
-            expect(await page.evaluate((_) => $.hasAnimation('.animate'))).toBe(true);
+            expect(await page.evaluate(() => $.hasAnimation('.animate'))).toBe(true);
         });
     });
 
@@ -236,7 +236,7 @@ export function animateTests(createAnimate) {
 
             await page.evaluate((operation) => {
                 document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
-                operation('form', (_) => { }, { duration: 100, type: 'linear', debug: true });
+                operation('form', () => { }, { duration: 100, type: 'linear', debug: true });
             }, operation);
             await advanceClock(page, 50);
             expect(Number(await page.locator('#form').getAttribute('data-animation-progress'))).toBeCloseTo(0.5, 10);
@@ -249,7 +249,7 @@ export function animateTests(createAnimate) {
 
             await page.evaluate((operation) => {
                 document.body.innerHTML = '<form id="form"><input name="dataset"></form>';
-                operation('form', (_) => { }, { duration: 100, type: 'linear', debug: true });
+                operation('form', () => { }, { duration: 100, type: 'linear', debug: true });
             }, operation);
             await advanceClock(page, 150);
             expect(await page.locator('#form').getAttribute('data-animation-progress')).toBeNull();

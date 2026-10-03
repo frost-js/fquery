@@ -26,7 +26,7 @@ export function getTextTests(getText) {
     });
 
     test('reads form contents when a control shadows textContent', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML = '<form><input name="textContent"><span>Test</span></form>';
         });
 

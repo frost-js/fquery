@@ -7,7 +7,7 @@ test.describe('#setStyle', () => {
     setStyleTests(() => $.setStyle);
 
     test('sets styles on forms with a control whose name is style', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML = '<form id="form"><input name="style"></form>';
             $.setStyle('form', 'color', 'red');
         });
@@ -16,7 +16,7 @@ test.describe('#setStyle', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setStyle(document.getElementById('test1'), 'display', 'block');
         });
 
@@ -25,7 +25,7 @@ test.describe('#setStyle', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setStyle(document.querySelectorAll('div'), 'display', 'block');
         });
 
@@ -34,7 +34,7 @@ test.describe('#setStyle', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setStyle(document.body.children, 'display', 'block');
         });
 
@@ -43,7 +43,7 @@ test.describe('#setStyle', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setStyle([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

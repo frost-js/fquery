@@ -7,14 +7,14 @@ test.describe('QuerySet #isHidden', () => {
     isHiddenTests((nodes) => $(nodes).isHidden());
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = new Document();
             return $(myDoc).isHidden();
         })).toBe(true);
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myWindow = {
                 document: {},
                 id: 'window',

@@ -8,7 +8,7 @@ test.describe('QuerySet #commonAncestor', () => {
 
     test.describe('empty results', () => {
         test('returns an empty QuerySet for nodes in separate detached trees', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const parent1 = document.createElement('div');
                 const parent2 = document.createElement('div');
                 const node1 = document.createElement('span');
@@ -24,7 +24,7 @@ test.describe('QuerySet #commonAncestor', () => {
         });
 
         test('returns an empty QuerySet when a middle node belongs to another tree', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const parent1 = document.createElement('div');
                 const parent2 = document.createElement('div');
                 const node1 = document.createElement('span');
@@ -43,7 +43,7 @@ test.describe('QuerySet #commonAncestor', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('a');
             const query2 = query1.commonAncestor();
 

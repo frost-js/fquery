@@ -9,7 +9,7 @@ test.describe('#removeData', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.removeData(document.getElementById('test1'), 'testA');
             return $.getData('#test1');
         })).toEqual({
@@ -18,33 +18,33 @@ test.describe('#removeData', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeData(document.querySelectorAll('div'), 'testA');
         });
 
-        expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test1'))).toEqual({
             testB: 'Test 2',
         });
-        expect(await page.evaluate((_) => $.getData('#test2'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test2'))).toEqual({
             testB: 'Test 2',
         });
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeData(document.body.children, 'testA');
         });
 
-        expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test1'))).toEqual({
             testB: 'Test 2',
         });
-        expect(await page.evaluate((_) => $.getData('#test2'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test2'))).toEqual({
             testB: 'Test 2',
         });
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, {
                 testA: 'Test 1',
@@ -58,7 +58,7 @@ test.describe('#removeData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, {
@@ -73,7 +73,7 @@ test.describe('#removeData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(document, {
                 testA: 'Test 1',
                 testB: 'Test 2',
@@ -86,7 +86,7 @@ test.describe('#removeData', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(window, {
                 testA: 'Test 1',
                 testB: 'Test 2',
@@ -99,17 +99,17 @@ test.describe('#removeData', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeData([
                 document.getElementById('test1'),
                 document.getElementById('test2'),
             ], 'testA');
         });
 
-        expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test1'))).toEqual({
             testB: 'Test 2',
         });
-        expect(await page.evaluate((_) => $.getData('#test2'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test2'))).toEqual({
             testB: 'Test 2',
         });
     });

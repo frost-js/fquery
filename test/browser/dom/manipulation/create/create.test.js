@@ -10,7 +10,7 @@ test.describe('#create', () => {
     });
 
     test('creates nodes when a form shadows document.createElement', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             document.body.innerHTML = '<form name="createElement"></form>';
             return $.create('span', { text: 'Test' }).textContent;
         })).toBe('Test');

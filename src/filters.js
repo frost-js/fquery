@@ -32,7 +32,7 @@ import { find, findOne } from './traversal/find.js';
  */
 export function parseFilter(filter, defaultValue = true) {
     if (!filter) {
-        return (_) => defaultValue;
+        return () => defaultValue;
     }
 
     if (isFunction(filter)) {
@@ -57,8 +57,8 @@ export function parseFilter(filter, defaultValue = true) {
         return (node) => filter.includes(node);
     }
 
-    return (_) => !defaultValue;
-};
+    return () => !defaultValue;
+}
 
 /**
  * Returns a node-containment filter callback.
@@ -93,8 +93,8 @@ export function parseFilterContains(filter, defaultValue = true) {
         return (node) => filter.some((other) => node !== other && callDomMethod(node, 'contains', other));
     }
 
-    return (_) => !defaultValue;
-};
+    return () => !defaultValue;
+}
 
 /**
  * Returns the first node matching a filter.
@@ -120,7 +120,7 @@ export function parseNode(nodes, options = {}) {
             return result;
         }
     }
-};
+}
 
 /**
  * Returns a filtered array of nodes.
@@ -144,7 +144,7 @@ export function parseNodes(nodes, options = {}) {
     return nodes.length > 1 && results.length > 1 ?
         unique(results) :
         results;
-};
+}
 
 /**
  * Returns a function for filtering nodes.
@@ -164,4 +164,4 @@ function parseNodesFilter({
         (window && isWindow(value)) ||
         (fragment && isFragment(value)) ||
         (shadow && isShadow(value));
-};
+}

@@ -10,7 +10,7 @@ test.describe('#afterSelection', () => {
 
     test.describe('inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.afterSelection(document.getElementById('a1'));
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -29,7 +29,7 @@ test.describe('#afterSelection', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.afterSelection(document.querySelectorAll('a'));
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -47,7 +47,7 @@ test.describe('#afterSelection', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.afterSelection(document.getElementById('parent').children);
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +
@@ -65,7 +65,7 @@ test.describe('#afterSelection', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div><span></span></div>',
@@ -89,7 +89,7 @@ test.describe('#afterSelection', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.afterSelection([
                     document.getElementById('a1'),
                     document.getElementById('a2'),
@@ -110,7 +110,7 @@ test.describe('#afterSelection', () => {
         });
 
         test('works with HTML nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.afterSelection('<div><span></span></div>');
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +

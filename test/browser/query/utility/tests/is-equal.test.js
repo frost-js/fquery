@@ -7,7 +7,7 @@ test.describe('QuerySet #isEqual', () => {
     isEqualTests(([nodes, ...args]) => $(nodes).isEqual(...args));
 
     test('compares forms with a control named isEqualNode', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             document.body.innerHTML =
                 '<form><input name="isEqualNode"></form><form><input name="isEqualNode"></form>';
             return $('form').first().isEqual($('form').last());
@@ -16,7 +16,7 @@ test.describe('QuerySet #isEqual', () => {
 
     test.describe('source inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment1 = document.createDocumentFragment();
                 const fragment2 = document.createDocumentFragment();
                 return $(fragment1).isEqual([fragment2]);
@@ -24,7 +24,7 @@ test.describe('QuerySet #isEqual', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div1 = document.createElement('div');
                 const div2 = document.createElement('div');
                 const shadow1 = div1.attachShadow({ mode: 'open' });
@@ -36,7 +36,7 @@ test.describe('QuerySet #isEqual', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('#parent2 > span');
                 return $('#parent1 span').isEqual(query);
             })).toBe(true);

@@ -4,9 +4,9 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, isDocument, isFragment, isShadow, isWindow, merge } from '@fr0st/core';
-import { parseParams } from './../ajax/helpers.js';
-import { getContext, getWindow } from './../config.js';
-import { parseFilter, parseNode, parseNodes } from './../filters.js';
+import { parseParams } from '../ajax/helpers.js';
+import { getContext, getWindow } from '../config.js';
+import { parseFilter, parseNode, parseNodes } from '../filters.js';
 
 /**
  * Executes a command in the document context.
@@ -16,7 +16,7 @@ import { parseFilter, parseNode, parseNodes } from './../filters.js';
  */
 export function exec(command, value = null) {
     return callDomMethod(getContext(), 'execCommand', command, false, value);
-};
+}
 
 /**
  * Gets the index of the first node relative to its parent.
@@ -35,7 +35,7 @@ export function index(selector) {
     }
 
     return merge([], getDomProperty(parent, 'children')).indexOf(node);
-};
+}
 
 /**
  * Gets the index of the first node matching a filter.
@@ -51,7 +51,7 @@ export function indexOf(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).findIndex(nodeFilter);
-};
+}
 
 /**
  * Normalizes nodes (remove empty text nodes, and join adjacent text nodes).
@@ -68,7 +68,7 @@ export function normalize(selector) {
     for (const node of nodes) {
         callDomMethod(node, 'normalize');
     }
-};
+}
 
 /**
  * Returns a serialized string containing names and values of all form nodes.
@@ -82,7 +82,7 @@ export function serialize(selector) {
             value: value.replace(/\r\n|\r|\n/g, '\r\n'),
         })),
     );
-};
+}
 
 /**
  * Returns a serialized array containing names and values of all form nodes.
@@ -238,7 +238,7 @@ export function sort(selector) {
 
         return 0;
     });
-};
+}
 
 /**
  * Returns the tag name (lowercase) of the first node.
@@ -253,4 +253,4 @@ export function tagName(selector) {
     }
 
     return getDomProperty(node, 'tagName').toLowerCase();
-};
+}

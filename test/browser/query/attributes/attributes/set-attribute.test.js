@@ -9,7 +9,7 @@ test.describe('QuerySet #setAttribute', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        const isSameQuerySet = await page.evaluate((_) => {
+        const isSameQuerySet = await page.evaluate(() => {
             const query = $('input');
 
             return query === query.setAttribute('placeholder', '123');

@@ -14,7 +14,7 @@ test.describe('QuerySet #getData', () => {
     }
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, 'test', 'Test 2');
             return $(fragment).getData('test');
@@ -22,7 +22,7 @@ test.describe('QuerySet #getData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, 'test', 'Test 2');
@@ -31,14 +31,14 @@ test.describe('QuerySet #getData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(document, 'test', 'Test 2');
             return $(document).getData('test');
         })).toBe('Test 2');
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(window, 'test', 'Test 2');
             return $(window).getData('test');
         })).toBe('Test 2');

@@ -8,7 +8,7 @@ test.describe('#removeAttribute', () => {
     });
 
     test('removes an attribute for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeAttribute('input', 'disabled');
         });
 
@@ -17,7 +17,7 @@ test.describe('#removeAttribute', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeAttribute(document.getElementById('test1'), 'disabled');
         });
 
@@ -26,7 +26,7 @@ test.describe('#removeAttribute', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeAttribute(document.querySelectorAll('input'), 'disabled');
         });
 
@@ -35,7 +35,7 @@ test.describe('#removeAttribute', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeAttribute(document.body.children, 'disabled');
         });
 
@@ -44,7 +44,7 @@ test.describe('#removeAttribute', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeAttribute([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

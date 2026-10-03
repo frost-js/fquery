@@ -1,8 +1,8 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { getDomProperty, isDocument, isWindow } from '@fr0st/core';
-import { parseNode } from './../filters.js';
-import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from './../vars.js';
+import { parseNode } from '../filters.js';
+import { BORDER_BOX, CONTENT_BOX, MARGIN_BOX, PADDING_BOX, SCROLL_BOX } from '../vars.js';
 import { css } from './styles.js';
 
 /**
@@ -60,7 +60,7 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     }
 
     return result;
-};
+}
 
 /**
  * Gets the computed width of the first node.
@@ -111,4 +111,4 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     }
 
     return result;
-};
+}

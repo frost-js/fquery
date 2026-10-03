@@ -12,7 +12,7 @@ import { expectAnimationState } from '../../support/assertions/animation.js';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +
@@ -27,10 +27,10 @@ export const setup = async ({ page }) => {
  */
 export function stopTests(stop) {
     test('stops animations on all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.animate(
                 '.animate',
-                (_) => { },
+                () => { },
                 {
                     duration: 100,
                     debug: true,
@@ -47,19 +47,19 @@ export function stopTests(stop) {
     });
 
     test('stops animations on all nodes (without finishing)', async ({ page }) => {
-        await page.evaluate((_) => {
-            $.animate(
+        await page.evaluate(() => {
+            window.stoppedAnimation = $.animate(
                 '.animate',
-                (_) => { },
+                () => { },
                 {
                     duration: 100,
                     debug: true,
                 },
-            );
+            ).catch((node) => node.id);
         });
         await advanceClock(page, 50);
         await page.evaluate(stop, ['.animate', { finish: false }]);
-        const testHtml = await page.evaluate((_) => document.body.innerHTML);
+        const testHtml = await page.evaluate(() => document.body.innerHTML);
         await expectAnimationState(page, [
             {
                 selectors: ['#test1', '#test3'],
@@ -70,7 +70,8 @@ export function stopTests(stop) {
             },
         ]);
         await advanceClock(page, 25);
-        const html = await page.evaluate((_) => document.body.innerHTML);
+        const html = await page.evaluate(() => document.body.innerHTML);
         expect(html).toBe(testHtml);
+        expect(await page.evaluate(() => window.stoppedAnimation)).toBe('test2');
     });
 }

@@ -2,8 +2,8 @@
 /** @import { ReleaseStyleLock } from '../../attributes/style-locks.js'; */
 /** @import { StyleValues } from '../../attributes/styles.js'; */
 
-import { setStyleLock as _setStyleLock } from './../../attributes/style-locks.js';
-import { addClass as _addClass, css as _css, getStyle as _getStyle, hide as _hide, removeClass as _removeClass, removeStyle as _removeStyle, setStyle as _setStyle, show as _show, toggle as _toggle, toggleClass as _toggleClass } from './../../attributes/styles.js';
+import { setStyleLock as _setStyleLock } from '../../attributes/style-locks.js';
+import { addClass as _addClass, css as _css, getStyle as _getStyle, hide as _hide, removeClass as _removeClass, removeStyle as _removeStyle, setStyle as _setStyle, show as _show, toggle as _toggle, toggleClass as _toggleClass } from '../../attributes/styles.js';
 
 /**
  * Adds classes to each node.
@@ -14,7 +14,7 @@ export function addClass(...classes) {
     _addClass(this, ...classes);
 
     return this;
-};
+}
 
 /**
  * Gets computed CSS style values for the first node.
@@ -23,7 +23,7 @@ export function addClass(...classes) {
  */
 export function css(style) {
     return _css(this, style);
-};
+}
 
 /**
  * Gets style properties for the first node.
@@ -32,7 +32,7 @@ export function css(style) {
  */
 export function getStyle(style) {
     return _getStyle(this, style);
-};
+}
 
 /**
  * Hides each node from display.
@@ -42,7 +42,7 @@ export function hide() {
     _hide(this);
 
     return this;
-};
+}
 
 /**
  * Removes classes from each node.
@@ -53,7 +53,7 @@ export function removeClass(...classes) {
     _removeClass(this, ...classes);
 
     return this;
-};
+}
 
 /**
  * Removes a style property from each node.
@@ -64,7 +64,7 @@ export function removeStyle(style) {
     _removeStyle(this, style);
 
     return this;
-};
+}
 
 /**
  * Sets style properties for each node.
@@ -77,7 +77,7 @@ export function setStyle(style, value, { important = false } = {}) {
     _setStyle(this, style, value, { important });
 
     return this;
-};
+}
 
 /**
  * Temporarily sets and locks one inline style property for each node.
@@ -89,7 +89,7 @@ export function setStyle(style, value, { important = false } = {}) {
  */
 export function setStyleLock(property, value, { important = false } = {}) {
     return _setStyleLock(this, property, value, { important });
-};
+}
 
 /**
  * Displays each hidden node.
@@ -99,7 +99,7 @@ export function show() {
     _show(this);
 
     return this;
-};
+}
 
 /**
  * Toggles the visibility of each node.
@@ -110,7 +110,7 @@ export function toggle(force) {
     _toggle(this, force);
 
     return this;
-};
+}
 
 /**
  * Toggles classes for each node.
@@ -121,4 +121,4 @@ export function toggleClass(...classes) {
     _toggleClass(this, ...classes);
 
     return this;
-};
+}

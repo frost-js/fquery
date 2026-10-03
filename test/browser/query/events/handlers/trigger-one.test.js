@@ -8,11 +8,11 @@ test.describe('QuerySet #triggerOne', () => {
 
     test.describe('node inputs', () => {
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $(shadow).triggerOne('click');
@@ -21,9 +21,9 @@ test.describe('QuerySet #triggerOne', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $(document).triggerOne('click');
@@ -32,9 +32,9 @@ test.describe('QuerySet #triggerOne', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $(window).triggerOne('click');

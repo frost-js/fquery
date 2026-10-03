@@ -8,7 +8,7 @@ test.describe('QuerySet #withChildren', () => {
     });
 
     test('returns nodes with children', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('div').withChildren().get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -18,7 +18,7 @@ test.describe('QuerySet #withChildren', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.withChildren();
 
@@ -29,7 +29,7 @@ test.describe('QuerySet #withChildren', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const range = document.createRange();
             const fragment = range.createContextualFragment('<div></div>');
             fragment.id = 'fragment';
@@ -43,7 +43,7 @@ test.describe('QuerySet #withChildren', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             const range = document.createRange();
@@ -61,7 +61,7 @@ test.describe('QuerySet #withChildren', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $(document).withChildren().get().map((node) => node.id));
 
         expect(ids).toEqual([

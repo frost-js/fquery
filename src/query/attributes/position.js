@@ -3,8 +3,8 @@
 /** @import { OffsetOptions } from '../../attributes/position.js'; */
 /** @import { PercentOptions } from '../../attributes/position.js'; */
 
-import { center as _center, constrain as _constrain, distTo as _distTo, distToNode as _distToNode, nearestTo as _nearestTo, nearestToNode as _nearestToNode, percentX as _percentX, percentY as _percentY, position as _position, rect as _rect } from './../../attributes/position.js';
-import QuerySet from './../query-set-core.js';
+import { center as _center, constrain as _constrain, distTo as _distTo, distToNode as _distToNode, nearestTo as _nearestTo, nearestToNode as _nearestToNode, percentX as _percentX, percentY as _percentY, position as _position, rect as _rect } from '../../attributes/position.js';
+import QuerySet from '../query-set-core.js';
 
 /**
  * Gets the X,Y co-ordinates for the center of the first node.
@@ -13,7 +13,7 @@ import QuerySet from './../query-set-core.js';
  */
 export function center({ offset = false } = {}) {
     return _center(this, { offset });
-};
+}
 
 /**
  * Constrains each node to a container node.
@@ -24,7 +24,7 @@ export function constrain(container) {
     _constrain(this, container);
 
     return this;
-};
+}
 
 /**
  * Gets the distance of a node to an X,Y position in the Window.
@@ -35,7 +35,7 @@ export function constrain(container) {
  */
 export function distTo(x, y, { offset = false } = {}) {
     return _distTo(this, x, y, { offset });
-};
+}
 
 /**
  * Gets the distance between two nodes.
@@ -44,7 +44,7 @@ export function distTo(x, y, { offset = false } = {}) {
  */
 export function distToNode(otherSelector) {
     return _distToNode(this, otherSelector);
-};
+}
 
 /**
  * Gets the nearest node to an X,Y position in the Window.
@@ -57,7 +57,7 @@ export function nearestTo(x, y, { offset = false } = {}) {
     const node = _nearestTo(this, x, y, { offset });
 
     return new QuerySet(node ? [node] : []);
-};
+}
 
 /**
  * Gets the nearest node to another node.
@@ -68,7 +68,7 @@ export function nearestToNode(otherSelector) {
     const node = _nearestToNode(this, otherSelector);
 
     return new QuerySet(node ? [node] : []);
-};
+}
 
 /**
  * Gets the percentage of an X co-ordinate relative to a node's width.
@@ -78,7 +78,7 @@ export function nearestToNode(otherSelector) {
  */
 export function percentX(x, { offset = false, clamp = true } = {}) {
     return _percentX(this, x, { offset, clamp });
-};
+}
 
 /**
  * Gets the percentage of a Y co-ordinate relative to a node's height.
@@ -88,7 +88,7 @@ export function percentX(x, { offset = false, clamp = true } = {}) {
  */
 export function percentY(y, { offset = false, clamp = true } = {}) {
     return _percentY(this, y, { offset, clamp });
-};
+}
 
 /**
  * Gets the position of the first node relative to the Window or Document.
@@ -97,7 +97,7 @@ export function percentY(y, { offset = false, clamp = true } = {}) {
  */
 export function position({ offset = false } = {}) {
     return _position(this, { offset });
-};
+}
 
 /**
  * Gets the computed bounding rectangle of the first node.
@@ -106,4 +106,4 @@ export function position({ offset = false } = {}) {
  */
 export function rect({ offset = false } = {}) {
     return _rect(this, { offset });
-};
+}

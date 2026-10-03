@@ -2,8 +2,8 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, isFragment, merge } from '@fr0st/core';
-import { parseFilter, parseNodes } from './../filters.js';
-import { getWrapTarget } from './../helpers.js';
+import { parseFilter, parseNodes } from '../filters.js';
+import { getWrapTarget } from '../helpers.js';
 import { clone, remove } from './manipulation.js';
 
 /**
@@ -54,7 +54,7 @@ export function unwrap(selector, nodeFilter) {
     }
 
     remove(parents);
-};
+}
 
 /**
  * Wraps each nodes with other nodes.
@@ -104,7 +104,7 @@ export function wrap(selector, otherSelector) {
 
         callDomMethod(deepest, 'insertBefore', node, null);
     }
-};
+}
 
 /**
  * Wraps all nodes with other nodes.
@@ -160,7 +160,7 @@ export function wrapAll(selector, otherSelector) {
     for (const node of nodes) {
         callDomMethod(deepest, 'insertBefore', node, null);
     }
-};
+}
 
 /**
  * Wraps the contents of each node with other nodes.
@@ -209,4 +209,4 @@ export function wrapInner(selector, otherSelector) {
             callDomMethod(deepest, 'insertBefore', child, null);
         }
     }
-};
+}

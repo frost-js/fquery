@@ -10,7 +10,7 @@ test.describe('#toggle', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.toggle(document.getElementById('test1'));
             });
 
@@ -19,7 +19,7 @@ test.describe('#toggle', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.toggle(document.querySelectorAll('div'));
             });
 
@@ -28,7 +28,7 @@ test.describe('#toggle', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.toggle(document.body.children);
             });
 
@@ -37,7 +37,7 @@ test.describe('#toggle', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.toggle([
                     document.getElementById('test1'),
                     document.getElementById('test2'),

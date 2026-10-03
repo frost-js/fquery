@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #tagName', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet #tagName', () => {
     });
 
     test('returns the tag name of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div').tagName())).toBe('div');
     });
 });

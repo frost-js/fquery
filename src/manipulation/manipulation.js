@@ -1,10 +1,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, isElement, isFragment, isNode, isShadow, merge } from '@fr0st/core';
-import { addEvent } from './../events/event-handlers.js';
-import { parseNodes } from './../filters.js';
-import { createEvent } from './../helpers.js';
-import { animations as _animations, data as _data, events as _events, queues, styles } from './../vars.js';
+import { addEvent } from '../events/event-handlers.js';
+import { parseNodes } from '../filters.js';
+import { createEvent } from '../helpers.js';
+import { animations as _animations, data as _data, events as _events, queues, styles } from '../vars.js';
 import { createFragment } from './create.js';
 
 /**
@@ -37,7 +37,7 @@ export function clone(selector, { deep = true, events = false, data = false, ani
 
         return clone;
     });
-};
+}
 
 /**
  * Deep-clones a single node.
@@ -80,7 +80,7 @@ function deepClone(node, clone, { deep = true, events = false, data = false, ani
             deepClone(content, getDomProperty(clone, 'content'), { deep, events, data, animations });
         }
     }
-};
+}
 
 /**
  * Detaches each node from the DOM.
@@ -98,7 +98,7 @@ export function detach(selector) {
     }
 
     return nodes;
-};
+}
 
 /**
  * Removes all children of each node from the DOM.
@@ -123,7 +123,7 @@ export function empty(selector) {
             callDomMethod(child, 'remove');
         }
     }
-};
+}
 
 /**
  * Removes each node from the DOM.
@@ -146,7 +146,7 @@ export function remove(selector) {
             callDomMethod(node, 'remove');
         }
     }
-};
+}
 
 /**
  * Removes all data for a single node.
@@ -211,7 +211,7 @@ export function removeNode(node) {
     if (isFragment(content)) {
         removeNode(content);
     }
-};
+}
 
 /**
  * Replaces each other node with nodes.
@@ -220,7 +220,7 @@ export function removeNode(node) {
  */
 export function replaceAll(selector, otherSelector) {
     replaceWith(otherSelector, selector);
-};
+}
 
 /**
  * Replaces each node with other nodes.
@@ -289,4 +289,4 @@ export function replaceWith(selector, otherSelector) {
     }
 
     remove(nodes);
-};
+}

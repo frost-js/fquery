@@ -9,7 +9,7 @@ test.describe('#setAttribute', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setAttribute(document.getElementById('test1'), 'placeholder', '123');
         });
 
@@ -18,7 +18,7 @@ test.describe('#setAttribute', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setAttribute(document.querySelectorAll('input'), 'placeholder', '123');
         });
 
@@ -27,7 +27,7 @@ test.describe('#setAttribute', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setAttribute(document.body.children, 'placeholder', '123');
         });
 
@@ -36,7 +36,7 @@ test.describe('#setAttribute', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.setAttribute([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

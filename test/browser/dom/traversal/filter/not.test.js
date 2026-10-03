@@ -9,7 +9,7 @@ test.describe('#not', () => {
     });
 
     test('returns nodes not matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.not('div', '[data-filter="test"]').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -20,7 +20,7 @@ test.describe('#not', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.not(document.getElementById('div2'), '[data-filter="test"]').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -29,7 +29,7 @@ test.describe('#not', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.not(document.querySelectorAll('div'), '[data-filter="test"]').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -39,7 +39,7 @@ test.describe('#not', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.not(document.body.children, '[data-filter="test"]').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -49,7 +49,7 @@ test.describe('#not', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -62,7 +62,7 @@ test.describe('#not', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -76,7 +76,7 @@ test.describe('#not', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.not([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

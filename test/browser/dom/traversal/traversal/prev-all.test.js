@@ -7,7 +7,7 @@ test.describe('#prevAll', () => {
     prevAllTests((args) => $.prevAll(...args).map((node) => node.id));
 
     test('returns all previous siblings of each node before a limit', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.prevAll('.span', null, '#span1, #span6').map((node) => node.id));
 
         expect(ids).toEqual([
@@ -16,14 +16,14 @@ test.describe('#prevAll', () => {
     });
 
     test('returns an empty array for empty nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => $.prevAll('#invalid'));
+        const ids = await page.evaluate(() => $.prevAll('#invalid'));
 
         expect(ids).toEqual([]);
     });
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.prevAll(document.getElementById('span3'), '#span1, #span5').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -32,7 +32,7 @@ test.describe('#prevAll', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.prevAll(document.querySelectorAll('.span'), '#span1, #span5').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -42,7 +42,7 @@ test.describe('#prevAll', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.prevAll(document.getElementById('parent2').children, '#span1, #span5').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -51,7 +51,7 @@ test.describe('#prevAll', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.prevAll(
                     [
                         document.getElementById('span3'),

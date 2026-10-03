@@ -12,7 +12,7 @@ export const setup = async ({ page }) => {
     await page.evaluate(() => {
         document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div><div id="div4"></div>';
     });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         $.setData('#div1', 'test1', 'Test 1');
         $.setData('#div3', 'test2', 'Test 2');
     });

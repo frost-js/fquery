@@ -9,14 +9,14 @@ test.describe('QuerySet #removeData', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
             return query === query.removeData('testA');
         })).toBe(true);
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, {
                 testA: 'Test 1',
@@ -30,7 +30,7 @@ test.describe('QuerySet #removeData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, {
@@ -45,7 +45,7 @@ test.describe('QuerySet #removeData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(document, {
                 testA: 'Test 1',
                 testB: 'Test 2',
@@ -58,7 +58,7 @@ test.describe('QuerySet #removeData', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(window, {
                 testA: 'Test 1',
                 testB: 'Test 2',

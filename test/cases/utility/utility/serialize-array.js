@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<form id="form">' +
             '<div>' +
@@ -97,7 +97,7 @@ export function serializeArrayTests(serializeArray) {
 
     test.describe('control exclusions', () => {
         test('excludes button inputs', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<input name="test1" type="button" value="Test 1">' +
@@ -114,7 +114,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes directly selected image inputs', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<input name="test1" type="image" value="Test 1">' +
                     '<input name="test2" type="text" value="Test 2">';
@@ -129,7 +129,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes button elements', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<button name="button" value="Button">Button</button>' +
@@ -146,7 +146,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes directly selected button elements', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<button name="test1" value="Test 1">Test 1</button>' +
                     '<input name="test2" type="text" value="Test 2">';
@@ -161,7 +161,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes output elements', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<output name="output">Output</output>' +
@@ -178,7 +178,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes directly selected output elements', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<output name="test1">Test 1</output>' +
                     '<input name="test2" type="text" value="Test 2">';
@@ -193,7 +193,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes named fieldsets while including their controls', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<fieldset name="fieldset">' +
@@ -239,7 +239,7 @@ export function serializeArrayTests(serializeArray) {
         }
 
         test('includes inputs associated with datalists', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<datalist id="list"><option value="Test 1"></option></datalist>' +
@@ -283,7 +283,7 @@ export function serializeArrayTests(serializeArray) {
         }
 
         test('includes enabled controls in the first legend of a disabled fieldset', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<fieldset disabled>' +
@@ -301,7 +301,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes disabled controls in the first legend of a disabled fieldset', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<fieldset disabled>' +
@@ -320,7 +320,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes controls in later legends of a disabled fieldset', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<fieldset disabled>' +
@@ -342,7 +342,7 @@ export function serializeArrayTests(serializeArray) {
 
     test.describe('select options', () => {
         test('excludes disabled selected options from single selects', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<select name="test1">' +
@@ -362,7 +362,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes disabled selected options from multiple selects', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<select name="test1[]" multiple>' +
@@ -387,7 +387,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('includes selected options with empty values', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<select name="test1"><option value="" selected>Test 1</option></select>' +
@@ -403,7 +403,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes selected options in disabled optgroups from single selects', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<select name="test1">' +
@@ -425,7 +425,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes selected options in disabled optgroups from multiple selects', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<select name="test1[]" multiple>' +
@@ -455,7 +455,7 @@ export function serializeArrayTests(serializeArray) {
 
     test.describe('form associations', () => {
         test('serializes associated controls in document order', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<input name="test1" type="text" value="Test 1" form="form">' +
                     '<form id="form">' +
@@ -486,7 +486,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes descendant controls associated with another form', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<form id="form">' +
                     '<input name="test1" type="text" value="Test 1" form="other">' +
@@ -504,7 +504,7 @@ export function serializeArrayTests(serializeArray) {
         });
 
         test('excludes controls outside the form without an association', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.body.innerHTML =
                     '<input name="test1" type="text" value="Test 1">' +
                     '<form id="form">' +

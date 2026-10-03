@@ -8,40 +8,40 @@ test.describe('#offsetParent', () => {
     });
 
     test('returns the offset parent of the first node', async ({ page }) => {
-        const id = await page.evaluate((_) => $.offsetParent('a').id);
+        const id = await page.evaluate(() => $.offsetParent('a').id);
 
         expect(id).toBe('child1');
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {
-        const node = await page.evaluate((_) => $.offsetParent('#invalid'));
+        const node = await page.evaluate(() => $.offsetParent('#invalid'));
 
         expect(node).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const id = await page.evaluate((_) =>
+        const id = await page.evaluate(() =>
             $.offsetParent(document.getElementById('a1')).id);
 
         expect(id).toBe('child1');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const id = await page.evaluate((_) =>
+        const id = await page.evaluate(() =>
             $.offsetParent(document.querySelectorAll('a')).id);
 
         expect(id).toBe('child1');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const id = await page.evaluate((_) =>
+        const id = await page.evaluate(() =>
             $.offsetParent(document.getElementById('span1').children).id);
 
         expect(id).toBe('child1');
     });
 
     test('works with array nodes', async ({ page }) => {
-        const id = await page.evaluate((_) =>
+        const id = await page.evaluate(() =>
             $.offsetParent([
                 document.getElementById('a1'),
                 document.getElementById('a2'),

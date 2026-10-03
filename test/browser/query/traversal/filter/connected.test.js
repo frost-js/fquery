@@ -7,7 +7,7 @@ test.describe('QuerySet #connected', () => {
     connectedTests((nodes) => $(nodes).connected().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.connected();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #connected', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const nodes = await page.evaluate((_) => {
+            const nodes = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
 
                 return $(fragment).connected().get();
@@ -29,7 +29,7 @@ test.describe('QuerySet #connected', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.getElementById('div1');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';

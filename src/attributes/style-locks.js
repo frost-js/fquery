@@ -1,9 +1,9 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, unique } from '@fr0st/core';
-import { getContext } from './../config.js';
-import { parseNodes } from './../filters.js';
-import { escapeCss, normalizeCssProperty, normalizeCssValue } from './../helpers.js';
+import { getContext } from '../config.js';
+import { parseNodes } from '../filters.js';
+import { escapeCss, normalizeCssProperty, normalizeCssValue } from '../helpers.js';
 
 const styleLocks = new WeakMap();
 
@@ -23,7 +23,7 @@ export function assertStyleUnlocked(node, property) {
     if (styleLocks.get(node)?.has(property)) {
         throw new Error(`CSS property "${property}" is already locked.`);
     }
-};
+}
 
 /**
  * Temporarily sets and locks one inline style property for each node.
@@ -110,7 +110,7 @@ export function setStyleLock(selector, property, value, { important = false } = 
             }
         }
     };
-};
+}
 
 /**
  * Validates a property and value before acquiring style locks.
@@ -141,4 +141,4 @@ function validateStyleLock(property, value) {
     }
 
     return style;
-};
+}

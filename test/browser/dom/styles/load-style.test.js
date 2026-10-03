@@ -9,7 +9,7 @@ test.describe('#loadStyle', () => {
 
     test.describe('attributes', () => {
         test('loads a stylesheet', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadStyle('assets/test.css');
             });
 
@@ -21,7 +21,7 @@ test.describe('#loadStyle', () => {
         });
 
         test('loads a stylesheet with attributes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadStyle('assets/test.css', {
                     integrity: 'sha384-92bXn1Q36iY7yWatlPt66wCfjkIltnOTBPgiq2Vf8xM816mhHZfQ1w4JliBw10Fw',
                     crossorigin: 'anonymous',
@@ -67,7 +67,7 @@ test.describe('#loadStyle', () => {
 
     test.describe('contexts', () => {
         test('loads a stylesheet without cache using the document base URL', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.head.innerHTML = '<base href="/assets/">';
                 $.loadStyle('test.css?test=1', null, { cache: false });
             });
@@ -80,7 +80,7 @@ test.describe('#loadStyle', () => {
         });
 
         test('loads a stylesheet without cache in a context with a different base URL', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const iframe = document.createElement('iframe');
                 document.body.appendChild(iframe);
                 const context = iframe.contentDocument;
@@ -98,7 +98,7 @@ test.describe('#loadStyle', () => {
 
     test.describe('completion', () => {
         test('resolves when the stylesheet is loaded', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 await $.loadStyle('assets/test.css');
             });
 
@@ -106,7 +106,7 @@ test.describe('#loadStyle', () => {
         });
 
         test('throws on error', async ({ page }) => {
-            const didThrow = await page.evaluate(async (_) => {
+            const didThrow = await page.evaluate(async () => {
                 try {
                     await $.loadStyle('assets/error.css');
                     return false;

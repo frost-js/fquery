@@ -8,9 +8,9 @@ test.describe('#removeEventDelegate', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -21,7 +21,7 @@ test.describe('#removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate(document.getElementById('parent1'), 'click', 'a', callback);
@@ -34,9 +34,9 @@ test.describe('#removeEventDelegate', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -47,7 +47,7 @@ test.describe('#removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate(document.querySelectorAll('div'), 'click', 'a', callback);
@@ -60,9 +60,9 @@ test.describe('#removeEventDelegate', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -73,7 +73,7 @@ test.describe('#removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate(document.body.children, 'click', 'a', callback);
@@ -86,9 +86,9 @@ test.describe('#removeEventDelegate', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -99,7 +99,7 @@ test.describe('#removeEventDelegate', () => {
                 const a = document.createElement('a');
                 shadow.appendChild(a);
                 $.addEventDelegate(shadow, 'click', 'a', callback);
-                $.addEventDelegate(shadow, 'click', 'a', (_) => {
+                $.addEventDelegate(shadow, 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate(shadow, 'click', 'a', callback);
@@ -109,9 +109,9 @@ test.describe('#removeEventDelegate', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -122,7 +122,7 @@ test.describe('#removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate(document, 'click', 'a', callback);
-                $.addEventDelegate(document, 'click', 'a', (_) => {
+                $.addEventDelegate(document, 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate(document, 'click', 'a', callback);
@@ -135,9 +135,9 @@ test.describe('#removeEventDelegate', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -148,7 +148,7 @@ test.describe('#removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 $.removeEventDelegate([

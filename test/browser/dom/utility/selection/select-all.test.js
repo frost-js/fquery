@@ -10,7 +10,7 @@ test.describe('#selectAll', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.selectAll(document.getElementById('div3'));
                 const selection = document.getSelection();
                 const range = selection.getRangeAt(0);
@@ -19,7 +19,7 @@ test.describe('#selectAll', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.selectAll(document.querySelectorAll('.select'));
                 const selection = document.getSelection();
                 const range = selection.getRangeAt(0);
@@ -28,7 +28,7 @@ test.describe('#selectAll', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.selectAll(document.getElementById('select').children);
                 const selection = document.getSelection();
                 const range = selection.getRangeAt(0);
@@ -37,7 +37,7 @@ test.describe('#selectAll', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.selectAll([
                     document.getElementById('div4'),
                     document.getElementById('div2'),

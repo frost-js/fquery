@@ -2,7 +2,7 @@
 /** @import { NodeInput } from '../../helpers.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { unwrap as _unwrap, wrap as _wrap, wrapAll as _wrapAll, wrapInner as _wrapInner } from './../../manipulation/wrap.js';
+import { unwrap as _unwrap, wrap as _wrap, wrapAll as _wrapAll, wrapInner as _wrapInner } from '../../manipulation/wrap.js';
 
 /**
  * Unwraps each node.
@@ -13,7 +13,7 @@ export function unwrap(nodeFilter) {
     _unwrap(this, nodeFilter);
 
     return this;
-};
+}
 
 /**
  * Wraps each nodes with other nodes.
@@ -24,7 +24,7 @@ export function wrap(otherSelector) {
     _wrap(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Wraps all nodes with other nodes.
@@ -35,7 +35,7 @@ export function wrapAll(otherSelector) {
     _wrapAll(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Wraps the contents of each node with other nodes.
@@ -46,4 +46,4 @@ export function wrapInner(otherSelector) {
     _wrapInner(this, otherSelector);
 
     return this;
-};
+}

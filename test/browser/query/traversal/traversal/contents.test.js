@@ -7,7 +7,7 @@ test.describe('QuerySet #contents', () => {
     contentsTests((nodes) => $(nodes).contents().get().map((node) => node.textContent));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('.parent');
             const query2 = query1.contents();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #contents', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const text = await page.evaluate((_) => {
+            const text = await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     'Test 1<div id="child1"></div>Test 2',
@@ -36,7 +36,7 @@ test.describe('QuerySet #contents', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const text = await page.evaluate((_) => {
+            const text = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -56,7 +56,7 @@ test.describe('QuerySet #contents', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $(document).contents().get().map((node) => node.id));
 
             expect(ids).toEqual([

@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="parent" style="position: relative; margin: 1050px; padding: 25px 50px;">' +
             '<div id="test1" data-toggle="child" style="display: block; width: 100px; height: 100px; padding: 50px;"></div>' +
@@ -38,7 +38,7 @@ export function positionTests(position) {
     });
 
     test('returns the position with offset including parent borders', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('parent').style.cssText += 'border: 10px solid; border-left-width: 20px;';
         });
 

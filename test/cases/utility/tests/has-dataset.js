@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="div1" data-text="Test"></div>' +
             '<div id="div2"></div>' +
@@ -28,7 +28,7 @@ export function hasDatasetTests(hasDataset) {
     });
 
     test('returns true for an empty dataset value', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('div2').setAttribute('data-empty', '');
         });
 

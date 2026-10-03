@@ -8,7 +8,7 @@ test.describe('#removeDataset', () => {
     });
 
     test('removes a dataset value for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeDataset('div', 'text');
         });
 
@@ -17,7 +17,7 @@ test.describe('#removeDataset', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeDataset(document.getElementById('test1'), 'text');
         });
 
@@ -26,7 +26,7 @@ test.describe('#removeDataset', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeDataset(document.querySelectorAll('div'), 'text');
         });
 
@@ -35,7 +35,7 @@ test.describe('#removeDataset', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeDataset(document.body.children, 'text');
         });
 
@@ -44,7 +44,7 @@ test.describe('#removeDataset', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeDataset([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

@@ -13,10 +13,10 @@ test.describe('QuerySet #animate', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.animate');
             return query === query.animate(
-                (_) => { },
+                () => { },
                 {
                     debug: true,
                 },
@@ -26,7 +26,7 @@ test.describe('QuerySet #animate', () => {
 
     test.describe('completion and stopping', () => {
         test('completes animations started on the same node inside a callback', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('#test2')
                     .animate(
                         (node, progress) => {
@@ -43,7 +43,7 @@ test.describe('QuerySet #animate', () => {
                                     duration: 100,
                                     type: 'linear',
                                 },
-                            ).then((_) => {
+                            ).then(() => {
                                 node.dataset.completed = 'true';
                             });
                         },
@@ -60,16 +60,16 @@ test.describe('QuerySet #animate', () => {
 
     test.describe('queues', () => {
         test('adds the animation to the queue', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('.animate')
-                    .queue((_) =>
+                    .queue(() =>
                         new Promise((resolve) =>
                             setTimeout(resolve, 100),
                         ),
                     );
                 $('.animate')
                     .animate(
-                        (_) => { },
+                        () => { },
                         {
                             duration: 100,
                             debug: true,
@@ -77,7 +77,7 @@ test.describe('QuerySet #animate', () => {
                     );
             });
             await advanceClock(page, 50);
-            expect(await page.evaluate((_) => document.body.innerHTML)).toBe('<div id="test1"></div>' +
+            expect(await page.evaluate(() => document.body.innerHTML)).toBe('<div id="test1"></div>' +
                     '<div id="test2" class="animate"></div>' +
                     '<div id="test3"></div>' +
                     '<div id="test4" class="animate"></div>');

@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #each', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet #each', () => {
     });
 
     test('executes a callback on each node in the set', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const results = [];
             $('div')
                     .each((node) => {
@@ -28,9 +28,9 @@ test.describe('QuerySet #each', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
-            return query === query.each((_) => { });
+            return query === query.each(() => { });
         })).toEqual(true);
     });
 });

@@ -19,9 +19,9 @@ const ajaxDefaults = {
     rejectOnCancel: true,
     responseType: null,
     url: null,
-    xhr: (_) => {
+    xhr: () => {
         const { XMLHttpRequest } = getWindow();
-        return new XMLHttpRequest;
+        return new XMLHttpRequest();
     },
 };
 
@@ -46,7 +46,7 @@ export const config = {
  */
 export function getAjaxDefaults() {
     return ajaxDefaults;
-};
+}
 
 /**
  * Gets the animation defaults.
@@ -54,7 +54,7 @@ export function getAjaxDefaults() {
  */
 export function getAnimationDefaults() {
     return animationDefaults;
-};
+}
 
 /**
  * Gets the document context.
@@ -62,7 +62,7 @@ export function getAnimationDefaults() {
  */
 export function getContext() {
     return config.context;
-};
+}
 
 /**
  * Gets the window.
@@ -70,7 +70,7 @@ export function getContext() {
  */
 export function getWindow() {
     return config.window;
-};
+}
 
 /**
  * Sets the AJAX defaults.
@@ -81,7 +81,7 @@ export function setAjaxDefaults(options) {
 
     extend(ajaxDefaults, options);
     ajaxDefaults.headers = headers;
-};
+}
 
 /**
  * Sets the animation defaults.
@@ -89,7 +89,7 @@ export function setAjaxDefaults(options) {
  */
 export function setAnimationDefaults(options) {
     extend(animationDefaults, options);
-};
+}
 
 /**
  * Sets the document context.
@@ -102,7 +102,7 @@ export function setContext(context) {
     }
 
     config.context = context;
-};
+}
 
 /**
  * Sets the window.
@@ -115,7 +115,7 @@ export function setWindow(window) {
     }
 
     config.window = window;
-};
+}
 
 /**
  * Sets whether animations should use setTimeout.
@@ -123,4 +123,4 @@ export function setWindow(window) {
  */
 export function useTimeout(enable = true) {
     config.useTimeout = enable;
-};
+}

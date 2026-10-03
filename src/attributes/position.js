@@ -1,8 +1,8 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { callDomMethod, clampPercent, dist, getDomProperty } from '@fr0st/core';
-import { getContext, getWindow } from './../config.js';
-import { parseNode, parseNodes } from './../filters.js';
+import { getContext, getWindow } from '../config.js';
+import { parseNode, parseNodes } from '../filters.js';
 import { css } from './styles.js';
 
 /**
@@ -37,7 +37,7 @@ export function center(selector, { offset = false } = {}) {
         x: nodeBox.left + nodeBox.width / 2,
         y: nodeBox.top + nodeBox.height / 2,
     };
-};
+}
 
 /**
  * Constrains each node to a container node.
@@ -55,8 +55,8 @@ export function constrain(selector, containerSelector) {
 
     const documentElement = getDomProperty(getContext(), 'documentElement');
     const window = getWindow();
-    const getScrollX = (_) => getDomProperty(documentElement, 'scrollHeight') > window.outerHeight;
-    const getScrollY = (_) => getDomProperty(documentElement, 'scrollWidth') > window.outerWidth;
+    const getScrollX = () => getDomProperty(documentElement, 'scrollHeight') > window.outerHeight;
+    const getScrollY = () => getDomProperty(documentElement, 'scrollWidth') > window.outerWidth;
 
     const preScrollX = getScrollX();
     const preScrollY = getScrollY();
@@ -135,7 +135,7 @@ export function constrain(selector, containerSelector) {
     if (preScrollX !== postScrollX || preScrollY !== postScrollY) {
         constrain(nodes, containerSelector);
     }
-};
+}
 
 /**
  * Gets the distance of a node to an X,Y position in the Window.
@@ -153,7 +153,7 @@ export function distTo(selector, x, y, { offset = false } = {}) {
     }
 
     return dist(nodeCenter.x, nodeCenter.y, x, y);
-};
+}
 
 /**
  * Gets the distance between two nodes.
@@ -169,7 +169,7 @@ export function distToNode(selector, otherSelector) {
     }
 
     return distTo(selector, otherCenter.x, otherCenter.y);
-};
+}
 
 /**
  * Gets the nearest node to an X,Y position in the Window.
@@ -194,7 +194,7 @@ export function nearestTo(selector, x, y, { offset = false } = {}) {
     }
 
     return closest;
-};
+}
 
 /**
  * Gets the nearest node to another node.
@@ -210,7 +210,7 @@ export function nearestToNode(selector, otherSelector) {
     }
 
     return nearestTo(selector, otherCenter.x, otherCenter.y);
-};
+}
 
 /**
  * Gets the percentage of an X co-ordinate relative to a node's width.
@@ -233,7 +233,7 @@ export function percentX(selector, x, { offset = false, clamp = true } = {}) {
     return clamp ?
         clampPercent(percent) :
         percent;
-};
+}
 
 /**
  * Gets the percentage of a Y co-ordinate relative to a node's height.
@@ -256,7 +256,7 @@ export function percentY(selector, y, { offset = false, clamp = true } = {}) {
     return clamp ?
         clampPercent(percent) :
         percent;
-};
+}
 
 /**
  * Gets the position of the first node relative to the Window or Document.
@@ -288,7 +288,7 @@ export function position(selector, { offset = false } = {}) {
     }
 
     return result;
-};
+}
 
 /**
  * Gets the computed bounding rectangle of the first node.
@@ -312,4 +312,4 @@ export function rect(selector, { offset = false } = {}) {
     }
 
     return result;
-};
+}

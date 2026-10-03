@@ -12,7 +12,7 @@ import { advanceClock, setupClock } from '../../../setup/browser.js';
 export const setup = async ({ page }) => {
     await setupClock(page);
 
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="div1" class="test"></div>' +
             '<div id="div2"></div>' +

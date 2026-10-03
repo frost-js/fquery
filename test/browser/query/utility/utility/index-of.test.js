@@ -8,14 +8,14 @@ test.describe('QuerySet #indexOf', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 return $(fragment).indexOf();
             })).toBe(0);
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 return $(shadow).indexOf();
@@ -25,7 +25,7 @@ test.describe('QuerySet #indexOf', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('.test');
                 return $('div').indexOf(query);
             })).toBe(1);

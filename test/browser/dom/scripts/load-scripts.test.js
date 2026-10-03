@@ -1,9 +1,10 @@
 import { expect, test } from '#test';
+import { getScriptIntegrity } from '../../../support/assets.js';
 
 test.describe('#loadScripts', () => {
     test.describe('attributes', () => {
         test('loads scripts', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadScripts([
                     'assets/test.js',
                     'assets/test2.js',
@@ -24,20 +25,23 @@ test.describe('#loadScripts', () => {
         });
 
         test('loads scripts with attributes', async ({ page }) => {
-            await page.evaluate((_) => {
-                $.loadScripts([
-                    {
-                        src: 'assets/test.js',
-                        integrity: 'sha384-1AK0oxsmb9+cemh1YwLG4rPfSc3jb81aGOY8CBrD6WNTumSzeeAs3p5iYyXJemZu',
-                        crossorigin: 'anonymous',
-                    },
-                    {
-                        src: 'assets/test2.js',
-                        integrity: 'sha384-AhCcweXLV7j7q8PDvpl7r+bbPJICrsLyt6X2uQMwKva75GGIX3GZdxYhTVwgIcWT',
-                        crossorigin: 'anonymous',
-                    },
-                ]);
-            });
+            const integrities = await Promise.all([
+                getScriptIntegrity('test.js'),
+                getScriptIntegrity('test2.js'),
+            ]);
+
+            await page.evaluate(([firstIntegrity, secondIntegrity]) => $.loadScripts([
+                {
+                    src: 'assets/test.js',
+                    integrity: firstIntegrity,
+                    crossorigin: 'anonymous',
+                },
+                {
+                    src: 'assets/test2.js',
+                    integrity: secondIntegrity,
+                    crossorigin: 'anonymous',
+                },
+            ]), integrities);
 
             const scripts = page.locator('head script');
             const first = scripts.nth(0);
@@ -46,8 +50,8 @@ test.describe('#loadScripts', () => {
             await expect(scripts).toHaveCount(2);
             await expect(first).toHaveAttribute('src', 'assets/test.js');
             await expect(second).toHaveAttribute('src', 'assets/test2.js');
-            await expect(first).toHaveAttribute('integrity', 'sha384-1AK0oxsmb9+cemh1YwLG4rPfSc3jb81aGOY8CBrD6WNTumSzeeAs3p5iYyXJemZu');
-            await expect(second).toHaveAttribute('integrity', 'sha384-AhCcweXLV7j7q8PDvpl7r+bbPJICrsLyt6X2uQMwKva75GGIX3GZdxYhTVwgIcWT');
+            await expect(first).toHaveAttribute('integrity', integrities[0]);
+            await expect(second).toHaveAttribute('integrity', integrities[1]);
             await expect(first).toHaveAttribute('crossorigin', 'anonymous');
             await expect(second).toHaveAttribute('crossorigin', 'anonymous');
         });
@@ -86,7 +90,7 @@ test.describe('#loadScripts', () => {
 
     test.describe('completion', () => {
         test('resolves when the scripts are loaded', async ({ page }) => {
-            const data = await page.evaluate(async (_) => {
+            const data = await page.evaluate(async () => {
                 await $.loadScripts([
                     'assets/test.js',
                     'assets/test2.js',
@@ -98,7 +102,7 @@ test.describe('#loadScripts', () => {
         });
 
         test('throws on error', async ({ page }) => {
-            const didThrow = await page.evaluate(async (_) => {
+            const didThrow = await page.evaluate(async () => {
                 try {
                     await $.loadScripts([
                         'assets/error.js',

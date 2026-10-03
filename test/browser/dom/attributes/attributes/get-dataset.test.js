@@ -21,28 +21,28 @@ test.describe('#getDataset', () => {
     }
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const value = await page.evaluate((_) =>
+        const value = await page.evaluate(() =>
             $.getDataset(document.getElementById('test1'), 'text'));
 
         expect(value).toBe('Test');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const value = await page.evaluate((_) =>
+        const value = await page.evaluate(() =>
             $.getDataset(document.querySelectorAll('div'), 'text'));
 
         expect(value).toBe('Test');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const value = await page.evaluate((_) =>
+        const value = await page.evaluate(() =>
             $.getDataset(document.body.children, 'text'));
 
         expect(value).toBe('Test');
     });
 
     test('works with array nodes', async ({ page }) => {
-        const value = await page.evaluate((_) =>
+        const value = await page.evaluate(() =>
             $.getDataset([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

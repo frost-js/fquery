@@ -13,7 +13,7 @@ test.describe('QuerySet #slideOut', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.animate');
             return query === query.slideOut(
                 {
@@ -25,9 +25,9 @@ test.describe('QuerySet #slideOut', () => {
 
     test.describe('queues', () => {
         test('adds the animation to the queue', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $('.animate')
-                    .queue((_) =>
+                    .queue(() =>
                         new Promise((resolve) =>
                             setTimeout(resolve, 100),
                         ),
@@ -41,7 +41,7 @@ test.describe('QuerySet #slideOut', () => {
                     );
             });
             await advanceClock(page, 50);
-            expect(await page.evaluate((_) => document.body.innerHTML)).toBe('<div id="test1"></div>' +
+            expect(await page.evaluate(() => document.body.innerHTML)).toBe('<div id="test1"></div>' +
                     '<div id="test2" class="animate"></div>' +
                     '<div id="test3"></div>' +
                     '<div id="test4" class="animate"></div>');

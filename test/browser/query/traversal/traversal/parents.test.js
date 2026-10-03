@@ -7,7 +7,7 @@ test.describe('QuerySet #parents', () => {
     parentsTests(([nodes, ...args]) => $(nodes).parents(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('a');
             const query2 = query1.parents();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #parents', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('div');
 
                 return $('a').parents(query).get().map((node) => node.id);
@@ -34,7 +34,7 @@ test.describe('QuerySet #parents', () => {
         });
 
         test('works with QuerySet limit', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('div');
 
                 return $('a').parents(null, query).get().map((node) => node.id);

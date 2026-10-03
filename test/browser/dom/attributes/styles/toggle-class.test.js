@@ -9,7 +9,7 @@ test.describe('#toggleClass', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.toggleClass(document.getElementById('test1'), 'test1');
         });
 
@@ -18,7 +18,7 @@ test.describe('#toggleClass', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.toggleClass(document.querySelectorAll('div'), 'test1');
         });
 
@@ -27,7 +27,7 @@ test.describe('#toggleClass', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.toggleClass(document.body.children, 'test1');
         });
 
@@ -36,7 +36,7 @@ test.describe('#toggleClass', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.toggleClass([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

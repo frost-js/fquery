@@ -12,7 +12,7 @@ export function noConflict() {
     if (fQuery && window.$ === fQuery) {
         window.$ = _$;
     }
-};
+}
 
 /**
  * Registers the global variables.
@@ -31,4 +31,4 @@ export function registerGlobals(window, document, query) {
     window.$ = fQuery;
 
     return fQuery;
-};
+}

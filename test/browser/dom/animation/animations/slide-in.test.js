@@ -12,7 +12,7 @@ test.describe('#slideIn', () => {
 
     test.describe('style locks and restoration', () => {
         test('restores existing inline transform without changing overflow', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 for (const node of document.querySelectorAll('.animate')) {
                     node.style.setProperty('overflow', 'scroll');
                     node.style.setProperty('transform', 'scale(2)');
@@ -30,7 +30,7 @@ test.describe('#slideIn', () => {
         });
 
         test('restores and releases styles when the direction callback throws', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const node = document.getElementById('test2');
                 node.style.transform = 'scale(2)';
                 let calls = 0;
@@ -46,7 +46,7 @@ test.describe('#slideIn', () => {
                 });
             });
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 const release = $.setStyleLock('#test2', 'transform', 'scale(3)');
                 release();
             });
@@ -63,7 +63,7 @@ test.describe('#slideIn', () => {
 
     test.describe('completion and stopping', () => {
         test('can be stopped', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.slideIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -83,13 +83,13 @@ test.describe('#slideIn', () => {
         });
 
         test('can be stopped (without finishing)', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.slideIn('.animate', {
                     duration: 100,
                     debug: true,
                 });
 
-                animation.catch((_) => { });
+                animation.catch(() => { });
 
                 return { animation };
             });
@@ -124,7 +124,7 @@ test.describe('#slideIn', () => {
         });
 
         test('resolves when the animation is stopped', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 const animation = $.slideIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -141,7 +141,7 @@ test.describe('#slideIn', () => {
         });
 
         test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.slideIn('.animate', {
                         duration: 100,
@@ -157,13 +157,13 @@ test.describe('#slideIn', () => {
         });
 
         test('does not stop all animations', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.slideIn('.animate', {
                     duration: 100,
                 });
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -191,7 +191,7 @@ test.describe('#slideIn', () => {
         });
 
         test('resolves when the animation is completed', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.slideIn('.animate', {
                     duration: 100,
                     debug: true,
@@ -211,7 +211,7 @@ test.describe('#slideIn', () => {
         });
 
         test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.slideIn('.animate', {
                         duration: 1000,
@@ -229,7 +229,7 @@ test.describe('#slideIn', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.slideIn(
                     document.getElementById('test2'),
                     {
@@ -260,7 +260,7 @@ test.describe('#slideIn', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.slideIn(
                     document.querySelectorAll('.animate'),
                     {
@@ -291,7 +291,7 @@ test.describe('#slideIn', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.slideIn(
                     document.body.children,
                     {
@@ -318,7 +318,7 @@ test.describe('#slideIn', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.slideIn([
                     document.getElementById('test2'),
                     document.getElementById('test4'),

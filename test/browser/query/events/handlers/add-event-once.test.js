@@ -9,21 +9,21 @@ test.describe('QuerySet #addEventOnce', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
-            return query === query.addEventOnce('click', (_) => null);
+            return query === query.addEventOnce('click', () => null);
         })).toBe(true);
     });
 
     test.describe('node inputs', () => {
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 $(shadow)
-                        .addEventOnce('click', (_) => {
+                        .addEventOnce('click', () => {
                             result++;
                         });
                 shadow.dispatchEvent(event);
@@ -33,11 +33,11 @@ test.describe('QuerySet #addEventOnce', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 $(document)
-                        .addEventOnce('click', (_) => {
+                        .addEventOnce('click', () => {
                             result++;
                         });
                 document.dispatchEvent(event);
@@ -47,11 +47,11 @@ test.describe('QuerySet #addEventOnce', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 $(window)
-                        .addEventOnce('click', (_) => {
+                        .addEventOnce('click', () => {
                             result++;
                         });
                 window.dispatchEvent(event);

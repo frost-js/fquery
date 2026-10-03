@@ -7,7 +7,7 @@ test.describe('#hidden', () => {
     hiddenTests((nodes) => $.hidden(nodes).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.hidden(document.getElementById('div2')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -16,7 +16,7 @@ test.describe('#hidden', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.hidden(document.querySelectorAll('div')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -26,7 +26,7 @@ test.describe('#hidden', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.hidden(document.body.children).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -36,7 +36,7 @@ test.describe('#hidden', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const myDoc = new Document();
             myDoc.id = 'document';
 
@@ -49,7 +49,7 @@ test.describe('#hidden', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const myWindow = {
                 document: {},
                 id: 'window',
@@ -65,7 +65,7 @@ test.describe('#hidden', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.hidden([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

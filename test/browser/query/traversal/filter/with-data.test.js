@@ -7,7 +7,7 @@ test.describe('QuerySet #withData', () => {
     withDataTests(([nodes, ...args]) => $(nodes).withData(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.withData();
 
@@ -18,7 +18,7 @@ test.describe('QuerySet #withData', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
 
             $.setData(fragment, 'test', 'Test');
@@ -33,7 +33,7 @@ test.describe('QuerySet #withData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
 
@@ -49,7 +49,7 @@ test.describe('QuerySet #withData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             $.setData(document, 'test', 'Test');
 
             return $(document).withData().get().map((node) => node.id);
@@ -61,7 +61,7 @@ test.describe('QuerySet #withData', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             $.setData(window, 'test', 'Test');
 
             return $(window).withData().get().map((node) => node.id);

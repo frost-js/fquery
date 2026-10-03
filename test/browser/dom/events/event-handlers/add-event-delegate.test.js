@@ -8,13 +8,13 @@ test.describe('#addEventDelegate', () => {
 
     test.describe('scoped selectors', () => {
         test('works with Window nodes and scoped selectors', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
                 });
                 const element = document.getElementById('test1');
-                $.addEventDelegate(window, 'click', ':scope > body > div > a', (_) => {
+                $.addEventDelegate(window, 'click', ':scope > body > div > a', () => {
                     result++;
                 });
                 element.dispatchEvent(event);
@@ -26,10 +26,10 @@ test.describe('#addEventDelegate', () => {
 
     test.describe('node inputs', () => {
         test('matches form targets with a control named matches', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="matches"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEventDelegate('body', 'click', 'form', callback);
@@ -41,7 +41,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -54,7 +54,7 @@ test.describe('#addEventDelegate', () => {
                     document.getElementById('parent1'),
                     'click',
                     'a',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );
@@ -71,7 +71,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -84,7 +84,7 @@ test.describe('#addEventDelegate', () => {
                     document.querySelectorAll('div'),
                     'click',
                     'a',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );
@@ -101,7 +101,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -114,7 +114,7 @@ test.describe('#addEventDelegate', () => {
                     document.body.children,
                     'click',
                     'a',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );
@@ -131,7 +131,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -140,7 +140,7 @@ test.describe('#addEventDelegate', () => {
                 const shadow = div.attachShadow({ mode: 'open' });
                 const a = document.createElement('a');
                 shadow.appendChild(a);
-                $.addEventDelegate(shadow, 'click', 'a', (_) => {
+                $.addEventDelegate(shadow, 'click', 'a', () => {
                     result++;
                 });
                 a.dispatchEvent(event);
@@ -150,7 +150,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -159,7 +159,7 @@ test.describe('#addEventDelegate', () => {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate(document, 'click', 'a', (_) => {
+                $.addEventDelegate(document, 'click', 'a', () => {
                     result++;
                 });
                 element1.dispatchEvent(event);
@@ -175,13 +175,13 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
                 });
                 const element = document.getElementById('test2');
-                $.addEventDelegate(window, 'click', 'span', (_) => {
+                $.addEventDelegate(window, 'click', 'span', () => {
                     result++;
                 });
                 element.dispatchEvent(event);
@@ -191,7 +191,7 @@ test.describe('#addEventDelegate', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -207,7 +207,7 @@ test.describe('#addEventDelegate', () => {
                     ],
                     'click',
                     'a',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );

@@ -7,7 +7,7 @@ test.describe('QuerySet #getStyle', () => {
     getStyleTests(([nodes, ...args]) => $(nodes).getStyle(...args));
 
     test('returns an object with all style values for the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div').getStyle())).toEqual({
             display: 'block',
             width: '100px',

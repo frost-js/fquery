@@ -9,18 +9,18 @@ test.describe('QuerySet #addEvent', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
-            return query === query.addEvent('click', (_) => null);
+            return query === query.addEvent('click', () => null);
         })).toBe(true);
     });
 
     test.describe('node inputs', () => {
         test('adds listeners on forms with a control named addEventListener', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="addEventListener"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $('form').addEvent('click', callback);
@@ -30,13 +30,13 @@ test.describe('QuerySet #addEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const event = new Event('click');
                 $(shadow)
-                        .addEvent('click', (_) => {
+                        .addEvent('click', () => {
                             result++;
                         });
                 shadow.dispatchEvent(event);
@@ -46,11 +46,11 @@ test.describe('QuerySet #addEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 $(document)
-                        .addEvent('click', (_) => {
+                        .addEvent('click', () => {
                             result++;
                         });
                 document.dispatchEvent(event);
@@ -60,11 +60,11 @@ test.describe('QuerySet #addEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 $(window)
-                        .addEvent('click', (_) => {
+                        .addEvent('click', () => {
                             result++;
                         });
                 window.dispatchEvent(event);

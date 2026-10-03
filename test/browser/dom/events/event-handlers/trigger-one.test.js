@@ -8,10 +8,10 @@ test.describe('#triggerOne', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const targets = [];
-                $.addEvent('a', 'click', (e) => {
-                    targets.push(e.target.id);
+                $.addEvent('a', 'click', (event) => {
+                    targets.push(event.target.id);
                 });
                 $.triggerOne(document.getElementById('test1'), 'click');
                 return targets;
@@ -19,10 +19,10 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const targets = [];
-                $.addEvent('a', 'click', (e) => {
-                    targets.push(e.target.id);
+                $.addEvent('a', 'click', (event) => {
+                    targets.push(event.target.id);
                 });
                 $.triggerOne(document.querySelectorAll('a'), 'click');
                 return targets;
@@ -30,10 +30,10 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const targets = [];
-                $.addEvent('a', 'click', (e) => {
-                    targets.push(e.target.id);
+                $.addEvent('a', 'click', (event) => {
+                    targets.push(event.target.id);
                 });
                 $.triggerOne(document.getElementById('div1').children, 'click');
                 return targets;
@@ -41,11 +41,11 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $.triggerOne(shadow, 'click');
@@ -54,9 +54,9 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $.triggerOne(document, 'click');
@@ -65,9 +65,9 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $.triggerOne(window, 'click');
@@ -76,10 +76,10 @@ test.describe('#triggerOne', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const targets = [];
-                $.addEvent('a', 'click', (e) => {
-                    targets.push(e.target.id);
+                $.addEvent('a', 'click', (event) => {
+                    targets.push(event.target.id);
                 });
                 $.triggerOne([
                     document.getElementById('test1'),

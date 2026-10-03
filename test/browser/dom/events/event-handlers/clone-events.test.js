@@ -10,7 +10,7 @@ test.describe('#cloneEvents', () => {
 
     test.describe('empty registries', () => {
         test('does nothing when a node has no registered events', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.cloneEvents('#test3', '#test4');
                 return true;
             })).toBe(true);
@@ -19,7 +19,7 @@ test.describe('#cloneEvents', () => {
 
     test.describe('source inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element = document.getElementById('test1');
                 $.cloneEvents(element, '[data-toggle="noEvent"]');
@@ -39,7 +39,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $.cloneEvents(document.querySelectorAll('[data-toggle="event"]'), '[data-toggle="noEvent"]');
                 document.getElementById('test1').dispatchEvent(event);
@@ -58,7 +58,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $.cloneEvents(document.getElementById('eventParent').children, '[data-toggle="noEvent"]');
                 document.getElementById('test1').dispatchEvent(event);
@@ -77,12 +77,12 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(shadow, '[data-toggle="noEvent"]');
@@ -94,10 +94,10 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(document, '[data-toggle="noEvent"]');
@@ -109,10 +109,10 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(window, '[data-toggle="noEvent"]');
@@ -124,7 +124,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
@@ -150,7 +150,7 @@ test.describe('#cloneEvents', () => {
 
     test.describe('destination inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element = document.getElementById('test3');
                 $.cloneEvents('[data-toggle="event"]', element);
@@ -170,7 +170,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with NodeList other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $.cloneEvents('[data-toggle="event"]', document.querySelectorAll('[data-toggle="noEvent"]'));
                 document.getElementById('test1').dispatchEvent(event);
@@ -189,7 +189,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $.cloneEvents('[data-toggle="event"]', document.getElementById('noEventParent').children);
                 document.getElementById('test1').dispatchEvent(event);
@@ -208,13 +208,13 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with ShadowRoot other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(a, shadow);
@@ -225,11 +225,11 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with Document other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(a, document);
@@ -240,11 +240,11 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with Window other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $.cloneEvents(a, window);
@@ -255,7 +255,7 @@ test.describe('#cloneEvents', () => {
         });
 
         test('works with array other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element1 = document.getElementById('test3');
                 const element2 = document.getElementById('test4');

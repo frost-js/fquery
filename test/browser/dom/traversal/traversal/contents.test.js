@@ -7,14 +7,14 @@ test.describe('#contents', () => {
     contentsTests((nodes) => $.contents(nodes).map((node) => node.textContent));
 
     test('returns an empty array for empty nodes', async ({ page }) => {
-        const nodes = await page.evaluate((_) => $.contents('#invalid'));
+        const nodes = await page.evaluate(() => $.contents('#invalid'));
 
         expect(nodes).toEqual([]);
     });
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const text = await page.evaluate((_) =>
+            const text = await page.evaluate(() =>
                 $.contents(document.getElementById('parent1')).map((node) => node.textContent));
 
             expect(text).toEqual([
@@ -25,7 +25,7 @@ test.describe('#contents', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const text = await page.evaluate((_) =>
+            const text = await page.evaluate(() =>
                 $.contents(document.querySelectorAll('.parent')).map((node) => node.textContent));
 
             expect(text).toEqual([
@@ -39,7 +39,7 @@ test.describe('#contents', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const text = await page.evaluate((_) =>
+            const text = await page.evaluate(() =>
                 $.contents(document.body.children).map((node) => node.textContent));
 
             expect(text).toEqual([
@@ -53,7 +53,7 @@ test.describe('#contents', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const text = await page.evaluate((_) => {
+            const text = await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     'Test 1<div id="child1"></div>Test 2',
@@ -70,7 +70,7 @@ test.describe('#contents', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const text = await page.evaluate((_) => {
+            const text = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -90,7 +90,7 @@ test.describe('#contents', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.contents(document).map((node) => node.id));
 
             expect(ids).toEqual([
@@ -99,7 +99,7 @@ test.describe('#contents', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const text = await page.evaluate((_) =>
+            const text = await page.evaluate(() =>
                 $.contents([
                     document.getElementById('parent1'),
                     document.getElementById('parent2'),

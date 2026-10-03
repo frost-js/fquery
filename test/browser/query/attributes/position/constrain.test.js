@@ -9,7 +9,7 @@ test.describe('QuerySet #constrain', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('[data-toggle="from"]');
             return query === query.constrain('[data-toggle="to"]');
         })).toBe(true);
@@ -17,7 +17,7 @@ test.describe('QuerySet #constrain', () => {
 
     test.describe('destination inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $('[data-toggle="from"]').constrain(document.getElementById('test3'));
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -31,7 +31,7 @@ test.describe('QuerySet #constrain', () => {
         });
 
         test('works with NodeList other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $('[data-toggle="from"]').constrain(document.querySelectorAll('[data-toggle="to"]'));
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -45,7 +45,7 @@ test.describe('QuerySet #constrain', () => {
         });
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $('[data-toggle="from"]').constrain(document.getElementById('toParent').children);
                 return document.body.innerHTML;
             })).toBe('<div id="fromParent">' +
@@ -59,7 +59,7 @@ test.describe('QuerySet #constrain', () => {
         });
 
         test('works with array other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $('[data-toggle="from"]')
                         .constrain([
                             document.getElementById('test3'),
@@ -77,7 +77,7 @@ test.describe('QuerySet #constrain', () => {
         });
 
         test('works with QuerySet other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const query = $('[data-toggle="to"]');
                 $('[data-toggle="from"]').constrain(query);
                 return document.body.innerHTML;

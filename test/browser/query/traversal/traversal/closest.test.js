@@ -7,7 +7,7 @@ test.describe('QuerySet #closest', () => {
     closestTests(([nodes, ...args]) => $(nodes).closest(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('a');
             const query2 = query1.closest();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #closest', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('div');
 
                 return $('a').closest(query).get().map((node) => node.id);
@@ -32,7 +32,7 @@ test.describe('QuerySet #closest', () => {
         });
 
         test('works with QuerySet limit', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('#span2');
 
                 return $('a').closest('div', query).get().map((node) => node.id);

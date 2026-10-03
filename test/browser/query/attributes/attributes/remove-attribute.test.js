@@ -8,7 +8,7 @@ test.describe('QuerySet #removeAttribute', () => {
     });
 
     test('removes an attribute for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $('input').removeAttribute('disabled');
         });
 
@@ -17,7 +17,7 @@ test.describe('QuerySet #removeAttribute', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        const isSameQuerySet = await page.evaluate((_) => {
+        const isSameQuerySet = await page.evaluate(() => {
             const query = $('input');
 
             return query === query.removeAttribute('disabled');

@@ -94,7 +94,7 @@ $('.message').setText('Hello from fQuery');
 
 The DOM implementation is supplied by the application and is not a dependency of fQuery.
 
-## Quick Start
+## Usage
 
 Query existing nodes and chain operations:
 
@@ -128,7 +128,7 @@ $(() => {
 });
 ```
 
-## Query Model
+## Query model
 
 For node or selector inputs, `$(selector, context?)` and `$.query(selector, context?)` return a `QuerySet`. `$.queryOne(selector, context?)` returns a `QuerySet` containing at most one node.
 
@@ -346,7 +346,7 @@ Delegation matches the target or its nearest matching ancestor before the contai
 
 `$.mouseDragFactory(down, move?, up?, options?)` creates a mouse/touch drag callback. Options include `debounce`, `passive`, `preventDefault`, and the required number of `touches`.
 
-## Animation and Queues
+## Animation and queues
 
 ### Animation
 
@@ -452,7 +452,7 @@ HTTP error statuses, network errors, and timeouts reject with `{ status, xhr, ev
 
 `$.parseParams(data)` produces URL-encoded parameters and `$.parseFormData(data)` produces a `FormData` object. Both accept objects or `{ name, value }` entries. `parseFormData()` preserves repeated names and `File` or `Blob` values.
 
-## Scripts, Stylesheets, and Cookies
+## Scripts, stylesheets, and cookies
 
 - `$.loadScript(url, attributes?, options?)`: load one script. Scripts default to ordered execution.
 - `$.loadScripts(urls, options?)`: load multiple scripts. Entries can be URLs or attribute objects.
@@ -463,7 +463,7 @@ Loader options include `cache` and an alternate document `context`. Each functio
 
 Cookie helpers are `$.getCookie(name)`, `$.setCookie(name, value, { expires?, path?, secure? })`, and `$.removeCookie(name, { path?, secure? })`. Cookie expiration is specified in seconds.
 
-## Parsing, Selection, and Utilities
+## Parsing, selection, and utilities
 
 ### Parsing and sanitization
 
@@ -517,7 +517,7 @@ const values = $._unique([1, 1, 2]);
 
 These prefixed helpers follow the installed FrostCore version. Consult FrostCore for its complete API.
 
-## Behavior Notes
+## Behavior notes
 
 - Selector-based operations use the configured document unless an explicit context is supplied.
 - `QuerySet` getter methods generally inspect the first node; mutations generally apply to every node.

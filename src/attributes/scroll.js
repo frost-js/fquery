@@ -1,7 +1,7 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { getDomProperty, isDocument, isWindow } from '@fr0st/core';
-import { parseNode, parseNodes } from './../filters.js';
+import { parseNode, parseNodes } from '../filters.js';
 
 /**
  * Gets the scroll X position of the first node.
@@ -30,7 +30,7 @@ export function getScrollX(selector) {
     }
 
     return getDomProperty(node, 'scrollLeft');
-};
+}
 
 /**
  * Gets the scroll Y position of the first node.
@@ -59,7 +59,7 @@ export function getScrollY(selector) {
     }
 
     return getDomProperty(node, 'scrollTop');
-};
+}
 
 /**
  * Scrolls each node to an X,Y position.
@@ -89,7 +89,7 @@ export function setScroll(selector, x, y) {
             node.scrollTop = y;
         }
     }
-};
+}
 
 /**
  * Scrolls each node to an X position.
@@ -117,7 +117,7 @@ export function setScrollX(selector, x) {
             node.scrollLeft = x;
         }
     }
-};
+}
 
 /**
  * Scrolls each node to a Y position.
@@ -145,4 +145,4 @@ export function setScrollY(selector, y) {
             node.scrollTop = y;
         }
     }
-};
+}

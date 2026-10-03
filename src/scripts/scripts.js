@@ -1,6 +1,6 @@
 import { callDomMethod, getDomProperty, isString } from '@fr0st/core';
-import { appendQueryString } from './../ajax/helpers.js';
-import { getContext } from './../config.js';
+import { appendQueryString } from '../ajax/helpers.js';
+import { getContext } from '../config.js';
 
 /** @typedef {Record<string, *>} ScriptAttributes */
 
@@ -19,7 +19,7 @@ import { getContext } from './../config.js';
  */
 function isEnabled(value) {
     return value !== false && value !== null && typeof value !== 'undefined';
-};
+}
 
 /**
  * Applies a script attribute if it should be serialized.
@@ -33,7 +33,7 @@ function setScriptAttribute(script, key, value) {
     }
 
     script.setAttribute(key, value === true ? '' : value);
-};
+}
 
 /**
  * Loads and executes a JavaScript file.
@@ -67,10 +67,10 @@ export function loadScript(url, attributes, { cache = true, context = getContext
     getDomProperty(context, 'head').appendChild(script);
 
     return new Promise((resolve, reject) => {
-        script.onload = (_) => resolve();
+        script.onload = () => resolve();
         script.onerror = (error) => reject(error);
     });
-};
+}
 
 /**
  * Loads and executes multiple JavaScript files (in order).
@@ -86,4 +86,4 @@ export function loadScripts(urls, { cache = true, context = getContext() } = {})
                 loadScript(null, url, { cache, context }),
         ),
     );
-};
+}

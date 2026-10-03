@@ -1,6 +1,6 @@
 import { callDomMethod, getDomProperty, isFragment, merge } from '@fr0st/core';
-import { getContext, getWindow } from './../config.js';
-import { allowedTags as _allowedTags, uriAttributes } from './../vars.js';
+import { getContext, getWindow } from '../config.js';
+import { allowedTags as _allowedTags, uriAttributes } from '../vars.js';
 
 /** @typedef {Record<string, Array<string|RegExp>>} AllowedTags */
 
@@ -21,7 +21,7 @@ export function sanitize(html, allowedTags = _allowedTags) {
     }
 
     return template.innerHTML;
-};
+}
 
 /**
  * Checks whether an attribute is allowed.
@@ -47,7 +47,7 @@ function isAllowedAttribute(attribute, allowedAttributes) {
     } catch {
         return false;
     }
-};
+}
 
 /**
  * Sanitizes a single node.
@@ -91,4 +91,4 @@ function sanitizeNode(node, allowedTags = _allowedTags) {
     for (const child of childNodes) {
         sanitizeNode(child, allowedTags);
     }
-};
+}

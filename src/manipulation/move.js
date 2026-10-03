@@ -1,7 +1,7 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty } from '@fr0st/core';
-import { parseNodes } from './../filters.js';
+import { parseNodes } from '../filters.js';
 import { clone } from './manipulation.js';
 
 /**
@@ -44,7 +44,7 @@ export function after(selector, otherSelector) {
             callDomMethod(parent, 'insertBefore', clone, getDomProperty(node, 'nextSibling'));
         }
     }
-};
+}
 
 /**
  * Appends each other node to each node.
@@ -81,7 +81,7 @@ export function append(selector, otherSelector) {
             callDomMethod(node, 'insertBefore', clone, null);
         }
     }
-};
+}
 
 /**
  * Appends each node to each other node.
@@ -90,7 +90,7 @@ export function append(selector, otherSelector) {
  */
 export function appendTo(selector, otherSelector) {
     append(otherSelector, selector);
-};
+}
 
 /**
  * Inserts each other node before each node.
@@ -132,7 +132,7 @@ export function before(selector, otherSelector) {
             callDomMethod(parent, 'insertBefore', clone, node);
         }
     }
-};
+}
 
 /**
  * Inserts each node after each other node.
@@ -141,7 +141,7 @@ export function before(selector, otherSelector) {
  */
 export function insertAfter(selector, otherSelector) {
     after(otherSelector, selector);
-};
+}
 
 /**
  * Inserts each node before each other node.
@@ -150,7 +150,7 @@ export function insertAfter(selector, otherSelector) {
  */
 export function insertBefore(selector, otherSelector) {
     before(otherSelector, selector);
-};
+}
 
 /**
  * Prepends each other node to each node.
@@ -187,7 +187,7 @@ export function prepend(selector, otherSelector) {
             callDomMethod(node, 'insertBefore', clone, getDomProperty(node, 'firstChild'));
         }
     }
-};
+}
 
 /**
  * Prepends each node to each other node.
@@ -196,4 +196,4 @@ export function prepend(selector, otherSelector) {
  */
 export function prependTo(selector, otherSelector) {
     prepend(otherSelector, selector);
-};
+}

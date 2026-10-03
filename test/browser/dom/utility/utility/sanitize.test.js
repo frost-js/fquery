@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#sanitize', () => {
     test('returns a sanitized HTML string', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.sanitize(
                 '<script>' +
                     'window.alert(123);' +
@@ -17,7 +17,7 @@ test.describe('#sanitize', () => {
 
     test.describe('URL validation', () => {
         test('removes javascript URLs', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<a href="javascript:alert(1)">Test 1</a>' +
                     '<a href="java&#10;script:alert(1)">Test 2</a>' +
@@ -30,7 +30,7 @@ test.describe('#sanitize', () => {
         });
 
         test('validates URL attributes allowed by regular expression rules', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<a href="javascript:alert(1)">Test</a>',
                     {
@@ -40,7 +40,7 @@ test.describe('#sanitize', () => {
         });
 
         test('validates form action URLs', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<form action="javascript:alert(1)">' +
                         '<button formaction="javascript:alert(1)">Test</button>' +
@@ -53,7 +53,7 @@ test.describe('#sanitize', () => {
         });
 
         test('allows non-javascript URLs', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<a href="/test">Test 1</a>' +
                     '<a href="mailto:test@example.com">Test 2</a>' +
@@ -66,7 +66,7 @@ test.describe('#sanitize', () => {
         });
 
         test('removes malformed URLs', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize('<a href="http://[">Test</a>')))
                 .toBe('<a>Test</a>');
         });
@@ -74,7 +74,7 @@ test.describe('#sanitize', () => {
 
     test.describe('allowed tags and attributes', () => {
         test('sanitizes a HTML string with allowed tags', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<div id="div" class="test">' +
                         '<span id="span" class="test">Test</span>' +
@@ -87,7 +87,7 @@ test.describe('#sanitize', () => {
         });
 
         test('sanitizes a HTML string with allowed attributes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<div id="div" class="test">' +
                         '<span id="span" class="test">Test</span>' +
@@ -103,7 +103,7 @@ test.describe('#sanitize', () => {
         });
 
         test('matches string attribute rules exactly', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<div id="test" data-id="test" aria-labelledby="test">Test</div>',
                     {
@@ -113,7 +113,7 @@ test.describe('#sanitize', () => {
         });
 
         test('supports regular expression attribute rules', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<div data-test="Test" title="Test">Test</div>',
                     {
@@ -123,12 +123,12 @@ test.describe('#sanitize', () => {
         });
 
         test('ignores inherited tag rules', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize('<constructor>Test</constructor>', {}))).toBe('');
         });
 
         test('sanitizes a HTML string with allowed wildcard attributes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<div id="div" class="test">' +
                         '<span id="span" class="test">Test</span>' +
@@ -147,7 +147,7 @@ test.describe('#sanitize', () => {
 
     test.describe('shadowed DOM properties', () => {
         test('allows forms with a control named tagName', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<form><input name="tagName"></form>',
                     {
@@ -158,7 +158,7 @@ test.describe('#sanitize', () => {
         });
 
         test('removes disallowed form attributes when a control shadows attributes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<form onclick="window.alert(1)">' +
                         '<input name="attributes">' +
@@ -171,7 +171,7 @@ test.describe('#sanitize', () => {
         });
 
         test('removes disallowed form attributes when a control shadows removeAttribute', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<form onclick="window.alert(1)">' +
                         '<input name="removeAttribute">' +
@@ -184,7 +184,7 @@ test.describe('#sanitize', () => {
         });
 
         test('removes disallowed form descendants when a control shadows children', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize(
                     '<form>' +
                         '<input name="children"><script>window.alert(1)</script>' +
@@ -197,7 +197,7 @@ test.describe('#sanitize', () => {
         });
 
         test('removes disallowed forms with a control named remove', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.sanitize('<form><input name="remove"></form>', {}))).toBe('');
         });
     });

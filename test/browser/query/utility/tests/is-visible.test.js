@@ -7,12 +7,12 @@ test.describe('QuerySet #isVisible', () => {
     isVisibleTests((nodes) => $(nodes).isVisible());
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $(document).isVisible())).toBe(true);
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $(window).isVisible())).toBe(true);
     });
 });

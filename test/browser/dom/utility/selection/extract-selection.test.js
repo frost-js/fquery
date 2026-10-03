@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#extractSelection', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="select">' +
                 '<div id="div1">' +
@@ -26,7 +26,7 @@ test.describe('#extractSelection', () => {
     });
 
     test('returns the extracted nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const extracted = $.extractSelection();
             document.body.innerHTML = '';
             for (const node of extracted) {
@@ -37,7 +37,7 @@ test.describe('#extractSelection', () => {
     });
 
     test('extracts the selected nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.extractSelection();
             return document.body.innerHTML;
         })).toBe('<div id="select">' +

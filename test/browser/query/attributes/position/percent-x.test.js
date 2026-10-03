@@ -7,7 +7,7 @@ test.describe('QuerySet #percentX', () => {
     percentXTests(([nodes, ...args]) => $(nodes).percentX(...args));
 
     test('clamps the returned value between 0 and 100', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
             return [
                 query.percentX(0),

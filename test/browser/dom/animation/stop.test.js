@@ -14,10 +14,10 @@ test.describe('#stop', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -25,7 +25,7 @@ test.describe('#stop', () => {
                 );
             });
             await advanceClock(page, 50);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.stop(document.getElementById('test2'));
             });
             await expectAnimationState(page, [
@@ -40,10 +40,10 @@ test.describe('#stop', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -51,7 +51,7 @@ test.describe('#stop', () => {
                 );
             });
             await advanceClock(page, 25);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.stop(document.querySelectorAll('.animate'));
             });
             await expectAnimationState(page, [
@@ -62,10 +62,10 @@ test.describe('#stop', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -73,7 +73,7 @@ test.describe('#stop', () => {
                 );
             });
             await advanceClock(page, 25);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.stop(document.body.children);
             });
             await expectAnimationState(page, [
@@ -84,10 +84,10 @@ test.describe('#stop', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -95,7 +95,7 @@ test.describe('#stop', () => {
                 );
             });
             await advanceClock(page, 25);
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.stop([
                     document.getElementById('test2'),
                     document.getElementById('test4'),

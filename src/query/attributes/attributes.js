@@ -1,7 +1,7 @@
 /** @import { AttributeValues } from '../../attributes/attributes.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { getAttribute as _getAttribute, getDataset as _getDataset, getHtml as _getHtml, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHtml as _setHtml, setProperty as _setProperty, setText as _setText, setValue as _setValue } from './../../attributes/attributes.js';
+import { getAttribute as _getAttribute, getDataset as _getDataset, getHtml as _getHtml, getProperty as _getProperty, getText as _getText, getValue as _getValue, removeAttribute as _removeAttribute, removeDataset as _removeDataset, removeProperty as _removeProperty, setAttribute as _setAttribute, setDataset as _setDataset, setHtml as _setHtml, setProperty as _setProperty, setText as _setText, setValue as _setValue } from '../../attributes/attributes.js';
 
 /**
  * Gets attribute value(s) for the first node.
@@ -10,7 +10,7 @@ import { getAttribute as _getAttribute, getDataset as _getDataset, getHtml as _g
  */
 export function getAttribute(attribute) {
     return _getAttribute(this, attribute);
-};
+}
 
 /**
  * Gets dataset value(s) for the first node.
@@ -19,7 +19,7 @@ export function getAttribute(attribute) {
  */
 export function getDataset(key) {
     return _getDataset(this, key);
-};
+}
 
 /**
  * Gets the HTML contents of the first node.
@@ -27,7 +27,7 @@ export function getDataset(key) {
  */
 export function getHtml() {
     return _getHtml(this);
-};
+}
 
 /**
  * Gets a property value for the first node.
@@ -36,7 +36,7 @@ export function getHtml() {
  */
 export function getProperty(property) {
     return _getProperty(this, property);
-};
+}
 
 /**
  * Gets the text contents of the first node.
@@ -44,7 +44,7 @@ export function getProperty(property) {
  */
 export function getText() {
     return _getText(this);
-};
+}
 
 /**
  * Gets the value property of the first node.
@@ -52,7 +52,7 @@ export function getText() {
  */
 export function getValue() {
     return _getValue(this);
-};
+}
 
 /**
  * Removes an attribute from each node.
@@ -63,7 +63,7 @@ export function removeAttribute(attribute) {
     _removeAttribute(this, attribute);
 
     return this;
-};
+}
 
 /**
  * Removes a dataset value from each node.
@@ -74,7 +74,7 @@ export function removeDataset(key) {
     _removeDataset(this, key);
 
     return this;
-};
+}
 
 /**
  * Removes a property from each node.
@@ -85,7 +85,7 @@ export function removeProperty(property) {
     _removeProperty(this, property);
 
     return this;
-};
+}
 
 /**
  * Sets an attribute value for each node.
@@ -97,7 +97,7 @@ export function setAttribute(attribute, value) {
     _setAttribute(this, attribute, value);
 
     return this;
-};
+}
 
 /**
  * Sets a dataset value for each node.
@@ -109,7 +109,7 @@ export function setDataset(key, value) {
     _setDataset(this, key, value);
 
     return this;
-};
+}
 
 /**
  * Sets the HTML contents of each node.
@@ -120,7 +120,7 @@ export function setHtml(html) {
     _setHtml(this, html);
 
     return this;
-};
+}
 
 /**
  * Sets a property value for each node.
@@ -132,7 +132,7 @@ export function setProperty(property, value) {
     _setProperty(this, property, value);
 
     return this;
-};
+}
 
 /**
  * Sets the text contents of each node.
@@ -143,7 +143,7 @@ export function setText(text) {
     _setText(this, text);
 
     return this;
-};
+}
 
 /**
  * Sets the value property of each node.
@@ -154,4 +154,4 @@ export function setValue(value) {
     _setValue(this, value);
 
     return this;
-};
+}

@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<a href="#" id="test1">Test</a>' +
             '<a href="#" id="test2">Test</a>';
@@ -80,7 +80,7 @@ export function removeEventTests(createRemoveEvent) {
                 const event2 = new Event('hover');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent('a', 'click hover', (_) => {
+                $.addEvent('a', 'click hover', () => {
                     result++;
                 });
                 operation('a');
@@ -101,10 +101,10 @@ export function removeEventTests(createRemoveEvent) {
                 const event2 = new Event('hover');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
-                $.addEvent('a', 'click hover', (_) => {
+                $.addEvent('a', 'click hover', () => {
                     result++;
                 });
                 operation('a', 'click');
@@ -125,10 +125,10 @@ export function removeEventTests(createRemoveEvent) {
                 const event2 = new Event('hover');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
-                $.addEvent('a', 'click hover', (_) => {
+                $.addEvent('a', 'click hover', () => {
                     result++;
                 });
                 operation('a', 'click hover');
@@ -145,14 +145,14 @@ export function removeEventTests(createRemoveEvent) {
 
             expect(await page.evaluate((operation) => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 operation('a', 'click', callback);
@@ -167,14 +167,14 @@ export function removeEventTests(createRemoveEvent) {
 
             expect(await page.evaluate((operation) => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 operation('a', 'hover', callback);
@@ -193,10 +193,10 @@ export function removeEventTests(createRemoveEvent) {
                     const event = new Event(eventName);
                     const element1 = document.getElementById('test1');
                     const element2 = document.getElementById('test2');
-                    $.addEvent('a', eventName, (_) => {
+                    $.addEvent('a', eventName, () => {
                         result++;
                     });
-                    $.addEvent('a', 'click', (_) => null);
+                    $.addEvent('a', 'click', () => null);
                     operation('a', eventName);
                     element1.dispatchEvent(event);
                     element2.dispatchEvent(event);
@@ -212,10 +212,10 @@ export function removeEventTests(createRemoveEvent) {
                     const event = new Event('click');
                     const element1 = document.getElementById('test1');
                     const element2 = document.getElementById('test2');
-                    $.addEvent('a', 'click', (_) => {
+                    $.addEvent('a', 'click', () => {
                         result++;
                     });
-                    $.addEvent('a', eventName, (_) => null);
+                    $.addEvent('a', eventName, () => null);
                     operation('a', eventName);
                     element1.dispatchEvent(event);
                     element2.dispatchEvent(event);
@@ -231,12 +231,12 @@ export function removeEventTests(createRemoveEvent) {
 
             expect(await page.evaluate((operation) => {
                 let removedCount = 0;
-                const callback = (_) => {
+                const callback = () => {
                     removedCount++;
                 };
 
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => null);
+                $.addEvent('a', 'click', () => null);
                 operation('a', 'click', callback);
 
                 const clones = $.clone('a', { events: true });
@@ -251,10 +251,10 @@ export function removeEventTests(createRemoveEvent) {
 
             expect(await page.evaluate((operation) => {
                 let remainingCount = 0;
-                const callback = (_) => null;
+                const callback = () => null;
 
                 $.addEvent('a', 'click', callback);
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     remainingCount++;
                 });
                 operation('a', 'click', callback);
@@ -277,7 +277,7 @@ export function removeEventTests(createRemoveEvent) {
                 const event2 = new Event('hover');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent(document, 'click hover', (_) => {
+                $.addEvent(document, 'click hover', () => {
                     result++;
                 }, true);
                 operation(document);
@@ -300,10 +300,10 @@ export function removeEventTests(createRemoveEvent) {
                 const event2 = new Event('hover');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
-                $.addEvent(document, 'hover', (_) => {
+                $.addEvent(document, 'hover', () => {
                     result++;
                 }, { capture: true });
                 operation(document, null, null, { capture: true });

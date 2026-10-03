@@ -7,14 +7,14 @@ test.describe('#next', () => {
     nextTests((args) => $.next(...args).map((node) => node.id));
 
     test('returns an empty array for empty nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => $.next('#invalid'));
+        const ids = await page.evaluate(() => $.next('#invalid'));
 
         expect(ids).toEqual([]);
     });
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.next(document.getElementById('span6'), '#span7').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -23,7 +23,7 @@ test.describe('#next', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.next(document.querySelectorAll('.span'), '#span7').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -32,7 +32,7 @@ test.describe('#next', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.next(document.getElementById('parent2').children, '#span7').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -41,7 +41,7 @@ test.describe('#next', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.next(
                     [
                         document.getElementById('span2'),

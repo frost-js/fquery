@@ -12,7 +12,7 @@ test.describe('#animate', () => {
 
     test.describe('start times and zero duration', () => {
         test('resolves zero-duration animations with full progress', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 await $.animate(
                     '.animate',
                     (node, progress) => {
@@ -28,7 +28,7 @@ test.describe('#animate', () => {
         });
 
         test('completes zero-duration animations with infinite enabled', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 await $.animate(
                     '.animate',
                     (node, progress) => {
@@ -47,10 +47,10 @@ test.describe('#animate', () => {
 
     test.describe('completion and stopping', () => {
         test('can be stopped', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -72,17 +72,17 @@ test.describe('#animate', () => {
         });
 
         test('can be stopped (without finishing)', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
                     },
                 );
 
-                animation.catch((_) => { });
+                animation.catch(() => { });
 
                 return { animation };
             });
@@ -113,10 +113,10 @@ test.describe('#animate', () => {
         });
 
         test('resolves when the animation is stopped', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 const animation = $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -133,7 +133,7 @@ test.describe('#animate', () => {
         });
 
         test('resolves when the animation is stopped from its callback', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.animate(
                     '#test2',
                     (node, progress) => {
@@ -166,11 +166,11 @@ test.describe('#animate', () => {
         });
 
         test('throws when the animation is stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.animate(
                         '.animate',
-                        (_) => { },
+                        () => { },
                         {
                             duration: 1000,
                             debug: true,
@@ -186,17 +186,17 @@ test.describe('#animate', () => {
         });
 
         test('does not stop all animations', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => {
+            const animationHandle = await page.evaluateHandle(() => {
                 const animation = $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                     },
                 );
                 $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -222,10 +222,10 @@ test.describe('#animate', () => {
         });
 
         test('resolves when the animation is completed', async ({ page }) => {
-            const animationHandle = await page.evaluateHandle((_) => ({
+            const animationHandle = await page.evaluateHandle(() => ({
                 animation: $.animate(
                     '.animate',
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -245,7 +245,7 @@ test.describe('#animate', () => {
         });
 
         test('completes animations started on the same node inside a callback', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     '#test2',
                     (node, progress) => {
@@ -262,7 +262,7 @@ test.describe('#animate', () => {
                                 duration: 100,
                                 type: 'linear',
                             },
-                        ).then((_) => {
+                        ).then(() => {
                             node.dataset.completed = 'true';
                         });
                     },
@@ -277,12 +277,12 @@ test.describe('#animate', () => {
         });
 
         test('rejects callback errors without freezing later animations', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 window.animationError = null;
 
                 $.animate(
                     '#test2',
-                    (_) => {
+                    () => {
                         throw new Error('Test error');
                     },
                     {
@@ -327,11 +327,11 @@ test.describe('#animate', () => {
         });
 
         test('throws when all animations are stopped (without finishing)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const animation = $.animate(
                         '.animate',
-                        (_) => { },
+                        () => { },
                         {
                             duration: 1000,
                             debug: true,
@@ -349,10 +349,10 @@ test.describe('#animate', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     document.getElementById('test2'),
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -378,10 +378,10 @@ test.describe('#animate', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     document.querySelectorAll('.animate'),
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -407,10 +407,10 @@ test.describe('#animate', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     document.body.children,
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,
@@ -433,13 +433,13 @@ test.describe('#animate', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.animate(
                     [
                         document.getElementById('test2'),
                         document.getElementById('test4'),
                     ],
-                    (_) => { },
+                    () => { },
                     {
                         duration: 100,
                         debug: true,

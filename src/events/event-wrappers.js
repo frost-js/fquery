@@ -25,7 +25,7 @@ function getDelegate(node, target, selector, scoped) {
 
         target = getDomProperty(target, 'parentNode');
     }
-};
+}
 
 /**
  * Returns a wrapped event callback that executes on a delegate selector.
@@ -67,7 +67,7 @@ export function delegateFactory(node, selector, callback) {
             delete event.delegateTarget;
         }
     };
-};
+}
 
 /**
  * Returns a wrapped event callback that checks for a namespace match.
@@ -83,7 +83,7 @@ export function namespaceFactory(eventName, callback) {
 
         return callback(event);
     };
-};
+}
 
 /**
  * Returns a wrapped event callback that prevents the default action when the callback returns false.
@@ -96,7 +96,7 @@ export function preventFactory(callback) {
             event.preventDefault();
         }
     };
-};
+}
 
 /**
  * Returns a wrapped callback that performs cleanup before its first execution.
@@ -109,4 +109,4 @@ export function selfDestructCallbackFactory(callback, cleanup) {
         cleanup();
         return callback(event);
     };
-};
+}

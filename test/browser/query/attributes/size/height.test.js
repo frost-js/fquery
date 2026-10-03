@@ -8,12 +8,12 @@ test.describe('QuerySet #height', () => {
 
     test.describe('node inputs', () => {
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $(document).height())).toBe(1152);
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $(window).height())).toBe(600);
         });
     });

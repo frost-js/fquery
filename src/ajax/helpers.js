@@ -1,5 +1,5 @@
 import { getDomProperty, isArray, isObject, isPlainObject, isUndefined } from '@fr0st/core';
-import { getWindow } from './../config.js';
+import { getWindow } from '../config.js';
 
 /** @typedef {{name: string, value: *}} FormEntry */
 
@@ -21,7 +21,7 @@ export function appendQueryString(url, key, value, baseUri) {
     urlData.searchParams.append(key, value);
 
     return urlData.toString();
-};
+}
 
 /**
  * Creates URLSearchParams from input data.
@@ -32,7 +32,7 @@ export function createSearchParams(data) {
     const { URLSearchParams } = getWindow();
 
     return new URLSearchParams(data);
-};
+}
 
 /**
  * Creates a URL from a URL string.
@@ -44,7 +44,7 @@ export function createUrl(url, baseUri = getDomProperty(getWindow().document, 'b
     const { URL } = getWindow();
 
     return new URL(url, baseUri);
-};
+}
 
 /**
  * Merges headers case-insensitively, preserving the last value and spelling.
@@ -61,7 +61,7 @@ export function mergeHeaders(...sources) {
     }
 
     return Object.fromEntries(headers.values());
-};
+}
 
 /**
  * Returns a FormData object from form entries or a data object.
@@ -72,14 +72,14 @@ export function parseFormData(data) {
     const { FormData } = getWindow();
     const values = parseValues(data);
 
-    const formData = new FormData;
+    const formData = new FormData();
 
     for (const [key, value] of values) {
         formData.append(key, value);
     }
 
     return formData;
-};
+}
 
 /**
  * Returns a URI-encoded attribute string from form entries or a data object.
@@ -94,7 +94,7 @@ export function parseParams(data) {
         .join('&');
 
     return paramString;
-};
+}
 
 /**
  * Returns flattened parameter entries for a key and value.
@@ -121,7 +121,7 @@ function parseValue(key, value) {
     }
 
     return [[key, value]];
-};
+}
 
 /**
  * Returns flattened parameter entries from form entries or a data object.
@@ -139,4 +139,4 @@ function parseValues(data) {
     }
 
     return data;
-};
+}

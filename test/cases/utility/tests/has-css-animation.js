@@ -11,7 +11,7 @@ import { expect, test } from '#test';
 export const setup = async ({ page }) => {
     await page.addStyleTag({ content: '.test { animation: spin 4s linear infinite; }' +
         '@keyframes spin { 100% { transform: rotate(360deg); } }' });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="div1" class="test"></div>' +
             '<div id="div2"></div>' +

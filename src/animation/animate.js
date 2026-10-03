@@ -3,8 +3,8 @@
 /** @import { ElementInput } from '../helpers.js'; */
 /** @import { StopAnimationOptions } from './animation.js'; */
 
-import { parseNodes } from './../filters.js';
-import { animations } from './../vars.js';
+import { parseNodes } from '../filters.js';
+import { animations } from '../vars.js';
 import AnimationSet from './animation-set.js';
 import Animation from './animation.js';
 import { start } from './helpers.js';
@@ -24,7 +24,7 @@ export function animate(selector, callback, options) {
     start();
 
     return new AnimationSet(newAnimations);
-};
+}
 
 /**
  * Stops all animations for each node.
@@ -44,4 +44,4 @@ export function stop(selector, { finish = true } = {}) {
             animation.stop({ finish });
         }
     }
-};
+}

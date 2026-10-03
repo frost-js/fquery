@@ -112,7 +112,7 @@ var ajaxDefaults = {
 	rejectOnCancel: true,
 	responseType: null,
 	url: null,
-	xhr: (_) => {
+	xhr: () => {
 		const { XMLHttpRequest } = getWindow();
 		return new XMLHttpRequest();
 	}
@@ -317,19 +317,19 @@ var AjaxRequest = class {
 			xhr: this.xhr,
 			event
 		});
-		this.xhr.onload = (e) => {
-			if (this.xhr.status >= 400) rejectRequest(e);
+		this.xhr.onload = (event) => {
+			if (this.xhr.status >= 400) rejectRequest(event);
 			else this.#resolve({
 				response: this.xhr.response,
 				xhr: this.xhr,
-				event: e
+				event
 			});
 		};
 		this.xhr.onabort = () => this.cancel();
 		this.xhr.onerror = rejectRequest;
 		this.xhr.ontimeout = rejectRequest;
-		if (this.#options.onProgress) this.xhr.onprogress = (e) => this.#options.onProgress(e.loaded / e.total, this.xhr, e);
-		if (this.#options.onUploadProgress) this.xhr.upload.onprogress = (e) => this.#options.onUploadProgress(e.loaded / e.total, this.xhr, e);
+		if (this.#options.onProgress) this.xhr.onprogress = (event) => this.#options.onProgress(event.loaded / event.total, this.xhr, event);
+		if (this.#options.onUploadProgress) this.xhr.upload.onprogress = (event) => this.#options.onUploadProgress(event.loaded / event.total, this.xhr, event);
 		if (this.#options.beforeSend) this.#options.beforeSend(this.xhr);
 		this.xhr.send(this.#options.data);
 		if (this.#options.afterSend) this.#options.afterSend(this.xhr);
@@ -566,7 +566,7 @@ function debounce(callback) {
 	return (...args) => {
 		if (running) return;
 		running = true;
-		Promise.resolve().then((_) => {
+		Promise.resolve().then(() => {
 			try {
 				callback(...args);
 			} finally {
@@ -928,7 +928,7 @@ function findOneByTag$1(tagName, context = getContext()) {
 * @returns {NodeFilterCallback} The node filter callback.
 */
 function parseFilter(filter, defaultValue = true) {
-	if (!filter) return (_) => defaultValue;
+	if (!filter) return () => defaultValue;
 	if (isFunction(filter)) return filter;
 	if (isString(filter)) return (node) => isElement(node) && callDomMethod(node, "matches", filter);
 	if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node === filter;
@@ -938,7 +938,7 @@ function parseFilter(filter, defaultValue = true) {
 		shadow: true
 	});
 	if (filter.length) return (node) => filter.includes(node);
-	return (_) => !defaultValue;
+	return () => !defaultValue;
 }
 /**
 * Returns a node-containment filter callback.
@@ -957,7 +957,7 @@ function parseFilterContains(filter, defaultValue = true) {
 		shadow: true
 	});
 	if (filter.length) return (node) => filter.some((other) => node !== other && callDomMethod(node, "contains", other));
-	return (_) => !defaultValue;
+	return () => !defaultValue;
 }
 /**
 * Returns the first node matching a filter.
@@ -2008,7 +2008,7 @@ function addEvent$1(selector, eventNames, callback, { capture = false, delegate 
 			if (!events.has(node)) events.set(node, Object.create(null));
 			const nodeEvents = events.get(node);
 			let realCallback = callback;
-			if (selfDestruct) realCallback = selfDestructCallbackFactory(realCallback, (_) => removeEvent$1(node, eventName, realCallback, {
+			if (selfDestruct) realCallback = selfDestructCallbackFactory(realCallback, () => removeEvent$1(node, eventName, realCallback, {
 				capture,
 				delegate
 			}));
@@ -2761,8 +2761,8 @@ function constrain$1(selector, containerSelector) {
 	const nodes = parseNodes(selector);
 	const documentElement = getDomProperty(getContext(), "documentElement");
 	const window = getWindow();
-	const getScrollX = (_) => getDomProperty(documentElement, "scrollHeight") > window.outerHeight;
-	const getScrollY = (_) => getDomProperty(documentElement, "scrollWidth") > window.outerWidth;
+	const getScrollX = () => getDomProperty(documentElement, "scrollHeight") > window.outerHeight;
+	const getScrollY = () => getDomProperty(documentElement, "scrollWidth") > window.outerWidth;
 	const preScrollX = getScrollX();
 	const preScrollY = getScrollY();
 	for (const node of nodes) {
@@ -4464,9 +4464,9 @@ function dequeue(node, { queueName = "default" } = {}) {
 		if (!queue.size && queues.get(node) === queue) queues.delete(node);
 		return;
 	}
-	Promise.resolve(next(node)).then((_) => {
+	Promise.resolve(next(node)).then(() => {
 		if (queues.get(node) === queue && queue.get(queueName) === callbacks) dequeue(node, { queueName });
-	}).catch((_) => {
+	}).catch(() => {
 		if (queues.get(node) === queue && queue.get(queueName) === callbacks) {
 			queue.delete(queueName);
 			if (!queue.size) queues.delete(node);
@@ -4486,7 +4486,7 @@ function queue$1(selector, callback, { queueName = "default" } = {}) {
 		if (!queues.has(node)) queues.set(node, /* @__PURE__ */ new Map());
 		const queue = queues.get(node);
 		const runningQueue = queue.has(queueName);
-		if (!runningQueue) queue.set(queueName, [(_) => new Promise((resolve) => {
+		if (!runningQueue) queue.set(queueName, [() => new Promise((resolve) => {
 			setTimeout(resolve, 1);
 		})]);
 		queue.get(queueName).push(callback);
@@ -4516,7 +4516,7 @@ function clearQueue({ queueName = "default" } = {}) {
 */
 function delay(duration, { queueName = "default" } = {}) {
 	const { setTimeout } = getWindow();
-	return this.queue((_) => new Promise((resolve) => setTimeout(resolve, duration)), { queueName });
+	return this.queue(() => new Promise((resolve) => setTimeout(resolve, duration)), { queueName });
 }
 /**
 * Queues a callback on each node.
@@ -5624,7 +5624,7 @@ function selectAll$1(selector) {
 	if (selection.rangeCount) selection.removeAllRanges();
 	if (!nodes.length) return;
 	const range = createRange();
-	if (nodes.length == 1) range.selectNode(nodes.shift());
+	if (nodes.length === 1) range.selectNode(nodes.shift());
 	else {
 		range.setStartBefore(nodes.shift());
 		range.setEndAfter(nodes.pop());
@@ -6450,7 +6450,7 @@ function loadScript(url, attributes, { cache = true, context = getContext() } = 
 	for (const [key, value] of Object.entries(attributes)) setScriptAttribute(script, key, value);
 	getDomProperty(context, "head").appendChild(script);
 	return new Promise((resolve, reject) => {
-		script.onload = (_) => resolve();
+		script.onload = () => resolve();
 		script.onerror = (error) => reject(error);
 	});
 }
@@ -6497,7 +6497,7 @@ function loadStyle(url, attributes, { cache = true, context = getContext() } = {
 	for (const [key, value] of Object.entries(attributes)) link.setAttribute(key, value);
 	getDomProperty(context, "head").appendChild(link);
 	return new Promise((resolve, reject) => {
-		link.onload = (_) => resolve();
+		link.onload = () => resolve();
 		link.onerror = (error) => reject(error);
 	});
 }

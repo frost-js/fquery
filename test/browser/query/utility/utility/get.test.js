@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #slice', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,7 +12,7 @@ test.describe('QuerySet #slice', () => {
     });
 
     test('reduces the nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div')
                     .get()
                     .map((node) => node.id))).toEqual([
@@ -24,7 +24,7 @@ test.describe('QuerySet #slice', () => {
     });
 
     test('reduces the node at an index', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div').get(1).id)).toBe('div2');
     });
 });

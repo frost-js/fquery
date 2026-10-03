@@ -9,7 +9,7 @@ test.describe('#loadStyles', () => {
 
     test.describe('attributes', () => {
         test('loads stylesheets', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadStyles([
                     'assets/test.css',
                     'assets/test2.css',
@@ -28,7 +28,7 @@ test.describe('#loadStyles', () => {
         });
 
         test('loads stylesheets with attributes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.loadStyles([
                     {
                         href: 'assets/test.css',
@@ -90,7 +90,7 @@ test.describe('#loadStyles', () => {
 
     test.describe('completion', () => {
         test('resolves when stylesheets are loaded', async ({ page }) => {
-            await page.evaluate(async (_) => {
+            await page.evaluate(async () => {
                 await $.loadStyles([
                     'assets/test.css',
                     'assets/test2.css',
@@ -102,7 +102,7 @@ test.describe('#loadStyles', () => {
         });
 
         test('throws on error', async ({ page }) => {
-            const didThrow = await page.evaluate(async (_) => {
+            const didThrow = await page.evaluate(async () => {
                 try {
                     await $.loadStyles([
                         'assets/error.css',

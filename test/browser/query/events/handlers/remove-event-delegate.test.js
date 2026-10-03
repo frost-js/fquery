@@ -9,7 +9,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
             return query === query.removeEventDelegate(null, 'a');
         })).toBe(true);
@@ -17,9 +17,9 @@ test.describe('QuerySet #removeEventDelegate', () => {
 
     test.describe('node inputs', () => {
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -30,7 +30,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 const a = document.createElement('a');
                 shadow.appendChild(a);
                 $.addEventDelegate(shadow, 'click', 'a', callback);
-                $.addEventDelegate(shadow, 'click', 'a', (_) => {
+                $.addEventDelegate(shadow, 'click', 'a', () => {
                     result++;
                 });
                 $(shadow).removeEventDelegate('click', 'a', callback);
@@ -40,9 +40,9 @@ test.describe('QuerySet #removeEventDelegate', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -53,7 +53,7 @@ test.describe('QuerySet #removeEventDelegate', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate(document, 'click', 'a', callback);
-                $.addEventDelegate(document, 'click', 'a', (_) => {
+                $.addEventDelegate(document, 'click', 'a', () => {
                     result++;
                 });
                 $(document).removeEventDelegate('click', 'a', callback);

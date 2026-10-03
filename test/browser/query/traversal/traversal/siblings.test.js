@@ -7,7 +7,7 @@ test.describe('QuerySet #siblings', () => {
     siblingsTests(([nodes, ...args]) => $(nodes).siblings(...args).get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('.span');
             const query2 = query1.siblings();
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #siblings', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('#span1, #span10');
 
                 return $('.span').siblings(query).get().map((node) => node.id);

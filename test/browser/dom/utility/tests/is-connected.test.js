@@ -8,29 +8,29 @@ test.describe('#isConnected', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.isConnected(document.getElementById('div1')))).toBe(true);
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.isConnected(document.querySelectorAll('div')))).toBe(true);
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.isConnected(document.body.children))).toBe(true);
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 return $.isConnected(fragment);
             })).toBe(false);
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const div = document.getElementById('div1');
                 const shadow = div.attachShadow({ mode: 'open' });
                 return $.isConnected(shadow);
@@ -38,7 +38,7 @@ test.describe('#isConnected', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.isConnected([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

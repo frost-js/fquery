@@ -1,5 +1,5 @@
 import { extend, isObject } from '@fr0st/core';
-import { getAjaxDefaults, getWindow } from './../config.js';
+import { getAjaxDefaults, getWindow } from '../config.js';
 import { appendQueryString, createSearchParams, createUrl, mergeHeaders, parseFormData, parseParams } from './helpers.js';
 
 /**
@@ -132,7 +132,10 @@ export default class AjaxRequest {
 
                 const contentType = (contentTypeHeader || '').split(';')[0].trim().toLowerCase();
 
-                if (['GET', 'HEAD'].includes(this.#options.method) || contentType === 'application/x-www-form-urlencoded') {
+                if (
+                    ['GET', 'HEAD'].includes(this.#options.method) ||
+                    contentType === 'application/x-www-form-urlencoded'
+                ) {
                     this.#options.data = parseParams(this.#options.data);
                 } else if (contentType === 'application/json') {
                     this.#options.data = JSON.stringify(this.#options.data);
@@ -180,14 +183,14 @@ export default class AjaxRequest {
             event,
         });
 
-        this.xhr.onload = (e) => {
+        this.xhr.onload = (event) => {
             if (this.xhr.status >= 400) {
-                rejectRequest(e);
+                rejectRequest(event);
             } else {
                 this.#resolve({
                     response: this.xhr.response,
                     xhr: this.xhr,
-                    event: e,
+                    event,
                 });
             }
         };
@@ -198,13 +201,13 @@ export default class AjaxRequest {
         this.xhr.ontimeout = rejectRequest;
 
         if (this.#options.onProgress) {
-            this.xhr.onprogress = (e) =>
-                this.#options.onProgress(e.loaded / e.total, this.xhr, e);
+            this.xhr.onprogress = (event) =>
+                this.#options.onProgress(event.loaded / event.total, this.xhr, event);
         }
 
         if (this.#options.onUploadProgress) {
-            this.xhr.upload.onprogress = (e) =>
-                this.#options.onUploadProgress(e.loaded / e.total, this.xhr, e);
+            this.xhr.upload.onprogress = (event) =>
+                this.#options.onUploadProgress(event.loaded / event.total, this.xhr, event);
         }
 
         if (this.#options.beforeSend) {

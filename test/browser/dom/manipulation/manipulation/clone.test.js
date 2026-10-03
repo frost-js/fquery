@@ -8,8 +8,8 @@ test.describe('#clone', () => {
 
     test.describe('event cloning', () => {
         test('preserves passive events on descendant nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
-                $.addEvent('.test1', 'test', (_) => false, { passive: true });
+            expect(await page.evaluate(() => {
+                $.addEvent('.test1', 'test', () => false, { passive: true });
 
                 const [clone] = $.clone('.parent1', { events: true });
                 const event = new Event('test', { cancelable: true });

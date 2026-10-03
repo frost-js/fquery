@@ -2,9 +2,9 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { isFunction } from '@fr0st/core';
-import { getContext } from './../config.js';
-import { ready } from './../events/events.js';
-import { parseNode, parseNodes } from './../filters.js';
+import { getContext } from '../config.js';
+import { ready } from '../events/events.js';
+import { parseNode, parseNodes } from '../filters.js';
 import QuerySet from './query-set.js';
 
 /**
@@ -29,7 +29,7 @@ export function query(selector, context = null) {
     });
 
     return new QuerySet(nodes);
-};
+}
 
 /**
  * Returns a QuerySet for the first node.
@@ -49,4 +49,4 @@ export function queryOne(selector, context = null) {
     });
 
     return new QuerySet(node ? [node] : []);
-};
+}

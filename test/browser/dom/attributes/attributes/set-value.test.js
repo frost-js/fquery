@@ -10,7 +10,7 @@ test.describe('#setValue', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const element = document.getElementById('test1');
                 $.setValue(element, 'Test');
                 return [
@@ -24,7 +24,7 @@ test.describe('#setValue', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.setValue(document.querySelectorAll('input'), 'Test');
                 return [
                     document.getElementById('test1').value,
@@ -37,7 +37,7 @@ test.describe('#setValue', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.setValue(document.body.children, 'Test');
                 return [
                     document.getElementById('test1').value,
@@ -50,7 +50,7 @@ test.describe('#setValue', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
                 $.setValue([

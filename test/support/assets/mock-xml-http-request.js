@@ -4,7 +4,7 @@
  */
 window.MockXMLHttpRequest = class MockXMLHttpRequest {
     /**
-     * New MockXMLHttpRequest constructor.
+     * Creates a MockXMLHttpRequest.
      */
     constructor() {
         this.data = {
@@ -17,7 +17,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
     }
 
     /**
-     * Abort the request if it has already been sent.
+     * Aborts the request if it has already been sent.
      */
     abort() {
         if (!this._completeTimer) {
@@ -36,7 +36,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
     }
 
     /**
-     * Initialize a request.
+     * Initializes a request.
      * @param {string} method The request method.
      * @param {string} url The URL to send the request to.
      * @param {boolean} [async=true] Whether to perform the request asynchronously.
@@ -52,7 +52,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
     }
 
     /**
-     * Override the MIME type sent by the server.
+     * Overrides the MIME type sent by the server.
      * @param {string} mimeType The MIME type to use.
      */
     overrideMimeType(mimeType) {
@@ -60,7 +60,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
     }
 
     /**
-     * Send the request.
+     * Sends the request.
      * @param {*} [data=null] Data to send with the request.
      */
     send(data = null) {
@@ -75,7 +75,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
         }
 
         if (this.upload && this.upload.onprogress) {
-            this._uploadTimer = setTimeout((_) => {
+            this._uploadTimer = setTimeout(() => {
                 this._uploadTimer = null;
 
                 const progressEvent = new Event('progress');
@@ -87,7 +87,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
         }
 
         if (this.onprogress) {
-            this._progressTimer = setTimeout((_) => {
+            this._progressTimer = setTimeout(() => {
                 this._progressTimer = null;
 
                 const progressEvent = new Event('progress');
@@ -98,7 +98,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
             }, 10);
         }
 
-        this._completeTimer = setTimeout((_) => {
+        this._completeTimer = setTimeout(() => {
             this._completeTimer = null;
 
             if (this.forceError) {
@@ -120,7 +120,7 @@ window.MockXMLHttpRequest = class MockXMLHttpRequest {
     }
 
     /**
-     * Set a value of a HTTP request header.
+     * Sets a value of a HTTP request header.
      * @param {string} header The header to set.
      * @param {string} value The value to set.
      */

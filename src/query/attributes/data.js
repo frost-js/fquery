@@ -1,7 +1,7 @@
 /** @import { QueryInput } from '../../helpers.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { cloneData as _cloneData, getData as _getData, removeData as _removeData, setData as _setData } from './../../attributes/data.js';
+import { cloneData as _cloneData, getData as _getData, removeData as _removeData, setData as _setData } from '../../attributes/data.js';
 
 /**
  * Clones custom data from each node to each other node.
@@ -12,7 +12,7 @@ export function cloneData(otherSelector) {
     _cloneData(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Gets custom data for the first node.
@@ -21,7 +21,7 @@ export function cloneData(otherSelector) {
  */
 export function getData(key) {
     return _getData(this, key);
-};
+}
 
 /**
  * Removes custom data from each node.
@@ -32,7 +32,7 @@ export function removeData(key) {
     _removeData(this, key);
 
     return this;
-};
+}
 
 /**
  * Sets custom data for each node.
@@ -44,4 +44,4 @@ export function setData(key, value) {
     _setData(this, key, value);
 
     return this;
-};
+}

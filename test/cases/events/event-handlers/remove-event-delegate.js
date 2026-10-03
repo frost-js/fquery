@@ -10,7 +10,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="parent1">' +
             '<a href="#" id="test1">Test</a>' +
@@ -92,10 +92,10 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
-                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                $.addEventDelegate('div', 'click hover', 'a', () => {
                     result++;
                 });
                 operation('div', null, 'a');
@@ -126,10 +126,10 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
-                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                $.addEventDelegate('div', 'click hover', 'a', () => {
                     result++;
                 });
                 operation('div', 'click', 'a');
@@ -160,10 +160,10 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
-                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                $.addEventDelegate('div', 'click hover', 'a', () => {
                     result++;
                 });
                 operation('div', 'click hover', 'a');
@@ -184,7 +184,7 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
 
             expect(await page.evaluate((operation) => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -195,7 +195,7 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 operation('div', 'click', 'a', callback);
@@ -212,7 +212,7 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
 
             expect(await page.evaluate((operation) => {
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 const event = new Event('click', {
@@ -223,7 +223,7 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $.addEventDelegate('div', 'click', 'a', callback);
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
                 operation('div', 'hover', 'a', callback);
@@ -248,7 +248,7 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate('div', 'click hover', 'a', (_) => {
+                $.addEventDelegate('div', 'click hover', 'a', () => {
                     result++;
                 }, true);
                 operation('div', null, 'a');
@@ -277,10 +277,10 @@ export function removeEventDelegateTests(createRemoveEventDelegate) {
                 const element2 = document.getElementById('test2');
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
-                $.addEventDelegate('div', 'click', 'a', (_) => {
+                $.addEventDelegate('div', 'click', 'a', () => {
                     result++;
                 });
-                $.addEventDelegate('div', 'hover', 'a', (_) => {
+                $.addEventDelegate('div', 'hover', 'a', () => {
                     result++;
                 }, { capture: true });
                 operation('div', null, 'a', null, { capture: true });

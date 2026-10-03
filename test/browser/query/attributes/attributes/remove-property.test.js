@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #removeProperty', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<input type="checkbox" id="test1">' +
                 '<input type="checkbox" id="test2">';
@@ -12,7 +12,7 @@ test.describe('QuerySet #removeProperty', () => {
     });
 
     test('removes a property for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $('input').removeProperty('test');
         });
 
@@ -23,7 +23,7 @@ test.describe('QuerySet #removeProperty', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('input');
             return query === query.removeProperty('test');
         })).toBe(true);

@@ -9,7 +9,7 @@ test.describe('QuerySet #removeStyle', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
             return query === query.removeStyle('color');
         })).toBe(true);

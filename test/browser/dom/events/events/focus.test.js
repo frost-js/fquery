@@ -8,10 +8,10 @@ test.describe('#focus', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('focus', (_) => {
+                element.addEventListener('focus', () => {
                     result = true;
                 });
                 $.focus(document.getElementById('test1'));
@@ -20,10 +20,10 @@ test.describe('#focus', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('focus', (_) => {
+                element.addEventListener('focus', () => {
                     result = true;
                 });
                 $.focus(document.querySelectorAll('input'));
@@ -32,10 +32,10 @@ test.describe('#focus', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('focus', (_) => {
+                element.addEventListener('focus', () => {
                     result = true;
                 });
                 $.focus(document.body.children);
@@ -44,10 +44,10 @@ test.describe('#focus', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result;
                 const element = document.getElementById('test1');
-                element.addEventListener('focus', (_) => {
+                element.addEventListener('focus', () => {
                     result = true;
                 });
                 $.focus([

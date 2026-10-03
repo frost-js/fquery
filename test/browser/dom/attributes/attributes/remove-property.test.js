@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#removeProperty', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<input type="checkbox" id="test1">' +
                 '<input type="checkbox" id="test2">';
@@ -12,7 +12,7 @@ test.describe('#removeProperty', () => {
     });
 
     test('removes a property for all nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeProperty('input', 'test');
         });
 
@@ -23,7 +23,7 @@ test.describe('#removeProperty', () => {
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             const element = document.getElementById('test1');
             $.removeProperty(element, 'test');
         });
@@ -35,7 +35,7 @@ test.describe('#removeProperty', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeProperty(document.querySelectorAll('input'), 'test');
         });
 
@@ -46,7 +46,7 @@ test.describe('#removeProperty', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             $.removeProperty(document.body.children, 'test');
         });
 
@@ -57,7 +57,7 @@ test.describe('#removeProperty', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             const element1 = document.getElementById('test1');
             const element2 = document.getElementById('test2');
             $.removeProperty([

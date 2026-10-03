@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#getSelection', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="select">' +
                 '<div id="div1">' +
@@ -67,7 +67,7 @@ test.describe('#getSelection', () => {
 
     test.describe('selected nodes', () => {
         test('returns the selected nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const selected = $.getSelection();
                 document.body.innerHTML = '';
                 for (const node of selected) {
@@ -78,7 +78,7 @@ test.describe('#getSelection', () => {
         });
 
         test('returns selected text and element siblings in order', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const node = document.getElementById('select');
                 node.innerHTML = 'Test 1<span>Test 2</span>Test 3';
                 const range = document.createRange();
@@ -98,7 +98,7 @@ test.describe('#getSelection', () => {
         });
 
         test('returns a selection contained in a text node', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const node = document.getElementById('span1').firstChild;
                 const range = document.createRange();
                 range.setStart(node, 1);
@@ -115,7 +115,7 @@ test.describe('#getSelection', () => {
         });
 
         test('does not extract the selected nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 $.getSelection();
                 return document.body.innerHTML;
             })).toBe('<div id="select">' +

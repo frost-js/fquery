@@ -1,8 +1,8 @@
 /** @import { CloneOptions } from '../../manipulation/manipulation.js'; */
 /** @import { NodeInput } from '../../helpers.js'; */
 
-import { clone as _clone, detach as _detach, empty as _empty, remove as _remove, replaceAll as _replaceAll, replaceWith as _replaceWith } from './../../manipulation/manipulation.js';
-import QuerySet from './../query-set-core.js';
+import { clone as _clone, detach as _detach, empty as _empty, remove as _remove, replaceAll as _replaceAll, replaceWith as _replaceWith } from '../../manipulation/manipulation.js';
+import QuerySet from '../query-set-core.js';
 
 /**
  * Clones each node.
@@ -13,7 +13,7 @@ export function clone(options) {
     const clones = _clone(this, options);
 
     return new QuerySet(clones);
-};
+}
 
 /**
  * Detaches each node from the DOM.
@@ -23,7 +23,7 @@ export function detach() {
     _detach(this);
 
     return this;
-};
+}
 
 /**
  * Removes all children of each node from the DOM.
@@ -33,7 +33,7 @@ export function empty() {
     _empty(this);
 
     return this;
-};
+}
 
 /**
  * Removes each node from the DOM.
@@ -43,7 +43,7 @@ export function remove() {
     _remove(this);
 
     return this;
-};
+}
 
 /**
  * Replaces each other node with nodes.
@@ -54,7 +54,7 @@ export function replaceAll(otherSelector) {
     _replaceAll(this, otherSelector);
 
     return this;
-};
+}
 
 /**
  * Replaces each node with other nodes.
@@ -65,4 +65,4 @@ export function replaceWith(otherSelector) {
     _replaceWith(this, otherSelector);
 
     return this;
-};
+}

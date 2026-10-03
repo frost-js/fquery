@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#tagName', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div id="div1"></div>' +
                 '<div id="div2"></div>' +
@@ -12,27 +12,27 @@ test.describe('#tagName', () => {
     });
 
     test('returns the tag name of the first node', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.tagName('div'))).toBe('div');
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.tagName(document.getElementById('span1')))).toBe('span');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.tagName(document.querySelectorAll('div')))).toBe('div');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.tagName(document.body.children))).toBe('div');
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.tagName([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

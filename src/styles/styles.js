@@ -1,6 +1,6 @@
 import { callDomMethod, getDomProperty, isString } from '@fr0st/core';
-import { appendQueryString } from './../ajax/helpers.js';
-import { getContext } from './../config.js';
+import { appendQueryString } from '../ajax/helpers.js';
+import { getContext } from '../config.js';
 
 /** @typedef {Record<string, *>} StyleAttributes */
 
@@ -39,10 +39,10 @@ export function loadStyle(url, attributes, { cache = true, context = getContext(
     getDomProperty(context, 'head').appendChild(link);
 
     return new Promise((resolve, reject) => {
-        link.onload = (_) => resolve();
+        link.onload = () => resolve();
         link.onerror = (error) => reject(error);
     });
-};
+}
 
 /**
  * Imports multiple CSS stylesheets.
@@ -58,4 +58,4 @@ export function loadStyles(urls, { cache = true, context = getContext() } = {}) 
                 loadStyle(null, url, { cache, context }),
         ),
     );
-};
+}

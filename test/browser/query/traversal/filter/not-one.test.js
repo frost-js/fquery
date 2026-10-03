@@ -8,7 +8,7 @@ test.describe('QuerySet #notOne', () => {
         notOneTests(([nodes, filter]) => $(nodes).notOne(filter).get().map((node) => node.id));
 
         test('works with QuerySet filter', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('[data-filter="test"]');
 
                 return $('div').notOne(query).get().map((node) => node.id);
@@ -20,14 +20,14 @@ test.describe('QuerySet #notOne', () => {
         });
 
         test('works with HTMLCollection filter', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $('div').notOne(document.body.children).get().map((node) => node.id));
 
             expect(ids).toEqual([]);
         });
 
         test('works with DocumentFragment filter', async ({ page }) => {
-            const nodes = await page.evaluate((_) => {
+            const nodes = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -38,7 +38,7 @@ test.describe('QuerySet #notOne', () => {
         });
 
         test('works with ShadowRoot filter', async ({ page }) => {
-            const nodes = await page.evaluate((_) => {
+            const nodes = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -51,7 +51,7 @@ test.describe('QuerySet #notOne', () => {
     });
 
     test('returns the first node not matching a filter', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('div').notOne('[data-filter="test"]').get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -60,7 +60,7 @@ test.describe('QuerySet #notOne', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.notOne('[data-filter="test"]');
 
@@ -72,7 +72,7 @@ test.describe('QuerySet #notOne', () => {
 
     test.describe('node inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -85,7 +85,7 @@ test.describe('QuerySet #notOne', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';

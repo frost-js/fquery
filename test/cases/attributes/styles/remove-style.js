@@ -27,7 +27,7 @@ export function removeStyleTests(removeStyle) {
     });
 
     test('removes a custom property', async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             for (const node of document.querySelectorAll('div')) {
                 node.style.setProperty('--brandColor', 'red');
             }

@@ -7,7 +7,7 @@ test.describe('#withData', () => {
     withDataTests((args) => $.withData(...args).map((node) => node.id));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withData(document.getElementById('div1')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -16,7 +16,7 @@ test.describe('#withData', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withData(document.querySelectorAll('div')).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -26,7 +26,7 @@ test.describe('#withData', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withData(document.body.children).map((node) => node.id));
 
         expect(ids).toEqual([
@@ -36,7 +36,7 @@ test.describe('#withData', () => {
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, 'test', 'Test');
             fragment.id = 'fragment';
@@ -50,7 +50,7 @@ test.describe('#withData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, 'test', 'Test');
@@ -65,7 +65,7 @@ test.describe('#withData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             $.setData(document, 'test', 'Test');
 
             return $.withData(document).map((node) => node.id);
@@ -77,7 +77,7 @@ test.describe('#withData', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             $.setData(window, 'test', 'Test');
 
             return $.withData(window).map((node) => node.id);
@@ -89,7 +89,7 @@ test.describe('#withData', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $.withData([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#getCookie', () => {
     test('returns a cookie value', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test=Test',
                 nodeType: Node.DOCUMENT_NODE,
@@ -13,7 +13,7 @@ test.describe('#getCookie', () => {
     });
 
     test('returns a cookie value from multiple cookie values', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test1=Test 1;test2=Test 2;test3=Test 3',
                 nodeType: Node.DOCUMENT_NODE,
@@ -32,7 +32,7 @@ test.describe('#getCookie', () => {
     });
 
     test('returns null when the cookie does not exist', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test1=Test 1',
                 nodeType: Node.DOCUMENT_NODE,
@@ -43,7 +43,7 @@ test.describe('#getCookie', () => {
     });
 
     test('matches the exact cookie name', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test1=Test 1; test=Test 2',
                 nodeType: Node.DOCUMENT_NODE,
@@ -54,7 +54,7 @@ test.describe('#getCookie', () => {
     });
 
     test('decodes the cookie value', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test=Test%20value%3B%20100%25',
                 nodeType: Node.DOCUMENT_NODE,

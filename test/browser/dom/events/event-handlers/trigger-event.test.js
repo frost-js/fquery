@@ -10,10 +10,10 @@ test.describe('#triggerEvent', () => {
 
     test.describe('node inputs', () => {
         test('triggers listeners on forms with a control named dispatchEvent', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="dispatchEvent"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEvent('form', 'click', callback);
@@ -23,9 +23,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.triggerEvent(document.getElementById('test1'), 'click');
@@ -34,9 +34,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.triggerEvent(document.querySelectorAll('a'), 'click');
@@ -45,9 +45,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.triggerEvent(document.getElementById('div1').children, 'click');
@@ -56,11 +56,11 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $.triggerEvent(shadow, 'click');
@@ -69,9 +69,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $.triggerEvent(document, 'click');
@@ -80,9 +80,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $.triggerEvent(window, 'click');
@@ -91,9 +91,9 @@ test.describe('#triggerEvent', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
-                $.addEvent('a', 'click', (_) => {
+                $.addEvent('a', 'click', () => {
                     result++;
                 });
                 $.triggerEvent([

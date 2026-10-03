@@ -7,7 +7,7 @@ test.describe('QuerySet #withAnimation', () => {
     withAnimationTests((nodes) => $(nodes).withAnimation().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.withAnimation();
 

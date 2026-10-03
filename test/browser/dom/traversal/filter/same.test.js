@@ -8,7 +8,7 @@ test.describe('#same', () => {
 
     test.describe('source inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.same(document.getElementById('div2'), '#div2, #div4').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -17,7 +17,7 @@ test.describe('#same', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.same(document.querySelectorAll('div'), '#div2, #div4').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -27,7 +27,7 @@ test.describe('#same', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.same(document.body.children, '#div2, #div4').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -37,7 +37,7 @@ test.describe('#same', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment = document.createDocumentFragment();
                 fragment.id = 'fragment';
 
@@ -50,7 +50,7 @@ test.describe('#same', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 shadow.id = 'shadow';
@@ -64,7 +64,7 @@ test.describe('#same', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.same([
                     document.getElementById('div1'),
                     document.getElementById('div2'),

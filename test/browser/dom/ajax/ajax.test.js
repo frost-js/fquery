@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#ajax', () => {
     test('performs an AJAX request', async ({ page }) => {
-        expect(await page.evaluate(async (_) => {
+        expect(await page.evaluate(async () => {
             const response = await $.ajax();
             response.xhr = response.xhr.data;
             return response;
@@ -27,7 +27,7 @@ test.describe('#ajax', () => {
 
     test.describe('URL resolution', () => {
         test('performs an AJAX request with URL', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     url: '/test',
                 });
@@ -53,7 +53,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a relative URL and data', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 window.history.replaceState(null, '', '/app/');
 
                 const response = await $.ajax({
@@ -85,7 +85,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a relative URL matching the hostname and data', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 window.history.replaceState(null, '', '/app/');
 
                 const response = await $.ajax({
@@ -117,7 +117,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a relative URL and data using the document base URL', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 document.head.innerHTML = '<base href="/app/">';
 
                 const response = await $.ajax({
@@ -151,7 +151,7 @@ test.describe('#ajax', () => {
 
     test.describe('request options', () => {
         test('performs an AJAX request with method', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     method: 'POST',
                 });
@@ -177,7 +177,7 @@ test.describe('#ajax', () => {
         });
 
         test('normalizes the request method', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     method: 'get',
                 });
@@ -186,7 +186,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with content type', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     contentType: 'text/plain',
                 });
@@ -212,7 +212,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with response type', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     responseType: 'json',
                 });
@@ -239,7 +239,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with MIME type', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     mimeType: 'text/plain',
                 });
@@ -266,7 +266,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with username', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     username: 'test',
                 });
@@ -293,7 +293,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with password', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     password: 'test',
                 });
@@ -320,7 +320,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with timeout', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     timeout: 1000,
                 });
@@ -347,7 +347,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request (local)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     isLocal: true,
                 });
@@ -374,7 +374,7 @@ test.describe('#ajax', () => {
 
     test.describe('headers', () => {
         test('performs an AJAX request with custom headers', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'Test': 'Test 1',
@@ -403,7 +403,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a lowercase content-type header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'content-type': 'application/json',
@@ -431,7 +431,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a mixed-case content-type header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'cOnTeNt-TyPe': 'application/json',
@@ -459,7 +459,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a lowercase x-requested-with header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'x-requested-with': 'Test',
@@ -487,7 +487,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a mixed-case x-requested-with header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'x-ReQuEsTeD-wItH': 'Test',
@@ -515,7 +515,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a default content-type header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'content-type': 'application/json',
@@ -544,7 +544,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with a default x-requested-with header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'x-requested-with': 'Test',
@@ -573,7 +573,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request overriding a default content-type header with different casing', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'Content-Type': 'text/plain',
@@ -606,7 +606,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request overriding a default x-requested-with header with different casing', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'X-Requested-With': 'Test 1',
@@ -639,7 +639,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request overriding a custom default header with different casing', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'X-Test': 'Test 1',
@@ -673,7 +673,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request with headers from defaults and request options', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 $.setAjaxDefaults({
                     headers: {
                         'X-Default': 'Test 1',
@@ -708,7 +708,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request using the last spelling and value of a repeated header', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 const response = await $.ajax({
                     headers: {
                         'X-Test': 'Test 1',
@@ -740,7 +740,7 @@ test.describe('#ajax', () => {
 
     test.describe('caching', () => {
         test('performs an AJAX request without cache', async ({ page }) => {
-            const response = await page.evaluate(async (_) => {
+            const response = await page.evaluate(async () => {
                 const response = await $.ajax({
                     cache: false,
                 });
@@ -754,7 +754,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request without cache (query string)', async ({ page }) => {
-            const response = await page.evaluate(async (_) => {
+            const response = await page.evaluate(async () => {
                 const response = await $.ajax({
                     url: '/?test=1',
                     cache: false,
@@ -769,7 +769,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request without cache with a relative URL matching the hostname', async ({ page }) => {
-            const response = await page.evaluate(async (_) => {
+            const response = await page.evaluate(async () => {
                 window.history.replaceState(null, '', '/app/');
 
                 const response = await $.ajax({
@@ -786,7 +786,7 @@ test.describe('#ajax', () => {
         });
 
         test('performs an AJAX request without cache using the document base URL', async ({ page }) => {
-            const response = await page.evaluate(async (_) => {
+            const response = await page.evaluate(async () => {
                 document.head.innerHTML = '<base href="/app/">';
 
                 const response = await $.ajax({
@@ -805,7 +805,7 @@ test.describe('#ajax', () => {
 
     test.describe('callbacks', () => {
         test('works with beforeSend callback', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let result;
                 await $.ajax({
                     beforeSend: (xhr) => {
@@ -827,7 +827,7 @@ test.describe('#ajax', () => {
         });
 
         test('works with afterSend callback', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let result;
                 await $.ajax({
                     afterSend: (xhr) => {
@@ -850,7 +850,7 @@ test.describe('#ajax', () => {
         });
 
         test('works with onProgress callback', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let result;
                 await $.ajax({
                     onProgress: (progress, xhr, event) => {
@@ -883,7 +883,7 @@ test.describe('#ajax', () => {
         });
 
         test('works with onUploadProgress callback', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let result;
                 await $.ajax({
                     onUploadProgress: (progress, xhr, event) => {
@@ -918,7 +918,7 @@ test.describe('#ajax', () => {
 
     test.describe('cancellation', () => {
         test('can be cancelled', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax();
                     ajax.cancel();
@@ -945,7 +945,7 @@ test.describe('#ajax', () => {
         });
 
         test('can be cancelled with a custom reason', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax();
                     ajax.cancel('Custom reason');
@@ -972,12 +972,12 @@ test.describe('#ajax', () => {
         });
 
         test('can be cancelled without rejecting', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let rejected = false;
                 const ajax = $.ajax({
                     rejectOnCancel: false,
                 });
-                ajax.catch((_) => {
+                ajax.catch(() => {
                     rejected = true;
                 });
                 ajax.cancel();
@@ -987,7 +987,7 @@ test.describe('#ajax', () => {
         });
 
         test('can be aborted from afterSend callback', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     await $.ajax({
                         afterSend: (xhr) => {
@@ -1016,7 +1016,7 @@ test.describe('#ajax', () => {
         });
 
         test('can be aborted from afterSend callback without rejecting', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 let rejected = false;
                 const ajax = $.ajax({
                     rejectOnCancel: false,
@@ -1024,7 +1024,7 @@ test.describe('#ajax', () => {
                         xhr.abort();
                     },
                 });
-                ajax.catch((_) => {
+                ajax.catch(() => {
                     rejected = true;
                 });
                 await Promise.resolve();
@@ -1035,7 +1035,7 @@ test.describe('#ajax', () => {
 
     test.describe('failures', () => {
         test('throws on XHR error', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax();
                     ajax.xhr.forceError = true;
@@ -1065,7 +1065,7 @@ test.describe('#ajax', () => {
         });
 
         test('throws on XHR error (local)', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax({
                         isLocal: true,
@@ -1096,7 +1096,7 @@ test.describe('#ajax', () => {
         });
 
         test('throws on timeout', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax();
                     ajax.xhr.ontimeout(new Event('timeout'));
@@ -1125,7 +1125,7 @@ test.describe('#ajax', () => {
         });
 
         test('throws on status error', async ({ page }) => {
-            expect(await page.evaluate(async (_) => {
+            expect(await page.evaluate(async () => {
                 try {
                     const ajax = $.ajax();
                     ajax.xhr.status = 400;

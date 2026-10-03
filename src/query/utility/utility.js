@@ -3,10 +3,10 @@
 /** @import { QueryInput } from '../../helpers.js'; */
 
 import { merge, unique } from '@fr0st/core';
-import { getContext } from './../../config.js';
-import { parseNodes } from './../../filters.js';
-import { index as _index, indexOf as _indexOf, normalize as _normalize, serialize as _serialize, serializeArray as _serializeArray, sort as _sort, tagName as _tagName } from './../../utility/utility.js';
-import QuerySet from './../query-set-core.js';
+import { getContext } from '../../config.js';
+import { parseNodes } from '../../filters.js';
+import { index as _index, indexOf as _indexOf, normalize as _normalize, serialize as _serialize, serializeArray as _serializeArray, sort as _sort, tagName as _tagName } from '../../utility/utility.js';
+import QuerySet from '../query-set-core.js';
 
 /**
  * Merges with new nodes and sorts the results.
@@ -27,7 +27,7 @@ export function add(selector, context = null) {
     const nodes = _sort(unique(merge([], this.get(), otherNodes)));
 
     return new QuerySet(nodes);
-};
+}
 
 /**
  * Reduces the set of nodes to the one at the specified index.
@@ -38,7 +38,7 @@ export function eq(index) {
     const node = this.get(index);
 
     return new QuerySet(node ? [node] : []);
-};
+}
 
 /**
  * Reduces the set of nodes to the first.
@@ -46,7 +46,7 @@ export function eq(index) {
  */
 export function first() {
     return this.eq(0);
-};
+}
 
 /**
  * Gets the index of the first node relative to its parent node.
@@ -54,7 +54,7 @@ export function first() {
  */
 export function index() {
     return _index(this);
-};
+}
 
 /**
  * Gets the index of the first node matching a filter.
@@ -63,7 +63,7 @@ export function index() {
  */
 export function indexOf(nodeFilter) {
     return _indexOf(this, nodeFilter);
-};
+}
 
 /**
  * Reduces the set of nodes to the last.
@@ -71,7 +71,7 @@ export function indexOf(nodeFilter) {
  */
 export function last() {
     return this.eq(-1);
-};
+}
 
 /**
  * Normalizes nodes (remove empty text nodes, and join adjacent text nodes).
@@ -81,7 +81,7 @@ export function normalize() {
     _normalize(this);
 
     return this;
-};
+}
 
 /**
  * Returns a serialized string containing names and values of all form nodes.
@@ -89,7 +89,7 @@ export function normalize() {
  */
 export function serialize() {
     return _serialize(this);
-};
+}
 
 /**
  * Returns a serialized array containing names and values of all form nodes.
@@ -97,7 +97,7 @@ export function serialize() {
  */
 export function serializeArray() {
     return _serializeArray(this);
-};
+}
 
 /**
  * Sorts nodes by their position in the document.
@@ -105,7 +105,7 @@ export function serializeArray() {
  */
 export function sort() {
     return new QuerySet(_sort(this));
-};
+}
 
 /**
  * Returns the tag name (lowercase) of the first node.
@@ -113,4 +113,4 @@ export function sort() {
  */
 export function tagName() {
     return _tagName(this);
-};
+}

@@ -44,7 +44,7 @@ export function toggleTests(toggle) {
     test.describe('display recovery', () => {
         test('shows elements hidden by a stylesheet', async ({ page }) => {
             await page.addStyleTag({ content: '.hidden { display: none; }' });
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test1').classList.add('hidden');
             });
 
@@ -69,7 +69,7 @@ export function toggleTests(toggle) {
     test.describe('display restoration', () => {
         test('hides stylesheet-hidden elements after showing them', async ({ page }) => {
             await page.addStyleTag({ content: '.hidden { display: none; }' });
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test1').classList.add('hidden');
             });
 
@@ -80,7 +80,7 @@ export function toggleTests(toggle) {
         });
 
         test('restores the inline display after toggling twice', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 document.getElementById('test1').style.display = 'flex';
             });
 

@@ -14,22 +14,22 @@ test.describe('#getData', () => {
     }
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.getData(document.getElementById('test1'), 'test'))).toBe('Test 1');
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.getData(document.querySelectorAll('div'), 'test'))).toBe('Test 1');
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.getData(document.body.children, 'test'))).toBe('Test 1');
     });
 
     test('works with DocumentFragment nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const fragment = document.createDocumentFragment();
             $.setData(fragment, 'test', 'Test 2');
             return $.getData(fragment, 'test');
@@ -37,7 +37,7 @@ test.describe('#getData', () => {
     });
 
     test('works with ShadowRoot nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const div = document.createElement('div');
             const shadow = div.attachShadow({ mode: 'open' });
             $.setData(shadow, 'test', 'Test 2');
@@ -46,21 +46,21 @@ test.describe('#getData', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(document, 'test', 'Test 2');
             return $.getData(document, 'test');
         })).toBe('Test 2');
     });
 
     test('works with Window nodes', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             $.setData(window, 'test', 'Test 2');
             return $.getData(window, 'test');
         })).toBe('Test 2');
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.getData([
                 document.getElementById('test1'),
                 document.getElementById('test2'),

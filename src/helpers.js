@@ -30,7 +30,7 @@ export function createEvent(type, options) {
     const { CustomEvent } = getWindow();
 
     return new CustomEvent(type, options);
-};
+}
 
 /**
  * Creates a wrapped version of a function that executes once per tick.
@@ -48,7 +48,7 @@ export function debounce(callback) {
 
         running = true;
 
-        Promise.resolve().then((_) => {
+        Promise.resolve().then(() => {
             try {
                 callback(...args);
             } finally {
@@ -56,7 +56,7 @@ export function debounce(callback) {
             }
         });
     };
-};
+}
 
 /**
  * Escapes a string for use as a CSS identifier.
@@ -65,7 +65,7 @@ export function debounce(callback) {
  */
 export function escapeCss(value) {
     return getWindow().CSS.escape(value);
-};
+}
 
 /**
  * Returns a RegExp for testing a namespaced event.
@@ -74,7 +74,7 @@ export function escapeCss(value) {
  */
 export function eventNamespacedRegExp(event) {
     return new RegExp(`^${escapeRegExp(event)}(?:\\.|$)`, 'i');
-};
+}
 
 /**
  * Returns the first leaf element in a wrapper, or the wrapper if it has no element children.
@@ -88,7 +88,7 @@ export function getWrapTarget(node) {
     }
 
     return node;
-};
+}
 
 /**
  * Normalizes a CSS property name.
@@ -99,7 +99,7 @@ export function normalizeCssProperty(style) {
     return style.startsWith('--') ?
         style :
         kebabCase(style);
-};
+}
 
 /**
  * Normalizes a CSS property value.
@@ -117,7 +117,7 @@ export function normalizeCssValue(style, value) {
     return !CSS.supports(style, value) ?
         `${value}px` :
         value;
-};
+}
 
 /**
  * Returns a one-dimensional array of classes from nested arrays or space-separated strings.
@@ -129,7 +129,7 @@ export function parseClasses(classList) {
         .flat()
         .flatMap((val) => val.split(' '))
         .filter((val) => !!val);
-};
+}
 
 /**
  * Normalizes a key and value, or an existing data object, into a data object.
@@ -151,7 +151,7 @@ export function parseData(key, value, { json = false } = {}) {
         Object.entries(result)
             .map(([key, value]) => [key, isObject(value) || isArray(value) ? JSON.stringify(value) : value]),
     );
-};
+}
 
 /**
  * Parses a dataset string into a JavaScript value.
@@ -191,7 +191,7 @@ export function parseDataset(value) {
     }
 
     return value;
-};
+}
 
 /**
  * Returns the base event name from a namespaced event.
@@ -201,7 +201,7 @@ export function parseDataset(value) {
 export function parseEvent(event) {
     return event.split('.')
         .shift();
-};
+}
 
 /**
  * Returns an array of events from a space-separated string.
@@ -210,7 +210,7 @@ export function parseEvent(event) {
  */
 export function parseEvents(events) {
     return events.split(' ');
-};
+}
 
 /**
  * Resolves a single node.
@@ -239,7 +239,7 @@ export function resolveNode(nodes, stringCallback, nodeFilter) {
 
         return nodeFilter(node) ? node : undefined;
     }
-};
+}
 
 /**
  * Resolves multiple nodes.
@@ -266,4 +266,4 @@ export function resolveNodes(nodes, stringCallback, nodeFilter) {
     }
 
     return [];
-};
+}

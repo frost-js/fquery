@@ -8,32 +8,32 @@ test.describe('#width', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width(document.getElementById('test1')))).toBe(1250);
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width(document.querySelectorAll('div')))).toBe(1250);
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width(document.body.children))).toBe(1250);
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width(document))).toBe(800);
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width(window))).toBe(800);
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) =>
+            expect(await page.evaluate(() =>
                 $.width([
                     document.getElementById('test1'),
                     document.getElementById('test2'),

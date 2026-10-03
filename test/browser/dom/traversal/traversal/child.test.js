@@ -7,14 +7,14 @@ test.describe('#child', () => {
     childTests((args) => $.child(...args).map((node) => node.id));
 
     test('returns an empty array for empty nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => $.child('#invalid'));
+        const ids = await page.evaluate(() => $.child('#invalid'));
 
         expect(ids).toEqual([]);
     });
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.child(document.getElementById('parent1'), 'span').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -23,7 +23,7 @@ test.describe('#child', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.child(document.querySelectorAll('.parent'), 'span').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -33,7 +33,7 @@ test.describe('#child', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.child(document.body.children, 'span').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -43,7 +43,7 @@ test.describe('#child', () => {
         });
 
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div id="div1"></div><div id="div2"></div>',
@@ -58,7 +58,7 @@ test.describe('#child', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const range = document.createRange();
@@ -76,7 +76,7 @@ test.describe('#child', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.child(document, 'html').map((node) => node.id));
 
             expect(ids).toEqual([
@@ -85,7 +85,7 @@ test.describe('#child', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) =>
+            const ids = await page.evaluate(() =>
                 $.child(
                     [
                         document.getElementById('parent1'),

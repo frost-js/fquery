@@ -6,9 +6,13 @@ import { setupClock } from '../setup/browser.js';
 const collectCoverage = process.env.FQUERY_COVERAGE === 'true';
 
 const test = base.extend({
+    expectedBrowserErrors: [[], { option: true }],
     mockClock: [false, { option: true }],
     fqueryPage: [
-        async ({ page, mockClock }, use, testInfo) => {
+        async ({ page, mockClock, expectedBrowserErrors }, use, testInfo) => {
+            const errors = [];
+            page.on('pageerror', (error) => errors.push(error.message));
+
             if (collectCoverage) {
                 await page.coverage.startJSCoverage({
                     resetOnNavigation: false,
@@ -23,9 +27,13 @@ const test = base.extend({
                 waitUntil: 'domcontentloaded',
             });
 
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
+                if (!window.fQuery) {
+                    throw new Error('Failed to load fQuery on the test page.');
+                }
+
                 $.setAjaxDefaults({
-                    xhr: (_) => new window.MockXMLHttpRequest(),
+                    xhr: () => new window.MockXMLHttpRequest(),
                 });
                 $.useTimeout();
 
@@ -41,6 +49,8 @@ const test = base.extend({
                 const coverage = await page.coverage.stopJSCoverage();
                 await addCoverageReport(coverage, testInfo);
             }
+
+            expect(errors, 'Uncaught browser errors').toEqual(expectedBrowserErrors);
         },
         { auto: true },
     ],

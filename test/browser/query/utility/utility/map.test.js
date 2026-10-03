@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('QuerySet #map', () => {
     test.beforeEach(async ({ page }) => {
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.body.innerHTML =
                 '<div>' +
                 '<span id="span1"></span>' +
@@ -14,7 +14,7 @@ test.describe('QuerySet #map', () => {
     });
 
     test('executes a callback on each node in the set, and creates a new set from the results', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $('div')
                     .map((node) => node.firstChild)
                     .get()
@@ -25,7 +25,7 @@ test.describe('QuerySet #map', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.map((node) => node.firstChild);
             return query2.constructor.name === 'QuerySet' && query1 !== query2;

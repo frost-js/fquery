@@ -7,7 +7,7 @@ test.describe('QuerySet #hidden', () => {
     hiddenTests((nodes) => $(nodes).hidden().get().map((node) => node.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.hidden();
 
@@ -18,7 +18,7 @@ test.describe('QuerySet #hidden', () => {
     });
 
     test('works with Document nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const myDoc = new Document();
             myDoc.id = 'document';
 
@@ -31,7 +31,7 @@ test.describe('QuerySet #hidden', () => {
     });
 
     test('works with Window nodes', async ({ page }) => {
-        const ids = await page.evaluate((_) => {
+        const ids = await page.evaluate(() => {
             const myWindow = {
                 document: {},
                 id: 'window',

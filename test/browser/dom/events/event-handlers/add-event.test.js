@@ -8,10 +8,10 @@ test.describe('#addEvent', () => {
 
     test.describe('node inputs', () => {
         test('adds listeners on forms with a control named addEventListener', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 document.body.innerHTML = '<form><input name="addEventListener"></form>';
                 let result = 0;
-                const callback = (_) => {
+                const callback = () => {
                     result++;
                 };
                 $.addEvent('form', 'click', callback);
@@ -21,12 +21,12 @@ test.describe('#addEvent', () => {
         });
 
         test('works with HTMLElement nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
                 const element2 = document.getElementById('test2');
-                $.addEvent(element1, 'click', (_) => {
+                $.addEvent(element1, 'click', () => {
                     result++;
                 });
                 element1.dispatchEvent(event);
@@ -38,7 +38,7 @@ test.describe('#addEvent', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
@@ -46,7 +46,7 @@ test.describe('#addEvent', () => {
                 $.addEvent(
                     document.querySelectorAll('a'),
                     'click',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );
@@ -59,7 +59,7 @@ test.describe('#addEvent', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
@@ -67,7 +67,7 @@ test.describe('#addEvent', () => {
                 $.addEvent(
                     document.body.children,
                     'click',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );
@@ -80,12 +80,12 @@ test.describe('#addEvent', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
                 const event = new Event('click');
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 shadow.dispatchEvent(event);
@@ -95,10 +95,10 @@ test.describe('#addEvent', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 document.dispatchEvent(event);
@@ -108,10 +108,10 @@ test.describe('#addEvent', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 window.dispatchEvent(event);
@@ -121,7 +121,7 @@ test.describe('#addEvent', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const element1 = document.getElementById('test1');
@@ -132,7 +132,7 @@ test.describe('#addEvent', () => {
                         element2,
                     ],
                     'click',
-                    (_) => {
+                    () => {
                         result++;
                     },
                 );

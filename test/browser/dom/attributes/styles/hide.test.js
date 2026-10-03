@@ -8,7 +8,7 @@ test.describe('#hide', () => {
 
     test.describe('node inputs', () => {
         test('works with HTMLElement nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.hide(document.getElementById('test1'));
             });
 
@@ -17,7 +17,7 @@ test.describe('#hide', () => {
         });
 
         test('works with NodeList nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.hide(document.querySelectorAll('div'));
             });
 
@@ -26,7 +26,7 @@ test.describe('#hide', () => {
         });
 
         test('works with HTMLCollection nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.hide(document.body.children);
             });
 
@@ -35,7 +35,7 @@ test.describe('#hide', () => {
         });
 
         test('works with array nodes', async ({ page }) => {
-            await page.evaluate((_) => {
+            await page.evaluate(() => {
                 $.hide([
                     document.getElementById('test1'),
                     document.getElementById('test2'),

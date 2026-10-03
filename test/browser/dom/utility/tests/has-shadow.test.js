@@ -7,22 +7,22 @@ test.describe('#hasShadow', () => {
     hasShadowTests((nodes) => $.hasShadow(nodes));
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasShadow(document.getElementById('div1')))).toBe(true);
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasShadow(document.querySelectorAll('div')))).toBe(true);
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasShadow(document.body.children))).toBe(true);
     });
 
     test('works with array nodes', async ({ page }) => {
-        expect(await page.evaluate((_) =>
+        expect(await page.evaluate(() =>
             $.hasShadow([
                 document.getElementById('div1'),
                 document.getElementById('div2'),

@@ -9,7 +9,7 @@ test.describe('QuerySet #wrapSelection', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('.outer');
             return query === query.wrapSelection();
         })).toBe(true);
@@ -17,7 +17,7 @@ test.describe('QuerySet #wrapSelection', () => {
 
     test.describe('wrapper inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div class="div-outer"><div class="div-inner"></div></div>',

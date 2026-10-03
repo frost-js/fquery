@@ -8,7 +8,7 @@ test.describe('#fragment', () => {
     });
 
     test('returns the document fragment of the first node', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const fragment = $.fragment('template');
 
             return fragment instanceof DocumentFragment;
@@ -18,13 +18,13 @@ test.describe('#fragment', () => {
     });
 
     test('returns undefined for nodes without a fragment', async ({ page }) => {
-        const fragment = await page.evaluate((_) => $.fragment('#div1'));
+        const fragment = await page.evaluate(() => $.fragment('#div1'));
 
         expect(fragment).toBe(undefined);
     });
 
     test('returns undefined for meta nodes with content', async ({ page }) => {
-        const fragment = await page.evaluate((_) => {
+        const fragment = await page.evaluate(() => {
             document.head.innerHTML = '<meta name="description" content="Test">';
             return $.fragment('meta');
         });
@@ -33,13 +33,13 @@ test.describe('#fragment', () => {
     });
 
     test('returns undefined for empty nodes', async ({ page }) => {
-        const fragment = await page.evaluate((_) => $.fragment('#invalid'));
+        const fragment = await page.evaluate(() => $.fragment('#invalid'));
 
         expect(fragment).toBe(undefined);
     });
 
     test('works with HTMLElement nodes', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const fragment = $.fragment(document.getElementById('template1'));
 
             return fragment instanceof DocumentFragment;
@@ -49,7 +49,7 @@ test.describe('#fragment', () => {
     });
 
     test('works with NodeList nodes', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const fragment = $.fragment(document.querySelectorAll('template'));
 
             return fragment instanceof DocumentFragment;
@@ -59,7 +59,7 @@ test.describe('#fragment', () => {
     });
 
     test('works with HTMLCollection nodes', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const fragment = $.fragment(document.body.children);
 
             return fragment instanceof DocumentFragment;
@@ -69,7 +69,7 @@ test.describe('#fragment', () => {
     });
 
     test('works with array nodes', async ({ page }) => {
-        const hasFragment = await page.evaluate((_) => {
+        const hasFragment = await page.evaluate(() => {
             const fragment = $.fragment([
                 document.getElementById('template1'),
                 document.getElementById('template2'),

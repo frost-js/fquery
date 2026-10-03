@@ -1,9 +1,9 @@
 /** @import QuerySet from '../query/query-set.js'; */
 
 import { callDomMethod } from '@fr0st/core';
-import { parseNode, parseNodes } from './../filters.js';
-import { createEvent, eventNamespacedRegExp, parseEvent, parseEvents } from './../helpers.js';
-import { events } from './../vars.js';
+import { parseNode, parseNodes } from '../filters.js';
+import { createEvent, eventNamespacedRegExp, parseEvent, parseEvents } from '../helpers.js';
+import { events } from '../vars.js';
 import { delegateFactory, namespaceFactory, preventFactory, selfDestructCallbackFactory } from './event-wrappers.js';
 
 /**
@@ -73,7 +73,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
             if (selfDestruct) {
                 realCallback = selfDestructCallbackFactory(
                     realCallback,
-                    (_) => removeEvent(node, eventName, realCallback, { capture, delegate }),
+                    () => removeEvent(node, eventName, realCallback, { capture, delegate }),
                 );
             }
 
@@ -103,7 +103,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
             callDomMethod(node, 'addEventListener', realEventName, realCallback, { capture, passive });
         }
     }
-};
+}
 
 /**
  * Adds delegated events to each node.
@@ -115,7 +115,7 @@ export function addEvent(selector, eventNames, callback, { capture = false, dele
  */
 export function addEventDelegate(selector, events, delegate, callback, { capture = false, passive = false } = {}) {
     addEvent(selector, events, callback, { capture, delegate, passive });
-};
+}
 
 /**
  * Adds self-destructing delegated events to each node.
@@ -127,7 +127,7 @@ export function addEventDelegate(selector, events, delegate, callback, { capture
  */
 export function addEventDelegateOnce(selector, events, delegate, callback, { capture = false, passive = false } = {}) {
     addEvent(selector, events, callback, { capture, delegate, passive, selfDestruct: true });
-};
+}
 
 /**
  * Adds self-destructing events to each node.
@@ -138,7 +138,7 @@ export function addEventDelegateOnce(selector, events, delegate, callback, { cap
  */
 export function addEventOnce(selector, events, callback, { capture = false, passive = false } = {}) {
     addEvent(selector, events, callback, { capture, passive, selfDestruct: true });
-};
+}
 
 /**
  * Clones all events from each node to other nodes.
@@ -159,7 +159,7 @@ export function cloneEvents(selector, otherSelector) {
     for (const eventData of sourceEvents) {
         addEvent(otherSelector, eventData.eventName, eventData.callback, eventData);
     }
-};
+}
 
 /**
  * Removes events from each node.
@@ -205,9 +205,12 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
             }
 
             const otherEvents = realEvents.filter((eventData) => {
-                if (eventLookup && !eventLookup[realEventName].some((regExp) =>
-                    regExp.test(eventData.eventName),
-                )) {
+                if (
+                    eventLookup &&
+                    !eventLookup[realEventName].some((regExp) =>
+                        regExp.test(eventData.eventName),
+                    )
+                ) {
                     return true;
                 }
 
@@ -243,7 +246,7 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
             events.delete(node);
         }
     }
-};
+}
 
 /**
  * Removes delegated events from each node.
@@ -255,7 +258,7 @@ export function removeEvent(selector, eventNames, callback, { capture = null, de
  */
 export function removeEventDelegate(selector, events, delegate, callback, { capture = null } = {}) {
     removeEvent(selector, events, callback, { capture, delegate });
-};
+}
 
 /**
  * Triggers events on each node.
@@ -277,7 +280,7 @@ export function triggerEvent(selector, events, { data = null, detail = null, bub
             triggerOne(node, event, { data, detail, bubbles, cancelable });
         }
     }
-};
+}
 
 /**
  * Triggers an event for the first node.
@@ -315,4 +318,4 @@ export function triggerOne(selector, event, { data = null, detail = null, bubble
     }
 
     return callDomMethod(node, 'dispatchEvent', eventData);
-};
+}

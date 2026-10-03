@@ -1,10 +1,10 @@
 /** @import { NodeInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, merge } from '@fr0st/core';
-import { getWindow } from './../config.js';
-import { parseNode, parseNodes } from './../filters.js';
-import { getWrapTarget } from './../helpers.js';
-import { createRange } from './../manipulation/create.js';
+import { getWindow } from '../config.js';
+import { parseNode, parseNodes } from '../filters.js';
+import { getWrapTarget } from '../helpers.js';
+import { createRange } from '../manipulation/create.js';
 import { sort } from './utility.js';
 
 /**
@@ -33,7 +33,7 @@ export function afterSelection(selector) {
     for (const node of nodes) {
         range.insertNode(node);
     }
-};
+}
 
 /**
  * Inserts each node before the selection.
@@ -60,7 +60,7 @@ export function beforeSelection(selector) {
     for (const node of nodes) {
         range.insertNode(node);
     }
-};
+}
 
 /**
  * Extracts selected nodes from the DOM.
@@ -80,7 +80,7 @@ export function extractSelection() {
     const fragment = range.extractContents();
 
     return merge([], fragment.childNodes);
-};
+}
 
 /**
  * Returns all selected nodes.
@@ -107,7 +107,7 @@ export function getSelection() {
     }
 
     return nodes.filter((node) => range.intersectsNode(node));
-};
+}
 
 /**
  * Creates a selection on the first node.
@@ -138,7 +138,7 @@ export function select(selector) {
     const range = createRange();
     range.selectNode(node);
     selection.addRange(range);
-};
+}
 
 /**
  * Creates a selection containing all of the nodes.
@@ -165,7 +165,7 @@ export function selectAll(selector) {
 
     const range = createRange();
 
-    if (nodes.length == 1) {
+    if (nodes.length === 1) {
         range.selectNode(nodes.shift());
     } else {
         range.setStartBefore(nodes.shift());
@@ -173,7 +173,7 @@ export function selectAll(selector) {
     }
 
     selection.addRange(range);
-};
+}
 
 /**
  * Wraps selected nodes with other nodes.
@@ -205,4 +205,4 @@ export function wrapSelection(selector) {
     for (const node of nodes.reverse()) {
         range.insertNode(node);
     }
-};
+}

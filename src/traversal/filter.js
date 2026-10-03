@@ -4,11 +4,11 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { callDomMethod, getDomProperty, isDocument, isElement, isWindow } from '@fr0st/core';
-import { css } from './../attributes/styles.js';
-import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
-import { parseClasses } from './../helpers.js';
-import { closest } from './../traversal/traversal.js';
-import { animations, data } from './../vars.js';
+import { css } from '../attributes/styles.js';
+import { parseFilter, parseFilterContains, parseNodes } from '../filters.js';
+import { parseClasses } from '../helpers.js';
+import { closest } from '../traversal/traversal.js';
+import { animations, data } from '../vars.js';
 
 /**
  * Returns all nodes connected to the DOM.
@@ -21,7 +21,7 @@ export function connected(selector) {
         fragment: true,
         shadow: true,
     }).filter((node) => getDomProperty(node, 'isConnected'));
-};
+}
 
 /**
  * Returns all nodes considered equal to any of the other nodes.
@@ -45,7 +45,7 @@ export function equal(selector, otherSelector) {
             callDomMethod(node, 'isEqualNode', other),
         ),
     );
-};
+}
 
 /**
  * Returns all nodes matching a filter.
@@ -61,7 +61,7 @@ export function filter(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).filter(nodeFilter);
-};
+}
 
 /**
  * Returns the first node matching a filter.
@@ -77,7 +77,7 @@ export function filterOne(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).find(nodeFilter) || null;
-};
+}
 
 /**
  * Returns all "fixed" nodes.
@@ -94,7 +94,7 @@ export function fixed(selector) {
             (parent) => isElement(parent) && css(parent, 'position') === 'fixed',
         ).length,
     );
-};
+}
 
 /**
  * Returns all hidden nodes.
@@ -117,7 +117,7 @@ export function hidden(selector) {
 
         return !isElement(node) || callDomMethod(node, 'getClientRects').length === 0;
     });
-};
+}
 
 /**
  * Returns all nodes not matching a filter.
@@ -133,7 +133,7 @@ export function not(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).filter((node, index) => !nodeFilter(node, index));
-};
+}
 
 /**
  * Returns the first node not matching a filter.
@@ -149,7 +149,7 @@ export function notOne(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).find((node, index) => !nodeFilter(node, index)) || null;
-};
+}
 
 /**
  * Returns all nodes considered identical to any of the other nodes.
@@ -169,7 +169,7 @@ export function same(selector, otherSelector) {
         fragment: true,
         shadow: true,
     }).filter((node) => others.includes(node));
-};
+}
 
 /**
  * Returns all visible nodes.
@@ -192,7 +192,7 @@ export function visible(selector) {
 
         return isElement(node) && callDomMethod(node, 'getClientRects').length > 0;
     });
-};
+}
 
 /**
  * Returns all nodes with an animation.
@@ -204,7 +204,7 @@ export function withAnimation(selector) {
         .filter((node) =>
             animations.has(node),
         );
-};
+}
 
 /**
  * Returns all nodes with a specified attribute.
@@ -217,7 +217,7 @@ export function withAttribute(selector, attribute) {
         .filter((node) =>
             callDomMethod(node, 'hasAttribute', attribute),
         );
-};
+}
 
 /**
  * Returns all nodes with child elements.
@@ -232,7 +232,7 @@ export function withChildren(selector) {
     }).filter((node) =>
         !!getDomProperty(node, 'childElementCount'),
     );
-};
+}
 
 /**
  * Returns all nodes with any of the specified classes.
@@ -249,7 +249,7 @@ export function withClass(selector, ...classes) {
                 getDomProperty(node, 'classList').contains(className),
             ),
         );
-};
+}
 
 /**
  * Returns all nodes with a CSS animation.
@@ -263,7 +263,7 @@ export function withCssAnimation(selector) {
                 .split(',')
                 .some((duration) => parseFloat(duration)),
         );
-};
+}
 
 /**
  * Returns all nodes with a CSS transition.
@@ -277,7 +277,7 @@ export function withCssTransition(selector) {
                 .split(',')
                 .some((duration) => parseFloat(duration)),
         );
-};
+}
 
 /**
  * Returns all nodes with custom data.
@@ -305,7 +305,7 @@ export function withData(selector, key) {
 
         return Object.hasOwn(nodeData, key);
     });
-};
+}
 
 /**
  * Returns all nodes with a descendant matching a filter.
@@ -321,7 +321,7 @@ export function withDescendent(selector, nodeFilter) {
         shadow: true,
         document: true,
     }).filter(nodeFilter);
-};
+}
 
 /**
  * Returns all nodes with a specified property.
@@ -334,4 +334,4 @@ export function withProperty(selector, property) {
         .filter((node) =>
             Object.hasOwn(node, property),
         );
-};
+}

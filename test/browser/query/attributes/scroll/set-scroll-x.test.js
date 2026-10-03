@@ -7,7 +7,7 @@ test.describe('QuerySet #setScrollX', () => {
     setScrollXTests(([nodes, ...args]) => $(nodes).setScrollX(...args));
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
             return query === query.setScrollX(100);
         })).toBe(true);

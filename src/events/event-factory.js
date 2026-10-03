@@ -1,8 +1,8 @@
 /** @import { EventCallback } from './event-handlers.js'; */
 
-import { getWindow } from './../config.js';
-import { debounce as _debounce } from './../helpers.js';
-import { eventLookup } from './../vars.js';
+import { getWindow } from '../config.js';
+import { debounce as _debounce } from '../helpers.js';
+import { eventLookup } from '../vars.js';
 import { addEvent, removeEvent } from './event-handlers.js';
 
 /**
@@ -86,4 +86,4 @@ export function mouseDragFactory(down, move, up, { debounce = true, passive = tr
         addEvent(window, moveEvent, realMove, { passive });
         addEvent(window, upEvent, realUp);
     };
-};
+}

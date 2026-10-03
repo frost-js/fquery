@@ -2,7 +2,7 @@
 /** @import { NodeInput } from '../../helpers.js'; */
 /** @import QuerySet from '../query-set.js'; */
 
-import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCssAnimation as _hasCssAnimation, hasCssTransition as _hasCssTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from './../../utility/tests.js';
+import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildren as _hasChildren, hasClass as _hasClass, hasCssAnimation as _hasCssAnimation, hasCssTransition as _hasCssTransition, hasData as _hasData, hasDataset as _hasDataset, hasDescendent as _hasDescendent, hasFragment as _hasFragment, hasProperty as _hasProperty, hasShadow as _hasShadow, is as _is, isConnected as _isConnected, isEqual as _isEqual, isFixed as _isFixed, isHidden as _isHidden, isSame as _isSame, isVisible as _isVisible } from '../../utility/tests.js';
 
 /**
  * Checks whether any of the nodes has an animation.
@@ -10,7 +10,7 @@ import { hasAnimation as _hasAnimation, hasAttribute as _hasAttribute, hasChildr
  */
 export function hasAnimation() {
     return _hasAnimation(this);
-};
+}
 
 /**
  * Checks whether any of the nodes has a specified attribute.
@@ -19,7 +19,7 @@ export function hasAnimation() {
  */
 export function hasAttribute(attribute) {
     return _hasAttribute(this, attribute);
-};
+}
 
 /**
  * Checks whether any of the nodes has child nodes.
@@ -27,7 +27,7 @@ export function hasAttribute(attribute) {
  */
 export function hasChildren() {
     return _hasChildren(this);
-};
+}
 
 /**
  * Checks whether any of the nodes has any of the specified classes.
@@ -36,7 +36,7 @@ export function hasChildren() {
  */
 export function hasClass(...classes) {
     return _hasClass(this, ...classes);
-};
+}
 
 /**
  * Checks whether any of the nodes has a CSS animation.
@@ -44,7 +44,7 @@ export function hasClass(...classes) {
  */
 export function hasCssAnimation() {
     return _hasCssAnimation(this);
-};
+}
 
 /**
  * Checks whether any of the nodes has a CSS transition.
@@ -52,7 +52,7 @@ export function hasCssAnimation() {
  */
 export function hasCssTransition() {
     return _hasCssTransition(this);
-};
+}
 
 /**
  * Checks whether any of the nodes has custom data.
@@ -61,7 +61,7 @@ export function hasCssTransition() {
  */
 export function hasData(key) {
     return _hasData(this, key);
-};
+}
 
 /**
  * Checks whether any of the nodes has the specified dataset value.
@@ -70,7 +70,7 @@ export function hasData(key) {
  */
 export function hasDataset(key) {
     return _hasDataset(this, key);
-};
+}
 
 /**
  * Checks whether any of the nodes contains a descendant matching a filter.
@@ -79,7 +79,7 @@ export function hasDataset(key) {
  */
 export function hasDescendent(nodeFilter) {
     return _hasDescendent(this, nodeFilter);
-};
+}
 
 /**
  * Checks whether any of the nodes has a DocumentFragment.
@@ -87,7 +87,7 @@ export function hasDescendent(nodeFilter) {
  */
 export function hasFragment() {
     return _hasFragment(this);
-};
+}
 
 /**
  * Checks whether any of the nodes has a specified property.
@@ -96,7 +96,7 @@ export function hasFragment() {
  */
 export function hasProperty(property) {
     return _hasProperty(this, property);
-};
+}
 
 /**
  * Checks whether any of the nodes has a ShadowRoot.
@@ -104,7 +104,7 @@ export function hasProperty(property) {
  */
 export function hasShadow() {
     return _hasShadow(this);
-};
+}
 
 /**
  * Checks whether any of the nodes matches a filter.
@@ -113,7 +113,7 @@ export function hasShadow() {
  */
 export function is(nodeFilter) {
     return _is(this, nodeFilter);
-};
+}
 
 /**
  * Checks whether any of the nodes is connected to the DOM.
@@ -121,7 +121,7 @@ export function is(nodeFilter) {
  */
 export function isConnected() {
     return _isConnected(this);
-};
+}
 
 /**
  * Checks whether any of the nodes is considered equal to any of the other nodes.
@@ -131,7 +131,7 @@ export function isConnected() {
  */
 export function isEqual(otherSelector, { shallow = false } = {}) {
     return _isEqual(this, otherSelector, { shallow });
-};
+}
 
 /**
  * Checks whether any of the elements or a parent of any of the elements is "fixed".
@@ -139,7 +139,7 @@ export function isEqual(otherSelector, { shallow = false } = {}) {
  */
 export function isFixed() {
     return _isFixed(this);
-};
+}
 
 /**
  * Checks whether any of the nodes is hidden.
@@ -147,7 +147,7 @@ export function isFixed() {
  */
 export function isHidden() {
     return _isHidden(this);
-};
+}
 
 /**
  * Checks whether any of the nodes is considered identical to any of the other nodes.
@@ -156,7 +156,7 @@ export function isHidden() {
  */
 export function isSame(otherSelector) {
     return _isSame(this, otherSelector);
-};
+}
 
 /**
  * Checks whether any of the nodes is visible.
@@ -164,4 +164,4 @@ export function isSame(otherSelector) {
  */
 export function isVisible() {
     return _isVisible(this);
-};
+}

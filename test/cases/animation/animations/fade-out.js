@@ -12,7 +12,7 @@ import { expectAnimationState } from '../../../support/assertions/animation.js';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +

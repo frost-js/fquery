@@ -2,7 +2,7 @@ import { expect, test } from '#test';
 
 test.describe('#removeCookie', () => {
     test('removes a cookie', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test=Test',
                 nodeType: Node.DOCUMENT_NODE,
@@ -14,7 +14,7 @@ test.describe('#removeCookie', () => {
     });
 
     test('removes a cookie with path', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test=Test',
                 nodeType: Node.DOCUMENT_NODE,
@@ -26,7 +26,7 @@ test.describe('#removeCookie', () => {
     });
 
     test('removes a cookie with secure', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const myDoc = {
                 cookie: 'test=Test',
                 nodeType: Node.DOCUMENT_NODE,

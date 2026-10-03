@@ -9,7 +9,7 @@ test.describe('QuerySet #cloneEvents', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('[data-toggle="event"]');
             return query === query.cloneEvents('[data-toggle="noEvent"]');
         })).toBe(true);
@@ -17,12 +17,12 @@ test.describe('QuerySet #cloneEvents', () => {
 
     test.describe('source inputs', () => {
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(shadow, 'click', (_) => {
+                $.addEvent(shadow, 'click', () => {
                     result++;
                 });
                 $(shadow).cloneEvents('[data-toggle="noEvent"]');
@@ -34,10 +34,10 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(document, 'click', (_) => {
+                $.addEvent(document, 'click', () => {
                     result++;
                 });
                 $(document).cloneEvents('[data-toggle="noEvent"]');
@@ -49,10 +49,10 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with Window nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
-                $.addEvent(window, 'click', (_) => {
+                $.addEvent(window, 'click', () => {
                     result++;
                 });
                 $(window).cloneEvents('[data-toggle="noEvent"]');
@@ -66,7 +66,7 @@ test.describe('QuerySet #cloneEvents', () => {
 
     test.describe('destination inputs', () => {
         test('works with HTMLElement other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element = document.getElementById('test3');
                 $('[data-toggle="event"]').cloneEvents(element);
@@ -86,7 +86,7 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with NodeList other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $('[data-toggle="event"]').cloneEvents(document.querySelectorAll('[data-toggle="noEvent"]'));
                 document.getElementById('test1').dispatchEvent(event);
@@ -105,7 +105,7 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with HTMLCollection other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 $('[data-toggle="event"]').cloneEvents(document.getElementById('noEventParent').children);
                 document.getElementById('test1').dispatchEvent(event);
@@ -124,13 +124,13 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with ShadowRoot other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
                 const div = document.createElement('div');
                 const shadow = div.attachShadow({ mode: 'open' });
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $(a).cloneEvents(shadow);
@@ -141,11 +141,11 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with Document other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $(a).cloneEvents(document);
@@ -156,11 +156,11 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with Window other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click');
                 const a = document.createElement('a');
-                $.addEvent(a, 'click', (_) => {
+                $.addEvent(a, 'click', () => {
                     result++;
                 });
                 $(a).cloneEvents(window);
@@ -171,7 +171,7 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with array other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const element1 = document.getElementById('test3');
                 const element2 = document.getElementById('test4');
@@ -196,7 +196,7 @@ test.describe('QuerySet #cloneEvents', () => {
         });
 
         test('works with QuerySet other nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const event = new Event('click');
                 const query = $('[data-toggle="noEvent"]');
                 $('[data-toggle="event"]').cloneEvents(query);

@@ -1,10 +1,10 @@
 /** @import { ElementInput } from '../helpers.js'; */
 
 import { getDomProperty } from '@fr0st/core';
-import { getWindow } from './../config.js';
-import { parseNode, parseNodes } from './../filters.js';
-import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from './../helpers.js';
-import { styles } from './../vars.js';
+import { getWindow } from '../config.js';
+import { parseNode, parseNodes } from '../filters.js';
+import { normalizeCssProperty, normalizeCssValue, parseClasses, parseData } from '../helpers.js';
+import { styles } from '../vars.js';
 import { assertStyleUnlocked, setStyleLock } from './style-locks.js';
 
 /** @typedef {Record<string, string|number>} StyleValues */
@@ -28,7 +28,7 @@ export function addClass(selector, ...classes) {
     for (const node of nodes) {
         getDomProperty(node, 'classList').add(...classes);
     }
-};
+}
 
 /**
  * Gets computed CSS style value(s) for the first node.
@@ -65,7 +65,7 @@ export function css(selector, style) {
     style = normalizeCssProperty(style);
 
     return nodeStyles.getPropertyValue(style);
-};
+}
 
 /**
  * Gets style properties for the first node.
@@ -94,7 +94,7 @@ export function getStyle(selector, style) {
     }
 
     return styles;
-};
+}
 
 /**
  * Hides each node from display.
@@ -121,7 +121,7 @@ export function hide(selector) {
             style.setProperty('display', 'none', priority);
         }
     }
-};
+}
 
 /**
  * Removes classes from each node.
@@ -140,7 +140,7 @@ export function removeClass(selector, ...classes) {
     for (const node of nodes) {
         getDomProperty(node, 'classList').remove(...classes);
     }
-};
+}
 
 /**
  * Removes a style property from each node.
@@ -155,7 +155,7 @@ export function removeStyle(selector, style) {
     for (const node of nodes) {
         getDomProperty(node, 'style').removeProperty(style);
     }
-};
+}
 
 /**
  * Sets style properties for each node.
@@ -183,7 +183,7 @@ export function setStyle(selector, style, value, { important = false } = {}) {
             );
         }
     }
-};
+}
 
 /**
  * Displays each hidden node.
@@ -210,7 +210,7 @@ export function show(selector) {
             style.setProperty('display', 'revert');
         }
     }
-};
+}
 
 /**
  * Toggles the visibility of each node.
@@ -227,7 +227,7 @@ export function toggle(selector, force) {
             hide(node);
         }
     }
-};
+}
 
 /**
  * Toggles classes for each node.
@@ -248,4 +248,4 @@ export function toggleClass(selector, ...classes) {
             getDomProperty(node, 'classList').toggle(className);
         }
     }
-};
+}

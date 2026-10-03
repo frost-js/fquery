@@ -7,7 +7,7 @@ test.describe('QuerySet #equal', () => {
     equalTests(([nodes, ...args]) => $(nodes).equal(...args).get().map((node) => node.dataset.id));
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('#parent1 span');
             const query2 = query1.equal('#parent2 span');
 
@@ -19,7 +19,7 @@ test.describe('QuerySet #equal', () => {
 
     test.describe('source inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment1 = document.createDocumentFragment();
                 const fragment2 = document.createDocumentFragment();
                 fragment1.id = 'fragment';
@@ -33,7 +33,7 @@ test.describe('QuerySet #equal', () => {
         });
 
         test('works with ShadowRoot nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div1 = document.createElement('div');
                 const div2 = document.createElement('div');
                 const shadow1 = div1.attachShadow({ mode: 'open' });
@@ -51,7 +51,7 @@ test.describe('QuerySet #equal', () => {
 
     test.describe('QuerySet inputs', () => {
         test('works with QuerySet other nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const query = $('#parent2 > [data-id="span2"]');
 
                 return $('#parent1 span').equal(query).get().map((node) => node.dataset.id);
@@ -65,7 +65,7 @@ test.describe('QuerySet #equal', () => {
 
     test.describe('comparison inputs', () => {
         test('works with DocumentFragment other nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const fragment1 = document.createDocumentFragment();
                 const fragment2 = document.createDocumentFragment();
                 fragment1.id = 'fragment';
@@ -79,7 +79,7 @@ test.describe('QuerySet #equal', () => {
         });
 
         test('works with ShadowRoot other nodes', async ({ page }) => {
-            const ids = await page.evaluate((_) => {
+            const ids = await page.evaluate(() => {
                 const div1 = document.createElement('div');
                 const div2 = document.createElement('div');
                 const shadow1 = div1.attachShadow({ mode: 'open' });

@@ -13,7 +13,7 @@ import { expectAnimationState } from '../../../support/assertions/animation.js';
  */
 export const setup = async ({ page }) => {
     await page.addStyleTag({ content: 'div { width: 100px; height: 100px; }' });
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2" class="animate"></div>' +
@@ -196,7 +196,7 @@ export function dropInTests(dropIn) {
 
         test('adds a drop-in animation to each node (direction callback)', async ({ page }) => {
             const args = await page.evaluateHandle(() => ['.animate', {
-                direction: (_) => 'bottom',
+                direction: () => 'bottom',
                 duration: 100,
                 debug: true,
             }]);

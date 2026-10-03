@@ -9,7 +9,7 @@ test.describe('QuerySet #beforeSelection', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('a');
             return query === query.beforeSelection();
         })).toBe(true);
@@ -17,7 +17,7 @@ test.describe('QuerySet #beforeSelection', () => {
 
     test.describe('inputs', () => {
         test('works with DocumentFragment nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 const range = document.createRange();
                 const fragment = range.createContextualFragment(
                     '<div><span></span></div>',

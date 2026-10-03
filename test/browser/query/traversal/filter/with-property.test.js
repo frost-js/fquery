@@ -5,14 +5,14 @@ test.describe('QuerySet #withProperty', () => {
         await page.evaluate(() => {
             document.body.innerHTML = '<div id="div1"></div><div id="div2"></div><div id="div3"></div><div id="div4"></div>';
         });
-        await page.evaluate((_) => {
+        await page.evaluate(() => {
             document.getElementById('div1').test = 'Test 1';
             document.getElementById('div3').test = 'Test 2';
         });
     });
 
     test('returns nodes with a specified property', async ({ page }) => {
-        const ids = await page.evaluate((_) =>
+        const ids = await page.evaluate(() =>
             $('div').withProperty('test').get().map((node) => node.id));
 
         expect(ids).toEqual([
@@ -22,7 +22,7 @@ test.describe('QuerySet #withProperty', () => {
     });
 
     test('returns a new QuerySet', async ({ page }) => {
-        const isNewQuerySet = await page.evaluate((_) => {
+        const isNewQuerySet = await page.evaluate(() => {
             const query1 = $('div');
             const query2 = query1.withProperty('test');
 

@@ -9,15 +9,15 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
     });
 
     test('returns the QuerySet', async ({ page }) => {
-        expect(await page.evaluate((_) => {
+        expect(await page.evaluate(() => {
             const query = $('div');
-            return query === query.addEventDelegateOnce('click', 'a', (_) => null);
+            return query === query.addEventDelegateOnce('click', 'a', () => null);
         })).toBe(true);
     });
 
     test.describe('node inputs', () => {
         test('works with ShadowRoot nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -27,7 +27,7 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
                 const a = document.createElement('a');
                 shadow.appendChild(a);
                 $(shadow)
-                        .addEventDelegateOnce('click', 'a', (_) => {
+                        .addEventDelegateOnce('click', 'a', () => {
                             result++;
                         });
                 a.dispatchEvent(event);
@@ -37,7 +37,7 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
         });
 
         test('works with Document nodes', async ({ page }) => {
-            expect(await page.evaluate((_) => {
+            expect(await page.evaluate(() => {
                 let result = 0;
                 const event = new Event('click', {
                     bubbles: true,
@@ -47,7 +47,7 @@ test.describe('QuerySet #addEventDelegateOnce', () => {
                 const element3 = document.getElementById('test3');
                 const element4 = document.getElementById('test4');
                 $(document)
-                        .addEventDelegateOnce('click', 'a', (_) => {
+                        .addEventDelegateOnce('click', 'a', () => {
                             result++;
                         });
                 element1.dispatchEvent(event);

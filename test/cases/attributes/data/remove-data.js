@@ -9,7 +9,7 @@ import { expect, test } from '#test';
  * @returns {Promise<void>} The promise.
  */
 export const setup = async ({ page }) => {
-    await page.evaluate((_) => {
+    await page.evaluate(() => {
         document.body.innerHTML =
             '<div id="test1"></div>' +
             '<div id="test2"></div>';
@@ -28,17 +28,17 @@ export function removeDataTests(removeData) {
     test('removes all data for all nodes', async ({ page }) => {
         await page.evaluate(removeData, ['div']);
 
-        expect(await page.evaluate((_) => $.getData('#test1'))).toBeUndefined();
-        expect(await page.evaluate((_) => $.getData('#test2'))).toBeUndefined();
+        expect(await page.evaluate(() => $.getData('#test1'))).toBeUndefined();
+        expect(await page.evaluate(() => $.getData('#test2'))).toBeUndefined();
     });
 
     test('removes data for all nodes', async ({ page }) => {
         await page.evaluate(removeData, ['div', 'testA']);
 
-        expect(await page.evaluate((_) => $.getData('#test1'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test1'))).toEqual({
             testB: 'Test 2',
         });
-        expect(await page.evaluate((_) => $.getData('#test2'))).toEqual({
+        expect(await page.evaluate(() => $.getData('#test2'))).toEqual({
             testB: 'Test 2',
         });
     });

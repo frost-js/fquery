@@ -4,12 +4,12 @@
 /** @import { QueryInput } from '../helpers.js'; */
 
 import { callDomMethod, camelCase, getDomProperty, isDocument, isElement, isFragment, isWindow } from '@fr0st/core';
-import { css } from './../attributes/styles.js';
-import { parseFilter, parseFilterContains, parseNodes } from './../filters.js';
-import { parseClasses } from './../helpers.js';
-import { clone } from './../manipulation/manipulation.js';
-import { closest } from './../traversal/traversal.js';
-import { animations, data } from './../vars.js';
+import { css } from '../attributes/styles.js';
+import { parseFilter, parseFilterContains, parseNodes } from '../filters.js';
+import { parseClasses } from '../helpers.js';
+import { clone } from '../manipulation/manipulation.js';
+import { closest } from '../traversal/traversal.js';
+import { animations, data } from '../vars.js';
 
 /**
  * Checks whether any of the nodes has an animation.
@@ -19,7 +19,7 @@ import { animations, data } from './../vars.js';
 export function hasAnimation(selector) {
     return parseNodes(selector)
         .some((node) => animations.has(node));
-};
+}
 
 /**
  * Checks whether any of the nodes has a specified attribute.
@@ -30,7 +30,7 @@ export function hasAnimation(selector) {
 export function hasAttribute(selector, attribute) {
     return parseNodes(selector)
         .some((node) => callDomMethod(node, 'hasAttribute', attribute));
-};
+}
 
 /**
  * Checks whether any of the nodes has child nodes.
@@ -43,7 +43,7 @@ export function hasChildren(selector) {
         shadow: true,
         document: true,
     }).some((node) => getDomProperty(node, 'childElementCount'));
-};
+}
 
 /**
  * Checks whether any of the nodes has any of the specified classes.
@@ -58,7 +58,7 @@ export function hasClass(selector, ...classes) {
         .some((node) =>
             classes.some((className) => getDomProperty(node, 'classList').contains(className)),
         );
-};
+}
 
 /**
  * Checks whether any of the nodes has a CSS animation.
@@ -72,7 +72,7 @@ export function hasCssAnimation(selector) {
                 .split(',')
                 .some((duration) => parseFloat(duration)),
         );
-};
+}
 
 /**
  * Checks whether any of the nodes has a CSS transition.
@@ -86,7 +86,7 @@ export function hasCssTransition(selector) {
                 .split(',')
                 .some((duration) => parseFloat(duration)),
         );
-};
+}
 
 /**
  * Checks whether any of the nodes has custom data.
@@ -113,7 +113,7 @@ export function hasData(selector, key) {
 
         return Object.hasOwn(nodeData, key);
     });
-};
+}
 
 /**
  * Checks whether any of the nodes has the specified dataset value.
@@ -126,7 +126,7 @@ export function hasDataset(selector, key) {
 
     return parseNodes(selector)
         .some((node) => Object.hasOwn(getDomProperty(node, 'dataset'), key));
-};
+}
 
 /**
  * Checks whether any of the nodes contains a descendant matching a filter.
@@ -142,7 +142,7 @@ export function hasDescendent(selector, nodeFilter) {
         shadow: true,
         document: true,
     }).some(nodeFilter);
-};
+}
 
 /**
  * Checks whether any of the nodes has a DocumentFragment.
@@ -152,7 +152,7 @@ export function hasDescendent(selector, nodeFilter) {
 export function hasFragment(selector) {
     return parseNodes(selector)
         .some((node) => isFragment(getDomProperty(node, 'content')));
-};
+}
 
 /**
  * Checks whether any of the nodes has a specified property.
@@ -163,7 +163,7 @@ export function hasFragment(selector) {
 export function hasProperty(selector, property) {
     return parseNodes(selector)
         .some((node) => Object.hasOwn(node, property));
-};
+}
 
 /**
  * Checks whether any of the nodes has a ShadowRoot.
@@ -173,7 +173,7 @@ export function hasProperty(selector, property) {
 export function hasShadow(selector) {
     return parseNodes(selector)
         .some((node) => getDomProperty(node, 'shadowRoot'));
-};
+}
 
 /**
  * Checks whether any of the nodes matches a filter.
@@ -189,7 +189,7 @@ export function is(selector, nodeFilter) {
         fragment: true,
         shadow: true,
     }).some(nodeFilter);
-};
+}
 
 /**
  * Checks whether any of the nodes is connected to the DOM.
@@ -202,7 +202,7 @@ export function isConnected(selector) {
         fragment: true,
         shadow: true,
     }).some((node) => getDomProperty(node, 'isConnected'));
-};
+}
 
 /**
  * Checks whether any of the nodes is considered equal to any of the other nodes.
@@ -232,7 +232,7 @@ export function isEqual(selector, otherSelector, { shallow = false } = {}) {
     return nodes.some((node) =>
         others.some((other) => callDomMethod(node, 'isEqualNode', other)),
     );
-};
+}
 
 /**
  * Checks whether any of the nodes or a parent of any of the nodes is "fixed".
@@ -249,7 +249,7 @@ export function isFixed(selector) {
             (parent) => isElement(parent) && css(parent, 'position') === 'fixed',
         ).length,
     );
-};
+}
 
 /**
  * Checks whether any of the nodes is hidden.
@@ -272,7 +272,7 @@ export function isHidden(selector) {
 
         return !isElement(node) || callDomMethod(node, 'getClientRects').length === 0;
     });
-};
+}
 
 /**
  * Checks whether any of the nodes is considered identical to any of the other nodes.
@@ -292,7 +292,7 @@ export function isSame(selector, otherSelector) {
         fragment: true,
         shadow: true,
     }).some((node) => others.includes(node));
-};
+}
 
 /**
  * Checks whether any of the nodes is visible.
@@ -315,4 +315,4 @@ export function isVisible(selector) {
 
         return isElement(node) && callDomMethod(node, 'getClientRects').length > 0;
     });
-};
+}
