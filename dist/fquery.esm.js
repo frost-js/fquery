@@ -626,7 +626,7 @@ function normalizeCssValue(style, value) {
 * @returns {string[]} The parsed classes.
 */
 function parseClasses(classList) {
-	return classList.flat().flatMap((val) => val.split(" ")).filter((val) => !!val);
+	return classList.flat().flatMap((val) => val.split(" ")).filter((val) => Boolean(val));
 }
 /**
 * Normalizes a key and value, or an existing data object, into a data object.
@@ -651,7 +651,7 @@ function parseDataset(value) {
 	if (["true", "on"].includes(lower)) return true;
 	if (["false", "off"].includes(lower)) return false;
 	if (lower === "null") return null;
-	if (isNumeric(lower)) return parseFloat(lower);
+	if (isNumeric(lower)) return Number(lower);
 	if (["{", "["].includes(lower.charAt(0))) try {
 		return JSON.parse(value);
 	} catch {}
@@ -947,9 +947,9 @@ function parseFilter(filter, defaultValue = true) {
 * @returns {NodeFilterCallback} The node contains filter callback.
 */
 function parseFilterContains(filter, defaultValue = true) {
-	if (!filter) return (node) => defaultValue && !!getDomProperty(node, "firstElementChild");
+	if (!filter) return (node) => defaultValue && Boolean(getDomProperty(node, "firstElementChild"));
 	if (isFunction(filter)) return (node) => merge([], callDomMethod(node, "querySelectorAll", "*")).some(filter);
-	if (isString(filter)) return (node) => !!findOne$1(filter, node);
+	if (isString(filter)) return (node) => Boolean(findOne$1(filter, node));
 	if (isNode(filter) || isFragment(filter) || isShadow(filter)) return (node) => node !== filter && callDomMethod(node, "contains", filter);
 	filter = parseNodes(filter, {
 		node: true,
@@ -1844,11 +1844,11 @@ function animateSqueeze(selector, options, out) {
 		let sizeStyle;
 		let axis;
 		if (["top", "bottom"].includes(dir)) {
-			size = parseFloat(css$1(node, "height")) || 0;
+			size = Number.parseFloat(css$1(node, "height")) || 0;
 			sizeStyle = "height";
 			if (dir === "top") axis = "Y";
 		} else {
-			size = parseFloat(css$1(node, "width")) || 0;
+			size = Number.parseFloat(css$1(node, "width")) || 0;
 			sizeStyle = "width";
 			if (dir === "left") axis = "X";
 		}
@@ -2772,10 +2772,10 @@ function constrain$1(selector, containerSelector) {
 		if (nodeBox.height > containerBox.height) {
 			let height = containerBox.height;
 			if (contentBox) {
-				height -= parseFloat(css$1(node, "padding-top"));
-				height -= parseFloat(css$1(node, "padding-bottom"));
-				height -= parseFloat(css$1(node, "border-top-width"));
-				height -= parseFloat(css$1(node, "border-bottom-width"));
+				height -= Number.parseFloat(css$1(node, "padding-top"));
+				height -= Number.parseFloat(css$1(node, "padding-bottom"));
+				height -= Number.parseFloat(css$1(node, "border-top-width"));
+				height -= Number.parseFloat(css$1(node, "border-bottom-width"));
 			}
 			getDomProperty(node, "style").setProperty("height", `${Math.max(0, height)}px`);
 			resized = true;
@@ -2783,10 +2783,10 @@ function constrain$1(selector, containerSelector) {
 		if (nodeBox.width > containerBox.width) {
 			let width = containerBox.width;
 			if (contentBox) {
-				width -= parseFloat(css$1(node, "padding-left"));
-				width -= parseFloat(css$1(node, "padding-right"));
-				width -= parseFloat(css$1(node, "border-left-width"));
-				width -= parseFloat(css$1(node, "border-right-width"));
+				width -= Number.parseFloat(css$1(node, "padding-left"));
+				width -= Number.parseFloat(css$1(node, "padding-right"));
+				width -= Number.parseFloat(css$1(node, "border-left-width"));
+				width -= Number.parseFloat(css$1(node, "border-right-width"));
 			}
 			getDomProperty(node, "style").setProperty("width", `${Math.max(0, width)}px`);
 			resized = true;
@@ -2797,7 +2797,7 @@ function constrain$1(selector, containerSelector) {
 		else if (nodeBox.right - containerBox.right > 0) leftOffset = nodeBox.right - containerBox.right;
 		if (leftOffset) {
 			const oldLeft = css$1(node, "left");
-			const trueLeft = oldLeft && oldLeft !== "auto" ? parseFloat(oldLeft) : 0;
+			const trueLeft = oldLeft && oldLeft !== "auto" ? Number.parseFloat(oldLeft) : 0;
 			getDomProperty(node, "style").setProperty("left", `${trueLeft - leftOffset}px`);
 		}
 		let topOffset;
@@ -2805,7 +2805,7 @@ function constrain$1(selector, containerSelector) {
 		else if (nodeBox.bottom - containerBox.bottom > 0) topOffset = nodeBox.bottom - containerBox.bottom;
 		if (topOffset) {
 			const oldTop = css$1(node, "top");
-			const trueTop = oldTop && oldTop !== "auto" ? parseFloat(oldTop) : 0;
+			const trueTop = oldTop && oldTop !== "auto" ? Number.parseFloat(oldTop) : 0;
 			getDomProperty(node, "style").setProperty("top", `${trueTop - topOffset}px`);
 		}
 		if (css$1(node, "position") === "static") getDomProperty(node, "style").setProperty("position", "relative");
@@ -3064,14 +3064,14 @@ function height$1(selector, { boxSize = 1, outer = false } = {}) {
 	if (boxSize >= 4) return getDomProperty(node, "scrollHeight");
 	let result = getDomProperty(node, "clientHeight");
 	if (boxSize <= 0) {
-		result -= parseInt(css$1(node, "padding-top"));
-		result -= parseInt(css$1(node, "padding-bottom"));
+		result -= Number.parseInt(css$1(node, "padding-top"));
+		result -= Number.parseInt(css$1(node, "padding-bottom"));
 		result = Math.max(0, result);
 	}
-	if (boxSize >= 2) result = getDomProperty(node, "offsetHeight") ?? result + parseInt(css$1(node, "border-top-width")) + parseInt(css$1(node, "border-bottom-width"));
+	if (boxSize >= 2) result = getDomProperty(node, "offsetHeight") ?? result + Number.parseInt(css$1(node, "border-top-width")) + Number.parseInt(css$1(node, "border-bottom-width"));
 	if (boxSize >= 3) {
-		result += parseInt(css$1(node, "margin-top"));
-		result += parseInt(css$1(node, "margin-bottom"));
+		result += Number.parseInt(css$1(node, "margin-top"));
+		result += Number.parseInt(css$1(node, "margin-bottom"));
 	}
 	return result;
 }
@@ -3092,14 +3092,14 @@ function width$1(selector, { boxSize = 1, outer = false } = {}) {
 	if (boxSize >= 4) return getDomProperty(node, "scrollWidth");
 	let result = getDomProperty(node, "clientWidth");
 	if (boxSize <= 0) {
-		result -= parseInt(css$1(node, "padding-left"));
-		result -= parseInt(css$1(node, "padding-right"));
+		result -= Number.parseInt(css$1(node, "padding-left"));
+		result -= Number.parseInt(css$1(node, "padding-right"));
 		result = Math.max(0, result);
 	}
-	if (boxSize >= 2) result = getDomProperty(node, "offsetWidth") ?? result + parseInt(css$1(node, "border-left-width")) + parseInt(css$1(node, "border-right-width"));
+	if (boxSize >= 2) result = getDomProperty(node, "offsetWidth") ?? result + Number.parseInt(css$1(node, "border-left-width")) + Number.parseInt(css$1(node, "border-right-width"));
 	if (boxSize >= 3) {
-		result += parseInt(css$1(node, "margin-left"));
-		result += parseInt(css$1(node, "margin-right"));
+		result += Number.parseInt(css$1(node, "margin-left"));
+		result += Number.parseInt(css$1(node, "margin-right"));
 	}
 	return result;
 }
@@ -4961,7 +4961,7 @@ function withChildren$1(selector) {
 		fragment: true,
 		shadow: true,
 		document: true
-	}).filter((node) => !!getDomProperty(node, "childElementCount"));
+	}).filter((node) => Boolean(getDomProperty(node, "childElementCount")));
 }
 /**
 * Returns all nodes with any of the specified classes.
@@ -4979,7 +4979,7 @@ function withClass$1(selector, ...classes) {
 * @returns {Node[]} The filtered nodes.
 */
 function withCssAnimation$1(selector) {
-	return parseNodes(selector).filter((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
+	return parseNodes(selector).filter((node) => css$1(node, "animation-duration").split(",").some((duration) => Number.parseFloat(duration)));
 }
 /**
 * Returns all nodes with a CSS transition.
@@ -4987,7 +4987,7 @@ function withCssAnimation$1(selector) {
 * @returns {Node[]} The filtered nodes.
 */
 function withCssTransition$1(selector) {
-	return parseNodes(selector).filter((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
+	return parseNodes(selector).filter((node) => css$1(node, "transition-duration").split(",").some((duration) => Number.parseFloat(duration)));
 }
 /**
 * Returns all nodes with custom data.
@@ -5745,7 +5745,7 @@ function hasClass$1(selector, ...classes) {
 * @returns {boolean} Whether any of the nodes has a CSS animation.
 */
 function hasCssAnimation$1(selector) {
-	return parseNodes(selector).some((node) => css$1(node, "animation-duration").split(",").some((duration) => parseFloat(duration)));
+	return parseNodes(selector).some((node) => css$1(node, "animation-duration").split(",").some((duration) => Number.parseFloat(duration)));
 }
 /**
 * Checks whether any of the nodes has a CSS transition.
@@ -5753,7 +5753,7 @@ function hasCssAnimation$1(selector) {
 * @returns {boolean} Whether any of the nodes has a CSS transition.
 */
 function hasCssTransition$1(selector) {
-	return parseNodes(selector).some((node) => css$1(node, "transition-duration").split(",").some((duration) => parseFloat(duration)));
+	return parseNodes(selector).some((node) => css$1(node, "transition-duration").split(",").some((duration) => Number.parseFloat(duration)));
 }
 /**
 * Checks whether any of the nodes has custom data.

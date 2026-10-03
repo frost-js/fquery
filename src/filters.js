@@ -68,7 +68,7 @@ export function parseFilter(filter, defaultValue = true) {
  */
 export function parseFilterContains(filter, defaultValue = true) {
     if (!filter) {
-        return (node) => defaultValue && !!getDomProperty(node, 'firstElementChild');
+        return (node) => defaultValue && Boolean(getDomProperty(node, 'firstElementChild'));
     }
 
     if (isFunction(filter)) {
@@ -76,7 +76,7 @@ export function parseFilterContains(filter, defaultValue = true) {
     }
 
     if (isString(filter)) {
-        return (node) => !!findOne(filter, node);
+        return (node) => Boolean(findOne(filter, node));
     }
 
     if (isNode(filter) || isFragment(filter) || isShadow(filter)) {

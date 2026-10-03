@@ -55,6 +55,24 @@ export function getDatasetTests(getDataset) {
         expect(value).toBe(123.456);
     });
 
+    for (const { name, input, expected } of [
+        { name: 'decimal', input: '12.5', expected: 12.5 },
+        { name: 'scientific notation', input: '1e3', expected: 1000 },
+        { name: 'hexadecimal', input: '0x10', expected: 16 },
+        { name: 'binary', input: '0b10', expected: 2 },
+        { name: 'octal', input: '0o10', expected: 8 },
+        { name: 'integer with units', input: '12px', expected: '12px' },
+        { name: 'decimal with units', input: '12.5px', expected: '12.5px' },
+        { name: 'empty', input: '', expected: '' },
+        { name: 'whitespace', input: '   ', expected: '   ' },
+    ]) {
+        test(`preserves complete-value conversion (${name})`, async ({ page }) => {
+            await page.evaluate((input) => $.setDataset('#test1', { sample: input }), input);
+
+            expect(await page.evaluate(getDataset, ['#test1', 'sample'])).toBe(expected);
+        });
+    }
+
     test('parses boolean true values', async ({ page }) => {
         const value = await page.evaluate(getDataset, ['div', 'true']);
 

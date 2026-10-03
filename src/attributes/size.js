@@ -44,19 +44,19 @@ export function height(selector, { boxSize = PADDING_BOX, outer = false } = {}) 
     let result = getDomProperty(node, 'clientHeight');
 
     if (boxSize <= CONTENT_BOX) {
-        result -= parseInt(css(node, 'padding-top'));
-        result -= parseInt(css(node, 'padding-bottom'));
+        result -= Number.parseInt(css(node, 'padding-top'));
+        result -= Number.parseInt(css(node, 'padding-bottom'));
         result = Math.max(0, result);
     }
 
     if (boxSize >= BORDER_BOX) {
         result = getDomProperty(node, 'offsetHeight') ??
-            result + parseInt(css(node, 'border-top-width')) + parseInt(css(node, 'border-bottom-width'));
+            result + Number.parseInt(css(node, 'border-top-width')) + Number.parseInt(css(node, 'border-bottom-width'));
     }
 
     if (boxSize >= MARGIN_BOX) {
-        result += parseInt(css(node, 'margin-top'));
-        result += parseInt(css(node, 'margin-bottom'));
+        result += Number.parseInt(css(node, 'margin-top'));
+        result += Number.parseInt(css(node, 'margin-bottom'));
     }
 
     return result;
@@ -95,19 +95,19 @@ export function width(selector, { boxSize = PADDING_BOX, outer = false } = {}) {
     let result = getDomProperty(node, 'clientWidth');
 
     if (boxSize <= CONTENT_BOX) {
-        result -= parseInt(css(node, 'padding-left'));
-        result -= parseInt(css(node, 'padding-right'));
+        result -= Number.parseInt(css(node, 'padding-left'));
+        result -= Number.parseInt(css(node, 'padding-right'));
         result = Math.max(0, result);
     }
 
     if (boxSize >= BORDER_BOX) {
         result = getDomProperty(node, 'offsetWidth') ??
-            result + parseInt(css(node, 'border-left-width')) + parseInt(css(node, 'border-right-width'));
+            result + Number.parseInt(css(node, 'border-left-width')) + Number.parseInt(css(node, 'border-right-width'));
     }
 
     if (boxSize >= MARGIN_BOX) {
-        result += parseInt(css(node, 'margin-left'));
-        result += parseInt(css(node, 'margin-right'));
+        result += Number.parseInt(css(node, 'margin-left'));
+        result += Number.parseInt(css(node, 'margin-right'));
     }
 
     return result;

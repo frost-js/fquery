@@ -317,13 +317,13 @@ function animateSqueeze(selector, options, out) {
 
             let size; let sizeStyle; let axis;
             if (['top', 'bottom'].includes(dir)) {
-                size = parseFloat(css(node, 'height')) || 0;
+                size = Number.parseFloat(css(node, 'height')) || 0;
                 sizeStyle = 'height';
                 if (dir === 'top') {
                     axis = 'Y';
                 }
             } else {
-                size = parseFloat(css(node, 'width')) || 0;
+                size = Number.parseFloat(css(node, 'width')) || 0;
                 sizeStyle = 'width';
                 if (dir === 'left') {
                     axis = 'X';

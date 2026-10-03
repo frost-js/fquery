@@ -128,7 +128,7 @@ export function parseClasses(classList) {
     return classList
         .flat()
         .flatMap((val) => val.split(' '))
-        .filter((val) => !!val);
+        .filter((val) => Boolean(val));
 }
 
 /**
@@ -178,7 +178,7 @@ export function parseDataset(value) {
     }
 
     if (isNumeric(lower)) {
-        return parseFloat(lower);
+        return Number(lower);
     }
 
     if (['{', '['].includes(lower.charAt(0))) {

@@ -67,6 +67,27 @@ export function widthTests(width) {
             expect(await page.evaluate(width, args)).toBe(0);
         });
 
+        test('calculates content and margin widths from pixel-valued styles', async ({ page }) => {
+            const contentArgs = await page.evaluateHandle(() => {
+                $.setStyle('#test1', {
+                    width: '100px',
+                    padding: '12px',
+                    border: '3px solid',
+                    margin: '12px',
+                    overflow: 'visible',
+                });
+
+                return ['#test1', { boxSize: $.CONTENT_BOX }];
+            });
+
+            expect(await page.evaluate(width, contentArgs)).toBe(100);
+
+            const marginArgs = await page.evaluateHandle(() =>
+                ['#test1', { boxSize: $.MARGIN_BOX }]);
+
+            expect(await page.evaluate(width, marginArgs)).toBe(154);
+        });
+
         test('returns the border box width of an SVG element', async ({ page }) => {
             const args = await page.evaluateHandle(() => {
                 document.body.innerHTML = '<svg style="display: block; width: 100px; height: 100px; padding: 10px; border: 2px solid; box-sizing: content-box;"></svg>';

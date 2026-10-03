@@ -70,7 +70,7 @@ export function hasCssAnimation(selector) {
         .some((node) =>
             css(node, 'animation-duration')
                 .split(',')
-                .some((duration) => parseFloat(duration)),
+                .some((duration) => Number.parseFloat(duration)),
         );
 }
 
@@ -84,7 +84,7 @@ export function hasCssTransition(selector) {
         .some((node) =>
             css(node, 'transition-duration')
                 .split(',')
-                .some((duration) => parseFloat(duration)),
+                .some((duration) => Number.parseFloat(duration)),
         );
 }
 

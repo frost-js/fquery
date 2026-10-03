@@ -230,7 +230,7 @@ export function withChildren(selector) {
         shadow: true,
         document: true,
     }).filter((node) =>
-        !!getDomProperty(node, 'childElementCount'),
+        Boolean(getDomProperty(node, 'childElementCount')),
     );
 }
 
@@ -261,7 +261,7 @@ export function withCssAnimation(selector) {
         .filter((node) =>
             css(node, 'animation-duration')
                 .split(',')
-                .some((duration) => parseFloat(duration)),
+                .some((duration) => Number.parseFloat(duration)),
         );
 }
 
@@ -275,7 +275,7 @@ export function withCssTransition(selector) {
         .filter((node) =>
             css(node, 'transition-duration')
                 .split(',')
-                .some((duration) => parseFloat(duration)),
+                .some((duration) => Number.parseFloat(duration)),
         );
 }
 

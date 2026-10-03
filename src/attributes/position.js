@@ -70,10 +70,10 @@ export function constrain(selector, containerSelector) {
             let height = containerBox.height;
 
             if (contentBox) {
-                height -= parseFloat(css(node, 'padding-top'));
-                height -= parseFloat(css(node, 'padding-bottom'));
-                height -= parseFloat(css(node, 'border-top-width'));
-                height -= parseFloat(css(node, 'border-bottom-width'));
+                height -= Number.parseFloat(css(node, 'padding-top'));
+                height -= Number.parseFloat(css(node, 'padding-bottom'));
+                height -= Number.parseFloat(css(node, 'border-top-width'));
+                height -= Number.parseFloat(css(node, 'border-bottom-width'));
             }
 
             getDomProperty(node, 'style').setProperty('height', `${Math.max(0, height)}px`);
@@ -84,10 +84,10 @@ export function constrain(selector, containerSelector) {
             let width = containerBox.width;
 
             if (contentBox) {
-                width -= parseFloat(css(node, 'padding-left'));
-                width -= parseFloat(css(node, 'padding-right'));
-                width -= parseFloat(css(node, 'border-left-width'));
-                width -= parseFloat(css(node, 'border-right-width'));
+                width -= Number.parseFloat(css(node, 'padding-left'));
+                width -= Number.parseFloat(css(node, 'padding-right'));
+                width -= Number.parseFloat(css(node, 'border-left-width'));
+                width -= Number.parseFloat(css(node, 'border-right-width'));
             }
 
             getDomProperty(node, 'style').setProperty('width', `${Math.max(0, width)}px`);
@@ -107,7 +107,7 @@ export function constrain(selector, containerSelector) {
 
         if (leftOffset) {
             const oldLeft = css(node, 'left');
-            const trueLeft = oldLeft && oldLeft !== 'auto' ? parseFloat(oldLeft) : 0;
+            const trueLeft = oldLeft && oldLeft !== 'auto' ? Number.parseFloat(oldLeft) : 0;
             getDomProperty(node, 'style').setProperty('left', `${trueLeft - leftOffset}px`);
         }
 
@@ -120,7 +120,7 @@ export function constrain(selector, containerSelector) {
 
         if (topOffset) {
             const oldTop = css(node, 'top');
-            const trueTop = oldTop && oldTop !== 'auto' ? parseFloat(oldTop) : 0;
+            const trueTop = oldTop && oldTop !== 'auto' ? Number.parseFloat(oldTop) : 0;
             getDomProperty(node, 'style').setProperty('top', `${trueTop - topOffset}px`);
         }
 
