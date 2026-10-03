@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/query",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "private": false,
     "description": "Lightweight JavaScript library for DOM querying, traversal, manipulation, events, animation, AJAX, and browser utilities.",
     "keywords": [
@@ -55,14 +55,14 @@
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@fr0st/core": "^4.0.0"
+        "@fr0st/core": "^4.0.1"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.3",
+        "@fr0st/eslint-config": "^6.0.1",
         "@playwright/test": "^1.63.0",
-        "eslint": "^10.9.1",
-        "monocart-reporter": "^2.12.6",
-        "vite": "^8.2.2"
+        "eslint": "^10.11.0",
+        "monocart-reporter": "^2.14.0",
+        "vite": "^8.3.1"
     },
     "engines": {
         "node": "^20.19.0 || ^22.13.0 || >=24"

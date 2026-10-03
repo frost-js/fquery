@@ -198,7 +198,7 @@
 	*/
 	var isNumeric = (value) => {
 		try {
-			return !isNaN(parseFloat(value)) && isFinite(value);
+			return !isNaN(Number.parseFloat(value)) && isFinite(value);
 		} catch {
 			return false;
 		}
@@ -208,7 +208,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is an object-like reference.
 	*/
-	var isObject = (value) => !!value && value === Object(value);
+	var isObject = (value) => Boolean(value) && value === Object(value);
 	/**
 	* Checks whether a value is a plain object.
 	* @param {*} value The value to test.
@@ -224,7 +224,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a ShadowRoot.
 	*/
-	var isShadow = (value) => getNodeType(value) === DOCUMENT_FRAGMENT_NODE && !!value.host;
+	var isShadow = (value) => getNodeType(value) === DOCUMENT_FRAGMENT_NODE && Boolean(value.host);
 	/**
 	* Checks whether a value is a string.
 	* @param {*} value The value to test.
@@ -248,7 +248,7 @@
 	* @param {*} value The value to test.
 	* @returns {boolean} Whether the value is a Window.
 	*/
-	var isWindow = (value) => !!value && !!value.document && getDomProperty(value.document, "defaultView") === value;
+	var isWindow = (value) => Boolean(value) && Boolean(value.document) && getDomProperty(value.document, "defaultView") === value;
 	/**
 	* Math methods
 	*/
@@ -350,7 +350,7 @@
 		const result = Math.round(value / step) * step;
 		const precision = getDecimalPlaces(step);
 		if (precision > 100) return result;
-		return parseFloat(result.toFixed(precision));
+		return Number(result.toFixed(precision));
 	};
 	/**
 	* Array methods
@@ -470,7 +470,7 @@
 		let newArgs;
 		let newThis;
 		let running = false;
-		const cancel = (_) => {
+		const cancel = () => {
 			if (animationReference !== null) {
 				if (isBrowser) window.cancelAnimationFrame(animationReference);
 				else clearTimeout(animationReference);
@@ -485,7 +485,7 @@
 			newThis = this;
 			if (running) return;
 			running = true;
-			animationReference = _requestAnimationFrame((_) => {
+			animationReference = _requestAnimationFrame(() => {
 				const args = newArgs;
 				const thisArg = newThis;
 				animationReference = null;
@@ -545,7 +545,7 @@
 		let newArgs;
 		let newThis;
 		let trailingPending = false;
-		const cancel = (_) => {
+		const cancel = () => {
 			if (debounceReference !== null) clearTimeout(debounceReference);
 			debounceReference = null;
 			newArgs = null;
@@ -561,7 +561,7 @@
 			} else trailingPending = false;
 			newArgs = args;
 			newThis = this;
-			debounceReference = setTimeout((_) => {
+			debounceReference = setTimeout(() => {
 				const args = newArgs;
 				const thisArg = newThis;
 				const callTrailing = trailing && (!leading || trailingPending);
@@ -646,14 +646,14 @@
 		let lastRan;
 		let newArgs;
 		let newThis;
-		const cancel = (_) => {
+		const cancel = () => {
 			if (throttleReference !== null) clearTimeout(throttleReference);
 			throttleReference = null;
 			lastRan = void 0;
 			newArgs = null;
 			newThis = null;
 		};
-		const runTrailing = (_) => {
+		const runTrailing = () => {
 			const args = newArgs;
 			const thisArg = newThis;
 			throttleReference = null;
@@ -943,7 +943,7 @@
 	var randomString = (length = 16, chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") => {
 		const characters = Array.from(chars);
 		if (!characters.length) throw new TypeError("chars must not be empty");
-		return new Array(length).fill().map((_) => characters[randomInt(characters.length)]).join("");
+		return new Array(length).fill().map(() => characters[randomInt(characters.length)]).join("");
 	};
 	/**
 	* Converts a string to snake_case.
